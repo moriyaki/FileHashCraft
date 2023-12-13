@@ -1,11 +1,12 @@
+using System.Linq;
+
 namespace FilOps.Tests
 {
     public class ModelTest
     {
         [Fact]
-        public static void Test1()
+        public  void Test1()
         {
-
         }
     }
 }
