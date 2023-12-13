@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models.WindowsAPI;
@@ -7,6 +9,31 @@ namespace FilOps.ViewModels
 {
     public class FolderFileViewModel : ObservableObject
     {
+        private readonly MainViewModel? _mainViewModel;
+
+        public FolderFileViewModel()
+        {
+            throw new InvalidOperationException("DirectoryItemViewModel");
+        }
+
+        public FolderFileViewModel(MainViewModel mv)
+        {
+            _mainViewModel = mv;
+            if (_mainViewModel != null)
+            {
+                _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+            }
+        }
+
+        private void MainViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MainViewModel.FontSize))
+            {
+                // MainViewModel の FontSize が変更された場合、DirectoryItemViewModel のプロパティも更新
+                OnPropertyChanged(nameof(FontSize));
+            }
+        }
+
         #region データバインディング
         /// <summary>
         /// ファイル表示名
@@ -125,6 +152,28 @@ namespace FilOps.ViewModels
         {
             get => _IsDirectory;
             set => SetProperty(ref _IsDirectory, value);
+        }
+
+        /// <summary>
+        /// フォントサイズ
+        /// </summary>
+        public double FontSize
+        {
+            get
+            {
+                if (_mainViewModel != null)
+                {
+                    return _mainViewModel.FontSize;
+                }
+                return SystemFonts.MessageFontSize;
+            }
+            set
+            {
+                if (_mainViewModel != null)
+                {
+                    _mainViewModel.FontSize = value;
+                }
+            }
         }
         #endregion データバインディング
     }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FilOps.Models.StorageOperation;
@@ -101,6 +102,22 @@ namespace FilOps.ViewModels
             get => _commandText;
             set => SetProperty(ref _commandText, value);
         }
+
+        /// <summary>
+        /// フォントサイズの変更
+        /// </summary>
+        private double _FontSize = SystemFonts.MessageFontSize;
+        public double FontSize
+        {
+            get => _FontSize;
+            set
+            {
+                if (10 <= value && value <= 18)
+                {
+                    SetProperty(ref _FontSize, value);
+                }
+            }
+        }
         #endregion データバインディング
 
         public MainViewModel()
@@ -168,7 +185,7 @@ namespace FilOps.ViewModels
             foreach (var folderFile in files.GetFilesInformation(path))
             {
                 // フォルダやファイルの情報を ViewModel に変換
-                var item = new FolderFileViewModel
+                var item = new FolderFileViewModel(this)
                 {
                     FullPath = folderFile.FullPath,
                     LastModifiedDate = folderFile.LastModifiedDate,

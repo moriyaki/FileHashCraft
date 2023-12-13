@@ -6,6 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:FilOps"
         mc:Ignorable="d"
+        PreviewMouseWheel="OnMouseWheel"
         Title="FilOps" Height="450" Width="800">
     <DockPanel LastChildFill="True">
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top">
@@ -34,11 +35,12 @@
                 </Grid.ColumnDefinitions>
                 <Button Content="↑" Grid.Column="0" Margin="3"
                         Command="{Binding ToUpFolder}"/>
-                <Label Content="Path" Grid.Column="1"/>
+                <Label Content="Path" Grid.Column="1" FontSize="{Binding FontSize}"/>
                 <TextBox 
                     Grid.Column="2"
                     Margin="3"
                     Name="CurrentDir"
+                    FontSize="{Binding FontSize}"
                     Text="{Binding CurrentDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
@@ -49,12 +51,14 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Content="Command" Grid.Column="0"/>
+                <Label Content="Command" Grid.Column="0" FontSize="{Binding FontSize}"/>
                 <TextBox 
                     Grid.Column="1"
                     Margin="3"
                     Name="UserCommand"
-                    Text="{Binding CommandText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    FontSize="{Binding FontSize}"
+                    Text="{Binding CommandText, Mode=OneWay, 
+                    UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
             <Grid Grid.Row="1">
@@ -75,9 +79,9 @@
                         <HierarchicalDataTemplate DataType="FolderItem" 
                                                   ItemsSource="{Binding Path=Children}">
                             <StackPanel Orientation="Horizontal">
-                                <Image Source="{Binding Icon, Mode=OneWay}" />
-                                <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
-                                <TextBlock Text="{Binding Name, Mode=OneWay}" />
+                                <Image Source="{Binding Icon, Mode=OneWay}"/>
+                                <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
                             </StackPanel>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
@@ -97,7 +101,8 @@
                           SelectedItem="{Binding SelectedListViewItem}"
                           VirtualizingStackPanel.IsVirtualizing="True"
                           VirtualizingPanel.VirtualizationMode="Recycling"
-                          SelectionMode="Single">
+                          SelectionMode="Single"
+                          FontSize="{Binding FontSize}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn
@@ -107,9 +112,9 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
-                                            <CheckBox IsChecked="{Binding IsFileChecked, Mode=TwoWay}"/>
+                                            <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
                                             <Image Source="{Binding Icon, Mode=OneWay}" />
-                                            <TextBlock Text="{Binding Name, Mode=OneWay}" />
+                                            <TextBlock Text="{Binding Name, Mode=OneWay}" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -117,8 +122,8 @@
                             <GridViewColumn
 							    x:Name="UpdateDate"
 							    Width="100"
-							    DisplayMemberBinding="{Binding LastFileUpdate, StringFormat=yyyy/MM/dd hh:mm:dd, Mode=OneWay}"
-							    Header="更新日時" />
+							    DisplayMemberBinding="{Binding LastFileUpdate, Mode=OneWay}"
+                                Header="更新日時" />
                             <GridViewColumn
 							    x:Name="FileType"
 							    Width="100"

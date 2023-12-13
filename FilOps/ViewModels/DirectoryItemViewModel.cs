@@ -1,5 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models.StorageOperation;
@@ -9,16 +11,28 @@ namespace FilOps.ViewModels
 {
     public class DirectoryItemViewModel : ObservableObject
     {
-        private readonly MainViewModel? _model;
+        private readonly MainViewModel? _mainViewModel;
 
         public DirectoryItemViewModel()
         {
             throw new InvalidOperationException("DirectoryItemViewModel");
         }
 
-        public DirectoryItemViewModel(MainViewModel model)
+        public DirectoryItemViewModel(MainViewModel mv)
         {
-            _model = model;
+            _mainViewModel = mv;
+            if (_mainViewModel != null)
+            {
+                _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+            }
+        }
+        private void MainViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MainViewModel.FontSize))
+            {
+                // MainViewModel の FontSize が変更された場合、DirectoryItemViewModel のプロパティも更新
+                OnPropertyChanged(nameof(FontSize));
+            }
         }
 
         #region データバインディング用
@@ -106,15 +120,15 @@ namespace FilOps.ViewModels
             {
                 if (value != _IsSelected)
                 {
-                    if (_model != null)
+                    if (_mainViewModel != null)
                     {
-                        _model.CurrentItem = this;
+                        _mainViewModel.CurrentItem = this;
                     }
                     SetProperty(ref _IsSelected, value);
 
-                    if (_IsSelected && _model != null)
+                    if (_IsSelected && _mainViewModel != null)
                     {
-                        _model.CurrentDir = this.FullPath;
+                        _mainViewModel.CurrentDir = this.FullPath;
                     }
                 }
             }
@@ -131,9 +145,9 @@ namespace FilOps.ViewModels
             {
                 if (SetProperty(ref _HasChildren, value))
                 {
-                    if (value && Children.Count == 0 && _model != null)
+                    if (value && Children.Count == 0 && _mainViewModel != null)
                     {
-                        Children.Add(new DirectoryItemViewModel(_model) { Name = "【dummy】" });
+                        Children.Add(new DirectoryItemViewModel(_mainViewModel) { Name = "【dummy】" });
                     }
                 }
             }
@@ -153,11 +167,11 @@ namespace FilOps.ViewModels
                     if (IsReady)
                     {
                         Children.Clear();
-                        if (_model == null) return;
+                        if (_mainViewModel == null) return;
                         var dirs = new Dirs();
                         foreach (var child in dirs.GetDirInformation(FullPath))
                         {
-                            var item = new DirectoryItemViewModel(_model)
+                            var item = new DirectoryItemViewModel(_mainViewModel)
                             {
                                 FullPath = child.FullPath,
                                 HasChildren = child.HasChildren,
@@ -179,6 +193,28 @@ namespace FilOps.ViewModels
         {
             get => _IsChecked;
             set => SetProperty(ref _IsChecked, value);
+        }
+
+        /// <summary>
+        /// フォントサイズ
+        /// </summary>
+        public double FontSize
+        {
+            get
+            {
+                if (_mainViewModel != null)
+                {
+                    return _mainViewModel.FontSize;
+                }
+                return SystemFonts.MessageFontSize;
+            }
+            set
+            {
+                if (_mainViewModel != null)
+                {
+                    _mainViewModel.FontSize = value;
+                }
+            }
         }
         #endregion データバインディング用
     }
