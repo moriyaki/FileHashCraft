@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -35,29 +37,25 @@ namespace FilOps.Models.WindowsAPI
     /// SHGetFileInfoの第3引数で、情報を受け取る構造体です。
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct SHFILEINFO
+    public unsafe struct SHFILEINFO
     {
         public IntPtr hIcon;
         public int iIcon;
         public uint dwAttributes;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-        public string szDisplayName;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-        public string szTypeName;
+        public fixed ushort szDisplayName[260];
+        public fixed ushort szTypeName[80];
     };
 
-    public static class WindowsFileSystem
+    public static partial class WindowsFileSystem
     {
-        // LibraryImport にしようとしたらSHFILEINFOでエラーになる
-#pragma warning disable SYSLIB1054
         // ファイルシステム内のオブジェクト(ファイル、フォルダ、ディレクトリ、ドライブルートなど)に関する情報を取得します。
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttribs, ref SHFILEINFO psfi, uint cbFileInfo, SHGFI uFlags);
+        [LibraryImport("shell32.dll", EntryPoint = "SHGetFileInfoW", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial IntPtr SHGetFileInfo(string pszPath, uint dwFileAttribs, ref SHFILEINFO psfi, uint cbFileInfo, SHGFI uFlags);
 
         // 指定されたアイコンハンドルを解放します。
-        [DllImport("user32.dll")]
-        private static extern bool DestroyIcon(IntPtr handle);
-#pragma warning restore SYSLIB1054
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool DestroyIcon(IntPtr handle);
 
         // ファイルのアイコンと種類のキャッシュ
         private static readonly Dictionary<string, BitmapSource> FileIconCache = [];
@@ -102,7 +100,10 @@ namespace FilOps.Models.WindowsAPI
             DestroyIcon(shinfo.hIcon);
 
             // 取得したアイコンとファイル種類を返す
-            return (icon, shinfo.szTypeName);
+            unsafe
+            {
+                return (icon, Utf16StringMarshaller.ConvertToManaged(shinfo.szTypeName) ?? String.Empty);
+            }
         }
 
         /// <summary>
