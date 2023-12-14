@@ -20,8 +20,6 @@ namespace FilOps
 
             base.OnStartup(e);
             var v = new MainView();
-            var vm = new MainViewModel();
-            v.ViewModel = vm;
             v.Show();
         }
     }

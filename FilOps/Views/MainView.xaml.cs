@@ -12,32 +12,25 @@ namespace FilOps
         public MainView()
         {
             InitializeComponent();
+            _mainVM = new MainViewModel();
+            DataContext = _mainVM;
         }
 
-        private MainViewModel? _ViewModel;
-        public MainViewModel? ViewModel
-        {
-            get => _ViewModel;
-            set
-            {
-                DataContext = value;
-                _ViewModel = value;
-            }
-        }
+        private readonly MainViewModel _mainVM;
 
-        private void OnMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                if (ViewModel != null)
+                if (_mainVM != null)
                 {
                     if (e.Delta > 0)
                     {
-                        ViewModel.FontSize += 1;
+                        _mainVM.FontSize += 1;
                     }
                     else
                     {
-                        ViewModel.FontSize -= 1;
+                        _mainVM.FontSize -= 1;
                     }
                 }
                 e.Handled = true;
