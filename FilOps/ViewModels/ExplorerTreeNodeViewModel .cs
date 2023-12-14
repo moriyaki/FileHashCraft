@@ -167,8 +167,8 @@ namespace FilOps.ViewModels
                     {
                         Children.Clear();
                         if (_explorerPageViewModel == null) return;
-                        var dirs = new Dirs();
-                        foreach (var child in dirs.GetDirInformation(FullPath))
+                        var files = new Files();
+                        foreach (var child in files.GetFilesInformation(FullPath))
                         {
                             var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
                             {

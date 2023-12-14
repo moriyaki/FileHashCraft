@@ -148,23 +148,23 @@ namespace FilOps.ViewModels
                 }
             );
 
-            foreach (var root in Dirs.SpecialFolderScan())
+            foreach (var root in Files.SpecialFolderScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this)
                 {
                     FullPath = root.FullPath,
-                    IsReady = root.DriveIsReady,
+                    IsReady = root.IsReady,
                     HasChildren = root.HasChildren,
                 };
                 TreeRoot.Add(item);
             }
             var selected = true;
-            foreach (var root in Dirs.DriveScan())
+            foreach (var root in Files.DriveScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this)
                 {
                     FullPath = root.FullPath,
-                    IsReady = root.DriveIsReady,
+                    IsReady = root.IsReady,
                     HasChildren = root.HasChildren,
                 };
                 TreeRoot.Add(item);
