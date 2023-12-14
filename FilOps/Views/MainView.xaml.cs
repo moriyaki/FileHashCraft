@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using FilOps.ViewModels;
+using FilOps.Views;
 
 namespace FilOps
 {
@@ -12,33 +13,10 @@ namespace FilOps
         public MainView()
         {
             InitializeComponent();
+            mainFrame.Navigate(new ExplorerPage());
             _mainVM = new MainViewModel();
             DataContext = _mainVM;
         }
-
         private readonly MainViewModel _mainVM;
-
-        private void OnMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
-            {
-                if (_mainVM != null)
-                {
-                    if (e.Delta > 0)
-                    {
-                        _mainVM.FontSize += 1;
-                    }
-                    else
-                    {
-                        _mainVM.FontSize -= 1;
-                    }
-                }
-                e.Handled = true;
-            }
-            else
-            {
-                base.OnMouseWheel(e);
-            }
-        }
     }
 }

@@ -3,33 +3,33 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FilOps.Models.WindowsAPI;
+using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
     public class ExplorerListItemViewModel : ObservableObject
     {
-        private readonly MainViewModel? _mainViewModel;
+        private readonly ExplorerPageViewModel? _explorerPageViewModel;
 
         public ExplorerListItemViewModel()
         {
             throw new InvalidOperationException("ExplorerListItemViewModel");
         }
 
-        public ExplorerListItemViewModel(MainViewModel mv)
+        public ExplorerListItemViewModel(ExplorerPageViewModel mv)
         {
-            _mainViewModel = mv;
-            if (_mainViewModel != null)
+            _explorerPageViewModel = mv;
+            if (_explorerPageViewModel != null)
             {
-                _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+                _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             }
         }
 
-        private void MainViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(MainViewModel.FontSize))
+            if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
             {
-                // MainViewModel の FontSize が変更された場合、ExplorerListItemViewModel のプロパティも更新
+                // ExplorerPageViewModel の FontSize が変更された場合、ExplorerListItemViewModel のプロパティも更新
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -63,12 +63,12 @@ namespace FilOps.ViewModels
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = WindowsGetFolderDisplayName.GetDisplayName(FullPath);
+                Name = WindowsAPI.GetDisplayName(FullPath);
 
                 App.Current?.Dispatcher.Invoke(new Action(() =>
                 {
-                    Icon = WindowsFileSystem.GetIcon(FullPath);
-                    FileType = WindowsFileSystem.GetType(FullPath);
+                    Icon = WindowsAPI.GetIcon(FullPath);
+                    FileType = WindowsAPI.GetType(FullPath);
                 }));
             }
         }
@@ -161,17 +161,17 @@ namespace FilOps.ViewModels
         {
             get
             {
-                if (_mainViewModel != null)
+                if (_explorerPageViewModel != null)
                 {
-                    return _mainViewModel.FontSize;
+                    return _explorerPageViewModel.FontSize;
                 }
                 return SystemFonts.MessageFontSize;
             }
             set
             {
-                if (_mainViewModel != null)
+                if (_explorerPageViewModel != null)
                 {
-                    _mainViewModel.FontSize = value;
+                    _explorerPageViewModel.FontSize = value;
                 }
             }
         }

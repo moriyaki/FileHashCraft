@@ -1,7 +1,6 @@
 ﻿using System.IO;
-using FilOps.Models.WindowsAPI;
 
-namespace FilOps.Models.StorageOperation
+namespace FilOps.Models
 {
     #region ディレクトリ情報
     /// <summary>
@@ -66,14 +65,14 @@ namespace FilOps.Models.StorageOperation
         {
             IEnumerable<string> special_folder_path =
             [
-                WindowsSpecialFolder.GetPath(KnownFolder.Objects3D),
-                WindowsSpecialFolder.GetPath(KnownFolder.Downloads),
-                WindowsSpecialFolder.GetPath(KnownFolder.Desktop),
-                WindowsSpecialFolder.GetPath(KnownFolder.Documents),
-                WindowsSpecialFolder.GetPath(KnownFolder.Pictures),
-                WindowsSpecialFolder.GetPath(KnownFolder.Videos),
-                WindowsSpecialFolder.GetPath(KnownFolder.Music),
-                WindowsSpecialFolder.GetPath(KnownFolder.User),
+                WindowsAPI.GetPath(KnownFolder.Objects3D),
+                WindowsAPI.GetPath(KnownFolder.Downloads),
+                WindowsAPI.GetPath(KnownFolder.Desktop),
+                WindowsAPI.GetPath(KnownFolder.Documents),
+                WindowsAPI.GetPath(KnownFolder.Pictures),
+                WindowsAPI.GetPath(KnownFolder.Videos),
+                WindowsAPI.GetPath(KnownFolder.Music),
+                WindowsAPI.GetPath(KnownFolder.User),
             ];
 
             foreach (var special_folder in special_folder_path)

@@ -1,13 +1,33 @@
-﻿using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
-using System.Windows;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Windows;
 
-namespace FilOps.Models.WindowsAPI
+namespace FilOps.Models
 {
+
+    /// <summary>
+    /// 特殊フォルダの列挙子
+    /// </summary>
+    public enum KnownFolder
+    {
+        Objects3D,
+        Downloads,
+        Desktop,
+        Documents,
+        Pictures,
+        Videos,
+        Music,
+        User,
+    }
+    #region WindowsAPIで使うenumとstruct
     /// <summary>
     /// SHGetFIleInfoの第4引数で指定する、取得する情報のパラメータです。
     /// </summary>
@@ -34,6 +54,22 @@ namespace FilOps.Models.WindowsAPI
     }
 
     /// <summary>
+    /// SIGDN 列挙型は、SHGetNameFromIDList 関数で使用される表示名の取得方法を指定します。
+    /// </summary>
+    public enum SIGDN : uint
+    {
+        SIGDN_NORMALDISPLAY = 0x00000000,
+        SIGDN_PARENTRELATIVEPARSING = 0x80018001,
+        SIGDN_DESKTOPABSOLUTEPARSING = 0x80028000,
+        SIGDN_PARENTRELATIVEEDITING = 0x80031001,
+        SIGDN_DESKTOPABSOLUTEEDITING = 0x8004c000,
+        SIGDN_FILESYSPATH = 0x80058000,
+        SIGDN_URL = 0x80068000,
+        SIGDN_PARENTRELATIVEFORADDRESSBAR = 0x8007c001,
+        SIGDN_PARENTRELATIVE = 0x80080001
+    }
+
+    /// <summary>
     /// SHGetFileInfoの第3引数で、情報を受け取る構造体です。
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -45,9 +81,22 @@ namespace FilOps.Models.WindowsAPI
         public fixed ushort szDisplayName[260];
         public fixed ushort szTypeName[80];
     };
-
-    public static partial class WindowsFileSystem
+    # endregion WindowsAPIで使うenumとstruct
+ 
+    public static partial class WindowsAPI
     {
+        #region WindowsAPIへのLibraryImport
+        // パスからpidlを取得します。
+        [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial int SHParseDisplayName(
+            string pszName, IntPtr pbc, out IntPtr ppidl, uint sfgaoIn, out uint psfgaoOut
+        );
+
+        // pidlからフォルダ表示名を取得します。
+        [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial int SHGetNameFromIDList(
+            IntPtr pidl, SIGDN sigdnName, out string ppszName);
+
         // ファイルシステム内のオブジェクト(ファイル、フォルダ、ディレクトリ、ドライブルートなど)に関する情報を取得します。
         [LibraryImport("shell32.dll", EntryPoint = "SHGetFileInfoW", StringMarshalling = StringMarshalling.Utf16)]
         private static partial IntPtr SHGetFileInfo(string pszPath, uint dwFileAttribs, ref SHFILEINFO psfi, uint cbFileInfo, SHGFI uFlags);
@@ -57,10 +106,28 @@ namespace FilOps.Models.WindowsAPI
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool DestroyIcon(IntPtr handle);
 
-        // ファイルのアイコンと種類のキャッシュ
-        private static readonly Dictionary<string, BitmapSource> FileIconCache = [];
-        private static readonly Dictionary<string, string> FileTypeCache = [];
+        private static readonly Dictionary<KnownFolder, string> _specialFolder = [];
 
+        // 特殊フォルダのパスを取得する
+        [LibraryImport("shell32", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial int SHGetKnownFolderPath(
+            Guid rfid, uint dwFlags, nint hToken, out string @return);
+        #endregion WindowsAPIへのLibraryImport]
+
+        /// <summary>
+        /// KnownFolderをキーにGUIDを取得する辞書
+        /// </summary>
+        private static readonly Dictionary<KnownFolder, Guid> _guids = new()
+        {
+            [KnownFolder.Objects3D] = new Guid("{31C0DD25-9439-4F12-BF41-7FF4EDA38722}"),
+            [KnownFolder.Downloads] = new Guid("374DE290-123F-4565-9164-39C4925E467B"),
+            [KnownFolder.Desktop] = new Guid("{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}"),
+            [KnownFolder.Documents] = new Guid("{FDD39AD0-238F-46AF-ADB4-6C85480369C7}"),
+            [KnownFolder.Pictures] = new Guid("{33E28130-4E1E-4676-835A-98395C3BC3BB}"),
+            [KnownFolder.Videos] = new Guid("{18989B1D-99B5-455B-841C-AB7C74E4DDFC}"),
+            [KnownFolder.Music] = new Guid("{4BD8D571-6D19-48D3-BE97-422220080E43}"),
+            [KnownFolder.User] = new Guid("\t{5E6C858F-0E22-4760-9AFE-EA3317B67173}"),
+        };
         /// <summary>
         /// ディレクトリやファイルのアイコンとファイル種類を取得します。
         /// </summary>
@@ -153,6 +220,10 @@ namespace FilOps.Models.WindowsAPI
             }
         }
 
+        // ファイルのアイコンと種類のキャッシュ
+        private static readonly Dictionary<string, BitmapSource> FileIconCache = [];
+        private static readonly Dictionary<string, string> FileTypeCache = [];
+
         /// <summary>
         /// ファイルのアイコンを取得します。
         /// </summary>
@@ -173,6 +244,52 @@ namespace FilOps.Models.WindowsAPI
         {
             var key = ReadIconAndType(path);
             return FileTypeCache[key];
+        }
+
+        /// <summary>
+        /// ファイルパスからファイルの表示名を取得します。
+        /// </summary>
+        /// もし取得に失敗した場合は元のファイルパスを返します。
+        /// <returns>ファイルの表示名</returns>
+        public static string GetDisplayName(string path)
+        {
+            try
+            {
+                Marshal.ThrowExceptionForHR(SHParseDisplayName(path, IntPtr.Zero, out var pidl, 0, out _));
+                Marshal.ThrowExceptionForHR(SHGetNameFromIDList(pidl, SIGDN.SIGDN_NORMALDISPLAY, out var display_name));
+                return display_name;
+            }
+            catch
+            {
+                return path;
+            }
+        }
+        /// <summary>
+        /// 指定された特殊フォルダのパスを取得します。
+        /// </summary>
+        /// <param name="knownFolder">取得したい特殊フォルダ</param>
+        /// <returns>特殊フォルダのパス</returns>
+        public static string GetPath(KnownFolder knownFolder)
+        {
+            // 指定された特殊フォルダのパスを取得
+            SHGetKnownFolderPath(_guids[knownFolder], 0, 0, out var path);
+
+            // 取得したパスを特殊フォルダのキャッシュに保存
+            _specialFolder[knownFolder] = path;
+
+            // 取得した特殊フォルダのパスを返す
+            return path;
+        }
+
+        /// <summary>
+        /// 指定されたパスが特殊フォルダかどうかを調査します。
+        /// </summary>
+        /// <param name="path">調査するフルパス</param>
+        /// <returns>特殊フォルダである場合は true、それ以外の場合は false</returns>
+        public static bool IsSpecialFolder(string path)
+        {
+            // キャッシュされた特殊フォルダのパスと一致するか確認
+            return _specialFolder.ContainsValue(path);
         }
     }
 }

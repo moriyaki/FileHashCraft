@@ -4,33 +4,32 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FilOps.Models.StorageOperation;
-using FilOps.Models.WindowsAPI;
+using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
     public class ExplorerTreeNodeViewModel : ObservableObject
     {
-        private readonly MainViewModel? _mainViewModel;
+        private readonly ExplorerPageViewModel? _explorerPageViewModel;
 
         public ExplorerTreeNodeViewModel()
         {
             throw new InvalidOperationException("ExplorerTreeNodeViewModel");
         }
 
-        public ExplorerTreeNodeViewModel(MainViewModel mv)
+        public ExplorerTreeNodeViewModel(ExplorerPageViewModel mv)
         {
-            _mainViewModel = mv;
-            if (_mainViewModel != null)
+            _explorerPageViewModel = mv;
+            if (_explorerPageViewModel != null)
             {
-                _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+                _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             }
         }
-        private void MainViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(MainViewModel.FontSize))
+            if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
             {
-                // MainViewModel の FontSize が変更された場合、ExplorerTreeNodeViewModel のプロパティも更新
+                // ExplorerPageViewModel の FontSize が変更された場合、ExplorerTreeNodeViewModel のプロパティも更新
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -74,8 +73,8 @@ namespace FilOps.ViewModels
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = WindowsGetFolderDisplayName.GetDisplayName(FullPath);
-                Icon = WindowsFileSystem.GetIcon(value);
+                Name = WindowsAPI.GetDisplayName(FullPath);
+                Icon = WindowsAPI.GetIcon(value);
             }
         }
 
@@ -120,15 +119,15 @@ namespace FilOps.ViewModels
             {
                 if (value != _IsSelected)
                 {
-                    if (_mainViewModel != null)
+                    if (_explorerPageViewModel != null)
                     {
-                        _mainViewModel.CurrentItem = this;
+                        _explorerPageViewModel.CurrentItem = this;
                     }
                     SetProperty(ref _IsSelected, value);
 
-                    if (_IsSelected && _mainViewModel != null)
+                    if (_IsSelected && _explorerPageViewModel != null)
                     {
-                        _mainViewModel.CurrentDir = this.FullPath;
+                        _explorerPageViewModel.CurrentDir = this.FullPath;
                     }
                 }
             }
@@ -145,9 +144,9 @@ namespace FilOps.ViewModels
             {
                 if (SetProperty(ref _HasChildren, value))
                 {
-                    if (value && Children.Count == 0 && _mainViewModel != null)
+                    if (value && Children.Count == 0 && _explorerPageViewModel != null)
                     {
-                        Children.Add(new ExplorerTreeNodeViewModel(_mainViewModel) { Name = "【dummy】" });
+                        Children.Add(new ExplorerTreeNodeViewModel(_explorerPageViewModel) { Name = "【dummy】" });
                     }
                 }
             }
@@ -167,11 +166,11 @@ namespace FilOps.ViewModels
                     if (IsReady)
                     {
                         Children.Clear();
-                        if (_mainViewModel == null) return;
+                        if (_explorerPageViewModel == null) return;
                         var dirs = new Dirs();
                         foreach (var child in dirs.GetDirInformation(FullPath))
                         {
-                            var item = new ExplorerTreeNodeViewModel(_mainViewModel)
+                            var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
                             {
                                 FullPath = child.FullPath,
                                 HasChildren = child.HasChildren,
@@ -202,17 +201,17 @@ namespace FilOps.ViewModels
         {
             get
             {
-                if (_mainViewModel != null)
+                if (_explorerPageViewModel != null)
                 {
-                    return _mainViewModel.FontSize;
+                    return _explorerPageViewModel.FontSize;
                 }
                 return SystemFonts.MessageFontSize;
             }
             set
             {
-                if (_mainViewModel != null)
+                if (_explorerPageViewModel != null)
                 {
-                    _mainViewModel.FontSize = value;
+                    _explorerPageViewModel.FontSize = value;
                 }
             }
         }
