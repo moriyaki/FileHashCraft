@@ -9,16 +9,16 @@ using FilOps.Models.WindowsAPI;
 
 namespace FilOps.ViewModels
 {
-    public class DirectoryItemViewModel : ObservableObject
+    public class ExplorerTreeNodeViewModel : ObservableObject
     {
         private readonly MainViewModel? _mainViewModel;
 
-        public DirectoryItemViewModel()
+        public ExplorerTreeNodeViewModel()
         {
-            throw new InvalidOperationException("DirectoryItemViewModel");
+            throw new InvalidOperationException("ExplorerTreeNodeViewModel");
         }
 
-        public DirectoryItemViewModel(MainViewModel mv)
+        public ExplorerTreeNodeViewModel(MainViewModel mv)
         {
             _mainViewModel = mv;
             if (_mainViewModel != null)
@@ -30,7 +30,7 @@ namespace FilOps.ViewModels
         {
             if (e.PropertyName == nameof(MainViewModel.FontSize))
             {
-                // MainViewModel の FontSize が変更された場合、DirectoryItemViewModel のプロパティも更新
+                // MainViewModel の FontSize が変更された場合、ExplorerTreeNodeViewModel のプロパティも更新
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -39,8 +39,8 @@ namespace FilOps.ViewModels
         /// <summary>
         /// このディレクトリの子ディレクトリのコレクション
         /// </summary>
-        private ObservableCollection<DirectoryItemViewModel> _Children = [];
-        public ObservableCollection<DirectoryItemViewModel> Children
+        private ObservableCollection<ExplorerTreeNodeViewModel> _Children = [];
+        public ObservableCollection<ExplorerTreeNodeViewModel> Children
         {
             get => _Children;
             set => SetProperty(ref _Children, value);
@@ -92,8 +92,8 @@ namespace FilOps.ViewModels
         /// <summary>
         /// ディレクトリの親ディレクトリ
         /// </summary>
-        private DirectoryItemViewModel? _Parent = null;
-        public DirectoryItemViewModel? Parent
+        private ExplorerTreeNodeViewModel? _Parent = null;
+        public ExplorerTreeNodeViewModel? Parent
         {
             get => _Parent;
             private set => SetProperty(ref _Parent, value);
@@ -147,7 +147,7 @@ namespace FilOps.ViewModels
                 {
                     if (value && Children.Count == 0 && _mainViewModel != null)
                     {
-                        Children.Add(new DirectoryItemViewModel(_mainViewModel) { Name = "【dummy】" });
+                        Children.Add(new ExplorerTreeNodeViewModel(_mainViewModel) { Name = "【dummy】" });
                     }
                 }
             }
@@ -171,7 +171,7 @@ namespace FilOps.ViewModels
                         var dirs = new Dirs();
                         foreach (var child in dirs.GetDirInformation(FullPath))
                         {
-                            var item = new DirectoryItemViewModel(_mainViewModel)
+                            var item = new ExplorerTreeNodeViewModel(_mainViewModel)
                             {
                                 FullPath = child.FullPath,
                                 HasChildren = child.HasChildren,

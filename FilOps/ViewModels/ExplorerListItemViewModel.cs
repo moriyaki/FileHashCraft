@@ -7,16 +7,16 @@ using FilOps.Models.WindowsAPI;
 
 namespace FilOps.ViewModels
 {
-    public class FolderFileViewModel : ObservableObject
+    public class ExplorerListItemViewModel : ObservableObject
     {
         private readonly MainViewModel? _mainViewModel;
 
-        public FolderFileViewModel()
+        public ExplorerListItemViewModel()
         {
-            throw new InvalidOperationException("DirectoryItemViewModel");
+            throw new InvalidOperationException("ExplorerListItemViewModel");
         }
 
-        public FolderFileViewModel(MainViewModel mv)
+        public ExplorerListItemViewModel(MainViewModel mv)
         {
             _mainViewModel = mv;
             if (_mainViewModel != null)
@@ -29,7 +29,7 @@ namespace FilOps.ViewModels
         {
             if (e.PropertyName == nameof(MainViewModel.FontSize))
             {
-                // MainViewModel の FontSize が変更された場合、DirectoryItemViewModel のプロパティも更新
+                // MainViewModel の FontSize が変更された場合、ExplorerListItemViewModel のプロパティも更新
                 OnPropertyChanged(nameof(FontSize));
             }
         }

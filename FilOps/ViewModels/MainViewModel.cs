@@ -13,8 +13,8 @@ namespace FilOps.ViewModels
         /// <summary>
         /// ツリービューのルートのコレクション
         /// </summary>
-        private ObservableCollection<DirectoryItemViewModel> _TreeRoot = [];
-        public ObservableCollection<DirectoryItemViewModel> TreeRoot
+        private ObservableCollection<ExplorerTreeNodeViewModel> _TreeRoot = [];
+        public ObservableCollection<ExplorerTreeNodeViewModel> TreeRoot
         {
             get => _TreeRoot;
             set => SetProperty(ref _TreeRoot, value);
@@ -23,8 +23,8 @@ namespace FilOps.ViewModels
         /// <summary>
         /// リストビューのコレクション
         /// </summary>
-        private ObservableCollection<FolderFileViewModel> _ListFile = [];
-        public ObservableCollection<FolderFileViewModel> ListFile
+        private ObservableCollection<ExplorerListItemViewModel> _ListFile = [];
+        public ObservableCollection<ExplorerListItemViewModel> ListFile
         {
             get => _ListFile;
             set => SetProperty(ref _ListFile, value);
@@ -48,8 +48,8 @@ namespace FilOps.ViewModels
         /// <summary>
         /// 選択されているリストビュー
         /// </summary>
-        private FolderFileViewModel? _SelectedListViewItem = null;
-        public FolderFileViewModel? SelectedListViewItem
+        private ExplorerListItemViewModel? _SelectedListViewItem = null;
+        public ExplorerListItemViewModel? SelectedListViewItem
         {
             get => _SelectedListViewItem;
             set => SetProperty(ref _SelectedListViewItem, value);
@@ -79,8 +79,8 @@ namespace FilOps.ViewModels
         /// <summary>
         /// カレントディレクトリの情報
         /// </summary>
-        private DirectoryItemViewModel? _CurrentItem = null;
-        public DirectoryItemViewModel? CurrentItem
+        private ExplorerTreeNodeViewModel? _CurrentItem = null;
+        public ExplorerTreeNodeViewModel? CurrentItem
         {
             get => _CurrentItem;
             set
@@ -151,7 +151,7 @@ namespace FilOps.ViewModels
 
             foreach (var root in Dirs.SpecialFolderScan())
             {
-                var item = new DirectoryItemViewModel(this)
+                var item = new ExplorerTreeNodeViewModel(this)
                 {
                     FullPath = root.FullPath,
                     IsReady = root.DriveIsReady,
@@ -162,7 +162,7 @@ namespace FilOps.ViewModels
             var selected = true;
             foreach (var root in Dirs.DriveScan())
             {
-                var item = new DirectoryItemViewModel(this)
+                var item = new ExplorerTreeNodeViewModel(this)
                 {
                     FullPath = root.FullPath,
                     IsReady = root.DriveIsReady,
@@ -185,7 +185,7 @@ namespace FilOps.ViewModels
             foreach (var folderFile in files.GetFilesInformation(path))
             {
                 // フォルダやファイルの情報を ViewModel に変換
-                var item = new FolderFileViewModel(this)
+                var item = new ExplorerListItemViewModel(this)
                 {
                     FullPath = folderFile.FullPath,
                     LastModifiedDate = folderFile.LastModifiedDate,
@@ -208,7 +208,7 @@ namespace FilOps.ViewModels
         public void FolderSelectedChanged(string changedPath)
         {
             // 選択するディレクトリのアイテム
-            DirectoryItemViewModel? selectingVM = null;
+            ExplorerTreeNodeViewModel? selectingVM = null;
 
             // パスの最後がディレクトリセパレータで終わる場合は除去
             string trueChangedPath = changedPath.TrimEnd(Path.DirectorySeparatorChar);
