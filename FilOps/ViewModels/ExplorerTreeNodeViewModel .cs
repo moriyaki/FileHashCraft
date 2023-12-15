@@ -117,19 +117,14 @@ namespace FilOps.ViewModels
             get => _IsSelected;
             set
             {
-                if (value != _IsSelected)
+                if (_IsSelected != value)
                 {
-                    if (_explorerPageViewModel is not null)
-                    {
-                        _explorerPageViewModel.CurrentItem = this ?? null;
-                    }
-
-                    if (SetProperty(ref _IsSelected, value) && _explorerPageViewModel is not null)
+                    if (value && _explorerPageViewModel != null)
                     {
                         _explorerPageViewModel.CurrentDir = this.FullPath;
                     }
+                    SetProperty(ref _IsSelected, value);
                 }
-
             }
         }
 

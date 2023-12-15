@@ -73,10 +73,6 @@ namespace FilOps.ViewModels
                         FolderSelectedChanged(value);
                         ListViewUpdater.Execute(null);
                     }
-                    else
-                    {
-                        ListFile.Clear();
-                    }
                 }
             }
         }
@@ -136,8 +132,8 @@ namespace FilOps.ViewModels
                     ListFile.Clear();
                     await Task.Run(() => FolderFileListScan(CurrentDir));
 
-                },
-                () => { return CurrentItem is not null; }
+                }
+                //() => { return CurrentItem is not null; }
             );
 
             FileListViewExecuted = new RelayCommand(
@@ -217,19 +213,17 @@ namespace FilOps.ViewModels
             string trueChangedPath = changedPath.TrimEnd(Path.DirectorySeparatorChar);
 
             // ルートディレクトリにある場合は選択状態に設定して終了
-            foreach (var root in TreeRoot)
+            var selectedRoot = TreeRoot.FirstOrDefault(root => Path.Equals(root.FullPath, trueChangedPath));
+            if (selectedRoot != null)
             {
-                if (Path.Equals(root.FullPath, trueChangedPath))
-                {
-                    root.IsSelected = true;
-                    return;
-                }
-                if (trueChangedPath.Contains(root.FullPath))
-                {
-                    // サブディレクトリ内の場合は一部一致するルートディレクトリを特定
-                    selectingVM = root;
-                    break;
-                }
+                selectedRoot.IsSelected = true;
+                return;
+            }
+            // サブディレクトリ内の場合は一部一致するルートディレクトリを特定
+            var subDirectoryRoot = TreeRoot.FirstOrDefault(root => trueChangedPath.Contains(root.FullPath));
+            if (subDirectoryRoot != null)
+            {
+                selectingVM = subDirectoryRoot;
             }
 
             var directories = GetDirectoryNames(trueChangedPath).ToList();
@@ -254,23 +248,20 @@ namespace FilOps.ViewModels
             // パスの各ディレクトリに対して処理を実行
             foreach (var directory in directories)
             {
-                foreach (var child in selectingVM.Children)
+                var child = selectingVM.Children.FirstOrDefault(c => c.FullPath == directory);
+
+                if (child != null)
                 {
-                    if (child.FullPath == directory)
+                    if (directory != trueChangedPath)
                     {
-                        if (directory != trueChangedPath)
-                        {
-                            // サブディレクトリを展開して選択状態にする
-                            child.IsExpanded = true;
-                            selectingVM = child;
-                            break;
-                        }
-                        else
-                        {
-                            // 最終ディレクトリを選択状態にする
-                            child.IsSelected = true;
-                            break;
-                        }
+                        // サブディレクトリを展開して選択状態にする
+                        child.IsExpanded = true;
+                        selectingVM = child;
+                    }
+                    else
+                    {
+                        // 最終ディレクトリを選択状態にする
+                        child.IsSelected = true;
                     }
                 }
             }
