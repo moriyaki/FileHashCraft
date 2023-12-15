@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Printing;
 using System.Windows.Controls;
 
 namespace FilOps.Models
@@ -44,8 +45,13 @@ namespace FilOps.Models
     #endregion ディレクトリとファイル情報
 
     #region ディレクトリとファイルの管理
-    public class Files
+    public class FileSystemManager
     {
+        private static readonly FileSystemManager _instance = new();
+        public static FileSystemManager Instance => _instance;
+        private FileSystemManager() { }
+
+
         /// <summary>
         /// 指定されたディレクトリに子ディレクトリが存在するかどうかを判定します。
         /// </summary>
@@ -65,7 +71,11 @@ namespace FilOps.Models
             {
                 return false;
             }
-            catch (System.IO.DirectoryNotFoundException)
+            catch (DirectoryNotFoundException)
+            {
+                return false;
+            }
+            catch (IOException)
             {
                 return false;
             }
@@ -76,7 +86,7 @@ namespace FilOps.Models
         /// 特殊フォルダをスキャンして情報を取得します。
         /// </summary>
         /// <returns>特殊フォルダの情報のコレクション</returns>
-        public static IEnumerable<FileInformation> SpecialFolderScan()
+        public IEnumerable<FileInformation> SpecialFolderScan()
         {
             IEnumerable<string> special_folder_path =
             [
@@ -92,18 +102,7 @@ namespace FilOps.Models
 
             foreach (var folder in special_folder_path)
             {
-                var fileInfo = new FileInfo(folder);
-                var item = new FileInformation
-                {
-                    FullPath = folder,
-                    IsReady = true,
-                    IsDirectory = true,
-                    LastModifiedDate = fileInfo.LastWriteTime,
-                    FileSize = 0,
-                };
-                item.HasChildren = HasChildrenDirectories(item.FullPath);
-
-                yield return item;
+                yield return GetFileInformationFromDirectorPath(folder);
             }
         }
 
@@ -115,17 +114,8 @@ namespace FilOps.Models
         {
             foreach (var dir in DriveInfo.GetDrives())
             {
-                var fileInfo = new FileInfo(dir.Name);
-                var item = new FileInformation
-                {
-                    FullPath = dir.Name,
-                    IsReady = dir.IsReady,
-                    IsDirectory = true,
-                    LastModifiedDate = fileInfo.LastWriteTime,
-                    FileSize = 0,
-                };
-                item.HasChildren = item.IsReady && HasChildrenDirectories(item.FullPath);
-
+                FileInformation item;
+                item = GetFileInformationFromDirectorPath(dir.Name, dir.IsReady);
                 yield return item;
             }
         }
@@ -155,17 +145,7 @@ namespace FilOps.Models
                 FileAttributes attributes = File.GetAttributes(folder);
                 if ((attributes & FileAttributes.System) != FileAttributes.System)
                 {
-                    var fileInfo = new FileInfo(folder);
-                    var item = new FileInformation
-                    {
-                        FullPath = fileInfo.FullName,
-                        IsDirectory = true,
-                        IsReady = true,
-                        LastModifiedDate = fileInfo.LastWriteTime,
-                        FileSize = 0,
-                    };
-                    item.HasChildren = HasChildrenDirectories(item.FullPath);
-                    yield return item;
+                    yield return GetFileInformationFromDirectorPath(folder);
                 }
             }
             foreach (var file in Directory.EnumerateFiles(path))
@@ -179,19 +159,7 @@ namespace FilOps.Models
                     continue;
                 }
                 catch (IOException) { }
-
-                var fileInfo = new FileInfo(file);
-                var item = new FileInformation
-                {
-                    FullPath = fileInfo.FullName,
-                    IsDirectory = false,
-                    IsReady = true,
-                    LastModifiedDate = fileInfo.LastWriteTime,
-                    FileSize = fileInfo.Length,
-                    HasChildren = false,
-                };
-                yield return item;
-
+                yield return GetFileInformationFromDirectorPath(file);
             }
         }
 
@@ -204,24 +172,83 @@ namespace FilOps.Models
         /// ファイル情報のキャッシュからディレクトリ情報のコレクションを取得します。
         /// </summary>
         /// <param name="path">コレクションを得るディレクトリのパス</param>
+        /// <param name="isDirectoryOnly">コレクションがディレクトリなら取得する</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public IEnumerable<FileInformation> GetFilesInformation(string path)
+        public IEnumerable<FileInformation> GetFilesInformation(string path, bool isDirectoryOnly)
         {
             if (FilesCache.TryGetValue(path, out var result))
             {
                 foreach (var item in result)
                 {
-                    yield return item;
+                    if (!isDirectoryOnly || item.IsDirectory)
+                    {
+                        yield return item;
+                    }
                 }
             }
             else
             {
                 List<FileInformation> newFiles = FileItemScan(path).ToList();
                 FilesCache[path] = newFiles;
-                foreach (var fileInfo in newFiles)
+                foreach (var item in newFiles)
                 {
-                    yield return fileInfo;
+                    if (!isDirectoryOnly || item.IsDirectory)
+                    {
+                        yield return item;
+                    }
                 }
+            }
+        }
+
+        /// <summary>
+        /// ファイル情報のキャッシュにディレクトリ情報のコレクションがあるかを取得します。
+        /// </summary>
+        /// <param name="path">コレクションを確認するディレクトリのパス</param>
+        /// <returns>ディレクトリ情報がキャッシュにあるかどうか</returns>
+        public bool HasFilesInformation(string path) => FilesCache.TryGetValue(path, out _);
+
+        /// <summary>
+        /// 指定されたディレクトリのパスから、FileInformationを取得します。
+        /// </summary>
+        /// <param name="path">FileInformationに変換するファイルのフルパス</param>
+        /// <param name="isReady">ドライブが準備されているかどうか。既定値は true です。</param>
+        /// <returns>指定されたディレクトリのFileInformation</returns>
+        /// <remarks>
+        /// メソッドの動作には、指定されたディレクトリが存在することが前提とされています。
+        /// </remarks>
+        public static FileInformation GetFileInformationFromDirectorPath(string path, bool isReady = true)
+        {
+            FileInformation? item;
+            if (Directory.Exists(path) || !isReady)
+            {
+                var fileInfo = new FileInfo(path);
+                item = new FileInformation
+                {
+                    FullPath = fileInfo.FullName,
+                    IsDirectory = true,
+                    IsReady = isReady,
+                    LastModifiedDate = fileInfo.LastWriteTime,
+                    HasChildren = HasChildrenDirectories(fileInfo.FullName),
+                };
+                return item;
+            }
+            else 
+            {
+                if (!File.Exists(path))
+                {
+                    throw new FileNotFoundException($"File not found: {path}");
+                }
+                var fileInfo = new FileInfo(path);
+                item = new FileInformation
+                {
+                    FullPath = fileInfo.FullName,
+                    IsDirectory = false,
+                    IsReady = isReady,
+                    LastModifiedDate = fileInfo.LastWriteTime,
+                    FileSize = fileInfo.Length,
+                    HasChildren = false,
+                };
+                return item;
             }
         }
     }

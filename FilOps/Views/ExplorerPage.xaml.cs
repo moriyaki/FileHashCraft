@@ -33,7 +33,7 @@ namespace FilOps.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                if (viewModel != null)
+                if (viewModel is not null)
                 {
                     if (e.Delta > 0)
                     {

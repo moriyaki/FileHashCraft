@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FilOps.Models;
@@ -72,6 +73,10 @@ namespace FilOps.ViewModels
                         FolderSelectedChanged(value);
                         ListViewUpdater.Execute(null);
                     }
+                    else
+                    {
+                        ListFile.Clear();
+                    }
                 }
             }
         }
@@ -85,11 +90,11 @@ namespace FilOps.ViewModels
             get => _CurrentItem;
             set
             {
-                if (_CurrentItem != value && _CurrentItem != null)
+                SetProperty(ref _CurrentItem, value);
+                if (_CurrentItem is not null)
                 {
                     _CurrentItem.IsSelected = false;
                 }
-                SetProperty(ref _CurrentItem, value);
             }
         }
 
@@ -123,7 +128,7 @@ namespace FilOps.ViewModels
         {
             ToUpFolder = new RelayCommand(
                 () => { CurrentDir = CurrentItem?.Parent?.FullPath ?? CurrentDir; },
-                () => { return CurrentItem?.Parent != null; }
+                () => { return CurrentItem?.Parent is not null; }
             );
 
             ListViewUpdater = new RelayCommand(
@@ -132,12 +137,12 @@ namespace FilOps.ViewModels
                     await Task.Run(() => FolderFileListScan(CurrentDir));
 
                 },
-                () => { return CurrentItem != null; }
+                () => { return CurrentItem is not null; }
             );
 
             FileListViewExecuted = new RelayCommand(
                 () => {
-                    if (SelectedListViewItem != null)
+                    if (SelectedListViewItem is not null)
                     {
                         var newDir = Path.Combine(CurrentDir, SelectedListViewItem.Name);
                         if (Directory.Exists(newDir))
@@ -148,7 +153,7 @@ namespace FilOps.ViewModels
                 }
             );
 
-            foreach (var root in Files.SpecialFolderScan())
+            foreach (var root in FileSystemManager.Instance.SpecialFolderScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this)
                 {
@@ -159,7 +164,7 @@ namespace FilOps.ViewModels
                 TreeRoot.Add(item);
             }
             var selected = true;
-            foreach (var root in Files.DriveScan())
+            foreach (var root in FileSystemManager.DriveScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this)
                 {
@@ -180,8 +185,7 @@ namespace FilOps.ViewModels
         private void FolderFileListScan(string path)
         {
             // Files クラスを使用して指定ディレクトリのファイル情報を取得
-            var files = new Files();
-            foreach (var folderFile in files.GetFilesInformation(path))
+            foreach (var folderFile in FileSystemManager.Instance.GetFilesInformation(path, false))
             {
                 // フォルダやファイルの情報を ViewModel に変換
                 var item = new ExplorerListItemViewModel(this)

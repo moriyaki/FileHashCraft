@@ -20,7 +20,7 @@ namespace FilOps.ViewModels
         public ExplorerTreeNodeViewModel(ExplorerPageViewModel mv)
         {
             _explorerPageViewModel = mv;
-            if (_explorerPageViewModel != null)
+            if (_explorerPageViewModel is not null)
             {
                 _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             }
@@ -119,17 +119,17 @@ namespace FilOps.ViewModels
             {
                 if (value != _IsSelected)
                 {
-                    if (_explorerPageViewModel != null)
+                    if (_explorerPageViewModel is not null)
                     {
-                        _explorerPageViewModel.CurrentItem = this;
+                        _explorerPageViewModel.CurrentItem = this ?? null;
                     }
-                    SetProperty(ref _IsSelected, value);
 
-                    if (_IsSelected && _explorerPageViewModel != null)
+                    if (SetProperty(ref _IsSelected, value) && _explorerPageViewModel is not null)
                     {
                         _explorerPageViewModel.CurrentDir = this.FullPath;
                     }
                 }
+
             }
         }
 
@@ -142,12 +142,10 @@ namespace FilOps.ViewModels
             get => _HasChildren;
             set
             {
-                if (SetProperty(ref _HasChildren, value))
+                if (SetProperty(ref _HasChildren, value) &&
+                    Children.Count == 0 && _explorerPageViewModel is not null)
                 {
-                    if (value && Children.Count == 0 && _explorerPageViewModel != null)
-                    {
-                        Children.Add(new ExplorerTreeNodeViewModel(_explorerPageViewModel) { Name = "【dummy】" });
-                    }
+                    Children.Add(new ExplorerTreeNodeViewModel(_explorerPageViewModel) { Name = "【dummy】" });
                 }
             }
         }
@@ -161,24 +159,20 @@ namespace FilOps.ViewModels
             get => _IsExpanded;
             set
             {
-                if (SetProperty(ref _IsExpanded, value))
+                if (SetProperty(ref _IsExpanded, value) && IsReady)
                 {
-                    if (IsReady)
+                    Children.Clear();
+                    if (_explorerPageViewModel == null) return;
+                    foreach (var child in FileSystemManager.Instance.GetFilesInformation(FullPath, true))
                     {
-                        Children.Clear();
-                        if (_explorerPageViewModel == null) return;
-                        var files = new Files();
-                        foreach (var child in files.GetFilesInformation(FullPath))
+                        var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
                         {
-                            var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
-                            {
-                                FullPath = child.FullPath,
-                                HasChildren = child.HasChildren,
-                                IsReady = this.IsReady,
-                                Parent = this,
-                            };
-                            Children.Add(item);
-                        }
+                            FullPath = child.FullPath,
+                            HasChildren = child.HasChildren,
+                            IsReady = this.IsReady,
+                            Parent = this,
+                        };
+                        Children.Add(item);
                     }
                 }
             }
@@ -199,17 +193,10 @@ namespace FilOps.ViewModels
         /// </summary>
         public double FontSize
         {
-            get
-            {
-                if (_explorerPageViewModel != null)
-                {
-                    return _explorerPageViewModel.FontSize;
-                }
-                return SystemFonts.MessageFontSize;
-            }
+            get => _explorerPageViewModel?.FontSize ?? SystemFonts.MessageFontSize;
             set
             {
-                if (_explorerPageViewModel != null)
+                if (_explorerPageViewModel is not null)
                 {
                     _explorerPageViewModel.FontSize = value;
                 }

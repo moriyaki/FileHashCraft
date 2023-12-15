@@ -19,7 +19,7 @@ namespace FilOps.ViewModels
         public ExplorerListItemViewModel(ExplorerPageViewModel mv)
         {
             _explorerPageViewModel = mv;
-            if (_explorerPageViewModel != null)
+            if (_explorerPageViewModel is not null)
             {
                 _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             }
@@ -159,17 +159,10 @@ namespace FilOps.ViewModels
         /// </summary>
         public double FontSize
         {
-            get
-            {
-                if (_explorerPageViewModel != null)
-                {
-                    return _explorerPageViewModel.FontSize;
-                }
-                return SystemFonts.MessageFontSize;
-            }
+            get => _explorerPageViewModel?.FontSize ?? SystemFonts.MessageFontSize;
             set
             {
-                if (_explorerPageViewModel != null)
+                if (_explorerPageViewModel is not null)
                 {
                     _explorerPageViewModel.FontSize = value;
                 }
