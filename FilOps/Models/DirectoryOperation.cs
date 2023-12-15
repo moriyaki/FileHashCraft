@@ -47,9 +47,11 @@ namespace FilOps.Models
     #region ディレクトリとファイルの管理
     public class FileSystemManager
     {
+        #region Singleton
         private static readonly FileSystemManager _instance = new();
         public static FileSystemManager Instance => _instance;
         private FileSystemManager() { }
+        #endregion Singleton
 
         #region ファイルのスキャン関連
         /// <summary>
@@ -206,7 +208,6 @@ namespace FilOps.Models
                 }
             }
         }
-        #endregion ファイルのスキャン関連
 
         /// <summary>
         /// ファイル情報のキャッシュにディレクトリ情報のコレクションがあるかを取得します。
@@ -240,7 +241,7 @@ namespace FilOps.Models
                 };
                 return item;
             }
-            else 
+            else
             {
                 var fileInfo = new FileInfo(path);
                 item = new FileInformation
@@ -255,6 +256,10 @@ namespace FilOps.Models
                 return item;
             }
         }
+        #endregion ファイルのスキャン関連
+
     }
     #endregion ディレクトリとファイルの管理
+
+
 }

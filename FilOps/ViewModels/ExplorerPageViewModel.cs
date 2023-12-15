@@ -47,6 +47,18 @@ namespace FilOps.ViewModels
         public RelayCommand FileListViewExecuted { get; set; }
 
         /// <summary>
+        /// ディレクトリ変更を監視するインスタンス
+        /// </summary>
+        private FileSystemWatcher CurrentDirectoryWatcher = new();
+
+
+        private readonly NotifyFilters CurrentDirectoryNotifyFIilter = NotifyFilters.DirectoryName
+            | NotifyFilters.FileName
+            | NotifyFilters.LastWrite
+            | NotifyFilters.Size;
+
+
+        /// <summary>
         /// 選択されているリストビュー
         /// </summary>
         private ExplorerListItemViewModel? _SelectedListViewItem = null;
@@ -65,12 +77,32 @@ namespace FilOps.ViewModels
             get => _currentDir;
             set
             {
-                if (SetProperty(ref _currentDir, value))
+                string changedDir = value;
+
+                if (Directory.Exists(value))
+                {
+                    var dirName = Path.GetDirectoryName(value);
+                    if (dirName is not null)
+                    {
+                        var dirs = Directory.GetDirectories(dirName) ?? [""];
+                        if (dirs is not null)
+                        {
+                            changedDir = dirs.FirstOrDefault(dir => dir.Equals(value, StringComparison.OrdinalIgnoreCase)) ?? value;
+                        }
+                    }
+                    else
+                    {
+                        changedDir = value.ToUpper();
+                    }
+                }
+
+                if (SetProperty(ref _currentDir, changedDir))
                 {
                     ToUpFolder.CanExecute(null);
-                    if (Directory.Exists(value))
+                    if (Directory.Exists(changedDir))
                     {
-                        FolderSelectedChanged(value);
+                        FolderSelectedChanged(changedDir);
+                        SetCurrentDirectoryWatcher(changedDir);
                         ListViewUpdater.Execute(null);
                     }
                 }
@@ -90,6 +122,7 @@ namespace FilOps.ViewModels
                 if (_CurrentItem is not null)
                 {
                     _CurrentItem.IsSelected = false;
+                    SetCurrentDirectoryWatcher(_CurrentItem.FullPath);
                 }
             }
         }
@@ -148,7 +181,6 @@ namespace FilOps.ViewModels
                     }
                 }
             );
-
             foreach (var root in FileSystemManager.Instance.SpecialFolderScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this)
@@ -170,8 +202,50 @@ namespace FilOps.ViewModels
                 };
                 TreeRoot.Add(item);
                 item.IsSelected = selected;
-                selected = false;
+                if (selected)
+                {
+                    CurrentItem = item;
+                    selected = false;
+                }
             }
+        }
+
+        private void OnCreated(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Created) return;
+            MessageBox.Show($"Created : {e.FullPath}");
+        }
+
+        private void OnDeleted(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Deleted) return;
+            MessageBox.Show($"Deleted : {e.FullPath}");
+        }
+
+        private void OnRenamed(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Renamed) return;
+            MessageBox.Show($"Renamed : {e.FullPath}");
+        }
+
+        /// <summary>
+        /// ディレクトリの変更を全監視する設定をする
+        /// </summary>
+        /// <param name="path"></param>
+        private void SetCurrentDirectoryWatcher(string path)
+        {
+            CurrentDirectoryWatcher.Created -= OnCreated;
+            CurrentDirectoryWatcher.Deleted -= OnDeleted;
+            CurrentDirectoryWatcher.Renamed -= OnRenamed;
+
+            CurrentDirectoryWatcher.Path = path;
+            CurrentDirectoryWatcher.Filter = "*.*";
+            CurrentDirectoryWatcher.NotifyFilter = CurrentDirectoryNotifyFIilter;
+            CurrentDirectoryWatcher.EnableRaisingEvents = true;
+
+            CurrentDirectoryWatcher.Created += OnCreated;
+            CurrentDirectoryWatcher.Deleted += OnDeleted;
+            CurrentDirectoryWatcher.Renamed += OnRenamed;
         }
 
         /// <summary>
@@ -248,20 +322,22 @@ namespace FilOps.ViewModels
             // パスの各ディレクトリに対して処理を実行
             foreach (var directory in directories)
             {
-                var child = selectingVM.Children.FirstOrDefault(c => c.FullPath == directory);
-
-                if (child != null)
+                foreach (var child in selectingVM.Children)
                 {
-                    if (directory != trueChangedPath)
+                    if (child.FullPath == directory)
                     {
-                        // サブディレクトリを展開して選択状態にする
-                        child.IsExpanded = true;
                         selectingVM = child;
-                    }
-                    else
-                    {
-                        // 最終ディレクトリを選択状態にする
-                        child.IsSelected = true;
+                        if (directory != trueChangedPath)
+                        {
+                            // サブディレクトリを展開して選択状態にする
+                            child.IsExpanded = true;
+                        }
+                        else
+                        {
+                            // 最終ディレクトリを選択状態にする
+                            child.IsSelected = true;
+                            return;
+                        }
                     }
                 }
             }
