@@ -51,7 +51,7 @@ namespace FilOps.Models
         public static FileSystemManager Instance => _instance;
         private FileSystemManager() { }
 
-
+        #region ファイルのスキャン関連
         /// <summary>
         /// 指定されたディレクトリに子ディレクトリが存在するかどうかを判定します。
         /// </summary>
@@ -67,17 +67,15 @@ namespace FilOps.Models
                     return true;
                 }
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
-                return false;
-            }
-            catch (DirectoryNotFoundException)
-            {
-                return false;
-            }
-            catch (IOException)
-            {
-                return false;
+                if (ex is UnauthorizedAccessException ||
+                    ex is DirectoryNotFoundException ||
+                    ex is IOException)
+                {
+                    return false;
+                }
+                throw;
             }
             return false;
         }
@@ -132,14 +130,16 @@ namespace FilOps.Models
             {
                 folders = Directory.EnumerateDirectories(path);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
-                yield break;
+                if (ex is UnauthorizedAccessException || ex is IOException)
+                {
+                    yield break;
+                }
+                throw;
             }
-            catch (IOException)
-            {
-                yield break;
-            }
+
+
             foreach (var folder in folders)
             {
                 FileAttributes attributes = File.GetAttributes(folder);
@@ -159,6 +159,7 @@ namespace FilOps.Models
                     continue;
                 }
                 catch (IOException) { }
+
                 yield return GetFileInformationFromDirectorPath(file);
             }
         }
@@ -176,7 +177,13 @@ namespace FilOps.Models
         /// <returns>ファイル情報のコレクション</returns>
         public IEnumerable<FileInformation> GetFilesInformation(string path, bool isDirectoryOnly)
         {
-            if (FilesCache.TryGetValue(path, out var result))
+            var scanPath = (path.Length == 2 && path[1] == ':') ? path + Path.DirectorySeparatorChar : path;
+            if (!Directory.Exists(path) || path.Length == 1)
+            {
+                yield break;
+            }
+
+            if (FilesCache.TryGetValue(scanPath, out var result))
             {
                 foreach (var item in result)
                 {
@@ -188,7 +195,7 @@ namespace FilOps.Models
             }
             else
             {
-                List<FileInformation> newFiles = FileItemScan(path).ToList();
+                List<FileInformation> newFiles = FileItemScan(scanPath).ToList();
                 FilesCache[path] = newFiles;
                 foreach (var item in newFiles)
                 {
@@ -199,6 +206,7 @@ namespace FilOps.Models
                 }
             }
         }
+        #endregion ファイルのスキャン関連
 
         /// <summary>
         /// ファイル情報のキャッシュにディレクトリ情報のコレクションがあるかを取得します。
@@ -208,9 +216,9 @@ namespace FilOps.Models
         public bool HasFilesInformation(string path) => FilesCache.TryGetValue(path, out _);
 
         /// <summary>
-        /// 指定されたディレクトリのパスから、FileInformationを取得します。
+        /// 指定されたディレクトリのパスから、FileInformationを生成します。
         /// </summary>
-        /// <param name="path">FileInformationに変換するファイルのフルパス</param>
+        /// <param name="path">FileInformationを生成するファイルのフルパス</param>
         /// <param name="isReady">ドライブが準備されているかどうか。既定値は true です。</param>
         /// <returns>指定されたディレクトリのFileInformation</returns>
         /// <remarks>
@@ -234,10 +242,6 @@ namespace FilOps.Models
             }
             else 
             {
-                if (!File.Exists(path))
-                {
-                    throw new FileNotFoundException($"File not found: {path}");
-                }
                 var fileInfo = new FileInfo(path);
                 item = new FileInformation
                 {

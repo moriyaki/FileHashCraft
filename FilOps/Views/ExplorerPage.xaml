@@ -81,11 +81,12 @@
 			    Width="3"
 			    HorizontalAlignment="Stretch" />
 
-            <TreeView Name="FolderTreeRoot" Grid.Column="0"
-                         ItemsSource="{Binding TreeRoot, Mode=OneWay}">
+            <TreeView Name="DirectoryTreeRoot" Grid.Column="0"
+                      ItemsSource="{Binding TreeRoot, Mode=OneWay}"
+                      SelectedItemChanged="DirectoryTreeRoot_SelectedItemChanged">
                 <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate DataType="FolderItem" 
-                                                 ItemsSource="{Binding Path=Children}">
+                    <HierarchicalDataTemplate DataType="DirectoryItem"
+                                              ItemsSource="{Binding Path=Children}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding Icon, Mode=OneWay}"/>
                             <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
@@ -104,7 +105,7 @@
                 </TreeView.Resources>
             </TreeView>
 
-            <ListView Name="FolderFileList" Grid.Column="2"
+            <ListView Name="FileItemsList" Grid.Column="2"
                          ItemsSource="{Binding ListFile, Mode=OneWay}"
                          SelectedItem="{Binding SelectedListViewItem}"
                          VirtualizingStackPanel.IsVirtualizing="True"

@@ -51,5 +51,44 @@ namespace FilOps.Views
                 base.OnMouseWheel(e);
             }
         }
+
+        private void DirectoryTreeRoot_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            if (e.NewValue is ExplorerTreeNodeViewModel)
+            {
+                var item = e.NewValue as ExplorerTreeNodeViewModel;
+
+                // 対応するTreeViewItemを取得
+                var treeViewItem = FindTreeViewItem(DirectoryTreeRoot, item);
+                // 対応するTreeViewItemが存在する場合、それを表示するようにスクロール
+                treeViewItem?.BringIntoView();
+            }
+        }
+
+        private static TreeViewItem? FindTreeViewItem(ItemsControl parent, ExplorerTreeNodeViewModel? data)
+        {
+            TreeViewItem? result = null;
+            foreach (object item in parent.Items)
+            {
+                if (parent.ItemContainerGenerator?.ContainerFromItem(item) is TreeViewItem treeViewItem)
+                {
+
+                    if (treeViewItem.DataContext == data)
+                    {
+                        return treeViewItem;
+                    }
+
+                    // 子アイテムを再帰的に検索
+                    result = FindTreeViewItem(treeViewItem, data);
+                    if (result != null)
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            return result;
+        }
     }
 }
