@@ -45,6 +45,11 @@ namespace FilOps.ViewModels
             set => SetProperty(ref _Children, value);
         }
 
+        public void AddChildren(ExplorerTreeNodeViewModel item)
+        {
+            Children.Add(item);
+        }
+
         /// <summary>
         /// ディレクトリの表示名
         /// </summary>
@@ -121,7 +126,7 @@ namespace FilOps.ViewModels
                 {
                     if (value && _explorerPageViewModel != null)
                     {
-                        _explorerPageViewModel.CurrentDir = this.FullPath;
+                        _explorerPageViewModel.CurrentItem = this;
                     }
                     SetProperty(ref _IsSelected, value);
                 }
@@ -158,7 +163,7 @@ namespace FilOps.ViewModels
                 {
                     Children.Clear();
                     if (_explorerPageViewModel == null) return;
-                    foreach (var child in FileSystemManager.Instance.GetFilesInformation(FullPath, true))
+                    foreach (var child in FileSystemManager.FileItemScan(FullPath, false))
                     {
                         var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
                         {

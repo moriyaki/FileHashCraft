@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Printing;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace FilOps.Models
@@ -44,7 +45,6 @@ namespace FilOps.Models
     }
     #endregion ディレクトリとファイル情報
 
-    #region ディレクトリとファイルの管理
     public class FileSystemManager
     {
         #region Singleton
@@ -53,7 +53,7 @@ namespace FilOps.Models
         private FileSystemManager() { }
         #endregion Singleton
 
-        #region ファイルのスキャン関連
+        #region ディレクトリとファイルのスキャン関連
         /// <summary>
         /// 指定されたディレクトリに子ディレクトリが存在するかどうかを判定します。
         /// </summary>
@@ -125,7 +125,7 @@ namespace FilOps.Models
         /// </summary>
         /// <param name="path">スキャンするディレクトリのパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public static IEnumerable<FileInformation> FileItemScan(string path)
+        public static IEnumerable<FileInformation> FileItemScan(string path, bool isFilesInclude)
         {
             IEnumerable<string> folders;
             try
@@ -150,71 +150,26 @@ namespace FilOps.Models
                     yield return GetFileInformationFromDirectorPath(folder);
                 }
             }
-            foreach (var file in Directory.EnumerateFiles(path))
+            if (isFilesInclude)
             {
-                try
+                foreach (var file in Directory.EnumerateFiles(path))
                 {
-                    using FileStream fs = File.OpenRead(file);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    continue;
-                }
-                catch (IOException) { }
-
-                yield return GetFileInformationFromDirectorPath(file);
-            }
-        }
-
-        /// <summary>
-        /// ファイル情報キャッシュのコレクション
-        /// </summary>
-        private readonly Dictionary<string, IEnumerable<FileInformation>> FilesCache = [];
-
-        /// <summary>
-        /// ファイル情報のキャッシュからディレクトリ情報のコレクションを取得します。
-        /// </summary>
-        /// <param name="path">コレクションを得るディレクトリのパス</param>
-        /// <param name="isDirectoryOnly">コレクションがディレクトリなら取得する</param>
-        /// <returns>ファイル情報のコレクション</returns>
-        public IEnumerable<FileInformation> GetFilesInformation(string path, bool isDirectoryOnly)
-        {
-            var scanPath = (path.Length == 2 && path[1] == ':') ? path + Path.DirectorySeparatorChar : path;
-            if (!Directory.Exists(path) || path.Length == 1)
-            {
-                yield break;
-            }
-
-            if (FilesCache.TryGetValue(scanPath, out var result))
-            {
-                foreach (var item in result)
-                {
-                    if (!isDirectoryOnly || item.IsDirectory)
+                    try
                     {
-                        yield return item;
+                        using FileStream fs = File.OpenRead(file);
                     }
-                }
-            }
-            else
-            {
-                List<FileInformation> newFiles = FileItemScan(scanPath).ToList();
-                FilesCache[path] = newFiles;
-                foreach (var item in newFiles)
-                {
-                    if (!isDirectoryOnly || item.IsDirectory)
+                    catch (UnauthorizedAccessException)
                     {
-                        yield return item;
+                        continue;
                     }
+                    catch (IOException) { }
+
+                    yield return GetFileInformationFromDirectorPath(file);
                 }
             }
         }
 
-        /// <summary>
-        /// ファイル情報のキャッシュにディレクトリ情報のコレクションがあるかを取得します。
-        /// </summary>
-        /// <param name="path">コレクションを確認するディレクトリのパス</param>
-        /// <returns>ディレクトリ情報がキャッシュにあるかどうか</returns>
-        public bool HasFilesInformation(string path) => FilesCache.TryGetValue(path, out _);
+        #endregion ディレクトリとファイルのスキャン関連
 
         /// <summary>
         /// 指定されたディレクトリのパスから、FileInformationを生成します。
@@ -256,10 +211,5 @@ namespace FilOps.Models
                 return item;
             }
         }
-        #endregion ファイルのスキャン関連
-
     }
-    #endregion ディレクトリとファイルの管理
-
-
 }

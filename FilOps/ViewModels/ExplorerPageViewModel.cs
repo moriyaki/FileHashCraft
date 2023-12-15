@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FilOps.Models;
@@ -49,17 +50,19 @@ namespace FilOps.ViewModels
         /// <summary>
         /// ディレクトリ変更を監視するインスタンス
         /// </summary>
-        private FileSystemWatcher CurrentDirectoryWatcher = new();
+        private readonly FileSystemWatcher CurrentDirectoryWatcher = new();
 
-
-        private readonly NotifyFilters CurrentDirectoryNotifyFIilter = NotifyFilters.DirectoryName
+        /// <summary>
+        /// ディレクトリ変更を通知するフィルタ
+        /// </summary>
+        private readonly NotifyFilters CurrentDirectoryNotifyFilter 
+            = NotifyFilters.DirectoryName
             | NotifyFilters.FileName
             | NotifyFilters.LastWrite
             | NotifyFilters.Size;
 
-
         /// <summary>
-        /// 選択されているリストビュー
+        /// 選択されているリストビューのアイテム
         /// </summary>
         private ExplorerListItemViewModel? _SelectedListViewItem = null;
         public ExplorerListItemViewModel? SelectedListViewItem
@@ -79,9 +82,22 @@ namespace FilOps.ViewModels
             {
                 string changedDir = value;
 
+                if (_currentDir.Length == 1 && value.Length == 2)
+                {
+                    // 1文字から2文字になった時は、'\\' を追加する
+                    changedDir = changedDir.ToUpper() + Path.DirectorySeparatorChar;
+                }
+                else if (changedDir.Length < 3)
+                {
+                    // 3文字未満なら返る
+                    SetProperty(ref _currentDir, value);
+                    return;
+                }
+
+                // 表示を大文字小文字正しいものを取得
                 if (Directory.Exists(value))
                 {
-                    var dirName = Path.GetDirectoryName(value);
+                    var dirName = Path.GetDirectoryName(changedDir);
                     if (dirName is not null)
                     {
                         var dirs = Directory.GetDirectories(dirName) ?? [""];
@@ -96,14 +112,15 @@ namespace FilOps.ViewModels
                     }
                 }
 
-                if (SetProperty(ref _currentDir, changedDir))
+                if (!SamePath(_currentDir, changedDir)) 
                 {
-                    ToUpFolder.CanExecute(null);
-                    if (Directory.Exists(changedDir))
+                    if (SetProperty(ref _currentDir, changedDir))
                     {
-                        FolderSelectedChanged(changedDir);
-                        SetCurrentDirectoryWatcher(changedDir);
-                        ListViewUpdater.Execute(null);
+                        ToUpFolder.CanExecute(null);
+                        if (Directory.Exists(changedDir))
+                        {
+                            CurrentItem = FolderSelectedChanged(changedDir);
+                        }
                     }
                 }
             }
@@ -118,11 +135,21 @@ namespace FilOps.ViewModels
             get => _CurrentItem;
             set
             {
-                SetProperty(ref _CurrentItem, value);
-                if (_CurrentItem is not null)
+                if (value is null) { return; }
+                if (_CurrentItem == value) { return; }
+
+                // 選択が変更されたら、明示的に今までの選択を外す
+                if (_CurrentItem is not null && _CurrentItem != value)
                 {
                     _CurrentItem.IsSelected = false;
-                    SetCurrentDirectoryWatcher(_CurrentItem.FullPath);
+                }
+                SetProperty(ref _CurrentItem, value);
+                if (value is not null)
+                {
+                    SetCurrentDirectoryWatcher(value);
+                    value.IsSelected = true;
+                    ListViewUpdater.Execute(null);
+                    CurrentDir = value.FullPath;
                 }
             }
         }
@@ -163,10 +190,11 @@ namespace FilOps.ViewModels
             ListViewUpdater = new RelayCommand(
                 async () => {
                     ListFile.Clear();
-                    await Task.Run(() => FolderFileListScan(CurrentDir));
-
+                    if ( CurrentItem != null )
+                    {
+                        await Task.Run(() => FolderFileListScan(CurrentItem.FullPath));
+                    }
                 }
-                //() => { return CurrentItem is not null; }
             );
 
             FileListViewExecuted = new RelayCommand(
@@ -204,24 +232,43 @@ namespace FilOps.ViewModels
                 item.IsSelected = selected;
                 if (selected)
                 {
-                    CurrentItem = item;
+                    CurrentDir = item.FullPath;
                     selected = false;
                 }
             }
         }
 
+        /// <summary>
+        /// ファイルの作成通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnCreated(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Created) return;
-            MessageBox.Show($"Created : {e.FullPath}");
+            if (CurrentItem != null)
+            {
+                MessageBox.Show($"CurrentDirectory : {CurrentItem.FullPath}");
+            }
+            MessageBox.Show($"Created : {Path.GetFileName(e.FullPath)}");
         }
 
+        /// <summary>
+        /// ファイルの削除通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnDeleted(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
-            MessageBox.Show($"Deleted : {e.FullPath}");
+            MessageBox.Show($"Deleted : {Path.GetFileName(e.FullPath)}");
         }
 
+        /// <summary>
+        /// ファイルの名前変更通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnRenamed(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;
@@ -231,21 +278,24 @@ namespace FilOps.ViewModels
         /// <summary>
         /// ディレクトリの変更を全監視する設定をする
         /// </summary>
-        /// <param name="path"></param>
-        private void SetCurrentDirectoryWatcher(string path)
+        /// <param name="treeItem"></param>
+        private void SetCurrentDirectoryWatcher(ExplorerTreeNodeViewModel treeItem)
         {
-            CurrentDirectoryWatcher.Created -= OnCreated;
-            CurrentDirectoryWatcher.Deleted -= OnDeleted;
-            CurrentDirectoryWatcher.Renamed -= OnRenamed;
+            if (treeItem.IsReady)
+            {
+                CurrentDirectoryWatcher.Created -= OnCreated;
+                CurrentDirectoryWatcher.Deleted -= OnDeleted;
+                CurrentDirectoryWatcher.Renamed -= OnRenamed;
 
-            CurrentDirectoryWatcher.Path = path;
-            CurrentDirectoryWatcher.Filter = "*.*";
-            CurrentDirectoryWatcher.NotifyFilter = CurrentDirectoryNotifyFIilter;
-            CurrentDirectoryWatcher.EnableRaisingEvents = true;
+                CurrentDirectoryWatcher.Path = treeItem.FullPath;
+                CurrentDirectoryWatcher.Filter = "*.*";
+                CurrentDirectoryWatcher.NotifyFilter = CurrentDirectoryNotifyFilter;
+                CurrentDirectoryWatcher.EnableRaisingEvents = true;
 
-            CurrentDirectoryWatcher.Created += OnCreated;
-            CurrentDirectoryWatcher.Deleted += OnDeleted;
-            CurrentDirectoryWatcher.Renamed += OnRenamed;
+                CurrentDirectoryWatcher.Created += OnCreated;
+                CurrentDirectoryWatcher.Deleted += OnDeleted;
+                CurrentDirectoryWatcher.Renamed += OnRenamed;
+            }
         }
 
         /// <summary>
@@ -255,7 +305,7 @@ namespace FilOps.ViewModels
         private void FolderFileListScan(string path)
         {
             // Files クラスを使用して指定ディレクトリのファイル情報を取得
-            foreach (var folderFile in FileSystemManager.Instance.GetFilesInformation(path, false))
+            foreach (var folderFile in FileSystemManager.FileItemScan(path, true))
             {
                 // フォルダやファイルの情報を ViewModel に変換
                 var item = new ExplorerListItemViewModel(this)
@@ -278,20 +328,19 @@ namespace FilOps.ViewModels
         /// カレントディレクトリが変更されたときの処理を行います。
         /// </summary>
         /// <param name="changedPath">変更されたカレントディレクトリのパス</param>
-        public void FolderSelectedChanged(string changedPath)
+        public ExplorerTreeNodeViewModel? FolderSelectedChanged(string changedPath)
         {
             // 選択するディレクトリのアイテム
             ExplorerTreeNodeViewModel? selectingVM = null;
 
             // パスの最後がディレクトリセパレータで終わる場合は除去
-            string trueChangedPath = changedPath.TrimEnd(Path.DirectorySeparatorChar);
+            string trueChangedPath = changedPath.Length == 3 ? changedPath : changedPath.TrimEnd(Path.DirectorySeparatorChar);
 
             // ルートディレクトリにある場合は選択状態に設定して終了
             var selectedRoot = TreeRoot.FirstOrDefault(root => Path.Equals(root.FullPath, trueChangedPath));
             if (selectedRoot != null)
             {
-                selectedRoot.IsSelected = true;
-                return;
+                return selectedRoot;
             }
             // サブディレクトリ内の場合は一部一致するルートディレクトリを特定
             var subDirectoryRoot = TreeRoot.FirstOrDefault(root => trueChangedPath.Contains(root.FullPath));
@@ -312,12 +361,12 @@ namespace FilOps.ViewModels
                 }
             }
 
-            if (selectingVM == null) return;
+            if (selectingVM is null) return null;
 
             // ルートディレクトリを展開
             selectingVM.IsExpanded = true;
 
-            directories.RemoveAt(0);
+            //directories.RemoveAt(0);
 
             // パスの各ディレクトリに対して処理を実行
             foreach (var directory in directories)
@@ -329,18 +378,31 @@ namespace FilOps.ViewModels
                         selectingVM = child;
                         if (directory != trueChangedPath)
                         {
-                            // サブディレクトリを展開して選択状態にする
+                            // サブディレクトリを展開する
                             child.IsExpanded = true;
                         }
                         else
                         {
-                            // 最終ディレクトリを選択状態にする
-                            child.IsSelected = true;
-                            return;
+                            return child;
                         }
                     }
                 }
             }
+            return null;
+        }
+
+        /// <summary>
+        /// 末尾の "\" 有無に関係なく、同じパスを指しているかどうか
+        /// </summary>
+        /// <param name="path1">比較するパス</param>
+        /// <param name="path2">比較されるパス</param>
+        /// <returns>同じパスかどうか</returns>
+        public static bool SamePath(string path1, string path2)
+        {
+            string truePath1 = path1.TrimEnd(Path.PathSeparator).ToLower();
+            string truePath2 = path2.TrimEnd(Path.PathSeparator).ToLower();
+
+            return truePath1 == truePath2;
         }
 
         /// <summary>
