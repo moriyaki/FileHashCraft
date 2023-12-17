@@ -2,7 +2,9 @@
 using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Diagnostics;
 using FilOps.Models;
+using System;
 
 namespace FilOps.ViewModels
 {
@@ -43,20 +45,6 @@ namespace FilOps.ViewModels
         /// リストビューダブルクリック時のコマンド
         /// </summary>
         public DelegateCommand FileListViewExecuted { get; set; }
-
-        /// <summary>
-        /// ディレクトリ変更を監視するインスタンス
-        /// </summary>
-        private readonly FileSystemWatcher CurrentDirectoryWatcher = new();
-
-        /// <summary>
-        /// ディレクトリ変更を通知するフィルタ
-        /// </summary>
-        private readonly NotifyFilters CurrentDirectoryNotifyFilter 
-            = NotifyFilters.DirectoryName
-            | NotifyFilters.FileName
-            | NotifyFilters.LastWrite
-            | NotifyFilters.Size;
 
         /// <summary>
         /// 選択されているリストビューのアイテム
@@ -109,11 +97,11 @@ namespace FilOps.ViewModels
                     }
                 }
 
-                if (!SamePath(_currentDir, changedDir)) 
+                if (!SamePath(_currentDir, changedDir))
                 {
                     if (SetProperty(ref _currentDir, changedDir))
                     {
-                        
+
                         if (Directory.Exists(changedDir))
                         {
                             CurrentItem = FolderSelectedChanged(changedDir);
@@ -178,6 +166,25 @@ namespace FilOps.ViewModels
         }
         #endregion データバインディング
 
+        /// <summary>
+        /// ディレクトリ変更を監視するインスタンス
+        /// </summary>
+        private readonly FileSystemWatcher CurrentDirectoryWatcher = new();
+
+        /// <summary>
+        /// ディレクトリ変更を通知するフィルタ
+        /// </summary>
+        private readonly NotifyFilters CurrentDirectoryNotifyFilter
+            = NotifyFilters.DirectoryName
+            | NotifyFilters.FileName
+            | NotifyFilters.LastWrite
+            | NotifyFilters.Size;
+
+
+        //private readonly List<FileSystemWatcher> DrivesWatcher = [];
+        //private readonly NotifyFilters DriveNotifyFilter = NotifyFilters.DirectoryName;
+   
+        #region コンストラクタ
         public ExplorerPageViewModel()
         {
             ToUpDirectory = new DelegateCommand(
@@ -196,7 +203,7 @@ namespace FilOps.ViewModels
             ListViewUpdater = new DelegateCommand(
                 async () => {
                     ListFile.Clear();
-                    if ( CurrentItem != null )
+                    if (CurrentItem != null)
                     {
                         await Task.Run(() => FolderFileListScan(CurrentItem.FullPath));
                     }
@@ -233,66 +240,7 @@ namespace FilOps.ViewModels
                 }
             }
         }
-
-        /// <summary>
-        /// ファイルの作成通知が入った場合のイベントメソッド
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnCreated(object sender, FileSystemEventArgs e)
-        {
-            if (e.ChangeType != WatcherChangeTypes.Created) return;
-            if (CurrentItem != null)
-            {
-                MessageBox.Show($"CurrentDirectory : {CurrentItem.FullPath}");
-            }
-            MessageBox.Show($"Created : {Path.GetFileName(e.FullPath)}");
-        }
-
-        /// <summary>
-        /// ファイルの削除通知が入った場合のイベントメソッド
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnDeleted(object sender, FileSystemEventArgs e)
-        {
-            if (e.ChangeType != WatcherChangeTypes.Deleted) return;
-            MessageBox.Show($"Deleted : {Path.GetFileName(e.FullPath)}");
-        }
-
-        /// <summary>
-        /// ファイルの名前変更通知が入った場合のイベントメソッド
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnRenamed(object sender, FileSystemEventArgs e)
-        {
-            if (e.ChangeType != WatcherChangeTypes.Renamed) return;
-            MessageBox.Show($"Renamed : {e.FullPath}");
-        }
-
-        /// <summary>
-        /// ディレクトリの変更を全監視する設定をする
-        /// </summary>
-        /// <param name="treeItem"></param>
-        private void SetCurrentDirectoryWatcher(ExplorerTreeNodeViewModel treeItem)
-        {
-            if (treeItem.IsReady)
-            {
-                CurrentDirectoryWatcher.Created -= OnCreated;
-                CurrentDirectoryWatcher.Deleted -= OnDeleted;
-                CurrentDirectoryWatcher.Renamed -= OnRenamed;
-
-                CurrentDirectoryWatcher.Path = treeItem.FullPath;
-                CurrentDirectoryWatcher.Filter = "*.*";
-                CurrentDirectoryWatcher.NotifyFilter = CurrentDirectoryNotifyFilter;
-                CurrentDirectoryWatcher.EnableRaisingEvents = true;
-
-                CurrentDirectoryWatcher.Created += OnCreated;
-                CurrentDirectoryWatcher.Deleted += OnDeleted;
-                CurrentDirectoryWatcher.Renamed += OnRenamed;
-            }
-        }
+        #endregion コンストラクタ
 
         /// <summary>
         /// 指定されたディレクトリのファイル情報を取得し、リストビューを更新します。
@@ -423,5 +371,283 @@ namespace FilOps.ViewModels
                 yield return fullPath;
             }
         }
+
+        #region リムーバブルディスクの着脱処理
+        /// <summary>
+        /// リムーバブルドライブの追加または挿入処理をします。
+        /// </summary>
+        /// <param name="driveLetter">リムーバブルドライブのドライブレター</param>
+        public void InsertOpticalDriveMedia(char driveLetter)
+        {
+            var path = driveLetter + @":\";
+            Debug.WriteLine($"ドライブ追加または挿入：{path}");
+            var indexToInsert = 0;
+
+            foreach (var drive in TreeRoot)
+            {
+                if (drive.FullPath == path)
+                {
+                    var driveInfo = new DriveInfo(path);
+                    if (driveInfo.IsReady && Directory.Exists(path))
+                    {
+                        var task = Task.Run(() =>
+                        {
+                            drive.IsReady = true;
+                            var retries = 10;
+                            while (retries > 0)
+                            {
+                                if (drive.Icon == WindowsAPI.GetIcon(path) || drive.Name == WindowsAPI.GetDisplayName(path))
+                                {
+                                    retries--;
+                                    Task.Delay(100);
+                                    continue;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            App.Current?.Dispatcher.Invoke((Action)(() =>
+                            {
+                                drive.Icon = WindowsAPI.GetIcon(path);
+                                drive.Name = WindowsAPI.GetDisplayName(path);
+                                drive.HasChildren = Directory.EnumerateDirectories(path).Any();
+                            }));
+                        });
+                        return;
+                    }
+                }
+                else
+                {
+                    if (path.CompareTo(drive.FullPath) < 0)
+                    {
+                        var fi = FileSystemManager.GetFileInformationFromDirectorPath(path);
+                        var newTreeItem = new ExplorerTreeNodeViewModel(this, fi);
+                        TreeRoot.Insert(indexToInsert, newTreeItem);
+                        return;
+
+                    }
+                }
+                indexToInsert++;
+            }
+            // 最終ドライブの場合
+            var addFi = FileSystemManager.GetFileInformationFromDirectorPath(path);
+            var addNewTreeItem = new ExplorerTreeNodeViewModel(this, addFi);
+            TreeRoot.Add(addNewTreeItem);
+        }
+
+        public void EjectOpticalDriveMedia(char driveLetter)
+        {
+            var path = driveLetter + @":\";
+            Debug.WriteLine($"ドライブの削除またはイジェクト：{path}");
+
+            var driveInfo = new DriveInfo(path);
+            var isCDRom = driveInfo.DriveType == DriveType.CDRom;
+
+            var drive = TreeRoot.FirstOrDefault(c => c.FullPath == path);
+
+            if (drive != null)
+            {
+                if (isCDRom)
+                {
+                    drive.IsReady = false;
+
+                    var task = Task.Run(() =>
+                    {
+                        var retries = 10;
+                        while (retries > 0)
+                        {
+                            if (drive.Icon == WindowsAPI.GetIcon(path) || drive.Name == WindowsAPI.GetDisplayName(path))
+                            {
+                                retries--;
+                                Task.Delay(100);
+                                continue;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        App.Current?.Dispatcher.Invoke((Action)(() =>
+                        {
+                            drive.Icon = WindowsAPI.GetIcon(path);
+                            drive.Name = WindowsAPI.GetDisplayName(path);
+                            drive.HasChildren = false;
+                            drive.Children.Clear();
+
+                        }));
+                    });
+                }
+                else
+                {
+                    TreeRoot.Remove(drive);
+                }
+            }
+        }
+        #endregion リムーバブルディスクの着脱処理
+
+        #region ファイル作成、削除、変更通知
+        /// <summary>
+        /// ソート済みの位置に挿入するためのヘルパーメソッド
+        /// </summary>
+        /// <typeparam name="T">検索するObservableCollectionの型</typeparam>
+        /// <param name="collection">コレクション</param>
+        /// <param name="newItem">新しいアイテム</param>
+        /// <returns>挿入する位置</returns>
+        private static int FindIndexToInsert<T>(ObservableCollection<T> collection, T newItem) where T : IComparable<T>
+        {
+            int indexToInsert = 0;
+            foreach (var item in collection)
+            {
+                if (item.CompareTo(newItem) >= 0)
+                {
+                    break;
+                }
+                indexToInsert++;
+            }
+            return indexToInsert;
+        }
+
+        /// <summary>
+        /// ファイルの作成通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">FileSystemEventArgs</param>
+        private void OnCreated(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Created) return;
+            if (IsSpecialFolderOrTmpFile(e.FullPath)) return;
+ 
+            if (CurrentItem != null)
+            {
+                var fi = FileSystemManager.GetFileInformationFromDirectorPath(e.FullPath);
+
+                App.Current?.Dispatcher.Invoke((Action)(() =>
+                {
+                    // ツリービューの追加
+                    var newTreeItem = new ExplorerTreeNodeViewModel(this, fi);
+                    int newTreeIndex = FindIndexToInsert(CurrentItem.Children, newTreeItem);
+                    CurrentItem.Children.Insert(newTreeIndex, newTreeItem);
+
+                    // リストビューの追加
+                    var li = new ExplorerListItemViewModel(this, fi);
+                    var newListItem = new ExplorerListItemViewModel(this, fi);
+                    int newListIndex = FindIndexToInsert(ListFile, newListItem);
+                    ListFile.Insert(newListIndex, li);
+                }));
+            }
+        }
+
+        /// <summary>
+        /// ファイルの削除通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">FileSystemEventArgs</param>
+        private void OnDeleted(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Deleted) return;
+            if (IsSpecialFolderOrTmpFile(e.FullPath)) return;
+
+            App.Current?.Dispatcher.Invoke(() =>
+            {
+                var treeItem = CurrentItem?.Children.FirstOrDefault(i => i.FullPath == e.FullPath);
+
+                if (treeItem != null)
+                {
+                    CurrentItem?.Children.Remove(treeItem);
+                }
+
+                // リストビューからの削除
+                var listItem = ListFile.FirstOrDefault(i => i.FullPath == e.FullPath);
+
+                if (listItem != null)
+                {
+                    ListFile.Remove(listItem);
+                }
+            });
+        }
+
+        /// <summary>
+        /// ファイルの名前変更通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">RenamedEventArgs</param>
+        private void OnRenamed(object sender, RenamedEventArgs e)
+        {
+            if (IsSpecialFolderOrTmpFile(e.FullPath)) return;
+            App.Current?.Dispatcher.Invoke(() =>
+            {
+                // ツリービューの名前変更
+                var treeItem = CurrentItem?.Children.FirstOrDefault(i => i.FullPath == e.OldFullPath);
+                if (treeItem != null)
+                {
+                    treeItem.FullPath = e.FullPath;
+                }
+
+                // リストビューの名前変更
+                var listItem = ListFile.FirstOrDefault(i => i.FullPath == e.OldFullPath);
+                if (listItem != null)
+                {
+                    listItem.FullPath = e.FullPath;
+                }
+            });
+        }
+        #endregion ファイル作成、削除、変更通知
+
+        /// <summary>
+        /// ファイルの変更通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">FileSystemEventArgs</param>
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            if (IsSpecialFolderOrTmpFile(e.FullPath)) return;
+        }
+
+        private static bool IsSpecialFolderOrTmpFile(string path)
+        {
+            if (path.Contains(Environment.GetFolderPath(Environment.SpecialFolder.Windows))) return true;
+            if (path.Contains(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData))) return true;
+            if (path.Contains(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))) return true;
+            if (path.Contains(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData))) return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// ディレクトリの変更を全監視する設定をする
+        /// </summary>
+        /// <param name="treeItem"></param>
+        private void SetCurrentDirectoryWatcher(ExplorerTreeNodeViewModel treeItem)
+        {
+            if (treeItem.IsReady)
+            {
+                CurrentDirectoryWatcher.Changed -= OnChanged;
+                CurrentDirectoryWatcher.Created -= OnCreated;
+                CurrentDirectoryWatcher.Deleted -= OnDeleted;
+                CurrentDirectoryWatcher.Renamed -= OnRenamed;
+
+                CurrentDirectoryWatcher.Path = treeItem.FullPath;
+                CurrentDirectoryWatcher.Filter = "*.*";
+                CurrentDirectoryWatcher.NotifyFilter = CurrentDirectoryNotifyFilter;
+                CurrentDirectoryWatcher.EnableRaisingEvents = true;
+                CurrentDirectoryWatcher.IncludeSubdirectories = true;
+
+                CurrentDirectoryWatcher.Changed += OnChanged;
+                CurrentDirectoryWatcher.Created += OnCreated;
+                CurrentDirectoryWatcher.Deleted += OnDeleted;
+                CurrentDirectoryWatcher.Renamed += OnRenamed;
+            }
+        }
+
+        /*
+        private void AddRootDriveWatcher(ExplorerTreeNodeViewModel rootTreeItem)
+        {
+            var watcher = new FileSystemWatcher(rootTreeItem.FullPath);
+            watcher.Changed += OnChanged;
+
+            DrivesWatcher.Add(watcher);
+        }
+        */
     }
 }

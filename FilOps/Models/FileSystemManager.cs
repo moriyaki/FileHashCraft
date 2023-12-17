@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Printing;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -22,6 +24,10 @@ namespace FilOps.Models
         /// </summary>
         public bool IsReady { get; set; } = false;
 
+        /// <summary>
+        /// ドライブが着脱可能かどうか
+        /// </summary>
+        public bool IsRemovable { get; set; } = false;
         /// <summary>
         /// ファイルがディレクトリかどうか
         /// </summary>
@@ -102,7 +108,8 @@ namespace FilOps.Models
 
             foreach (var folder in special_folder_path)
             {
-                yield return GetFileInformationFromDirectorPath(folder);
+                var fi = GetFileInformationFromDirectorPath(folder);
+                if (fi != null) yield return fi;
             }
         }
 
@@ -114,8 +121,7 @@ namespace FilOps.Models
         {
             foreach (var dir in DriveInfo.GetDrives())
             {
-                FileInformation item;
-                item = GetFileInformationFromDirectorPath(dir.Name, dir.IsReady);
+                var item = GetFileInformationFromDirectorPath(dir.Name);
                 yield return item;
             }
         }
@@ -147,7 +153,8 @@ namespace FilOps.Models
                 FileAttributes attributes = File.GetAttributes(folder);
                 if ((attributes & FileAttributes.System) != FileAttributes.System)
                 {
-                    yield return GetFileInformationFromDirectorPath(folder);
+                    var fi = GetFileInformationFromDirectorPath(folder);
+                    if (fi != null) yield return fi;
                 }
             }
             if (isFilesInclude)
@@ -164,7 +171,8 @@ namespace FilOps.Models
                     }
                     catch (IOException) { }
 
-                    yield return GetFileInformationFromDirectorPath(file);
+                    var fi = GetFileInformationFromDirectorPath(file);
+                    if (fi != null) yield return fi;
                 }
             }
         }
@@ -180,36 +188,43 @@ namespace FilOps.Models
         /// <remarks>
         /// メソッドの動作には、指定されたディレクトリが存在することが前提とされています。
         /// </remarks>
-        public static FileInformation GetFileInformationFromDirectorPath(string path, bool isReady = true)
+        public static FileInformation GetFileInformationFromDirectorPath(string path)
         {
-            FileInformation? item;
-            if (Directory.Exists(path) || !isReady)
-            {
-                var fileInfo = new FileInfo(path);
-                item = new FileInformation
-                {
-                    FullPath = fileInfo.FullName,
-                    IsDirectory = true,
-                    IsReady = isReady,
-                    LastModifiedDate = fileInfo.LastWriteTime,
-                    HasChildren = HasChildrenDirectories(fileInfo.FullName),
-                };
-                return item;
-            }
-            else
+            var driveLetter = path[0].ToString() ?? string.Empty;
+            var driveInfo = new DriveInfo(driveLetter);
+            var isRemovable = driveInfo.DriveType == DriveType.Removable;
+            var isReady = driveInfo.IsReady;
+
+            FileInformation item;
+            
+            if (File.Exists(path))
             {
                 var fileInfo = new FileInfo(path);
                 item = new FileInformation
                 {
                     FullPath = fileInfo.FullName,
                     IsDirectory = false,
+                    IsRemovable = isRemovable,
                     IsReady = isReady,
                     LastModifiedDate = fileInfo.LastWriteTime,
                     FileSize = fileInfo.Length,
                     HasChildren = false,
                 };
-                return item;
             }
+            else
+            {
+                var dirInfo = new DirectoryInfo(path);
+                item = new FileInformation
+                {
+                    FullPath = dirInfo.FullName,
+                    IsDirectory = true,
+                    IsRemovable = isRemovable,
+                    IsReady = isReady,
+                    LastModifiedDate = dirInfo.LastWriteTime,
+                    HasChildren = HasChildrenDirectories(dirInfo.FullName),
+                };
+            }
+            return item;
         }
     }
 }

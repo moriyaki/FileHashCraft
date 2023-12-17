@@ -6,7 +6,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:FilOps"
         mc:Ignorable="d"
-        Title="FilOps" Height="800" Width="1200">
+        Title="FilOps" Height="600" Width="980">
     <DockPanel LastChildFill="True">
         <Frame x:Name="mainFrame" NavigationUIVisibility="Hidden"/>
     </DockPanel>

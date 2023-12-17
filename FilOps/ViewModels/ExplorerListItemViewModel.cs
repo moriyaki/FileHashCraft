@@ -7,7 +7,7 @@ using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
-    public class ExplorerListItemViewModel : ObservableObject
+    public class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>
     {
         private readonly ExplorerPageViewModel? _explorerPageViewModel;
 
@@ -36,6 +36,14 @@ namespace FilOps.ViewModels
                 // ExplorerPageViewModel の FontSize が変更された場合、ExplorerListItemViewModel のプロパティも更新
                 OnPropertyChanged(nameof(FontSize));
             }
+        }
+
+        public int CompareTo(ExplorerListItemViewModel? other)
+        {
+            if (other == null) return 1;
+
+            if (IsDirectory && !other.IsDirectory) return -1;
+            return this.Name.CompareTo(other.Name);
         }
 
         #region データバインディング

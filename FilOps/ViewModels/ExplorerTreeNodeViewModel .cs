@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -8,7 +9,7 @@ using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
-    public class ExplorerTreeNodeViewModel : ObservableObject
+    public class ExplorerTreeNodeViewModel : ObservableObject, IComparable<ExplorerTreeNodeViewModel>
     {
         private readonly ExplorerPageViewModel? _explorerPageViewModel;
 
@@ -34,6 +35,7 @@ namespace FilOps.ViewModels
             }
             FullPath = f.FullPath;
             IsReady = f.IsReady;
+            IsRemovable = f.IsRemovable;
             HasChildren = f.HasChildren;
 
         }
@@ -45,6 +47,13 @@ namespace FilOps.ViewModels
                 // ExplorerPageViewModel の FontSize が変更された場合、ExplorerTreeNodeViewModel のプロパティも更新
                 OnPropertyChanged(nameof(FontSize));
             }
+        }
+
+        public int CompareTo(ExplorerTreeNodeViewModel? other)
+        {
+            if (other == null) return 1;
+
+            return this.Name.CompareTo(other.Name);
         }
 
         #region データバインディング用
@@ -90,9 +99,9 @@ namespace FilOps.ViewModels
             get => _FullPath;
             set
             {
-                SetProperty(ref _FullPath, value);
-                Name = WindowsAPI.GetDisplayName(FullPath);
+                Name = WindowsAPI.GetDisplayName(value);
                 Icon = WindowsAPI.GetIcon(value);
+                SetProperty(ref _FullPath, value);
             }
         }
 
@@ -124,6 +133,16 @@ namespace FilOps.ViewModels
         {
             get => _IsReady;
             set => SetProperty(ref _IsReady, value);
+        }
+
+        /// <summary>
+        /// ディレクトリのドライブが着脱可能か
+        /// </summary>
+        private bool _IsRemovable = false;
+        public bool IsRemovable
+        {
+            get => _IsRemovable;
+            set => SetProperty(ref _IsRemovable, value);
         }
 
         /// <summary>
@@ -183,6 +202,7 @@ namespace FilOps.ViewModels
                             FullPath = child.FullPath,
                             HasChildren = child.HasChildren,
                             IsReady = this.IsReady,
+                            IsRemovable = this.IsRemovable,
                             Parent = this,
                         };
                         Children.Add(item);

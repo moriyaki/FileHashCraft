@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows;
+using System.Diagnostics;
 
 namespace FilOps.Models
 {
@@ -135,7 +136,7 @@ namespace FilOps.Models
         /// <param name="is_original">オリジナルのアイコンを取得するかどうか</param>
         /// <returns>取得したファイルのアイコンとファイル種類</returns>
         /// <exception cref="Exception">ファイル情報の取得に失敗したときに発生</exception>
-        private static (BitmapSource, string) GetResourceContent(string path, bool is_original = false)
+        private static (BitmapSource?, string) GetResourceContent(string path, bool is_original = false)
         {
             // SHFILEINFO 構造体のインスタンスを作成
             SHFILEINFO shinfo = new();
@@ -157,7 +158,8 @@ namespace FilOps.Models
             if (shFileInfoResult == IntPtr.Zero || shinfo.hIcon == IntPtr.Zero)
             {
                 int lastError = Marshal.GetLastWin32Error();
-                throw new Exception($"SHGetFileInfo Failed with error code {lastError}");
+                Debug.WriteLine($"SHGetFileInfo Failed with error code {lastError}");
+                return (null, string.Empty);
             }
 
             // アイコンを BitmapSource に変換
@@ -187,8 +189,11 @@ namespace FilOps.Models
                 var (icon, file_type) = GetResourceContent(path, true);
 
                 // 取得した情報をキャッシュに登録
-                FileIconCache[key] = icon;
-                FileTypeCache[key] = file_type;
+                if (icon != null)
+                {
+                    FileIconCache[key] = icon;
+                    FileTypeCache[key] = file_type;
+                }
             }
         }
 
@@ -197,7 +202,7 @@ namespace FilOps.Models
         /// </summary>
         /// <param name="path">ファイルのフルパス</param>
         /// <returns>キャッシュに利用するキー</returns>
-        private static string ReadIconAndType(string path)
+        private static string ReadIconAndTypeToCache(string path)
         {
             // 特殊なアイコンが必要な拡張子のリスト
             var specialIconExtensions = new List<string> { ".exe", ".lnk", ".ico" };
@@ -229,10 +234,19 @@ namespace FilOps.Models
         /// </summary>
         /// <param name="path">ファイルのフルパス</param>
         /// <returns>アイコン</returns>
-        public static BitmapSource GetIcon(string path)
+        public static BitmapSource? GetIcon(string path)
         {
-            var key = ReadIconAndType(path);
-            return FileIconCache[key];
+            if (Path.GetExtension(path) == ".tmp") return null;
+            if (path.Length > 3)
+            {
+                var key = ReadIconAndTypeToCache(path);
+                return FileIconCache[key];
+            }
+            else
+            {
+                var (icon, _) = GetResourceContent(path, true);
+                return icon;
+            }
         }
 
         /// <summary>
@@ -242,8 +256,17 @@ namespace FilOps.Models
         /// <returns>ファイルの種類</returns>
         public static string GetType(string path)
         {
-            var key = ReadIconAndType(path);
-            return FileTypeCache[key];
+            if (Path.GetExtension(path) == ".tmp") return string.Empty;
+            if (path.Length > 3)
+            {
+                var key = ReadIconAndTypeToCache(path);
+                return FileTypeCache[key];
+            }
+            else
+            {
+                var (_, file_type) = GetResourceContent(path, true);
+                return file_type;
+            }
         }
 
         /// <summary>
