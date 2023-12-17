@@ -25,7 +25,20 @@ namespace FilOps.ViewModels
                 _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             }
         }
+        public ExplorerTreeNodeViewModel(ExplorerPageViewModel mv, FileInformation f)
+        {
+            _explorerPageViewModel = mv;
+            if (_explorerPageViewModel is not null)
+            {
+                _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
+            }
+            FullPath = f.FullPath;
+            IsReady = f.IsReady;
+            HasChildren = f.HasChildren;
+
+        }
         private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+
         {
             if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
             {

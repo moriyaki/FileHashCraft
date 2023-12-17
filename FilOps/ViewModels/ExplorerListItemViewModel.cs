@@ -16,12 +16,16 @@ namespace FilOps.ViewModels
             throw new InvalidOperationException("ExplorerListItemViewModel");
         }
 
-        public ExplorerListItemViewModel(ExplorerPageViewModel mv)
+        public ExplorerListItemViewModel(ExplorerPageViewModel mv, FileInformation f)
         {
             _explorerPageViewModel = mv;
             if (_explorerPageViewModel is not null)
             {
                 _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
+                FullPath = f.FullPath;
+                LastModifiedDate = f.LastModifiedDate;
+                FileSize = f.FileSize;
+                IsDirectory = f.IsDirectory;
             }
         }
 

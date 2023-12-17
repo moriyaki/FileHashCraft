@@ -33,7 +33,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Content="↑" Grid.Column="0" Margin="3"
-                       Command="{Binding ToUpFolder}"/>
+                    Command="{Binding ToUpDirectory}"/>
             <Label Content="カレントディレクトリ" Grid.Column="1" FontSize="{Binding FontSize}"/>
             <TextBox 
                    Grid.Column="2"

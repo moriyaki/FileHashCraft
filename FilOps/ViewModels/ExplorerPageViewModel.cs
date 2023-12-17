@@ -1,10 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using FilOps.Models;
 
 namespace FilOps.ViewModels
@@ -35,17 +32,17 @@ namespace FilOps.ViewModels
         /// <summary>
         /// 「上へ」コマンド
         /// </summary>
-        public RelayCommand ToUpFolder { get; }
+        public DelegateCommand ToUpDirectory { get; set; }
 
         /// <summary>
         /// リストビュー更新コマンド
         /// </summary>
-        public RelayCommand ListViewUpdater { get; set; }
+        public DelegateCommand ListViewUpdater { get; set; }
 
         /// <summary>
         /// リストビューダブルクリック時のコマンド
         /// </summary>
-        public RelayCommand FileListViewExecuted { get; set; }
+        public DelegateCommand FileListViewExecuted { get; set; }
 
         /// <summary>
         /// ディレクトリ変更を監視するインスタンス
@@ -116,7 +113,7 @@ namespace FilOps.ViewModels
                 {
                     if (SetProperty(ref _currentDir, changedDir))
                     {
-                        ToUpFolder.CanExecute(null);
+                        
                         if (Directory.Exists(changedDir))
                         {
                             CurrentItem = FolderSelectedChanged(changedDir);
@@ -144,13 +141,13 @@ namespace FilOps.ViewModels
                     _CurrentItem.IsSelected = false;
                 }
                 SetProperty(ref _CurrentItem, value);
-                if (value is not null)
-                {
-                    SetCurrentDirectoryWatcher(value);
-                    value.IsSelected = true;
-                    ListViewUpdater.Execute(null);
-                    CurrentDir = value.FullPath;
-                }
+                ToUpDirectory.RaiseCanExecuteChanged();
+                //OnPropertyChanged(nameof(ToUpEnabled));
+
+                SetCurrentDirectoryWatcher(value);
+                value.IsSelected = true;
+                ListViewUpdater.Execute(null);
+                CurrentDir = value.FullPath;
             }
         }
 
@@ -180,14 +177,23 @@ namespace FilOps.ViewModels
             }
         }
         #endregion データバインディング
+
         public ExplorerPageViewModel()
         {
-            ToUpFolder = new RelayCommand(
-                () => { CurrentDir = CurrentItem?.Parent?.FullPath ?? CurrentDir; },
-                () => { return CurrentItem?.Parent is not null; }
+            ToUpDirectory = new DelegateCommand(
+                () => {
+                    if (CurrentItem != null)
+                    {
+                        CurrentItem = CurrentItem.Parent;
+                    }
+                },
+                () =>
+                {
+                    return CurrentItem != null && CurrentItem.Parent != null;
+                }
             );
 
-            ListViewUpdater = new RelayCommand(
+            ListViewUpdater = new DelegateCommand(
                 async () => {
                     ListFile.Clear();
                     if ( CurrentItem != null )
@@ -197,11 +203,11 @@ namespace FilOps.ViewModels
                 }
             );
 
-            FileListViewExecuted = new RelayCommand(
+            FileListViewExecuted = new DelegateCommand(
                 () => {
                     if (SelectedListViewItem is not null)
                     {
-                        var newDir = Path.Combine(CurrentDir, SelectedListViewItem.Name);
+                        var newDir = SelectedListViewItem.FullPath;
                         if (Directory.Exists(newDir))
                         {
                             CurrentDir = newDir;
@@ -211,23 +217,13 @@ namespace FilOps.ViewModels
             );
             foreach (var root in FileSystemManager.Instance.SpecialFolderScan())
             {
-                var item = new ExplorerTreeNodeViewModel(this)
-                {
-                    FullPath = root.FullPath,
-                    IsReady = root.IsReady,
-                    HasChildren = root.HasChildren,
-                };
+                var item = new ExplorerTreeNodeViewModel(this, root);
                 TreeRoot.Add(item);
             }
             var selected = true;
             foreach (var root in FileSystemManager.DriveScan())
             {
-                var item = new ExplorerTreeNodeViewModel(this)
-                {
-                    FullPath = root.FullPath,
-                    IsReady = root.IsReady,
-                    HasChildren = root.HasChildren,
-                };
+                var item = new ExplorerTreeNodeViewModel(this, root);
                 TreeRoot.Add(item);
                 item.IsSelected = selected;
                 if (selected)
@@ -308,13 +304,7 @@ namespace FilOps.ViewModels
             foreach (var folderFile in FileSystemManager.FileItemScan(path, true))
             {
                 // フォルダやファイルの情報を ViewModel に変換
-                var item = new ExplorerListItemViewModel(this)
-                {
-                    FullPath = folderFile.FullPath,
-                    LastModifiedDate = folderFile.LastModifiedDate,
-                    FileSize = folderFile.FileSize,
-                    IsDirectory = folderFile.IsDirectory,
-                };
+                var item = new ExplorerListItemViewModel(this, folderFile);
 
                 // UI スレッドでリストビューを更新
                 App.Current?.Dispatcher.Invoke((Action)(() =>
