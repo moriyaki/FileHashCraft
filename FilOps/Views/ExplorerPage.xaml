@@ -88,7 +88,8 @@
                     <HierarchicalDataTemplate DataType="DirectoryItem"
                                               ItemsSource="{Binding Path=Children}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Icon, Mode=OneWay}"/>
+                            <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"
+                                   />
                             <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
                             <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
                         </StackPanel>
@@ -121,8 +122,8 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
-                                        <Image Source="{Binding Icon, Mode=OneWay}" />
+                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                        <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}" />
                                         <TextBlock Text="{Binding Name, Mode=OneWay}" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </DataTemplate>

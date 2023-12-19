@@ -154,7 +154,7 @@ namespace FilOps.ViewModels
             get => _FontSize;
             set
             {
-                if (10 <= value && value <= 18)
+                if (8 <= value && value <= 24)
                 {
                     SetProperty(ref _FontSize, value);
                 }
