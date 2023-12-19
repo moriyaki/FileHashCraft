@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using FilOps.ViewModels;
 
 namespace FilOps.Views
@@ -38,14 +27,8 @@ namespace FilOps.Views
             {
                 if (viewModel is not null)
                 {
-                    if (e.Delta > 0)
-                    {
-                        viewModel.FontSize += 1;
-                    }
-                    else
-                    {
-                        viewModel.FontSize -= 1;
-                    }
+                    if (e.Delta > 0) { viewModel.FontSize += 1;}
+                    else             { viewModel.FontSize -= 1; }
                 }
                 e.Handled = true;
             }
@@ -86,21 +69,13 @@ namespace FilOps.Views
             {
                 if (parent.ItemContainerGenerator?.ContainerFromItem(item) is TreeViewItem treeViewItem)
                 {
-
-                    if (treeViewItem.DataContext == data)
-                    {
-                        return treeViewItem;
-                    }
+                    if (treeViewItem.DataContext == data) { return treeViewItem; }
 
                     // 子アイテムを再帰的に検索
                     result = FindTreeViewItem(treeViewItem, data);
-                    if (result != null)
-                    {
-                        break;
-                    }
+                    if (result != null) { break; }
                 }
             }
-
             return result;
         }
 
@@ -137,10 +112,7 @@ namespace FilOps.Views
             for (int i = 0; i < 26; i++)
             {
                 uint mask = (uint)(1 << i);
-                if ((unitMask & mask) != 0)
-                {
-                    return (char)('A' + i);
-                }
+                if ((unitMask & mask) != 0) { return (char)('A' + i); }
             }
             return (char)(0);
         }
@@ -160,15 +132,8 @@ namespace FilOps.Views
             // HwndSourceを取得
             hwndSource = PresentationSource.FromVisual(this) as HwndSource;
 
-            if (hwndSource != null)
-            {
-                // イベントハンドラを登録
-                hwndSource.AddHook(WndProc);
-            }
-            else
-            {
-                Debug.WriteLine("HwndSourceを取得できませんでした。");
-            }
+            if (hwndSource != null) { hwndSource.AddHook(WndProc); }
+            else { Debug.WriteLine("HwndSourceを取得できませんでした。"); }
         }
 
         // カスタムのウィンドウプロシージャ
@@ -183,14 +148,8 @@ namespace FilOps.Views
             volume.dbcv_unitmask = 0;
 
             DBT DBT_wParam;
-            if (Environment.Is64BitProcess)
-            {
-                DBT_wParam = (DBT)wParam.ToInt64();
-            }
-            else
-            {
-                DBT_wParam = (DBT)wParam.ToInt32();
-            }
+            if (Environment.Is64BitProcess) { DBT_wParam = (DBT)wParam.ToInt64(); }
+            else                            { DBT_wParam = (DBT)wParam.ToInt32(); }
 
             switch (DBT_wParam)
             {
@@ -207,10 +166,8 @@ namespace FilOps.Views
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}");
-                    }
+                    catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
+
                     viewModel.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
@@ -226,10 +183,8 @@ namespace FilOps.Views
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}");
-                    }
+                    catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
+
                     viewModel.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }

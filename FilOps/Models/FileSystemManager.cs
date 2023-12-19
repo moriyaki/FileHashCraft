@@ -1,9 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
-using System.Printing;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.IO;
 
 namespace FilOps.Models
 {
@@ -70,10 +65,7 @@ namespace FilOps.Models
             try
             {
                 var HasDirectory = Directory.EnumerateDirectories(full_path).Any();
-                if (HasDirectory)
-                {
-                    return true;
-                }
+                if (HasDirectory) { return true; }
             }
             catch (Exception ex)
             {
@@ -140,10 +132,7 @@ namespace FilOps.Models
             }
             catch (Exception ex)
             {
-                if (ex is UnauthorizedAccessException || ex is IOException)
-                {
-                    yield break;
-                }
+                if (ex is UnauthorizedAccessException || ex is IOException) { yield break; }
                 throw;
             }
 
@@ -165,10 +154,7 @@ namespace FilOps.Models
                     {
                         using FileStream fs = File.OpenRead(file);
                     }
-                    catch (UnauthorizedAccessException)
-                    {
-                        continue;
-                    }
+                    catch (UnauthorizedAccessException) { continue; }
                     catch (IOException) { }
 
                     var fi = GetFileInformationFromDirectorPath(file);

@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -132,7 +131,11 @@ namespace FilOps.ViewModels
         public bool IsReady
         {
             get => _IsReady;
-            set => SetProperty(ref _IsReady, value);
+            set
+            {
+                SetProperty(ref _IsReady, value);
+                if (!value) { Children.Clear(); }
+            }
         }
 
         /// <summary>
@@ -156,14 +159,20 @@ namespace FilOps.ViewModels
             {
                 if (_IsSelected != value)
                 {
+                    SetProperty(ref _IsSelected, value);
                     if (value && _explorerPageViewModel != null)
                     {
                         _explorerPageViewModel.CurrentItem = this;
+                        if (!IsKicked) { KickChildGet(); }
                     }
-                    SetProperty(ref _IsSelected, value);
                 }
             }
         }
+
+        /// <summary>
+        /// 子ディレクトリを取得しているかどうか
+        /// </summary>
+        private bool IsKicked = false;
 
         /// <summary>
         /// ディレクトリがディレクトリを持つかどうか
@@ -178,6 +187,7 @@ namespace FilOps.ViewModels
                     Children.Count == 0 && _explorerPageViewModel is not null)
                 {
                     Children.Add(new ExplorerTreeNodeViewModel(_explorerPageViewModel) { Name = "【dummy】" });
+
                 }
             }
         }
@@ -193,22 +203,47 @@ namespace FilOps.ViewModels
             {
                 if (SetProperty(ref _IsExpanded, value) && IsReady)
                 {
-                    Children.Clear();
-                    if (_explorerPageViewModel == null) return;
-                    foreach (var child in FileSystemManager.FileItemScan(FullPath, false))
+                    if (value && !IsKicked)
                     {
-                        var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
+                        KickChildGet();
+                    }
+                    else
+                    {
+                        /* する必要ある？
+                        if (HasChildren)
                         {
-                            FullPath = child.FullPath,
-                            HasChildren = child.HasChildren,
-                            IsReady = this.IsReady,
-                            IsRemovable = this.IsRemovable,
-                            Parent = this,
-                        };
-                        Children.Add(item);
+                            Children.Clear();
+                            if (_explorerPageViewModel == null) return;
+                            Children.Add(new ExplorerTreeNodeViewModel(_explorerPageViewModel) { Name = "【dummy】" });
+                            ChildrenChecked = false;
+                        }
+                        */
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 子ノードを設定する
+        /// </summary>
+        public void KickChildGet()
+        {
+            if (_explorerPageViewModel == null) { return; }
+            Children.Clear();
+            foreach (var child in FileSystemManager.FileItemScan(FullPath, false))
+            {
+                var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
+                {
+                    FullPath = child.FullPath,
+                    IsReady = this.IsReady,
+                    IsRemovable = this.IsRemovable,
+                    HasChildren = child.HasChildren,
+                    Parent = this,
+                };
+                Children.Add(item);
+
+            }
+            IsKicked = true;
         }
 
         /// <summary>

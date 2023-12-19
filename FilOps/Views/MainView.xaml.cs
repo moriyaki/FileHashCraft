@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Input;
 using FilOps.ViewModels;
 using FilOps.Views;
 

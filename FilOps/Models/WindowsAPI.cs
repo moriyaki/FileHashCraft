@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows;
-using System.Diagnostics;
 
 namespace FilOps.Models
 {
