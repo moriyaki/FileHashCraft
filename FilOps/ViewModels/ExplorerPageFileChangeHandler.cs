@@ -184,6 +184,97 @@ namespace FilOps.ViewModels
         }
         #endregion ヘルパーメソッド
 
+        #region カレントディレクトリ監視関連
+        /// <summary>
+        /// カレントディレクトリに対してファイル変更監視の設定をする
+        /// </summary>
+        /// <param name="rootTreeItem"></param>
+        private void SetCurrentDirectoryWatcher(string currentDirectory)
+        {
+            // System.IO.FileNotFoundException: 'Error reading the C:\Windows\CSC directory.'
+
+            try
+            {
+                CurrentWatcher.Created -= OnCurrentCreated;
+                CurrentWatcher.Deleted -= OnCurrentDeleted;
+                CurrentWatcher.Renamed -= OnCurrentRenamed;
+
+                CurrentWatcher.Path = currentDirectory;
+                CurrentWatcher.NotifyFilter = CurrentNotifyFilter;
+                CurrentWatcher.EnableRaisingEvents = true;
+                CurrentWatcher.IncludeSubdirectories = false;
+
+                CurrentWatcher.Created += OnCurrentCreated;
+                CurrentWatcher.Deleted += OnCurrentDeleted;
+                CurrentWatcher.Renamed += OnCurrentRenamed;
+
+                CurrentWatcher.Error += OnError;
+            }
+            catch (FileNotFoundException) { }
+        }
+
+        /// <summary>
+        /// カレントディレクトリのファイルの作成通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">FileSystemEventArgs</param>
+        private void OnCurrentCreated(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Created) return;
+
+            ///Debug.WriteLine($"Current Created : {e.FullPath}");
+            // 新しいリストビューアイテムを作成する
+            var fi = FileSystemManager.GetFileInformationFromDirectorPath(e.FullPath);
+            var item = new ExplorerListItemViewModel(this, fi);
+            var newListItem = new ExplorerListItemViewModel(this, fi);
+
+            // リストビューに作成したアイテムを追加する
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                int newListIndex = FindIndexToInsert(ListFile, newListItem);
+                ListFile.Insert(newListIndex, item);
+            });
+
+        }
+
+        /// <summary>
+        /// カレントディレクトリのファイル削除通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">FileSystemEventArgs</param>
+        private void OnCurrentDeleted(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Deleted) return;
+            if (File.Exists(e.FullPath)) { return; }
+
+            //Debug.WriteLine($"Current Deleted : {e.FullPath}");
+            // 削除されたアイテムを検索し、リストビューから削除する
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var listItem = ListFile.FirstOrDefault(i => i.FullPath == e.FullPath);
+                if (listItem != null) { ListFile.Remove(listItem); }
+            });
+        }
+
+        /// <summary>
+        /// カレントディレクトリのファイル名前変更通知が入った場合のイベントメソッド
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">RenamedEventArgs</param>
+        private void OnCurrentRenamed(object sender, RenamedEventArgs e)
+        {
+            Debug.WriteLine($"Current Renamed : {e.OldFullPath} to {e.FullPath}");
+
+            // 名前が変更されたアイテムを検索し、リストビューに新しい名前を反映する
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var listItem = ListFile.FirstOrDefault(i => i.FullPath == e.OldFullPath);
+                if (listItem != null) { listItem.FullPath = e.FullPath; }
+            });
+
+        }
+        #endregion カレントディレクトリ監視関連
+
         #region ドライブ監視関連
         /// <summary>
         /// ドライブに対してファイル変更監視の設定をする
@@ -293,160 +384,11 @@ namespace FilOps.ViewModels
         }
 
         /// <summary>
-        /// サブディレクトリが名前変更された時のUI処理
-        /// </summary>
-        /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
-        /// <param name="deletedItemNames">削除されたアイテムのコレクション</param>
-        /// <param name="addedItemNames">追加されたアイテムのコレクション</param>
-        /// <returns>Task</returns>
-        private async Task OnSubDirectoryRenamed(ExplorerTreeNodeViewModel modifiedTreeItem, IEnumerable<string> deletedItemNames,  IEnumerable<string> addedItemNames)
-        {
-            await App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                // 名前変更されたツリービューアイテムの取得
-                var renamedTreeItem = modifiedTreeItem.Children.FirstOrDefault(item => item.FullPath == deletedItemNames.FirstOrDefault());
-                if (renamedTreeItem != null)
-                {
-                    // 新しい名前を取得
-                    var renamedName = addedItemNames.FirstOrDefault();
-                    if (renamedName != null && !string.IsNullOrEmpty(renamedName))
-                    {
-                        var oldName = renamedTreeItem.FullPath;
-
-                        // 名前変更を反映
-                        //Debug.WriteLine($"Renamed {oldName} to {renamedName}");
-                        renamedTreeItem.FullPath = renamedName;
-
-                        // リストビューにも表示されていたら、そちらも更新
-                        if (CurrentItem != null && modifiedTreeItem == CurrentItem)
-                        {
-                            //Debug.WriteLine($"Renamed ListView {oldName} to {renamedName}");
-                            var listItem = ListFile.FirstOrDefault(item => item.FullPath == oldName);
-                            if (listItem != null) { listItem.FullPath = renamedName; }
-                        }
-                    }
-                }
-            });
-        }
-
-        /// <summary>
-        /// サブディレクトリが削除された時のUI処理
-        /// </summary>
-        /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
-        /// <param name="deletedItemNames">削除されたアイテムのコレクション</param>
-        /// <returns>Task</returns>
-        private async Task OnSubDirectoryDeleted(ExplorerTreeNodeViewModel modifiedTreeItem, IEnumerable<string> deletedItemNames)
-        {
-            await App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                // 削除されたツリービューアイテムの取得
-                var deletedTreeItem = modifiedTreeItem.Children.FirstOrDefault(c => c.FullPath == deletedItemNames.FirstOrDefault());
-                if (deletedTreeItem != null)
-                {
-                    // 削除されたツリービューアイテムの削除
-                    modifiedTreeItem.Children.Remove(deletedTreeItem);
-
-                    // リストビューにも表示されていたら、そちらも更新
-                    if (CurrentItem != null && modifiedTreeItem == CurrentItem)
-                    {
-                        var listItem = ListFile.FirstOrDefault(item => item.FullPath == deletedTreeItem.FullPath);
-                        if (listItem != null) { ListFile.Remove(listItem); }
-                    }
-                }
-            });
-        }
-
-        /// <summary>
-        /// サブディレクトリが追加された時のUI処理
-        /// </summary>
-        /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
-        /// <param name="addedItemNames">追加されたアイテムのコレクション</param>
-        /// <returns>Task</returns>
-        private async Task OnSubDirectoryCreated(ExplorerTreeNodeViewModel modifiedTreeItem, IEnumerable<string> addedItemNames)
-        {
-            await App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                // 追加されたファイル名の取得
-                var addName = addedItemNames.FirstOrDefault();
-                if (addName == null) { return; }
-
-                // 追加されたファイルをツリービューアイテムにして追加
-                var fi = FileSystemManager.GetFileInformationFromDirectorPath(addName);
-                var addItem = new ExplorerTreeNodeViewModel(this, fi);
-                Debug.WriteLine($"Add : {fi.FullPath}");
-                int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addItem);
-                modifiedTreeItem.Children.Insert(newTreeIndex, addItem);
-
-                // リストビューにも表示されていたら、そちらも更新
-                if (CurrentItem != null && modifiedTreeItem == CurrentItem)
-                {
-                    var li = new ExplorerListItemViewModel(this, fi);
-                    var newListItem = new ExplorerListItemViewModel(this, fi);
-                    int newListIndex = FindIndexToInsert(ListFile, newListItem);
-                    ListFile.Insert(newListIndex, li);
-                }
-            });
-        }
-
-        /// <summary>
-        /// ファイルの変更通知が入った場合のイベントメソッド
-        /// </summary>
-        /// <param name="sender">FileSystemWatcher</param>
-        /// <param name="e">FileSystemEventArgs</param>
-        private async void OnChanged(object sender, FileSystemEventArgs e)
-        {
-            if (IsSpecialFolderOrCannotAccess(e.FullPath)) return;
-
-            /// ごみ箱の処理
-            if (e.FullPath.Contains("$RECYCLE.BIN")) {
-                await HandleRecycleBinChange(e.FullPath);
-                return;
-            }
-
-            // 変更が加えられたディレクトリのツリーアイテムを取得
-            var modifiedTreeItem = FindChangedDirectoryTree(e.FullPath);
-            if (modifiedTreeItem == null) { return; }
-
-            // カレントディレクトリかどうか
-            var isCurrent = modifiedTreeItem == CurrentItem;
-
-            var dirs = Directory.EnumerateDirectories(e.FullPath);
-            var treeItems = modifiedTreeItem.Children
-                .Where(c => !string.IsNullOrEmpty(c.FullPath))
-                .Select(c => c.FullPath);
-
-            var deletedItemNames = treeItems.Except(dirs);
-            var addedItemNames = dirs.Except(treeItems);
-
-            // リネーム処理
-            if (deletedItemNames.Any() && addedItemNames.Any())
-            {
-                await OnSubDirectoryRenamed(modifiedTreeItem, deletedItemNames, addedItemNames);
-                return;
-            }
-
-            if (deletedItemNames.Any())
-            {
-                await OnSubDirectoryDeleted(modifiedTreeItem, deletedItemNames);
-                return;
-            }
-
-            if (addedItemNames.Any())
-            {
-                await OnSubDirectoryCreated(modifiedTreeItem, addedItemNames);
-            }
-        }
-
-        /// <summary>
         /// パスがドライブルートかを確認する
         /// </summary>
         /// <param name="path">ドライブルートか確認するパス</param>
         /// <returns>ドライブルートかどうか</returns>
-        private static bool IsRoot(string path)
-        {
-            var splitPath = path.Split('\\');
-            return splitPath.Length == 2;
-        }
+        private static bool IsRoot(string path) => path.Split('\\').Length == 2;
 
         /// <summary>
         /// ドライブルートにファイルアイテムが作成された時の処理
@@ -464,9 +406,9 @@ namespace FilOps.ViewModels
                     // 新しいツリービューアイテムの作成
                     var fi = FileSystemManager.GetFileInformationFromDirectorPath(createdFile);
                     var addItem = new ExplorerTreeNodeViewModel(this, fi);
-                    
+
                     // ソートされているので、そこに新しいツリービューアイテムを挿入
-                    int newTreeIndex = FindIndexToInsert(rootItem.Children, addItem);
+                    int newTreeIndex = FindIndexToInsert<ExplorerTreeNodeViewModel>(rootItem.Children, addItem);
                     rootItem.Children.Insert(newTreeIndex, addItem);
 
                     // リストビューにも表示されていたら、そちらも更新
@@ -496,7 +438,7 @@ namespace FilOps.ViewModels
                 {
                     // 名前変更されたツリービューアイテムの取得
                     var renamedItem = rootItem.Children.FirstOrDefault(item => item.FullPath == oldPath);
-                    
+
                     // 名前変更の反映
                     if (renamedItem != null) { renamedItem.FullPath = newPath; }
 
@@ -536,95 +478,260 @@ namespace FilOps.ViewModels
         }
         #endregion ドライブ監視関連
 
-        #region カレントディレクトリ監視関連
+        #region サブディレクトリ監視関連
         /// <summary>
-        /// カレントディレクトリに対してファイル変更監視の設定をする
+        /// サブディレクトリが名前変更された時のUI処理
         /// </summary>
-        /// <param name="rootTreeItem"></param>
-        private void SetCurrentDirectoryWatcher(string currentDirectory)
+        /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
+        /// <param name="deletedItemName">削除されたアイテムのコレクション</param>
+        /// <param name="addedItemName">追加されたアイテムのコレクション</param>
+        /// <returns>Task</returns>
+        private async Task OnSubDirectoryRenamed(ExplorerTreeNodeViewModel modifiedTreeItem, string deletedItemName, string addedItemName)
         {
-            // System.IO.FileNotFoundException: 'Error reading the C:\Windows\CSC directory.'
-
-            try
+            //Debug.WriteLine($"Renamed : {deletedItemName} to {addedItemName");
+            await App.Current.Dispatcher.InvokeAsync(() =>
             {
-                CurrentWatcher.Created -= OnCurrentCreated;
-                CurrentWatcher.Deleted -= OnCurrentDeleted;
-                CurrentWatcher.Renamed -= OnCurrentRenamed;
+                // 名前変更されたツリービューアイテムの取得
+                var renamedTreeItem = modifiedTreeItem.Children.FirstOrDefault(item => item.FullPath == deletedItemName);
+                if (renamedTreeItem != null)
+                {
+                    // 新しい名前を取得
+                    var newFullPath = addedItemName;
+                    if (newFullPath != null && !string.IsNullOrEmpty(newFullPath))
+                    {
+                        var oldFullPath = renamedTreeItem.FullPath;
 
-                CurrentWatcher.Path = currentDirectory;
-                CurrentWatcher.NotifyFilter = CurrentNotifyFilter;
-                CurrentWatcher.EnableRaisingEvents = true;
-                CurrentWatcher.IncludeSubdirectories = false;
+                        // 一度名前変更前のアイテムを除去
+                        //Debug.WriteLine($"Renamed {oldName} to {renamedName}");
+                        modifiedTreeItem.Children.Remove(renamedTreeItem);
+                        renamedTreeItem.FullPath = newFullPath;
 
-                CurrentWatcher.Created += OnCurrentCreated;
-                CurrentWatcher.Deleted += OnCurrentDeleted;
-                CurrentWatcher.Renamed += OnCurrentRenamed;
+                        // 名前変更後のアイテムを再追加
+                        int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, renamedTreeItem);
+                        modifiedTreeItem.Children.Insert(newTreeIndex, renamedTreeItem);
 
-                CurrentWatcher.Error += OnError;
+
+                        // リストビューにも表示されていたら、そちらも更新
+                        if (CurrentItem != null && modifiedTreeItem == CurrentItem)
+                        {
+                            //Debug.WriteLine($"Renamed ListView {oldName} to {renamedName}");
+                            var listItem = ListFile.FirstOrDefault(item => item.FullPath == oldFullPath);
+                            if (listItem != null) { listItem.FullPath = newFullPath; }
+                        }
+                    }
+                }
+            });
+        }
+
+        /// <summary>
+        /// サブディレクトリが削除された時のUI処理
+        /// </summary>
+        /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
+        /// <param name="deletedItemNames">削除されたアイテムのコレクション</param>
+        /// <returns>Task</returns>
+        private async Task OnSubDirectoryDeleted(ExplorerTreeNodeViewModel modifiedTreeItem, string deletedItemName)
+        {
+            //Debug.WriteLine($"Deleted : {deletedItemName}");
+            await App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                // 削除されたツリービューアイテムの取得
+                var deletedTreeItem = modifiedTreeItem.Children.FirstOrDefault(c => c.FullPath == deletedItemName);
+                if (deletedTreeItem != null)
+                {
+                    // 削除されたツリービューアイテムの削除
+                    modifiedTreeItem.Children.Remove(deletedTreeItem);
+
+                    // リストビューにも表示されていたら、そちらも更新
+                    if (CurrentItem != null && modifiedTreeItem == CurrentItem)
+                    {
+                        var listItem = ListFile.FirstOrDefault(item => item.FullPath == deletedItemName);
+                        if (listItem != null) { ListFile.Remove(listItem); }
+                    }
+
+                    // 特殊フォルダにも存在したら反映
+                    FindChangedSpecialDirectoryTreeItem(deletedItemName);
+                    //TODO
+                }
+            });
+        }
+
+        /// <summary>
+        /// サブディレクトリが追加された時のUI処理
+        /// </summary>
+        /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
+        /// <param name="addedItemNames">追加されたアイテムのコレクション</param>
+        /// <returns>Task</returns>
+        private async Task OnSubDirectoryCreated(ExplorerTreeNodeViewModel modifiedTreeItem, string addedItemNames)
+        {
+            //Debug.WriteLine($"Created : {addedItemNames}");
+            await App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                // 追加されたファイルをツリービューアイテムにして追加
+                var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(addedItemNames);
+                var addItem = new ExplorerTreeNodeViewModel(this, fileInformation);
+                Debug.WriteLine($"Add : {addedItemNames}");
+                int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addItem);
+                modifiedTreeItem.Children.Insert(newTreeIndex, addItem);
+
+                // リストビューにも表示されていたら、そちらも更新
+                if (CurrentItem != null && modifiedTreeItem == CurrentItem)
+                {
+                    var listItems = new ExplorerListItemViewModel(this, fileInformation);
+                    var newListItem = new ExplorerListItemViewModel(this, fileInformation);
+                    int newListIndex = FindIndexToInsert(ListFile, newListItem);
+                    ListFile.Insert(newListIndex, listItems);
+                }
+            });
+        }
+
+        /// <summary>
+        /// ツリービューへの差分を取り、名前変更、追加、削除の処理に振り分ける
+        /// </summary>
+        /// <param name="modifiedTreeItem">変更されるツリービューアイテム</param>
+        /// <param name="originalItems">変更前のコレクション</param>
+        /// <param name="changedItems">変更後のコレクション</param>
+        /// <returns></returns>
+        private async Task ExecuteChangedTreeItemChange(ExplorerTreeNodeViewModel modifiedTreeItem,
+            IEnumerable<string> originalItems, IEnumerable<string> changedItems)
+        {
+            // originalItems にあって changedItems に無いもの
+            var deletedItemNames = originalItems.Except(changedItems);
+            // changedItems にあって originalItems に無いもの
+            var addedItemNames = changedItems.Except(originalItems);
+
+            if (modifiedTreeItem != null)
+            { 
+                // originalItems も changedItems にもアイテムがある場合はリネーム処理
+                if (deletedItemNames.Any() && addedItemNames.Any())
+                {
+                    await OnSubDirectoryRenamed(modifiedTreeItem, deletedItemNames.First(), addedItemNames.First());
+                    return;
+                }
+
+                // originalItem にあり changedItem にない場合は削除処理
+                if (deletedItemNames.Any())
+                {
+                    await OnSubDirectoryDeleted(modifiedTreeItem, deletedItemNames.First());
+                }
+                // originalItems にあり originalItem にない場合は追加処理
+                if (addedItemNames.Any())
+                {
+                    await OnSubDirectoryCreated(modifiedTreeItem, addedItemNames.First());
+                }
             }
-            catch (FileNotFoundException) { }
         }
-
+        
         /// <summary>
-        /// カレントディレクトリのファイルの作成通知が入った場合のイベントメソッド
+        /// ファイルの変更通知が入った場合のイベントメソッド
         /// </summary>
         /// <param name="sender">FileSystemWatcher</param>
         /// <param name="e">FileSystemEventArgs</param>
-        private void OnCurrentCreated(object sender, FileSystemEventArgs e)
+        private async void OnChanged(object sender, FileSystemEventArgs e)
         {
-            if (e.ChangeType != WatcherChangeTypes.Created) return;
+            if (IsSpecialFolderOrCannotAccess(e.FullPath)) return;
 
-            ///Debug.WriteLine($"Current Created : {e.FullPath}");
-            // 新しいリストビューアイテムを作成する
-            var fi = FileSystemManager.GetFileInformationFromDirectorPath(e.FullPath);
-            var item = new ExplorerListItemViewModel(this, fi);
-            var newListItem = new ExplorerListItemViewModel(this, fi);
+            /// ごみ箱の処理
+            if (e.FullPath.Contains("$RECYCLE.BIN")) {
+                await HandleRecycleBinChange(e.FullPath);
+                return;
+            }
 
-            // リストビューに作成したアイテムを追加する
-            App.Current.Dispatcher.InvokeAsync(() =>
+            Debug.WriteLine($"Changed : {e.FullPath}");
+
+            // 変更が加えられたディレクトリの親ツリーアイテムを取得
+            var modifiedTreeItem = FindChangedDirectoryTree(e.FullPath);
+            // 変更が加えられたディレクトリ内にあるディレクトリのフルパスコレクションを取得
+            var dirs = Directory.EnumerateDirectories(e.FullPath);
+
+            FindChangedSpecialDirectoryTreeItem(e.FullPath);
+
+            if (modifiedTreeItem != null)
             {
-                int newListIndex = FindIndexToInsert(ListFile, newListItem);
-                ListFile.Insert(newListIndex, item);
-            });
-            
+                // 変更が加えられる前のツリービューアイテムを取得
+                var treeItems = modifiedTreeItem.Children
+                    .Where(c => !string.IsNullOrEmpty(c.FullPath))
+                    .Select(c => c.FullPath);
+
+                if (treeItems != null)
+                {
+                    await ExecuteChangedTreeItemChange(modifiedTreeItem, treeItems, dirs);
+                }
+            }
+
+            // 特殊ディレクトリフォルダの処理
+            foreach (var modifiedSpecialTreeItems in FindChangedSpecialDirectoryTreeItem(e.FullPath))
+            {
+                var treeItems = modifiedSpecialTreeItems.Children
+                    .Where(c => !string.IsNullOrEmpty(c.FullPath))
+                    .Select(c => c.FullPath);
+
+                if (treeItems != null)
+                {
+                    await ExecuteChangedTreeItemChange(modifiedSpecialTreeItems, treeItems, dirs);
+                }
+            }
         }
 
         /// <summary>
-        /// カレントディレクトリのファイル削除通知が入った場合のイベントメソッド
+        /// 特殊ユーザーディレクトリルートからツリーアイテムを探す
         /// </summary>
-        /// <param name="sender">FileSystemWatcher</param>
-        /// <param name="e">FileSystemEventArgs</param>
-        private void OnCurrentDeleted(object sender, FileSystemEventArgs e)
+        /// <param name="path">特殊ユーザーディレクトリが含まれることを期待するパス</param>
+        /// <returns>特殊ユーザーディレクトリ内のツリーアイテム</returns>
+        private List<ExplorerTreeNodeViewModel> FindChangedSpecialDirectoryTreeItem(string path)
         {
-            if (e.ChangeType != WatcherChangeTypes.Deleted) return;
-            if (File.Exists(e.FullPath)) { return; }
+            var specialTreeItems = new List<ExplorerTreeNodeViewModel>();
 
-            //Debug.WriteLine($"Current Deleted : {e.FullPath}");
-            // 削除されたアイテムを検索し、リストビューから削除する
-            App.Current.Dispatcher.InvokeAsync(() =>
+            foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
             {
-                var listItem = ListFile.FirstOrDefault(i => i.FullPath == e.FullPath);
-                if (listItem != null) { ListFile.Remove(listItem); }
-            });
+                // 特殊ユーザーディレクトリのパスを持つアイテムを抽出
+                var rootItem = TreeRoot.FirstOrDefault(item => item.FullPath == rootInfo.FullPath);
+
+                if (rootItem != null && path.Contains(rootInfo.FullPath))
+                {
+                    Debug.WriteLine($"Searching : {WindowsAPI.GetDisplayName(rootInfo.FullPath)}");
+                    if (Path.Equals(rootItem.FullPath, path))
+                    {
+                        // ルートで見つかった場合はリストに追加
+                        Debug.WriteLine($"\tFound : {rootItem.FullPath}");
+                        specialTreeItems.Add(rootItem);
+                    }
+                    else
+                    {
+                        // 再帰的にツリービューを検索
+                        FindTreeChild(rootItem, path, specialTreeItems);
+                        foreach (var item in specialTreeItems)
+                        {
+                            Debug.WriteLine($"\tFound : {item.FullPath}");
+                        }
+                    }
+                }
+            }
+            return specialTreeItems;
         }
 
         /// <summary>
-        /// カレントディレクトリのファイル名前変更通知が入った場合のイベントメソッド
+        /// 再帰的に、パスと等しいツリービューアイテムを探して SpecialTreeItem に追加する
         /// </summary>
-        /// <param name="sender">FileSystemWatcher</param>
-        /// <param name="e">RenamedEventArgs</param>
-        private void OnCurrentRenamed(object sender, RenamedEventArgs e)
+        /// <param name="treeItem">検索中のツリービューアイテム</param>
+        /// <param name="path">探し出すファイルのフルパス</param>
+        /// <param name="specialTreeItems">見つかった時に追加するリストコレクション</param>
+        private static void FindTreeChild(ExplorerTreeNodeViewModel treeItem, string path, List<ExplorerTreeNodeViewModel> specialTreeItems)
         {
-            Debug.WriteLine($"Current Renamed : {e.OldFullPath} to {e.FullPath}");
-
-            // 名前が変更されたアイテムを検索し、リストビューに新しい名前を反映する
-            App.Current.Dispatcher.InvokeAsync(() =>
+            // 見つかったら終わり
+            if (Path.Equals(treeItem.FullPath, path))
             {
-                var listItem = ListFile.FirstOrDefault(i => i.FullPath == e.OldFullPath);
-                if (listItem != null) { listItem.FullPath = e.FullPath; }
-            });
-            
+                specialTreeItems.Add(treeItem);
+                return;
+            }
+
+            // 開いてなければそこで終わり
+            if (!treeItem.IsExpanded) return;
+
+            foreach (var child in treeItem.Children)
+            {
+                FindTreeChild(child, path, specialTreeItems);
+            }
         }
-        #endregion カレントディレクトリ監視関連
+        #endregion サブディレクトリ監視関連
     }
 }

@@ -36,8 +36,25 @@ namespace FilOps.ViewModels
             IsReady = f.IsReady;
             IsRemovable = f.IsRemovable;
             HasChildren = f.HasChildren;
-
         }
+
+        /// <summary>
+        /// ソートのための比較関数
+        /// </summary>
+        /// <param name="other">ExplorerTreeNodeViewModel?</param>
+        /// <returns><bool/returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public int CompareTo(ExplorerTreeNodeViewModel? other)
+        {
+            return Name.CompareTo(other?.Name);
+        }
+
+
+        /// <summary>
+        /// PageのViewModelからフォントサイズの変更を受け取る
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 
         {
@@ -46,13 +63,6 @@ namespace FilOps.ViewModels
                 // ExplorerPageViewModel の FontSize が変更された場合、ExplorerTreeNodeViewModel のプロパティも更新
                 OnPropertyChanged(nameof(FontSize));
             }
-        }
-
-        public int CompareTo(ExplorerTreeNodeViewModel? other)
-        {
-            if (other == null) return 1;
-
-            return this.Name.CompareTo(other.Name);
         }
 
         #region データバインディング用

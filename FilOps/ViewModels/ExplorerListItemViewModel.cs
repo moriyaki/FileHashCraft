@@ -15,7 +15,6 @@ namespace FilOps.ViewModels
         {
             throw new InvalidOperationException("ExplorerListItemViewModel");
         }
-
         public ExplorerListItemViewModel(ExplorerPageViewModel mv, FileInformation f)
         {
             _explorerPageViewModel = mv;
@@ -29,6 +28,11 @@ namespace FilOps.ViewModels
             }
         }
 
+        /// <summary>
+        /// PageのViewModelからフォントサイズの変更を受け取る
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
@@ -38,12 +42,15 @@ namespace FilOps.ViewModels
             }
         }
 
+        /// <summary>
+        /// ソートのための比較関数
+        /// </summary>
+        /// <param name="other">ExplorerListItemViewModel?</param>
+        /// <returns><bool/returns>
+        /// <exception cref="NotImplementedException"></exception>
         public int CompareTo(ExplorerListItemViewModel? other)
         {
-            if (other == null) return 1;
-
-            if (IsDirectory && !other.IsDirectory) return -1;
-            return this.Name.CompareTo(other.Name);
+            return Name.CompareTo(other?.Name);
         }
 
         #region データバインディング

@@ -120,13 +120,21 @@ namespace FilOps.Views
         // ページのHwndSourceを保持するための変数
         private HwndSource? hwndSource;
 
-        // ウィンドウプロシージャをオーバーライド
+        /// <summary>
+        /// ウィンドウプロシージャをオーバーライド
+        /// </summary>
+        /// <param name="e">EventArgs</param>
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
             Loaded += ExplorerPage_Loaded;
         }
 
+        /// <summary>
+        /// ウィンドウがロードされた時のイベント、カスタムのウィンドウプロシージャをフックする
+        /// </summary>
+        /// <param name="sender">object</param>
+        /// <param name="e">RoutedEventArgs</param>
         private void ExplorerPage_Loaded(object sender, RoutedEventArgs e)
         {
             // HwndSourceを取得
@@ -136,7 +144,15 @@ namespace FilOps.Views
             else { Debug.WriteLine("HwndSourceを取得できませんでした。"); }
         }
 
-        // カスタムのウィンドウプロシージャ
+        /// <summary>
+        /// カスタムのウィンドウプロシージャ
+        /// </summary>
+        /// <param name="hwnd">IntPtr</param>
+        /// <param name="msg">int</param>
+        /// <param name="wParam">IntPtr</param>
+        /// <param name="lParam">IntPtr</param>
+        /// <param name="handled">ref bool</param>
+        /// <returns>IntPtr</returns>
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             // メッセージに対する処理を追加

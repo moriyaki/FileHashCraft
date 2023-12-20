@@ -77,33 +77,27 @@ namespace FilOps.ViewModels
                     return;
                 }
 
-                // 表示を大文字小文字正しいものを取得
+                // 可能なら、表示を大文字小文字正しいものを取得
                 if (Directory.Exists(value))
                 {
                     var dirName = Path.GetDirectoryName(changedDir);
                     if (dirName is not null)
                     {
                         var dirs = Directory.GetDirectories(dirName);
-                        if (dirs is not null)
-                        {
-                            changedDir = dirs.FirstOrDefault(dir => dir.Equals(value, StringComparison.OrdinalIgnoreCase)) ?? value;
-                        }
-                    }
-                    else
-                    {
-                        changedDir = value.ToUpper();
+                        changedDir = dirs?.FirstOrDefault(dir => dir.Equals(value, StringComparison.OrdinalIgnoreCase)) ?? value;
                     }
                 }
 
-                if (!Path.Equals(_currentDir, changedDir))
+                // 同じ値ならセットしない
+                if (Path.Equals(_currentDir, changedDir)) return;
+
+                // 値のセット
+                if (!SetProperty(ref _currentDir, changedDir)) return;
+
+                // ディレクトリが存在するなら、CurrentItemを設定
+                if (Directory.Exists(changedDir))
                 {
-                    if (SetProperty(ref _currentDir, changedDir))
-                    {
-                        if (Directory.Exists(changedDir))
-                        {
-                            CurrentItem = FolderSelectedChanged(changedDir);
-                        }
-                    }
+                    CurrentItem = FolderSelectedChanged(changedDir);
                 }
             }
         }
@@ -170,37 +164,33 @@ namespace FilOps.ViewModels
                 () => { return CurrentItem != null && CurrentItem.Parent != null; }
             );
 
-            ListViewUpdater = new DelegateCommand(
-                async () => {
-                    ListFile.Clear();
-                    if (CurrentItem != null)
-                    {
-                        await Task.Run(() => FolderFileListScan(CurrentItem.FullPath));
-                    }
+            ListViewUpdater = new DelegateCommand(async () => {
+                ListFile.Clear();
+                if (CurrentItem != null)
+                {
+                    await Task.Run(() => FolderFileListScan(CurrentItem.FullPath));
                 }
-            );
+            });
 
-            FileListViewExecuted = new DelegateCommand(
-                () => {
-                    if (SelectedListViewItem is not null)
+            FileListViewExecuted = new DelegateCommand(() => {
+                if (SelectedListViewItem is not null)
+                {
+                    var newDir = SelectedListViewItem.FullPath;
+                    if (Directory.Exists(newDir))
                     {
-                        var newDir = SelectedListViewItem.FullPath;
-                        if (Directory.Exists(newDir))
-                        {
-                            CurrentDir = newDir;
-                        }
+                        CurrentDir = newDir;
                     }
                 }
-            );
-            foreach (var root in FileSystemManager.Instance.SpecialFolderScan())
+            });
+            foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
             {
-                var item = new ExplorerTreeNodeViewModel(this, root);
+                var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                 TreeRoot.Add(item);
             }
             var selected = true;
-            foreach (var root in FileSystemManager.DriveScan())
+            foreach (var rootInfo in FileSystemManager.DriveScan())
             {
-                var item = new ExplorerTreeNodeViewModel(this, root);
+                var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                 TreeRoot.Add(item);
                 AddRootDriveWatcher(item);
                 item.IsSelected = selected;
@@ -246,40 +236,40 @@ namespace FilOps.ViewModels
             ExplorerTreeNodeViewModel? selectingVM = null;
 
             // パスの最後がディレクトリセパレータで終わる場合は除去
-            string trueChangedPath = changedPath.Length == 3 ? changedPath : changedPath.TrimEnd(Path.DirectorySeparatorChar);
+            changedPath = changedPath.Length == 3 ? changedPath : changedPath.TrimEnd(Path.DirectorySeparatorChar);
 
             // ルートディレクトリにある場合は選択状態に設定して終了
-            var selectedRoot = TreeRoot.FirstOrDefault(root => Path.Equals(root.FullPath, trueChangedPath));
+            var selectedRoot = TreeRoot.FirstOrDefault(root => Path.Equals(root.FullPath, changedPath));
             if (selectedRoot != null) { return selectedRoot; }
 
             // サブディレクトリ内の場合は一部一致するルートディレクトリを特定し、ルートディレクトリを展開
+            var subDirectoryRoot = TreeRoot.FirstOrDefault(root => changedPath.Contains(root.FullPath));
+            if (subDirectoryRoot == null) return null;
 
-            var subDirectoryRoot = TreeRoot.FirstOrDefault(root => trueChangedPath.Contains(root.FullPath));
-            if (subDirectoryRoot != null) 
+            selectingVM = subDirectoryRoot;
+            selectingVM.IsExpanded = true;
+
+
+            var directories = GetDirectoryNames(changedPath).ToList();
+
+            // パス内の各ディレクトリに対して処理を実行
+            foreach (var directory in directories)
             {
-                selectingVM = subDirectoryRoot;
-                selectingVM.IsExpanded = true;
-
-
-                var directories = GetDirectoryNames(trueChangedPath).ToList();
-
-                // パスの各ディレクトリに対して処理を実行
-                foreach (var directory in directories)
+                // 親ディレクトリの各子ディレクトリに対して処理を実行
+                foreach (var child in selectingVM.Children)
                 {
-                    foreach (var child in selectingVM.Children)
+                    if (child.FullPath == directory)
                     {
-                        if (child.FullPath == directory)
+                        selectingVM = child;
+                        if (Path.Equals(directory, changedPath))
                         {
-                            selectingVM = child;
-                            if (directory != trueChangedPath)
-                            {
-                                // サブディレクトリを展開する
-                                child.IsExpanded = true;
-                            }
-                            else
-                            {
-                                return child;
-                            }
+                            // カレントディレクトリが見つかった
+                            return child;
+                        }
+                        else
+                        {
+                            // サブディレクトリを展開する
+                            child.IsExpanded = true;
                         }
                     }
                 }
