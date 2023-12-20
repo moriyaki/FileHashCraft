@@ -6,7 +6,7 @@ using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
-    public partial class ExplorerPageViewModel : ObservableObject
+    public class ExplorerPageViewModel : ObservableObject
     {
         #region データバインディング
         /// <summary>
@@ -27,6 +27,12 @@ namespace FilOps.ViewModels
         {
             get => _ListFile;
             set => SetProperty(ref _ListFile, value);
+        }
+
+        private readonly FileSystemWatcherService _Watcher;
+        public FileSystemWatcherService Watcher
+        {
+            get => _Watcher;
         }
 
         /// <summary>
@@ -122,7 +128,7 @@ namespace FilOps.ViewModels
                 SetProperty(ref _CurrentItem, value);
                 ToUpDirectory.RaiseCanExecuteChanged();
 
-                SetCurrentDirectoryWatcher(value.FullPath);
+                Watcher.SetCurrentDirectoryWatcher(value.FullPath);
                 value.IsSelected = true;
                 ListViewUpdater.Execute(null);
                 CurrentDir = value.FullPath;
@@ -182,6 +188,7 @@ namespace FilOps.ViewModels
                     }
                 }
             });
+            _Watcher = new FileSystemWatcherService(this);
             foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this, rootInfo);
@@ -192,7 +199,7 @@ namespace FilOps.ViewModels
             {
                 var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                 TreeRoot.Add(item);
-                AddRootDriveWatcher(item);
+                Watcher.AddRootDriveWatcher(item);
                 item.IsSelected = selected;
                 if (selected)
                 {
@@ -282,7 +289,7 @@ namespace FilOps.ViewModels
         /// </summary>
         /// <param name="path">コレクションを取得するディレクトリ</param>
         /// <returns>親ディレクトリからのコレクション</returns>
-        private static IEnumerable<string> GetDirectoryNames(string path)
+        public static IEnumerable<string> GetDirectoryNames(string path)
         {
             // パスの区切り文字に関係なく分割する
             var pathSeparated = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);

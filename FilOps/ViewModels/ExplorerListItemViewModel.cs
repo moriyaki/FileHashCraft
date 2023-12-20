@@ -9,18 +9,18 @@ namespace FilOps.ViewModels
 {
     public class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>
     {
-        private readonly ExplorerPageViewModel? _explorerPageViewModel;
+        private readonly ExplorerPageViewModel? ExplorerVM;
 
         public ExplorerListItemViewModel()
         {
             throw new InvalidOperationException("ExplorerListItemViewModel");
         }
-        public ExplorerListItemViewModel(ExplorerPageViewModel mv, FileInformation f)
+        public ExplorerListItemViewModel(ExplorerPageViewModel vm, FileInformation f)
         {
-            _explorerPageViewModel = mv;
-            if (_explorerPageViewModel is not null)
+            ExplorerVM = vm;
+            if (ExplorerVM is not null)
             {
-                _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
+                ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
                 FullPath = f.FullPath;
                 LastModifiedDate = f.LastModifiedDate;
                 FileSize = f.FileSize;
@@ -178,12 +178,12 @@ namespace FilOps.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _explorerPageViewModel?.FontSize ?? SystemFonts.MessageFontSize;
+            get => ExplorerVM?.FontSize ?? SystemFonts.MessageFontSize;
             set
             {
-                if (_explorerPageViewModel is not null)
+                if (ExplorerVM is not null)
                 {
-                    _explorerPageViewModel.FontSize = value;
+                    ExplorerVM.FontSize = value;
                 }
             }
         }

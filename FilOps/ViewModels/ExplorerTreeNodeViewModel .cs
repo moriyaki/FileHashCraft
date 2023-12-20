@@ -10,7 +10,7 @@ namespace FilOps.ViewModels
 {
     public class ExplorerTreeNodeViewModel : ObservableObject, IComparable<ExplorerTreeNodeViewModel>
     {
-        private readonly ExplorerPageViewModel? _explorerPageViewModel;
+        private readonly ExplorerPageViewModel? ExplorerVM;
 
         public ExplorerTreeNodeViewModel()
         {
@@ -19,18 +19,18 @@ namespace FilOps.ViewModels
 
         public ExplorerTreeNodeViewModel(ExplorerPageViewModel mv)
         {
-            _explorerPageViewModel = mv;
-            if (_explorerPageViewModel is not null)
+            ExplorerVM = mv;
+            if (ExplorerVM is not null)
             {
-                _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
+                ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             }
         }
-        public ExplorerTreeNodeViewModel(ExplorerPageViewModel mv, FileInformation f)
+        public ExplorerTreeNodeViewModel(ExplorerPageViewModel vm, FileInformation f)
         {
-            _explorerPageViewModel = mv;
-            if (_explorerPageViewModel is not null)
+            ExplorerVM = vm;
+            if (ExplorerVM is not null)
             {
-                _explorerPageViewModel.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
+                ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             }
             FullPath = f.FullPath;
             IsReady = f.IsReady;
@@ -170,9 +170,9 @@ namespace FilOps.ViewModels
                 if (_IsSelected != value)
                 {
                     SetProperty(ref _IsSelected, value);
-                    if (value && _explorerPageViewModel != null)
+                    if (value && ExplorerVM != null)
                     {
-                        _explorerPageViewModel.CurrentItem = this;
+                        ExplorerVM.CurrentItem = this;
                         if (!IsKicked) { KickChildGet(); }
                     }
                 }
@@ -194,9 +194,9 @@ namespace FilOps.ViewModels
             set
             {
                 if (SetProperty(ref _HasChildren, value) &&
-                    Children.Count == 0 && _explorerPageViewModel is not null)
+                    Children.Count == 0 && ExplorerVM is not null)
                 {
-                    Children.Add(new ExplorerTreeNodeViewModel(_explorerPageViewModel) { Name = "【dummy】" });
+                    Children.Add(new ExplorerTreeNodeViewModel(ExplorerVM) { Name = "【dummy】" });
 
                 }
             }
@@ -238,11 +238,11 @@ namespace FilOps.ViewModels
         /// </summary>
         public void KickChildGet()
         {
-            if (_explorerPageViewModel == null) { return; }
+            if (ExplorerVM == null) { return; }
             Children.Clear();
             foreach (var child in FileSystemManager.FileItemScan(FullPath, false))
             {
-                var item = new ExplorerTreeNodeViewModel(_explorerPageViewModel)
+                var item = new ExplorerTreeNodeViewModel(ExplorerVM)
                 {
                     FullPath = child.FullPath,
                     IsReady = this.IsReady,
@@ -271,12 +271,12 @@ namespace FilOps.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _explorerPageViewModel?.FontSize ?? SystemFonts.MessageFontSize;
+            get => ExplorerVM?.FontSize ?? SystemFonts.MessageFontSize;
             set
             {
-                if (_explorerPageViewModel is not null)
+                if (ExplorerVM is not null)
                 {
-                    _explorerPageViewModel.FontSize = value;
+                    ExplorerVM.FontSize = value;
                 }
             }
         }
