@@ -10,7 +10,7 @@ namespace FilOps.ViewModels
 {
     public class ExplorerTreeNodeViewModel : ObservableObject, IComparable<ExplorerTreeNodeViewModel>
     {
-        private readonly ExplorerPageViewModel? ExplorerVM;
+        private readonly ExplorerPageViewModel ExplorerVM;
 
         private ExplorerTreeNodeViewModel()
         {
@@ -20,18 +20,12 @@ namespace FilOps.ViewModels
         public ExplorerTreeNodeViewModel(ExplorerPageViewModel mv)
         {
             ExplorerVM = mv;
-            if (ExplorerVM is not null)
-            {
-                ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
-            }
+             ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
         }
         public ExplorerTreeNodeViewModel(ExplorerPageViewModel vm, FileInformation f)
         {
             ExplorerVM = vm;
-            if (ExplorerVM is not null)
-            {
-                ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
-            }
+            ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
             FullPath = f.FullPath;
             IsReady = f.IsReady;
             IsRemovable = f.IsRemovable;
@@ -217,18 +211,14 @@ namespace FilOps.ViewModels
                     {
                         KickChildGet();
                     }
-                    else
-                    {
-                        /* する必要ある？
-                        if (HasChildren)
-                        {
-                            Children.Clear();
-                            if (_explorerPageViewModel == null) return;
-                            Children.Add(new ExplorerTreeNodeViewModel(_explorerPageViewModel) { Name = "【dummy】" });
-                            ChildrenChecked = false;
-                        }
-                        */
-                    }
+                }
+                if (value)
+                {
+                    ExplorerVM.TreeViewManager.AddDirectory(this.FullPath);
+                }
+                else
+                {
+                    ExplorerVM.TreeViewManager.RemoveDirectory(this.FullPath);
                 }
             }
         }

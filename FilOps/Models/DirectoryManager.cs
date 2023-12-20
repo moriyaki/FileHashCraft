@@ -34,6 +34,12 @@ namespace FilOps.Models
      * 
      * ここで仮に A が登録されたら、無条件に B,C,D,E は削除され、Aが登録される。
      */
+    public enum ManagementType
+    {
+        ForWatcher,
+        ForChecked,
+    }
+
     public class DirectoryManager
     {
         public DirectoryManager()
@@ -41,11 +47,6 @@ namespace FilOps.Models
             throw new NotImplementedException();
         }
 
-        public enum ManagementType
-        {
-            ForWatcher,
-            ForChecked,
-        }
 
         public DirectoryManager(ManagementType managementType)
         {

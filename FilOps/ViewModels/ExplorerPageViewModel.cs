@@ -54,6 +54,9 @@ namespace FilOps.ViewModels
             set => SetProperty(ref _SelectedListViewItem, value);
         }
 
+        private readonly DirectoryManager _TreeViewManager = new(ManagementType.ForWatcher);
+        public DirectoryManager TreeViewManager { get => _TreeViewManager; }
+
         /// <summary>
         /// カレントディレクトリ
         /// </summary>
@@ -187,12 +190,14 @@ namespace FilOps.ViewModels
             {
                 var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                 TreeRoot.Add(item);
+                TreeViewManager.AddDirectory(rootInfo.FullPath);
             }
             var selected = true;
             foreach (var rootInfo in FileSystemManager.DriveScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                 TreeRoot.Add(item);
+                TreeViewManager.AddDirectory(rootInfo.FullPath);
                 FileSystemWatcherService.Instance.AddRootDriveWatcher(item);
                 item.IsSelected = selected;
                 if (selected)
@@ -202,6 +207,14 @@ namespace FilOps.ViewModels
                 }
             }
         }
+        public ExplorerPageViewModel(object? o)
+        {
+            ToUpDirectory = new DelegateCommand(() => { });
+            ListViewUpdater = new DelegateCommand(() => { });
+            FileListViewExecuted = new DelegateCommand(() => { });
+            if (o == null)  { }
+        }
+
         #endregion コンストラクタ
 
         /// <summary>

@@ -20,12 +20,30 @@ namespace FilOps.ViewModels
                 {
                     lock (LockObject)
                     {
-                        _instance ??= new FileSystemWatcherService();
+                        // 既にコンストラクタで設定されている前提
+                        var dummyVM = new ExplorerPageViewModel(null);
+                        _instance ??= new FileSystemWatcherService(dummyVM);
+                        dummyVM = null;
                     }
                 }
 
                 return _instance;
             }
+        }
+
+        /// <summary>
+        /// MainViewModel
+        /// </summary>
+        private readonly ExplorerPageViewModel ExplorerVM;
+
+        private FileSystemWatcherService()
+        {
+            throw new NotImplementedException();
+        }
+
+        public FileSystemWatcherService(ExplorerPageViewModel vm)
+        {
+            ExplorerVM = vm;
         }
 
         private readonly FileSystemWatcher CurrentWatcher = new();
@@ -47,19 +65,6 @@ namespace FilOps.ViewModels
             | NotifyFilters.LastWrite;
         #endregion FileSystemWatcherの宣言
 
-        /// <summary>
-        /// MainViewModel
-        /// </summary>
-        private readonly ExplorerPageViewModel ExplorerVM;
-        
-        private FileSystemWatcherService()
-        {
-            throw new NotImplementedException();
-        }
-        public FileSystemWatcherService(ExplorerPageViewModel vm)
-        {
-            ExplorerVM = vm;
-        }
 
         #region リムーバブルディスクの着脱処理
         /// <summary>
