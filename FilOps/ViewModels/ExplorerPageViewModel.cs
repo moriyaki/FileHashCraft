@@ -6,28 +6,20 @@ using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
-    public class ExplorerPageViewModel : ObservableObject
+    public interface IExplorerPageViewModel
+    {
+        public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; }
+        public ObservableCollection<ExplorerItemViewModelBase> ListFile { get; set; }
+        public string CurrentDir { get; set; }
+        public ExplorerTreeNodeViewModel? CurrentItem { get; set; }
+        public DirectoryManager TreeViewManager { get; }
+        public double FontSize { get; set; }
+    }
+    public class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
     {
         #region データバインディング
-        /// <summary>
-        /// ツリービューのルートのコレクション
-        /// </summary>
-        private ObservableCollection<ExplorerTreeNodeViewModel> _TreeRoot = [];
-        public ObservableCollection<ExplorerTreeNodeViewModel> TreeRoot
-        {
-            get => _TreeRoot;
-            set => SetProperty(ref _TreeRoot, value);
-        }
-
-        /// <summary>
-        /// リストビューのコレクション
-        /// </summary>
-        private ObservableCollection<ExplorerListItemViewModel> _ListFile = [];
-        public ObservableCollection<ExplorerListItemViewModel> ListFile
-        {
-            get => _ListFile;
-            set => SetProperty(ref _ListFile, value);
-        }
+        public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; } = [];
+        public ObservableCollection<ExplorerItemViewModelBase> ListFile { get; set; } = [];
 
         /// <summary>
         /// 「上へ」コマンド
@@ -159,7 +151,7 @@ namespace FilOps.ViewModels
         }
         #endregion データバインディング
 
-        #region コンストラクタ
+        #region コンストラクタと初期化
         public ExplorerPageViewModel()
         {
             ToUpDirectory = new DelegateCommand(
@@ -185,37 +177,26 @@ namespace FilOps.ViewModels
                     }
                 }
             });
-            _ = new FileSystemWatcherService(this);
+            InitializeOnce();
+        }
+
+        private void InitializeOnce()
+        {
             foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
             {
-                var item = new ExplorerTreeNodeViewModel(this, rootInfo);
+                var item = new ExplorerTreeNodeViewModel(rootInfo);
                 TreeRoot.Add(item);
                 TreeViewManager.AddDirectory(rootInfo.FullPath);
             }
-            var selected = true;
             foreach (var rootInfo in FileSystemManager.DriveScan())
             {
-                var item = new ExplorerTreeNodeViewModel(this, rootInfo);
+                var item = new ExplorerTreeNodeViewModel(rootInfo);
                 TreeRoot.Add(item);
                 TreeViewManager.AddDirectory(rootInfo.FullPath);
                 FileSystemWatcherService.Instance.AddRootDriveWatcher(item);
-                item.IsSelected = selected;
-                if (selected)
-                {
-                    CurrentDir = item.FullPath;
-                    selected = false;
-                }
             }
         }
-        public ExplorerPageViewModel(object? o)
-        {
-            ToUpDirectory = new DelegateCommand(() => { });
-            ListViewUpdater = new DelegateCommand(() => { });
-            FileListViewExecuted = new DelegateCommand(() => { });
-            if (o == null)  { }
-        }
-
-        #endregion コンストラクタ
+        #endregion コンストラクタと初期化
 
         /// <summary>
         /// 指定されたディレクトリのファイル情報を取得し、リストビューを更新します。
@@ -227,7 +208,7 @@ namespace FilOps.ViewModels
             foreach (var folderFile in FileSystemManager.FileItemScan(path, true))
             {
                 // フォルダやファイルの情報を ViewModel に変換
-                var item = new ExplorerListItemViewModel(this, folderFile);
+                var item = new ExplorerListItemViewModel(folderFile);
 
                 // UI スレッドでリストビューを更新
                 App.Current?.Dispatcher?.Invoke((Action)(() =>
@@ -251,13 +232,14 @@ namespace FilOps.ViewModels
 
             // ルートディレクトリにある場合は選択状態に設定して終了
             var selectedRoot = TreeRoot.FirstOrDefault(root => Path.Equals(root.FullPath, changedPath));
-            if (selectedRoot != null) { return selectedRoot; }
+            if (selectedRoot != null) { return selectedRoot as ExplorerTreeNodeViewModel; }
 
             // サブディレクトリ内の場合は一部一致するルートディレクトリを特定し、ルートディレクトリを展開
             var subDirectoryRoot = TreeRoot.FirstOrDefault(root => changedPath.Contains(root.FullPath));
             if (subDirectoryRoot == null) return null;
 
-            selectingVM = subDirectoryRoot;
+            selectingVM = subDirectoryRoot as ExplorerTreeNodeViewModel;
+            if (selectingVM == null) return null;
             selectingVM.IsExpanded = true;
 
 

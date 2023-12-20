@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using FilOps.ViewModels;
 using FilOps.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps
 {
@@ -9,13 +10,11 @@ namespace FilOps
     /// </summary>
     public partial class MainView : Window
     {
-        public MainView()
+　      public MainView()
         {
             InitializeComponent();
-            mainFrame.Navigate(new ExplorerPage());
-            _mainVM = new MainViewModel();
-            DataContext = _mainVM;
+            DataContext = App.Current.Services.GetService<IMainViewModel>();
+            MainFrame.Navigate(new ExplorerPage());
         }
-        private readonly MainViewModel _mainVM;
     }
 }

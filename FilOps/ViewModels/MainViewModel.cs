@@ -2,7 +2,7 @@
 
 namespace FilOps.ViewModels
 {
-    public class MainViewModel : ObservableObject
-    {
-    }
+    public interface IMainViewModel { }
+
+    public class MainViewModel : ObservableObject, IMainViewModel { }
 }

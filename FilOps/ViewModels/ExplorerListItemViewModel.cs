@@ -1,31 +1,16 @@
 ﻿using System.ComponentModel;
-using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
-    public class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>
+    public class ExplorerListItemViewModel : ExplorerItemViewModelBase
     {
-        private readonly ExplorerPageViewModel? ExplorerVM;
+        public ExplorerListItemViewModel() : base() { }
 
-        private ExplorerListItemViewModel()
+        public ExplorerListItemViewModel(FileInformation f) : base(f)
         {
-            throw new InvalidOperationException("ExplorerListItemViewModel");
-        }
-        public ExplorerListItemViewModel(ExplorerPageViewModel vm, FileInformation f)
-        {
-            ExplorerVM = vm;
-            if (ExplorerVM is not null)
-            {
-                ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
-                FullPath = f.FullPath;
-                LastModifiedDate = f.LastModifiedDate;
-                FileSize = f.FileSize;
-                IsDirectory = f.IsDirectory;
-            }
+            LastModifiedDate = f.LastModifiedDate;
+            FileSize = f.FileSize;
         }
 
         /// <summary>
@@ -42,56 +27,7 @@ namespace FilOps.ViewModels
             }
         }
 
-        /// <summary>
-        /// ソートのための比較関数
-        /// </summary>
-        /// <param name="other">ExplorerListItemViewModel?</param>
-        /// <returns><bool/returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public int CompareTo(ExplorerListItemViewModel? other)
-        {
-            return Name.CompareTo(other?.Name);
-        }
-
         #region データバインディング
-        /// <summary>
-        /// ファイル表示名
-        /// </summary>
-        private string _Name = string.Empty;
-        public string Name
-        {
-            get => _Name;
-            set => SetProperty(ref _Name, value);
-        }
-
-        /// <summary>
-        /// ファイル実体名
-        /// </summary>
-        public string FileName
-        {
-            get => Path.GetFileName(FullPath);
-        }
-
-        /// <summary>
-        /// ファイルまたはフォルダのフルパス
-        /// </summary>
-        private string _FullPath = string.Empty;
-        public string FullPath
-        {
-            get => _FullPath;
-            set
-            {
-                SetProperty(ref _FullPath, value);
-                Name = WindowsAPI.GetDisplayName(FullPath);
-
-                App.Current?.Dispatcher.Invoke(new Action(() =>
-                {
-                    Icon = WindowsAPI.GetIcon(FullPath);
-                    FileType = WindowsAPI.GetType(FullPath);
-                }));
-            }
-        }
-
         /// <summary>
         /// チェックボックス
         /// </summary>
@@ -103,41 +39,11 @@ namespace FilOps.ViewModels
         }
 
         /// <summary>
-        /// アイコン
-        /// </summary>
-        private BitmapSource? _Icon = null;
-        public BitmapSource? Icon
-        {
-            get => _Icon;
-            set => SetProperty(ref _Icon, value);
-        }
-
-        /// <summary>
         /// 表示用の更新日時文字列
         /// </summary>
         public string LastFileUpdate
         {
             get => LastModifiedDate?.ToString("yy/MM/dd HH:mm") ?? string.Empty;
-        }
-
-        /// <summary>
-        /// 更新日時
-        /// </summary>
-        private DateTime? _LastModifiedDate = null;
-        public DateTime? LastModifiedDate
-        {
-            get => _LastModifiedDate;
-            set => SetProperty(ref _LastModifiedDate, value);
-        }
-
-        /// <summary>
-        /// ファイルの種類
-        /// </summary>
-        private string _FileType = string.Empty;
-        public string FileType
-        {
-            get => _FileType;
-            set => SetProperty(ref _FileType, value);
         }
 
         /// <summary>
@@ -151,6 +57,16 @@ namespace FilOps.ViewModels
         }
 
         /// <summary>
+        /// 更新日時
+        /// </summary>
+        private DateTime? _LastModifiedDate = null;
+        public DateTime? LastModifiedDate
+        {
+            get => _LastModifiedDate;
+            set => SetProperty(ref _LastModifiedDate, value);
+        }
+
+        /// <summary>
         /// 書式化したファイルのサイズ文字列
         /// </summary>
         public string FormattedFileSize
@@ -160,31 +76,6 @@ namespace FilOps.ViewModels
                 if (FileSize == null || IsDirectory) return string.Empty;
                 var kb_filesize = (long)FileSize / 1024;
                 return kb_filesize.ToString("N") + "KB";
-            }
-        }
-
-        /// <summary>
-        /// ディレクトリかどうか
-        /// </summary>
-        private bool _IsDirectory = false;
-        public bool IsDirectory
-        {
-            get => _IsDirectory;
-            set => SetProperty(ref _IsDirectory, value);
-        }
-
-        /// <summary>
-        /// フォントサイズ
-        /// </summary>
-        public double FontSize
-        {
-            get => ExplorerVM?.FontSize ?? SystemFonts.MessageFontSize;
-            set
-            {
-                if (ExplorerVM is not null)
-                {
-                    ExplorerVM.FontSize = value;
-                }
             }
         }
         #endregion データバインディング

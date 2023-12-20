@@ -1,35 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels
 {
-    public class ExplorerTreeNodeViewModel : ObservableObject, IComparable<ExplorerTreeNodeViewModel>
+    public class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
-        private readonly ExplorerPageViewModel ExplorerVM;
+        public ExplorerTreeNodeViewModel() { }
 
-        private ExplorerTreeNodeViewModel()
+        public ExplorerTreeNodeViewModel(FileInformation f): base(f) { }
+        public ExplorerTreeNodeViewModel(FileInformation f, ExplorerTreeNodeViewModel parent) : base(f)
         {
-            throw new InvalidOperationException("ExplorerTreeNodeViewModel");
-        }
-
-        public ExplorerTreeNodeViewModel(ExplorerPageViewModel mv)
-        {
-            ExplorerVM = mv;
-             ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
-        }
-        public ExplorerTreeNodeViewModel(ExplorerPageViewModel vm, FileInformation f)
-        {
-            ExplorerVM = vm;
-            ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
-            FullPath = f.FullPath;
-            IsReady = f.IsReady;
-            IsRemovable = f.IsRemovable;
-            HasChildren = f.HasChildren;
+            Parent =parent;
         }
 
         /// <summary>
@@ -42,7 +25,6 @@ namespace FilOps.ViewModels
         {
             return Name.CompareTo(other?.Name);
         }
-
 
         /// <summary>
         /// PageのViewModelからフォントサイズの変更を受け取る
@@ -76,46 +58,13 @@ namespace FilOps.ViewModels
         }
 
         /// <summary>
-        /// ディレクトリの表示名
+        /// ディレクトリのチェックボックスがチェックされているかどうか
         /// </summary>
-        private string _Name = string.Empty;
-        public string Name
+        private bool? _IsChecked = false;
+        public bool? IsChecked
         {
-            get => _Name;
-            set => SetProperty(ref _Name, value);
-        }
-
-        /// <summary>
-        /// ディレクトリのの実体名
-        /// </summary>
-        public string FileName
-        {
-            get => Path.GetFileName(FullPath);
-        }
-
-        /// <summary>
-        /// ディレクトリのフルパス
-        /// </summary>
-        private string _FullPath = string.Empty;
-        public string FullPath
-        {
-            get => _FullPath;
-            set
-            {
-                Name = WindowsAPI.GetDisplayName(value);
-                Icon = WindowsAPI.GetIcon(value);
-                SetProperty(ref _FullPath, value);
-            }
-        }
-
-        /// <summary>
-        /// ディレクトリのアイコン
-        /// </summary>
-        private BitmapSource? _Icon = null;
-        public BitmapSource? Icon
-        {
-            get => _Icon;
-            set => SetProperty(ref _Icon, value);
+            get => _IsChecked;
+            set => SetProperty(ref _IsChecked, value);
         }
 
         /// <summary>
@@ -129,10 +78,25 @@ namespace FilOps.ViewModels
         }
 
         /// <summary>
+        /// ディレクトリがディレクトリを持つかどうか
+        /// </summary>
+        public override bool HasChildren
+        {
+            get => _HasChildren;
+            set
+            {
+                if (SetProperty(ref _HasChildren, value) &&  Children.Count == 0)
+                {
+                    Children.Add(new ExplorerTreeNodeViewModel() { Name = "【dummy】" });
+
+                }
+            }
+        }
+
+        /// <summary>
         /// ディレクトリのドライブが準備されているかどうか
         /// </summary>
-        private bool _IsReady = false;
-        public bool IsReady
+        public override bool IsReady
         {
             get => _IsReady;
             set
@@ -140,16 +104,6 @@ namespace FilOps.ViewModels
                 SetProperty(ref _IsReady, value);
                 if (!value) { Children.Clear(); }
             }
-        }
-
-        /// <summary>
-        /// ディレクトリのドライブが着脱可能か
-        /// </summary>
-        private bool _IsRemovable = false;
-        public bool IsRemovable
-        {
-            get => _IsRemovable;
-            set => SetProperty(ref _IsRemovable, value);
         }
 
         /// <summary>
@@ -164,9 +118,10 @@ namespace FilOps.ViewModels
                 if (_IsSelected != value)
                 {
                     SetProperty(ref _IsSelected, value);
-                    if (value && ExplorerVM != null)
+                    if (value)
                     {
-                        ExplorerVM.CurrentItem = this;
+                        var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
+                        if (explorerVM != null) { explorerVM.CurrentItem = this; }
                         if (!IsKicked) { KickChildGet(); }
                     }
                 }
@@ -177,24 +132,6 @@ namespace FilOps.ViewModels
         /// 子ディレクトリを取得しているかどうか
         /// </summary>
         private bool IsKicked = false;
-
-        /// <summary>
-        /// ディレクトリがディレクトリを持つかどうか
-        /// </summary>
-        private bool _HasChildren = false;
-        public bool HasChildren
-        {
-            get => _HasChildren;
-            set
-            {
-                if (SetProperty(ref _HasChildren, value) &&
-                    Children.Count == 0 && ExplorerVM is not null)
-                {
-                    Children.Add(new ExplorerTreeNodeViewModel(ExplorerVM) { Name = "【dummy】" });
-
-                }
-            }
-        }
 
         /// <summary>
         /// ディレクトリが展開されているかどうか
@@ -212,13 +149,15 @@ namespace FilOps.ViewModels
                         KickChildGet();
                     }
                 }
+                var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
+                if (explorerVM == null) { return; }
                 if (value)
                 {
-                    ExplorerVM.TreeViewManager.AddDirectory(this.FullPath);
+                    explorerVM.TreeViewManager.AddDirectory(this.FullPath);
                 }
                 else
                 {
-                    ExplorerVM.TreeViewManager.RemoveDirectory(this.FullPath);
+                    explorerVM.TreeViewManager.RemoveDirectory(this.FullPath);
                 }
             }
         }
@@ -228,48 +167,16 @@ namespace FilOps.ViewModels
         /// </summary>
         public void KickChildGet()
         {
-            if (ExplorerVM == null) { return; }
             Children.Clear();
             foreach (var child in FileSystemManager.FileItemScan(FullPath, false))
             {
-                var item = new ExplorerTreeNodeViewModel(ExplorerVM)
-                {
-                    FullPath = child.FullPath,
-                    IsReady = this.IsReady,
-                    IsRemovable = this.IsRemovable,
-                    HasChildren = child.HasChildren,
-                    Parent = this,
-                };
+                var item = new ExplorerTreeNodeViewModel(child, this);
                 Children.Add(item);
 
             }
             IsKicked = true;
         }
 
-        /// <summary>
-        /// ディレクトリのチェックボックスがチェックされているかどうか
-        /// </summary>
-        private bool? _IsChecked = false;
-        public bool? IsChecked
-        {
-            get => _IsChecked;
-            set => SetProperty(ref _IsChecked, value);
-        }
-
-        /// <summary>
-        /// フォントサイズ
-        /// </summary>
-        public double FontSize
-        {
-            get => ExplorerVM?.FontSize ?? SystemFonts.MessageFontSize;
-            set
-            {
-                if (ExplorerVM is not null)
-                {
-                    ExplorerVM.FontSize = value;
-                }
-            }
-        }
         #endregion データバインディング用
     }
 }

@@ -4,7 +4,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using FilOps.Models;
 using FilOps.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.Views
 {
@@ -16,34 +18,37 @@ namespace FilOps.Views
         public ExplorerPage()
         {
             InitializeComponent();
-            viewModel = new ExplorerPageViewModel();
-            DataContext = viewModel;
+            DataContext = App.Current.Services.GetService<IExplorerPageViewModel>();
         }
 
-        private readonly ExplorerPageViewModel viewModel;
+        /// <summary>
+        /// Ctrl + マウスホイールで拡大縮小を行う
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                if (viewModel is not null)
+                var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
+                if (explorerVM is not null)
                 {
-                    if (e.Delta > 0) { viewModel.FontSize += 1;}
-                    else             { viewModel.FontSize -= 1; }
+                    if (e.Delta > 0) { explorerVM.FontSize += 1;}
+                    else             { explorerVM.FontSize -= 1; }
                 }
                 e.Handled = true;
             }
             else
-            {
-                base.OnMouseWheel(e);
+                {
+                    base.OnMouseWheel(e);
+                }
             }
-        }
-
-        /// <summary>
-        /// ツリービューのディレクトリ選択状況が変わった時、選択されたアイテムまでスクロールします
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DirectoryTreeRoot_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+            /// <summary>
+            /// ツリービューのディレクトリ選択状況が変わった時、選択されたアイテムまでスクロールします
+            /// </summary>
+            /// <param name="sender"></param>
+            /// <param name="e"></param>
+            private void DirectoryTreeRoot_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (e.NewValue is ExplorerTreeNodeViewModel)
             {
@@ -137,6 +142,12 @@ namespace FilOps.Views
         /// <param name="e">RoutedEventArgs</param>
         private void ExplorerPage_Loaded(object sender, RoutedEventArgs e)
         {
+            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
+            if (explorerVM != null)
+            {
+                explorerVM.CurrentDir = WindowsAPI.GetPath(KnownFolder.User);
+            }
+
             // HwndSourceを取得
             hwndSource = PresentationSource.FromVisual(this) as HwndSource;
 
@@ -184,7 +195,7 @@ namespace FilOps.Views
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
 
-                    FileSystemWatcherService.Instance.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    FileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
                     //ドライブが取り外されたされた時の処理を書く
@@ -201,7 +212,7 @@ namespace FilOps.Views
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
 
-                    FileSystemWatcherService.Instance.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    FileSystemWatcherService.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }
             // デフォルトのウィンドウプロシージャに処理を渡す
