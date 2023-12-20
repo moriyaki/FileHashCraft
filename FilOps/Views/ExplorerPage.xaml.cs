@@ -184,7 +184,7 @@ namespace FilOps.Views
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
 
-                    viewModel.Watcher.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    FileSystemWatcherService.Instance.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
                     //ドライブが取り外されたされた時の処理を書く
@@ -201,7 +201,7 @@ namespace FilOps.Views
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
 
-                    viewModel.Watcher.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    FileSystemWatcherService.Instance.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }
             // デフォルトのウィンドウプロシージャに処理を渡す

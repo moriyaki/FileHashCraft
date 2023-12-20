@@ -12,7 +12,7 @@ namespace FilOps.ViewModels
     {
         private readonly ExplorerPageViewModel? ExplorerVM;
 
-        public ExplorerTreeNodeViewModel()
+        private ExplorerTreeNodeViewModel()
         {
             throw new InvalidOperationException("ExplorerTreeNodeViewModel");
         }

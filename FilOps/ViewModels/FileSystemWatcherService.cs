@@ -9,6 +9,25 @@ namespace FilOps.ViewModels
     public class FileSystemWatcherService
     {
         #region FileSystemWatcherの宣言
+        private static FileSystemWatcherService? _instance;
+        private static readonly object LockObject = new();
+
+        public static FileSystemWatcherService Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (LockObject)
+                    {
+                        _instance ??= new FileSystemWatcherService();
+                    }
+                }
+
+                return _instance;
+            }
+        }
+
         private readonly FileSystemWatcher CurrentWatcher = new();
         private readonly NotifyFilters CurrentNotifyFilter
             = NotifyFilters.FileName
@@ -33,7 +52,7 @@ namespace FilOps.ViewModels
         /// </summary>
         private readonly ExplorerPageViewModel ExplorerVM;
         
-        public FileSystemWatcherService()
+        private FileSystemWatcherService()
         {
             throw new NotImplementedException();
         }

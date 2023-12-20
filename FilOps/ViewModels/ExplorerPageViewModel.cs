@@ -29,12 +29,6 @@ namespace FilOps.ViewModels
             set => SetProperty(ref _ListFile, value);
         }
 
-        private readonly FileSystemWatcherService _Watcher;
-        public FileSystemWatcherService Watcher
-        {
-            get => _Watcher;
-        }
-
         /// <summary>
         /// 「上へ」コマンド
         /// </summary>
@@ -128,7 +122,7 @@ namespace FilOps.ViewModels
                 SetProperty(ref _CurrentItem, value);
                 ToUpDirectory.RaiseCanExecuteChanged();
 
-                Watcher.SetCurrentDirectoryWatcher(value.FullPath);
+                FileSystemWatcherService.Instance.SetCurrentDirectoryWatcher(value.FullPath);
                 value.IsSelected = true;
                 ListViewUpdater.Execute(null);
                 CurrentDir = value.FullPath;
@@ -188,7 +182,7 @@ namespace FilOps.ViewModels
                     }
                 }
             });
-            _Watcher = new FileSystemWatcherService(this);
+            _ = new FileSystemWatcherService(this);
             foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
             {
                 var item = new ExplorerTreeNodeViewModel(this, rootInfo);
@@ -199,7 +193,7 @@ namespace FilOps.ViewModels
             {
                 var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                 TreeRoot.Add(item);
-                Watcher.AddRootDriveWatcher(item);
+                FileSystemWatcherService.Instance.AddRootDriveWatcher(item);
                 item.IsSelected = selected;
                 if (selected)
                 {
@@ -223,13 +217,10 @@ namespace FilOps.ViewModels
                 var item = new ExplorerListItemViewModel(this, folderFile);
 
                 // UI スレッドでリストビューを更新
-                try
+                App.Current?.Dispatcher?.Invoke((Action)(() =>
                 {
-                    App.Current?.Dispatcher?.Invoke((Action)(() =>
-                    {
-                        ListFile.Add(item);
-                    }));
-                } catch (NullReferenceException) { }
+                    ListFile.Add(item);
+                }));
             }
         }
 

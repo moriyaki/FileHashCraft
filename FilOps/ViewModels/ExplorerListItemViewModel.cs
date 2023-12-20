@@ -11,7 +11,7 @@ namespace FilOps.ViewModels
     {
         private readonly ExplorerPageViewModel? ExplorerVM;
 
-        public ExplorerListItemViewModel()
+        private ExplorerListItemViewModel()
         {
             throw new InvalidOperationException("ExplorerListItemViewModel");
         }
