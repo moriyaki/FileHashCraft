@@ -152,11 +152,17 @@ namespace FilOps.ViewModels
                 }
                 if (value)
                 {
-                    ExplorerVM.TreeViewManager.AddDirectory(this.FullPath);
+                    foreach (var child in Children)
+                    {
+                        ExplorerVM.ExpandDirManager.AddDirectory(child.FullPath);
+                    }
                 }
                 else
                 {
-                    ExplorerVM.TreeViewManager.RemoveDirectory(this.FullPath);
+                    foreach (var child in Children)
+                    {
+                        ExplorerVM.ExpandDirManager.RemoveDirectory(child.FullPath);
+                    }
                 }
             }
         }

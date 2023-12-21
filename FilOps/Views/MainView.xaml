@@ -6,7 +6,8 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:FilOps"
         mc:Ignorable="d"
-        Title="FilOps" Height="600" Width="980">
+        Title="FilOps" Height="600" Width="980"
+        Closed="Window_Closed">
     <Grid>
         <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
     </Grid>

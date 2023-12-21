@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
+using FilOps.Models;
 using FilOps.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,7 +34,6 @@ namespace FilOps
             ProcessSystemDpiAware = 1,
             ProcessPerMonitorDpiAware = 2
         }
-
 
         public App()
         {
@@ -78,9 +78,13 @@ namespace FilOps
         {
             var services = new ServiceCollection();
 
+            services.AddTransient<IWindowService, WindowService>();
             services.AddTransient<IMainViewModel, MainViewModel>();
+            services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddSingleton<IFileSystemWatcherService, FileSystemWatcherService>();
+            services.AddSingleton<IDirectoryManager, ExpandedDirectoryManager>();
+            services.AddSingleton<IDirectoryManager, CheckedDirectoryManager>();
 
             return services.BuildServiceProvider();
         }   

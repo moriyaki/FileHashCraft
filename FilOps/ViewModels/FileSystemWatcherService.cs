@@ -50,7 +50,6 @@ namespace FilOps.ViewModels
             | NotifyFilters.LastWrite;
         #endregion FileSystemWatcherの宣言
 
-
         #region リムーバブルディスクの着脱処理
         /// <summary>
         /// リムーバブルドライブの追加または挿入処理をします。
@@ -186,7 +185,7 @@ namespace FilOps.ViewModels
         /// </summary>
         /// <param name="path">監視に引っかかったファイルパス</param>
         /// <returns>変更を反映するか否か</returns>
-        private static bool IsSpecialFolderOrCannotAccess(string path)
+        private bool NoNeedReflectDirectory(string path)
         {
             if (path.Length == 3) { return false; }
             if (path.Contains(Environment.GetFolderPath(Environment.SpecialFolder.Windows))) return true;
@@ -195,6 +194,8 @@ namespace FilOps.ViewModels
             if (path.Contains(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData))) return true;
             if (path.Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles))) return true;
             if (path.Contains(Path.GetTempPath())) return true;
+            if (!ExplorerVM.ExpandDirManager.HasDirectory(path)) return true;
+            
             try
             {
                 var hasDirectory = Directory.EnumerateFileSystemEntries(path).Any();
@@ -662,7 +663,7 @@ namespace FilOps.ViewModels
         /// <param name="e">FileSystemEventArgs</param>
         private async void OnChanged(object sender, FileSystemEventArgs e)
         {
-            if (IsSpecialFolderOrCannotAccess(e.FullPath)) return;
+            if (NoNeedReflectDirectory(e.FullPath)) return;
 
             /// ごみ箱の処理
             if (e.FullPath.Contains("$RECYCLE.BIN")) {

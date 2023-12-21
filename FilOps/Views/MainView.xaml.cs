@@ -16,5 +16,13 @@ namespace FilOps
             DataContext = App.Current.Services.GetService<IMainViewModel>();
             MainFrame.Navigate(new ExplorerPage());
         }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            var explorerPage = App.Current.Services.GetService<IExplorerPageViewModel>();
+            explorerPage?.HwndRemoveHook();
+
+            Application.Current.Shutdown();
+        }
     }
 }
