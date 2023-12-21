@@ -7,26 +7,28 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels
 {
-    public class FileSystemWatcherService
+    public interface IFileSystemWatcherService
+    {
+        public void InsertOpticalDriveMedia(char driveLetter);
+        public void EjectOpticalDriveMedia(char driveLetter);
+
+        public void AddRootDriveWatcher(ExplorerTreeNodeViewModel rootTreeItem);
+        void SetCurrentDirectoryWatcher(string fullPath);
+    }
+
+    public class FileSystemWatcherService : IFileSystemWatcherService
     {
         #region FileSystemWatcherの宣言
-        private static FileSystemWatcherService? _instance;
-        private static readonly object LockObject = new();
+        private readonly IExplorerPageViewModel ExplorerVM;
 
-        public static FileSystemWatcherService Instance
+        private FileSystemWatcherService()
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (LockObject)
-                    {
-                        _instance ??= new FileSystemWatcherService();
-                    }
-                }
+            throw new NotImplementedException();
+        }
 
-                return _instance;
-            }
+        public FileSystemWatcherService(IExplorerPageViewModel explorerVM)
+        {
+            ExplorerVM = explorerVM ?? throw new ArgumentNullException(nameof(explorerVM));
         }
 
         private readonly FileSystemWatcher CurrentWatcher = new();
@@ -54,15 +56,12 @@ namespace FilOps.ViewModels
         /// リムーバブルドライブの追加または挿入処理をします。
         /// </summary>
         /// <param name="driveLetter">リムーバブルドライブのドライブレター</param>
-        public static void InsertOpticalDriveMedia(char driveLetter)
+        public void InsertOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
             var indexToInsert = -1;
 
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-            if (explorerVM == null) { return; }
-
-            foreach (var drive in explorerVM.TreeRoot)
+            foreach (var drive in ExplorerVM.TreeRoot)
             {
                 // TreeViewの挿入位置を変更
                 indexToInsert++;
@@ -104,22 +103,22 @@ namespace FilOps.ViewModels
                     if (path.CompareTo(drive.FullPath) >= 0) continue;
 
                     var addNewInformation = FileSystemManager.GetFileInformationFromDirectorPath(path);
-                    var newTreeItem = new ExplorerTreeNodeViewModel(addNewInformation);
-                    explorerVM?.TreeRoot.Insert(indexToInsert, newTreeItem);
+                    var newTreeItem = new ExplorerTreeNodeViewModel(ExplorerVM, addNewInformation);
+                    ExplorerVM.TreeRoot.Insert(indexToInsert, newTreeItem);
                     return;
                 }
             }
             // 最終ドライブの場合
             var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(path);
-            var addNewTreeItem = new ExplorerTreeNodeViewModel(fileInformation);
-            explorerVM?.TreeRoot.Add(addNewTreeItem);
+            var addNewTreeItem = new ExplorerTreeNodeViewModel(ExplorerVM, fileInformation);
+            ExplorerVM?.TreeRoot.Add(addNewTreeItem);
         }
 
         /// <summary>
         /// リムーバブルメディアの削除またはイジェクト処理を行います
         /// </summary>
         /// <param name="driveLetter">リムーバブルドライブのドライブレター></param>
-        public static void EjectOpticalDriveMedia(char driveLetter)
+        public void EjectOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
             var driveInfo = new DriveInfo(path);
@@ -249,21 +248,15 @@ namespace FilOps.ViewModels
         private void OnCurrentCreated(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Created) return;
-
             ///Debug.WriteLine($"Current Created : {e.FullPath}");
+
             // 新しいリストビューアイテムを作成する
-            var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(e.FullPath);
-            var item = new ExplorerListItemViewModel(fileInformation);
-            var newListItem = new ExplorerListItemViewModel(fileInformation);
-
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-            if (explorerVM == null) { return; }
-
-            // リストビューに作成したアイテムを追加する
+            var newListItem = ExplorerVM.CreateListViewItem(e.FullPath);
+                        // リストビューに作成したアイテムを追加する
             App.Current.Dispatcher.InvokeAsync(() =>
             {
-                int newListIndex = FindIndexToInsert(explorerVM.ListFile, newListItem);
-                explorerVM.ListFile.Insert(newListIndex, item);
+                int newListIndex = FindIndexToInsert(ExplorerVM.ListFile, newListItem);
+                ExplorerVM.ListFile.Insert(newListIndex, newListItem);
             });
 
         }
@@ -277,14 +270,12 @@ namespace FilOps.ViewModels
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
             if (File.Exists(e.FullPath)) { return; }
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-
-            //Debug.WriteLine($"Current Deleted : {e.FullPath}");
             // 削除されたアイテムを検索し、リストビューから削除する
+
             App.Current.Dispatcher.InvokeAsync(() =>
             {
-                var listItem = explorerVM?.ListFile.FirstOrDefault(i => i.FullPath == e.FullPath);
-                if (listItem != null) { explorerVM?.ListFile.Remove(listItem); }
+                var listItem = ExplorerVM.ListFile.FirstOrDefault(i => i.FullPath == e.FullPath);
+                if (listItem != null) { ExplorerVM.ListFile.Remove(listItem); }
             });
         }
 
@@ -296,12 +287,11 @@ namespace FilOps.ViewModels
         private void OnCurrentRenamed(object sender, RenamedEventArgs e)
         {
             Debug.WriteLine($"Current Renamed : {e.OldFullPath} to {e.FullPath}");
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
 
             // 名前が変更されたアイテムを検索し、リストビューに新しい名前を反映する
             App.Current.Dispatcher.InvokeAsync(() =>
             {
-                var listItem = explorerVM?.ListFile.FirstOrDefault(i => i.FullPath == e.OldFullPath);
+                var listItem = ExplorerVM.ListFile.FirstOrDefault(i => i.FullPath == e.OldFullPath);
                 if (listItem != null) { listItem.FullPath = e.FullPath; }
             });
 
@@ -442,20 +432,18 @@ namespace FilOps.ViewModels
                 await App.Current.Dispatcher.InvokeAsync(() =>
                 {
                     // 新しいツリービューアイテムの作成
-                    var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(createdFile);
-                    var addItem = new ExplorerTreeNodeViewModel(fileInformation);
+                    var addTreeItem = explorerVM.CreateTreeViewItem(createdFile);
 
                     // ソートされているので、そこに新しいツリービューアイテムを挿入
-                    int newTreeIndex = FindIndexToInsert(rootItem.Children, addItem);
-                    rootItem.Children.Insert(newTreeIndex, addItem);
+                    int newTreeIndex = FindIndexToInsert(rootItem.Children, addTreeItem);
+                    rootItem.Children.Insert(newTreeIndex, addTreeItem);
 
                     // リストビューにも表示されていたら、そちらも更新
                     if (rootItem == explorerVM?.CurrentItem)
                     {
-                        var listItem = new ExplorerListItemViewModel(fileInformation);
-                        var newListItem = new ExplorerListItemViewModel(fileInformation);
-                        int newListIndex = FindIndexToInsert(explorerVM.ListFile, newListItem);
-                        explorerVM.ListFile.Insert(newListIndex, listItem);
+                        var addListItem = explorerVM.CreateListViewItem(createdFile);
+                        int newListIndex = FindIndexToInsert(explorerVM.ListFile, addListItem);
+                        explorerVM.ListFile.Insert(newListIndex, addListItem);
                     }
                 });
             }
@@ -527,10 +515,8 @@ namespace FilOps.ViewModels
         /// <param name="deletedItemName">削除されたアイテムのコレクション</param>
         /// <param name="addedItemName">追加されたアイテムのコレクション</param>
         /// <returns>Task</returns>
-        private static async Task OnSubDirectoryRenamed(ExplorerTreeNodeViewModel modifiedTreeItem, string deletedItemName, string addedItemName)
+        private async Task OnSubDirectoryRenamed(ExplorerTreeNodeViewModel modifiedTreeItem, string deletedItemName, string addedItemName)
         {
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-
             //Debug.WriteLine($"Renamed : {deletedItemName} to {addedItemName");
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
@@ -555,10 +541,10 @@ namespace FilOps.ViewModels
 
 
                         // リストビューにも表示されていたら、そちらも更新
-                        if (explorerVM?.CurrentItem != null && modifiedTreeItem == explorerVM.CurrentItem)
+                        if (ExplorerVM.CurrentItem != null && modifiedTreeItem == ExplorerVM.CurrentItem)
                         {
                             //Debug.WriteLine($"Renamed ListView {oldName} to {renamedName}");
-                            var listItem = explorerVM?.ListFile.FirstOrDefault(item => item.FullPath == oldFullPath);
+                            var listItem = ExplorerVM.ListFile.FirstOrDefault(item => item.FullPath == oldFullPath);
                             if (listItem != null) { listItem.FullPath = newFullPath; }
                         }
                     }
@@ -572,10 +558,9 @@ namespace FilOps.ViewModels
         /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
         /// <param name="deletedItemNames">削除されたアイテムのコレクション</param>
         /// <returns>Task</returns>
-        private static async Task OnSubDirectoryDeleted(ExplorerTreeNodeViewModel modifiedTreeItem, string deletedItemName)
+        private async Task OnSubDirectoryDeleted(ExplorerTreeNodeViewModel modifiedTreeItem, string deletedItemName)
         {
             //Debug.WriteLine($"Deleted : {deletedItemName}");
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
 
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
@@ -587,10 +572,10 @@ namespace FilOps.ViewModels
                     modifiedTreeItem.Children.Remove(deletedTreeItem);
 
                     // リストビューにも表示されていたら、そちらも更新
-                    if (explorerVM?.CurrentItem != null && modifiedTreeItem == explorerVM.CurrentItem)
+                    if (ExplorerVM.CurrentItem != null && modifiedTreeItem == ExplorerVM.CurrentItem)
                     {
-                        var listItem = explorerVM?.ListFile.FirstOrDefault(item => item.FullPath == deletedItemName);
-                        if (listItem != null) { explorerVM?.ListFile.Remove(listItem); }
+                        var listItem = ExplorerVM.ListFile.FirstOrDefault(item => item.FullPath == deletedItemName);
+                        if (listItem != null) { ExplorerVM.ListFile.Remove(listItem); }
                     }
 
                     // 特殊フォルダにも存在したら反映
@@ -606,29 +591,29 @@ namespace FilOps.ViewModels
         /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
         /// <param name="addedItemNames">追加されたアイテムのコレクション</param>
         /// <returns>Task</returns>
-        private static async Task OnSubDirectoryCreated(ExplorerTreeNodeViewModel modifiedTreeItem, string addedItemNames)
+        private async Task OnSubDirectoryCreated(ExplorerTreeNodeViewModel modifiedTreeItem, string addedItemNames)
         {
             //Debug.WriteLine($"Created : {addedItemNames}");
             
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
                 // 追加されたファイルをツリービューアイテムにして追加
+                /*
                 var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(addedItemNames);
                 var addItem = new ExplorerTreeNodeViewModel(fileInformation);
+                */
+                var addTreeItem = ExplorerVM.CreateTreeViewItem(addedItemNames); ;
+                
                 Debug.WriteLine($"Add : {addedItemNames}");
-                int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addItem);
-                modifiedTreeItem.Children.Insert(newTreeIndex, addItem);
-
-                var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-                if (explorerVM == null) { return; }
+                int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addTreeItem);
+                modifiedTreeItem.Children.Insert(newTreeIndex, addTreeItem);
 
                 // リストビューにも表示されていたら、そちらも更新
-                if (explorerVM.CurrentItem != null && modifiedTreeItem == explorerVM.CurrentItem)
+                if (ExplorerVM.CurrentItem != null && modifiedTreeItem == ExplorerVM.CurrentItem)
                 {
-                    var listItems = new ExplorerListItemViewModel(fileInformation);
-                    var newListItem = new ExplorerListItemViewModel(fileInformation);
-                    int newListIndex = FindIndexToInsert(explorerVM.ListFile, newListItem);
-                    explorerVM?.ListFile.Insert(newListIndex, listItems);
+                    var addListItem = ExplorerVM.CreateListViewItem(addedItemNames); ;
+                    int newListIndex = FindIndexToInsert(ExplorerVM.ListFile, addListItem);
+                    ExplorerVM.ListFile.Insert(newListIndex, addListItem);
                 }
             });
         }
@@ -640,7 +625,7 @@ namespace FilOps.ViewModels
         /// <param name="originalItems">変更前のコレクション</param>
         /// <param name="changedItems">変更後のコレクション</param>
         /// <returns></returns>
-        private static async Task ExecuteChangedTreeItemChange(ExplorerTreeNodeViewModel modifiedTreeItem,
+        private async Task ExecuteChangedTreeItemChange(ExplorerTreeNodeViewModel modifiedTreeItem,
             IEnumerable<string> originalItems, IEnumerable<string> changedItems)
         {
             // originalItems にあって changedItems に無いもの
@@ -726,16 +711,15 @@ namespace FilOps.ViewModels
         /// </summary>
         /// <param name="path">特殊ユーザーディレクトリが含まれることを期待するパス</param>
         /// <returns>特殊ユーザーディレクトリ内のツリーアイテム</returns>
-        private static List<ExplorerTreeNodeViewModel> FindChangedSpecialDirectoryTreeItem(string path)
+        private List<ExplorerTreeNodeViewModel> FindChangedSpecialDirectoryTreeItem(string path)
         {
             var specialTreeItems = new List<ExplorerTreeNodeViewModel>();
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
                         
             foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
             {
                 // 特殊ユーザーディレクトリのパスを持つアイテムを抽出
 
-                if (explorerVM?.TreeRoot.FirstOrDefault(item => item.FullPath == rootInfo.FullPath) is
+                if (ExplorerVM.TreeRoot.FirstOrDefault(item => item.FullPath == rootInfo.FullPath) is
                     ExplorerTreeNodeViewModel rootItem && path.Contains(rootInfo.FullPath))
                 {
                     Debug.WriteLine($"Searching : {WindowsAPI.GetDisplayName(rootInfo.FullPath)}");

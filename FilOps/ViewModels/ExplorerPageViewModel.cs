@@ -3,20 +3,28 @@ using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels
-{
-    public interface IExplorerPageViewModel
+{    public interface IExplorerPageViewModel
     {
+        public void InitializeOnce();
         public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; }
         public ObservableCollection<ExplorerItemViewModelBase> ListFile { get; set; }
         public string CurrentDir { get; set; }
         public ExplorerTreeNodeViewModel? CurrentItem { get; set; }
         public DirectoryManager TreeViewManager { get; }
         public double FontSize { get; set; }
+
+
+        // リストビューアイテムを作成する
+        public ExplorerTreeNodeViewModel CreateTreeViewItem(string path);
+        public ExplorerListItemViewModel CreateListViewItem(string path);
     }
     public class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
     {
+        private bool IsInitialized = false;
+
         #region データバインディング
         public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; } = [];
         public ObservableCollection<ExplorerItemViewModelBase> ListFile { get; set; } = [];
@@ -117,7 +125,8 @@ namespace FilOps.ViewModels
                 SetProperty(ref _CurrentItem, value);
                 ToUpDirectory.RaiseCanExecuteChanged();
 
-                FileSystemWatcherService.Instance.SetCurrentDirectoryWatcher(value.FullPath);
+
+                FileWatcherService?.SetCurrentDirectoryWatcher(value.FullPath);
                 value.IsSelected = true;
                 ListViewUpdater.Execute(null);
                 CurrentDir = value.FullPath;
@@ -149,6 +158,7 @@ namespace FilOps.ViewModels
                 }
             }
         }
+        private IFileSystemWatcherService? FileWatcherService;
         #endregion データバインディング
 
         #region コンストラクタと初期化
@@ -177,23 +187,27 @@ namespace FilOps.ViewModels
                     }
                 }
             });
-            InitializeOnce();
         }
 
-        private void InitializeOnce()
+        public void InitializeOnce()
         {
-            foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
+            if (!IsInitialized)
             {
-                var item = new ExplorerTreeNodeViewModel(rootInfo);
-                TreeRoot.Add(item);
-                TreeViewManager.AddDirectory(rootInfo.FullPath);
-            }
-            foreach (var rootInfo in FileSystemManager.DriveScan())
-            {
-                var item = new ExplorerTreeNodeViewModel(rootInfo);
-                TreeRoot.Add(item);
-                TreeViewManager.AddDirectory(rootInfo.FullPath);
-                FileSystemWatcherService.Instance.AddRootDriveWatcher(item);
+                FileWatcherService = App.Current.Services.GetService<IFileSystemWatcherService>() ?? throw new ArgumentNullException(nameof(IFileSystemWatcherService));
+                foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
+                {
+                    var item = new ExplorerTreeNodeViewModel(this, rootInfo);
+                    TreeRoot.Add(item);
+                    TreeViewManager.AddDirectory(rootInfo.FullPath);
+                }
+                foreach (var rootInfo in FileSystemManager.DriveScan())
+                {
+                    var item = new ExplorerTreeNodeViewModel(this, rootInfo);
+                    TreeRoot.Add(item);
+                    TreeViewManager.AddDirectory(rootInfo.FullPath);
+                    FileWatcherService.AddRootDriveWatcher(item);
+                }
+                IsInitialized = true;
             }
         }
         #endregion コンストラクタと初期化
@@ -208,7 +222,7 @@ namespace FilOps.ViewModels
             foreach (var folderFile in FileSystemManager.FileItemScan(path, true))
             {
                 // フォルダやファイルの情報を ViewModel に変換
-                var item = new ExplorerListItemViewModel(folderFile);
+                var item = new ExplorerListItemViewModel(this, folderFile);
 
                 // UI スレッドでリストビューを更新
                 App.Current?.Dispatcher?.Invoke((Action)(() =>
@@ -297,6 +311,28 @@ namespace FilOps.ViewModels
 
                 yield return fullPath;
             }
+        }
+
+        /// <summary>
+        /// ファイルパスからリストビューアイテムを作成する
+        /// </summary>
+        /// <param name="path">リストビューアイテムのファイルパス</param>
+        /// <returns>リストビューアイテム</returns>
+        public ExplorerItemViewModelBase CreateFileViewItem(string path)
+        {
+            var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(path);
+            return new ExplorerItemViewModelBase(this, fileInformation);
+        }
+        public ExplorerTreeNodeViewModel CreateTreeViewItem(string path)
+        {
+            var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(path);
+            return new ExplorerTreeNodeViewModel(this, fileInformation);
+
+        }
+        public ExplorerListItemViewModel CreateListViewItem(string path)
+        {
+            var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(path);
+            return new ExplorerListItemViewModel(this, fileInformation);
         }
     }
 }

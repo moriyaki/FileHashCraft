@@ -80,6 +80,7 @@ namespace FilOps
 
             services.AddTransient<IMainViewModel, MainViewModel>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
+            services.AddSingleton<IFileSystemWatcherService, FileSystemWatcherService>();
 
             return services.BuildServiceProvider();
         }   

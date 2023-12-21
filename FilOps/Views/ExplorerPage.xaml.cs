@@ -143,6 +143,8 @@ namespace FilOps.Views
         private void ExplorerPage_Loaded(object sender, RoutedEventArgs e)
         {
             var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
+            if (explorerVM == null) { throw new NullReferenceException(nameof(explorerVM)); }
+            explorerVM.InitializeOnce();
             if (explorerVM != null)
             {
                 explorerVM.CurrentDir = WindowsAPI.GetPath(KnownFolder.User);
@@ -166,6 +168,9 @@ namespace FilOps.Views
         /// <returns>IntPtr</returns>
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            var FileWatcherService = App.Current.Services.GetService<IFileSystemWatcherService>();
+            if (FileWatcherService == null) { throw new NullReferenceException(nameof(FileWatcherService)); }
+
             // メッセージに対する処理を追加
             Object? ptrToStructure;
             DEV_BROADCAST_VOLUME volume;
@@ -195,7 +200,7 @@ namespace FilOps.Views
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
 
-                    FileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    FileWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
                     //ドライブが取り外されたされた時の処理を書く
@@ -212,7 +217,7 @@ namespace FilOps.Views
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
 
-                    FileSystemWatcherService.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    FileWatcherService.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }
             // デフォルトのウィンドウプロシージャに処理を渡す

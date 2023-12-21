@@ -9,16 +9,22 @@ namespace FilOps.ViewModels
 {
     public class ExplorerItemViewModelBase : ObservableObject, IComparable<ExplorerItemViewModelBase>
     {
-        public ExplorerItemViewModelBase() { }
-
-        public ExplorerItemViewModelBase(FileInformation f)
+        public ExplorerItemViewModelBase(IExplorerPageViewModel explorerVM)
         {
+            ExplorerVM = explorerVM;
+        }
+
+        protected readonly IExplorerPageViewModel ExplorerVM;
+
+        public ExplorerItemViewModelBase(IExplorerPageViewModel explorerPageVM, FileInformation f)
+        {
+            ExplorerVM = explorerPageVM;
+
             FullPath = f.FullPath;
             IsReady = f.IsReady;
             IsRemovable = f.IsRemovable;
             IsDirectory = f.IsDirectory;
             HasChildren = f.HasChildren;
-
         }
 
         /// <summary>

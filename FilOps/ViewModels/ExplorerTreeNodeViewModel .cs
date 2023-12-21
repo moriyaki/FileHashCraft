@@ -7,10 +7,12 @@ namespace FilOps.ViewModels
 {
     public class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
-        public ExplorerTreeNodeViewModel() { }
+        ///public ExplorerTreeNodeViewModel() { }
 
-        public ExplorerTreeNodeViewModel(FileInformation f): base(f) { }
-        public ExplorerTreeNodeViewModel(FileInformation f, ExplorerTreeNodeViewModel parent) : base(f)
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
+
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileInformation f): base(explorerVM, f) { }
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
         {
             Parent =parent;
         }
@@ -87,7 +89,7 @@ namespace FilOps.ViewModels
             {
                 if (SetProperty(ref _HasChildren, value) &&  Children.Count == 0)
                 {
-                    Children.Add(new ExplorerTreeNodeViewModel() { Name = "【dummy】" });
+                    Children.Add(new ExplorerTreeNodeViewModel(ExplorerVM) { Name = "【dummy】" });
 
                 }
             }
@@ -120,8 +122,7 @@ namespace FilOps.ViewModels
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-                        if (explorerVM != null) { explorerVM.CurrentItem = this; }
+                        ExplorerVM.CurrentItem = this;
                         if (!IsKicked) { KickChildGet(); }
                     }
                 }
@@ -149,15 +150,13 @@ namespace FilOps.ViewModels
                         KickChildGet();
                     }
                 }
-                var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-                if (explorerVM == null) { return; }
                 if (value)
                 {
-                    explorerVM.TreeViewManager.AddDirectory(this.FullPath);
+                    ExplorerVM.TreeViewManager.AddDirectory(this.FullPath);
                 }
                 else
                 {
-                    explorerVM.TreeViewManager.RemoveDirectory(this.FullPath);
+                    ExplorerVM.TreeViewManager.RemoveDirectory(this.FullPath);
                 }
             }
         }
@@ -170,7 +169,7 @@ namespace FilOps.ViewModels
             Children.Clear();
             foreach (var child in FileSystemManager.FileItemScan(FullPath, false))
             {
-                var item = new ExplorerTreeNodeViewModel(child, this);
+                var item = new ExplorerTreeNodeViewModel(ExplorerVM, child, this);
                 Children.Add(item);
 
             }

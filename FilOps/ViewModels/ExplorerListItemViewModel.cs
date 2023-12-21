@@ -5,9 +5,9 @@ namespace FilOps.ViewModels
 {
     public class ExplorerListItemViewModel : ExplorerItemViewModelBase
     {
-        public ExplorerListItemViewModel() : base() { }
+        //public ExplorerListItemViewModel() : base() { }
 
-        public ExplorerListItemViewModel(FileInformation f) : base(f)
+        public ExplorerListItemViewModel(IExplorerPageViewModel explorerVM, FileInformation f) : base(explorerVM, f)
         {
             LastModifiedDate = f.LastModifiedDate;
             FileSize = f.FileSize;
