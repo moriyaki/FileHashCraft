@@ -40,7 +40,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <exception cref="NotImplementedException"></exception>
         public int CompareTo(ExplorerItemViewModelBase? other)
         {
-            return Name.CompareTo(other?.Name);
+            return FullPath.CompareTo(other?.FullPath);
         }
 
         /// <summary>

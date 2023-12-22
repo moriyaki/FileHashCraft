@@ -17,8 +17,9 @@ namespace FilOps.ViewModels.ExplorerPage
         public ObservableCollection<ExplorerItemViewModelBase> ListItems { get; set; }
         public string CurrentDirectory { get; set; }
         public ExplorerTreeNodeViewModel? CurrentDirectoryItem { get; set; }
-        public ExpandedDirectoryManager ExpandDirManager { get; }
         public double FontSize { get; set; }
+        public void AddDirectoryToExpandedDirManager(string fullPath);
+        public void RemoveDirectoryToExpandedDirManager(string fullPath);
 
         // WndProcフック処理関連
         public void HwndAddHook(HwndSource? hwndSource);
@@ -59,9 +60,6 @@ namespace FilOps.ViewModels.ExplorerPage
             get => _SelectedListViewItem;
             set => SetProperty(ref _SelectedListViewItem, value);
         }
-
-        private readonly ExpandedDirectoryManager _ExpandDirManager = new();
-        public ExpandedDirectoryManager ExpandDirManager { get => _ExpandDirManager; }
 
         /// <summary>
         /// カレントディレクトリ
@@ -174,12 +172,14 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         private readonly IDrivesFileSystemWatcherService DriveWatcherService;
         private readonly ICurrentDirectoryFIleSystemWatcherService CurrentWatcherService;
+        public readonly IExpandedDirectoryManager ExpandDirManager;
         #endregion データバインディング
 
         #region コンストラクタと初期化
         public ExplorerPageViewModel(
             IDrivesFileSystemWatcherService driveWatcherService,
-            ICurrentDirectoryFIleSystemWatcherService currentWatcherService
+            ICurrentDirectoryFIleSystemWatcherService currentWatcherService,
+            IExpandedDirectoryManager expandDirManager
             )
         {
             ToUpDirectory = new DelegateCommand(
@@ -208,10 +208,13 @@ namespace FilOps.ViewModels.ExplorerPage
                 }
             });
 
-
+            ExpandDirManager = expandDirManager;
             DriveWatcherService = driveWatcherService;
-            //DriveWatcherService.DirectoryChanged += DirectoryChanged;
-
+            DriveWatcherService.Changed += DirectoryChanged;
+            DriveWatcherService.Created += DirectoryCreated;
+            DriveWatcherService.Renamed += DirectoryRenamed;
+            DriveWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
+            DriveWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
 
             CurrentWatcherService = currentWatcherService;
             CurrentWatcherService.Created += CurrentDirectoryItemCreated;
@@ -236,9 +239,7 @@ namespace FilOps.ViewModels.ExplorerPage
                     var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                     TreeRoot.Add(item);
                     ExpandDirManager.AddDirectory(rootInfo.FullPath);
-                    /* 実装次第解除
-                    DriveWatcherService?.AddRootDriveWatcher(item);
-                    */
+                    DriveWatcherService.SetRootDirectoryWatcher(rootInfo);
                 }
                 IsInitialized = true;
             }
@@ -265,15 +266,26 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion アイテムの挿入位置を決定するヘルパー
 
-        #region ファイルアイテム取得(廃止予定)
+        public void AddDirectoryToExpandedDirManager(string fullPath)
+        {
+            ExpandDirManager.AddDirectory(fullPath);
+        }
+
+        public void RemoveDirectoryToExpandedDirManager(string fullPath)
+        {
+            ExpandDirManager.RemoveDirectory(fullPath);
+        }
+
+
+        #region ファイルアイテム取得(廃止)
         /// <summary>
         /// フルパスからツリービューアイテムを作成する
         /// </summary>
-        /// <param name="path">ファイルフルパス</param>
+        /// <param name="fullPath">ファイルフルパス</param>
         /// <returns>ツリービューアイテム</returns>
-        public ExplorerTreeNodeViewModel CreateTreeViewItem(string path)
+        public ExplorerTreeNodeViewModel CreateTreeViewItem(string fullPath)
         {
-            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(path);
+            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(fullPath);
             return new ExplorerTreeNodeViewModel(this, fileInformation);
 
         }
@@ -281,11 +293,11 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// フルパスからリストビューアイテムを作成する
         /// </summary>
-        /// <param name="path">ファイルフルパス</param>
+        /// <param name="fullPath">ファイルフルパス</param>
         /// <returns>リストビューアイテム</returns>
-        public ExplorerListItemViewModel CreateListViewItem(string path)
+        public ExplorerListItemViewModel CreateListViewItem(string fullPath)
         {
-            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(path);
+            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(fullPath);
             return new ExplorerListItemViewModel(this, fileInformation);
         }
         #endregion ファイルアイテム取得(廃止予定)
@@ -294,12 +306,19 @@ namespace FilOps.ViewModels.ExplorerPage
         // ページのHwndSourceを保持するための変数
         private HwndSource? hwndSource;
 
+        /// <summary>
+        /// リムーバブルドライブの状態変化フック追加
+        /// </summary>
+        /// <param name="hwndSource">HwndSource?</param>
         public void HwndAddHook(HwndSource? hwndSource)
         {
             if (hwndSource != null) { hwndSource.AddHook(WndProc); }
             else { Debug.WriteLine("HwndSourceを取得できませんでした。"); }
         }
 
+        /// <summary>
+        /// リムーバブルドライブの状態変化フック削除
+        /// </summary>
         public void HwndRemoveHook()
         {
             if (hwndSource != null)
@@ -386,9 +405,8 @@ namespace FilOps.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
-                    /* 実装次第解除
-                    DriveWatcherService?.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
-                    */
+                    DriveWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
                     //ドライブが取り外されたされた時の処理を書く
@@ -404,9 +422,8 @@ namespace FilOps.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
-                    /* 実装次第解除
                     DriveWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
-                    */
+                    
                     break;
             }
             // デフォルトのウィンドウプロシージャに処理を渡す

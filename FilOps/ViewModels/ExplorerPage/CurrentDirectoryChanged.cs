@@ -157,7 +157,7 @@ namespace FilOps.ViewModels.ExplorerPage
             // リストビューに新しい名前を反映する
             App.Current.Dispatcher.InvokeAsync(() =>
             {
-                if (listItem != null) { listItem.FullPath = e.NewFullPath; }
+                if (listItem != null) { listItem.FullPath = e.FullPath; }
             });
         }
         #endregion カレントディレクトリのファイル変更通知関連

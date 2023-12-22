@@ -11,6 +11,7 @@ namespace FilOps.ViewModels.DebugWindow
     }
     public class DebugWindowViewModel : ObservableObject, IDebugWindowViewModel
     {
+        private readonly IExpandedDirectoryManager ExpandDirManager;
         /// <summary>
         /// ポーリング中の処理
         /// </summary>
@@ -18,7 +19,7 @@ namespace FilOps.ViewModels.DebugWindow
         /// <param name="e"></param>
         private void Polling(object? sender, EventArgs e)
         {
-            var list = ExplorerPageViewModel.ExpandDirManager.Directories;
+            var list = ExpandDirManager.Directories;
             list.Sort();
             App.Current?.Dispatcher.Invoke(() =>
             {
@@ -68,8 +69,10 @@ namespace FilOps.ViewModels.DebugWindow
         public DelegateCommand PollingCommand { get; set; }
         #endregion バインディング
 
-        public DebugWindowViewModel()
+        public DebugWindowViewModel(IExpandedDirectoryManager expandDirManager)
         {
+            ExpandDirManager = expandDirManager;
+
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(Polling);
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -88,9 +91,6 @@ namespace FilOps.ViewModels.DebugWindow
                     }
                 }
             );
-
-            ExplorerPageViewModel = App.Current.Services.GetService<IExplorerPageViewModel>() ?? throw new NullReferenceException(nameof(IExplorerPageViewModel));
         }
-        private readonly IExplorerPageViewModel ExplorerPageViewModel;
     }
 }

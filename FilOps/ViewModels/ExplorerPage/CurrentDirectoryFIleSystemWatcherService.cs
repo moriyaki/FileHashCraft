@@ -9,6 +9,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
+    #region イベント引数
     /// <summary>
     /// カレントディレクトリへの追加削除イベント引数
     /// </summary>
@@ -33,7 +34,7 @@ namespace FilOps.ViewModels.ExplorerPage
     public class CurrentDirectoryFileRenamedEventArgs : EventArgs
     {
         public string OldFullPath { get; }
-        public string NewFullPath { get; }
+        public string FullPath { get; }
 
         public CurrentDirectoryFileRenamedEventArgs()
         {
@@ -48,9 +49,10 @@ namespace FilOps.ViewModels.ExplorerPage
         public CurrentDirectoryFileRenamedEventArgs(string oldFullPath, string newFullPath)
         {
             OldFullPath = oldFullPath;
-            NewFullPath = newFullPath;
+            FullPath = newFullPath;
         }
     }
+    #endregion イベント引数
 
     public interface ICurrentDirectoryFIleSystemWatcherService
     {
@@ -62,14 +64,14 @@ namespace FilOps.ViewModels.ExplorerPage
 
     public class CurrentDirectoryFIleSystemWatcherService : ICurrentDirectoryFIleSystemWatcherService
     {
+        #region FileSystemWatcherの宣言
         // イベントのデリゲート定義
         public delegate void FileChangedEventHandler(object sender, CurrentDirectoryFileChangedEventArgs filePath);
-        public event EventHandler<ExplorerPage.CurrentDirectoryFileChangedEventArgs>? Created;
-        public event EventHandler<ExplorerPage.CurrentDirectoryFileChangedEventArgs>? Deleted;
+        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Created;
+        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Deleted;
         public delegate void FileRenamedEventHandler(object sender, CurrentDirectoryFileRenamedEventArgs filePath);
-        public event EventHandler<ExplorerPage.CurrentDirectoryFileRenamedEventArgs>? Renamed;
+        public event EventHandler<CurrentDirectoryFileRenamedEventArgs>? Renamed;
 
-        #region FileSystemWatcherの宣言
         private readonly FileSystemWatcher CurrentWatcher = new();
 
         /// <summary>

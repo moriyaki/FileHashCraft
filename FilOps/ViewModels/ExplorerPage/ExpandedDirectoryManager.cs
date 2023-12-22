@@ -7,8 +7,14 @@ namespace FilOps.ViewModels.ExplorerPage
     public interface IExpandedDirectoryManager
     {
         public List<string> Directories { get; }
+        public bool HasDirectory(string path);
+        public void AddDirectory(string path);
+        public void RemoveDirectory(string path);
+
+
     }
 
+    // TODO : 削除するパスの特殊フォルダは除外
     public class ExpandedDirectoryManager : IExpandedDirectoryManager
     {
         /// <summary>

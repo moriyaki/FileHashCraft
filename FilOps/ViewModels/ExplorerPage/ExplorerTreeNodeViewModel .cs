@@ -152,14 +152,14 @@ namespace FilOps.ViewModels.ExplorerPage
                 {
                     foreach (var child in Children)
                     {
-                        ExplorerVM.ExpandDirManager.AddDirectory(child.FullPath);
+                        ExplorerVM.AddDirectoryToExpandedDirManager(child.FullPath);
                     }
                 }
                 else
                 {
                     foreach (var child in Children)
                     {
-                        ExplorerVM.ExpandDirManager.RemoveDirectory(child.FullPath);
+                        ExplorerVM.RemoveDirectoryToExpandedDirManager(child.FullPath);
                     }
                 }
             }
