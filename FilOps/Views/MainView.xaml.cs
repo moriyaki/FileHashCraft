@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using FilOps.ViewModels;
+using FilOps.ViewModels.ExplorerPage;
 using FilOps.Views;
+using FilOps.ViewModels.DebugWindow;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps

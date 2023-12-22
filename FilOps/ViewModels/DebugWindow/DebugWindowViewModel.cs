@@ -1,8 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Text;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FilOps.Models;
+using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels.DebugWindow

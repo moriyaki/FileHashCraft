@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using FilOps.Models;
-using FilOps.ViewModels.ExplorerPage;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
@@ -15,11 +9,11 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// 指定されたディレクトリのファイル情報を取得し、リストビューを更新します。
         /// </summary>
-        /// <param name="path">ファイル情報を取得するディレクトリのパス</param>
-        private void FolderFileListScan(string path)
+        /// <param name="fullPath">ファイル情報を取得するディレクトリのパス</param>
+        private void FolderFileListScan(string fullPath)
         {
             // Files クラスを使用して指定ディレクトリのファイル情報を取得
-            foreach (var folderFile in FileSystemManager.FileItemScan(path, true))
+            foreach (var folderFile in FileSystemInformationManager.FileItemScan(fullPath, true))
             {
                 // フォルダやファイルの情報を ViewModel に変換
                 var item = new ExplorerListItemViewModel(this, folderFile);
@@ -27,7 +21,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 // UI スレッドでリストビューを更新
                 App.Current?.Dispatcher?.Invoke((Action)(() =>
                 {
-                    ListFile.Add(item);
+                    ListItems.Add(item);
                 }));
             }
         }
@@ -38,9 +32,6 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <param name="changedPath">変更されたカレントディレクトリのパス</param>
         public ExplorerTreeNodeViewModel? FolderSelectedChanged(string changedPath)
         {
-            // 選択するディレクトリのアイテム
-            ExplorerTreeNodeViewModel? selectingVM = null;
-
             // パスの最後がディレクトリセパレータで終わる場合は除去
             changedPath = changedPath.Length == 3 ? changedPath : changedPath.TrimEnd(Path.DirectorySeparatorChar);
 
@@ -52,10 +43,8 @@ namespace FilOps.ViewModels.ExplorerPage
             var subDirectoryRoot = TreeRoot.FirstOrDefault(root => changedPath.Contains(root.FullPath));
             if (subDirectoryRoot == null) return null;
 
-            selectingVM = subDirectoryRoot as ExplorerTreeNodeViewModel;
-            if (selectingVM == null) return null;
+            if (subDirectoryRoot is not ExplorerTreeNodeViewModel selectingVM) return null;
             selectingVM.IsExpanded = true;
-
 
             var directories = GetDirectoryNames(changedPath).ToList();
 
@@ -114,5 +103,63 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion カレントディレクトリ移動関連
 
+        #region カレントディレクトリのファイル変更通知関連
+        /// <summary>
+        /// カレントディレクトリにファイルが作成された
+        /// ディレクトリの場合、TreeViewは全ドライブ監視が処理してくれる
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">作成されたファイルのフルパスが入っている</param>
+        public void CurrentDirectoryItemCreated(object? sender, CurrentDirectoryFileChangedEventArgs e)
+        {
+            // 追加されたファイルの情報を取得する
+            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
+
+            // リストビューに追加されたファイルを追加する
+            var newListItem = new ExplorerListItemViewModel(this, fileInformation);
+            int newListIndex = FindIndexToInsert(ListItems, newListItem);
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                ListItems.Insert(newListIndex, newListItem);
+            });
+        }
+
+        /// <summary>
+        /// カレントディレクトリのファイルが削除された
+        /// ディレクトリの場合、TreeViewは全ドライブ監視が処理してくれる
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">削除されたファイルのフルパスが入っている</param>
+        public void CurrentDirectoryItemDeleted(object? sender, CurrentDirectoryFileChangedEventArgs e)
+        {
+            // リストビューの削除されたアイテムを探す
+            var listItem = ListItems.FirstOrDefault(i => i.FullPath == e.FullPath);
+            
+            // リストビューから削除されたファイルを取り除く
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                if (listItem != null) { ListItems.Remove(listItem); }
+            });
+        }
+
+        /// <summary>
+        /// カレントディレクトリのファイル名が変更された
+        /// ディレクトリの場合、TreeViewは全ドライブ監視が処理してくれる
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">名前変更されたファイルの新旧フルパスが入っている</param>
+
+        public void CurrentDirectoryItemRenamed(object? sender, CurrentDirectoryFileRenamedEventArgs e)
+        {
+            // リストビューの名前変更されたアイテムを探す
+            var listItem = ListItems.FirstOrDefault(i => i.FullPath == e.OldFullPath);
+
+            // リストビューに新しい名前を反映する
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                if (listItem != null) { listItem.FullPath = e.NewFullPath; }
+            });
+        }
+        #endregion カレントディレクトリのファイル変更通知関連
     }
 }

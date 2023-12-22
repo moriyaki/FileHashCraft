@@ -7,7 +7,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using FilOps.Models;
-using FilOps.ViewModels;
 using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +21,19 @@ namespace FilOps.Views
         public ExplorerPage()
         {
             InitializeComponent();
-            DataContext = App.Current.Services.GetService<IExplorerPageViewModel>();
+            // DataContextをDIコンテナから取得する
+            var explorerPageViewModel = App.Current.Services.GetService<IExplorerPageViewModel>();
+
+            // explorerPageViewModelがnullでないことを確認してから設定
+            if (explorerPageViewModel != null)
+            {
+                DataContext = explorerPageViewModel;
+            }
+            else
+            {
+                throw new NullReferenceException("ExplorerPageViewModelViewModel is null");
+            }
+
         }
 
         // とりあえずのデバッグウィンドウ開く処理        
@@ -105,7 +116,7 @@ namespace FilOps.Views
             Loaded += ExplorerPage_Loaded;
         }
 
-        private IFileSystemWatcherService? FileWatcherService;
+        private IDrivesFileSystemWatcherService? FileWatcherService;
 
         /// <summary>
         /// ウィンドウがロードされた時のイベント、カスタムのウィンドウプロシージャをフックする
@@ -118,13 +129,13 @@ namespace FilOps.Views
             if (explorerVM == null) { throw new NullReferenceException(nameof(explorerVM)); }
             explorerVM.InitializeOnce();
 
-            FileWatcherService = App.Current.Services.GetService<IFileSystemWatcherService>();
+            FileWatcherService = App.Current.Services.GetService<IDrivesFileSystemWatcherService>();
             if (FileWatcherService == null) { throw new NullReferenceException(nameof(FileWatcherService)); }
 
 
             if (explorerVM != null)
             {
-                explorerVM.CurrentDir = WindowsAPI.GetPath(KnownFolder.User);
+                explorerVM.CurrentDirectory = WindowsAPI.GetPath(KnownFolder.User);
             }
 
             HwndSource? hwndSource;

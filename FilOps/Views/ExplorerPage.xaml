@@ -41,7 +41,7 @@
                    Margin="3"
                    Name="CurrentDir"
                    FontSize="{Binding FontSize}"
-                   Text="{Binding CurrentDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                   Text="{Binding CurrentDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
 
@@ -108,7 +108,7 @@
             </TreeView>
 
             <ListView Name="FileItemsList" Grid.Column="2"
-                         ItemsSource="{Binding ListFile, Mode=OneWay}"
+                         ItemsSource="{Binding ListItems, Mode=OneWay}"
                          SelectedItem="{Binding SelectedListViewItem}"
                          VirtualizingStackPanel.IsVirtualizing="True"
                          VirtualizingPanel.VirtualizationMode="Recycling"

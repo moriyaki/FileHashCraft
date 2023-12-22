@@ -18,12 +18,13 @@ namespace FilOps.ViewModels.DebugWindow
 
         public void ShowDebugWindow()
         {
-            DebugWindow.ShowWindow();
+            
+            Views.DebugWindow.ShowWindow();
         }
 
         public void CloseDebugWindow()
         {
-            DebugWindow.CloseWindow();
+            Views.DebugWindow.CloseWindow();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace FilOps.ViewModels.ExplorerPage
 
         protected readonly IExplorerPageViewModel ExplorerVM;
 
-        public ExplorerItemViewModelBase(IExplorerPageViewModel explorerPageVM, FileInformation f)
+        public ExplorerItemViewModelBase(IExplorerPageViewModel explorerPageVM, FileItemInformation f)
         {
             ExplorerVM = explorerPageVM;
 

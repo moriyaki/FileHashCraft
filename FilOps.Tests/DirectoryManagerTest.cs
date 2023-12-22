@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
 using FilOps.ViewModels;
+using FilOps.ViewModels.ExplorerPage;
 
 namespace FilOps.Tests
 {
@@ -10,7 +11,7 @@ namespace FilOps.Tests
         public void AddRemoveSimpleTest()
         {
             var path = @"C:\";
-            var dirManager = new ExplorerTreeViewExpandedDirectoryManager();
+            var dirManager = new ExpandedDirectoryManager();
 
             dirManager.AddDirectory(path + "aaa");
             dirManager.AddDirectory(path + "bbb");
@@ -26,7 +27,7 @@ namespace FilOps.Tests
         [Fact]
         public void AddRemoveRangeTest()
         {
-            var dirManager = new ExplorerTreeViewExpandedDirectoryManager();
+            var dirManager = new ExpandedDirectoryManager();
 
             var dirs = new string[] { @"C:\aaa", @"C:\bbb", @"C:\ccc" };
             dirManager.AddDirectory(dirs);

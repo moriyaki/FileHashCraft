@@ -9,8 +9,8 @@ namespace FilOps.ViewModels.ExplorerPage
     {
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
 
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileInformation f) : base(explorerVM, f) { }
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f) { }
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
         {
             Parent = parent;
         }
@@ -120,7 +120,7 @@ namespace FilOps.ViewModels.ExplorerPage
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        ExplorerVM.CurrentItem = this;
+                        ExplorerVM.CurrentDirectoryItem = this;
                         if (!IsKicked) { KickChildGet(); }
                     }
                 }
@@ -171,7 +171,7 @@ namespace FilOps.ViewModels.ExplorerPage
         public void KickChildGet()
         {
             Children.Clear();
-            foreach (var child in FileSystemManager.FileItemScan(FullPath, false))
+            foreach (var child in FileSystemInformationManager.FileItemScan(FullPath, false))
             {
                 var item = new ExplorerTreeNodeViewModel(ExplorerVM, child, this);
                 Children.Add(item);

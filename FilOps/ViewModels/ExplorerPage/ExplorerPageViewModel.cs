@@ -14,9 +14,9 @@ namespace FilOps.ViewModels.ExplorerPage
     {
         public void InitializeOnce();
         public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; }
-        public ObservableCollection<ExplorerItemViewModelBase> ListFile { get; set; }
-        public string CurrentDir { get; set; }
-        public ExplorerTreeNodeViewModel? CurrentItem { get; set; }
+        public ObservableCollection<ExplorerItemViewModelBase> ListItems { get; set; }
+        public string CurrentDirectory { get; set; }
+        public ExplorerTreeNodeViewModel? CurrentDirectoryItem { get; set; }
         public ExpandedDirectoryManager ExpandDirManager { get; }
         public double FontSize { get; set; }
 
@@ -33,7 +33,7 @@ namespace FilOps.ViewModels.ExplorerPage
     {
         #region データバインディング
         public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; } = [];
-        public ObservableCollection<ExplorerItemViewModelBase> ListFile { get; set; } = [];
+        public ObservableCollection<ExplorerItemViewModelBase> ListItems { get; set; } = [];
 
         /// <summary>
         /// 「上へ」コマンド
@@ -66,15 +66,15 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// カレントディレクトリ
         /// </summary>
-        private string _currentDir = string.Empty;
-        public string CurrentDir
+        private string _currentDirectory = string.Empty;
+        public string CurrentDirectory
         {
-            get => _currentDir;
+            get => _currentDirectory;
             set
             {
                 string changedDir = value;
 
-                if (_currentDir.Length == 1 && value.Length == 2)
+                if (_currentDirectory.Length == 1 && value.Length == 2)
                 {
                     // 1文字から2文字になった時は、'\\' を追加する
                     changedDir = changedDir.ToUpper() + Path.DirectorySeparatorChar;
@@ -82,7 +82,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 else if (changedDir.Length < 3)
                 {
                     // 3文字未満なら返る
-                    SetProperty(ref _currentDir, value);
+                    SetProperty(ref _currentDirectory, value);
                     return;
                 }
 
@@ -98,15 +98,15 @@ namespace FilOps.ViewModels.ExplorerPage
                 }
 
                 // 同じ値ならセットしない
-                if (Path.Equals(_currentDir, changedDir)) return;
+                if (Path.Equals(_currentDirectory, changedDir)) return;
 
                 // 値のセット
-                if (!SetProperty(ref _currentDir, changedDir)) return;
+                if (!SetProperty(ref _currentDirectory, changedDir)) return;
 
                 // ディレクトリが存在するなら、CurrentItemを設定
                 if (Directory.Exists(changedDir))
                 {
-                    CurrentItem = FolderSelectedChanged(changedDir);
+                    CurrentDirectoryItem = FolderSelectedChanged(changedDir);
                 }
             }
         }
@@ -114,28 +114,36 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// カレントディレクトリの情報
         /// </summary>
-        private ExplorerTreeNodeViewModel? _CurrentItem = null;
-        public ExplorerTreeNodeViewModel? CurrentItem
+        private ExplorerTreeNodeViewModel? _CurrentIDirectorytem = null;
+        public ExplorerTreeNodeViewModel? CurrentDirectoryItem
         {
-            get => _CurrentItem;
+            get => _CurrentIDirectorytem;
             set
             {
                 if (value is null) { return; }
-                if (_CurrentItem == value) { return; }
+                if (_CurrentIDirectorytem == value) { return; }
 
                 // 選択が変更されたら、明示的に今までの選択を外す
-                if (_CurrentItem is not null && _CurrentItem != value)
+                if (_CurrentIDirectorytem is not null && _CurrentIDirectorytem != value)
                 {
-                    _CurrentItem.IsSelected = false;
+                    _CurrentIDirectorytem.IsSelected = false;
                 }
-                SetProperty(ref _CurrentItem, value);
+                SetProperty(ref _CurrentIDirectorytem, value);
+                
+                // 「上へ」ボタンの可否をViewへ反映する
                 ToUpDirectory.RaiseCanExecuteChanged();
 
+                // カレントディレクトリが変更されたので、監視対象を移す
+                CurrentWatcherService.SetCurrentDirectoryWatcher(value.FullPath);
 
-                FileWatcherService?.SetCurrentDirectoryWatcher(value.FullPath);
+                // 選択ディレクトリを移す
                 value.IsSelected = true;
+
+                // リストビューをカレントディレクトリに更新する
                 ListViewUpdater.Execute(null);
-                CurrentDir = value.FullPath;
+
+                // カレントディレクトリの文字列を更新する
+                CurrentDirectory = value.FullPath;
             }
         }
 
@@ -164,35 +172,52 @@ namespace FilOps.ViewModels.ExplorerPage
                 }
             }
         }
-        private IFileSystemWatcherService? FileWatcherService;
+        private readonly IDrivesFileSystemWatcherService DriveWatcherService;
+        private readonly ICurrentDirectoryFIleSystemWatcherService CurrentWatcherService;
         #endregion データバインディング
 
         #region コンストラクタと初期化
-        public ExplorerPageViewModel()
+        public ExplorerPageViewModel(
+            IDrivesFileSystemWatcherService driveWatcherService,
+            ICurrentDirectoryFIleSystemWatcherService currentWatcherService
+            )
         {
             ToUpDirectory = new DelegateCommand(
-                () => { if (CurrentItem != null) { CurrentItem = CurrentItem.Parent; } },
-                () => { return CurrentItem != null && CurrentItem.Parent != null; }
+                () => { if (CurrentDirectoryItem != null) { CurrentDirectoryItem = CurrentDirectoryItem.Parent; } },
+                () => { return CurrentDirectoryItem != null && CurrentDirectoryItem.Parent != null; }
             );
 
-            ListViewUpdater = new DelegateCommand(async () => {
-                ListFile.Clear();
-                if (CurrentItem != null)
+            ListViewUpdater = new DelegateCommand(async () =>
+            {
+                ListItems.Clear();
+                if (CurrentDirectoryItem != null)
                 {
-                    await Task.Run(() => FolderFileListScan(CurrentItem.FullPath));
+                    await Task.Run(() => FolderFileListScan(CurrentDirectoryItem.FullPath));
                 }
             });
 
-            FileListViewExecuted = new DelegateCommand(() => {
+            FileListViewExecuted = new DelegateCommand(() =>
+            {
                 if (SelectedListViewItem is not null)
                 {
                     var newDir = SelectedListViewItem.FullPath;
                     if (Directory.Exists(newDir))
                     {
-                        CurrentDir = newDir;
+                        CurrentDirectory = newDir;
                     }
                 }
             });
+
+
+            DriveWatcherService = driveWatcherService;
+            //DriveWatcherService.DirectoryChanged += DirectoryChanged;
+
+
+            CurrentWatcherService = currentWatcherService;
+            CurrentWatcherService.Created += CurrentDirectoryItemCreated;
+            CurrentWatcherService.Deleted += CurrentDirectoryItemDeleted;
+            CurrentWatcherService.Renamed += CurrentDirectoryItemRenamed;
+
         }
 
         private bool IsInitialized = false;
@@ -200,25 +225,45 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             if (!IsInitialized)
             {
-                FileWatcherService = App.Current.Services.GetService<IFileSystemWatcherService>() ?? throw new ArgumentNullException(nameof(IFileSystemWatcherService));
-                foreach (var rootInfo in FileSystemManager.Instance.SpecialFolderScan())
+                foreach (var rootInfo in FileSystemInformationManager.Instance.SpecialFolderScan())
                 {
                     var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                     TreeRoot.Add(item);
                     ExpandDirManager.AddDirectory(rootInfo.FullPath);
                 }
-                foreach (var rootInfo in FileSystemManager.DriveScan())
+                foreach (var rootInfo in FileSystemInformationManager.DriveScan())
                 {
                     var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                     TreeRoot.Add(item);
                     ExpandDirManager.AddDirectory(rootInfo.FullPath);
-                    FileWatcherService.AddRootDriveWatcher(item);
+                    /* 実装次第解除
+                    DriveWatcherService?.AddRootDriveWatcher(item);
+                    */
                 }
                 IsInitialized = true;
             }
         }
         #endregion コンストラクタと初期化
 
+        #region アイテムの挿入位置を決定するヘルパー
+        /// <summary>
+        /// ソート済みの位置に挿入するためのヘルパーメソッド
+        /// </summary>
+        /// <typeparam name="T">検索するObservableCollectionの型</typeparam>
+        /// <param name="collection">コレクション</param>
+        /// <param name="newItem">新しいアイテム</param>
+        /// <returns>挿入する位置</returns>
+        private static int FindIndexToInsert<T>(ObservableCollection<T> collection, T newItem) where T : IComparable<T>
+        {
+            int indexToInsert = 0;
+            foreach (var item in collection)
+            {
+                if (item.CompareTo(newItem) >= 0) { break; }
+                indexToInsert++;
+            }
+            return indexToInsert;
+        }
+        #endregion アイテムの挿入位置を決定するヘルパー
 
         #region ファイルアイテム取得(廃止予定)
         /// <summary>
@@ -228,7 +273,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <returns>ツリービューアイテム</returns>
         public ExplorerTreeNodeViewModel CreateTreeViewItem(string path)
         {
-            var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(path);
+            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(path);
             return new ExplorerTreeNodeViewModel(this, fileInformation);
 
         }
@@ -240,7 +285,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <returns>リストビューアイテム</returns>
         public ExplorerListItemViewModel CreateListViewItem(string path)
         {
-            var fileInformation = FileSystemManager.GetFileInformationFromDirectorPath(path);
+            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(path);
             return new ExplorerListItemViewModel(this, fileInformation);
         }
         #endregion ファイルアイテム取得(廃止予定)
@@ -341,8 +386,9 @@ namespace FilOps.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
-
-                    FileWatcherService?.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    /* 実装次第解除
+                    DriveWatcherService?.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    */
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
                     //ドライブが取り外されたされた時の処理を書く
@@ -358,8 +404,9 @@ namespace FilOps.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
-
-                    FileWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    /* 実装次第解除
+                    DriveWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    */
                     break;
             }
             // デフォルトのウィンドウプロシージャに処理を渡す
@@ -367,4 +414,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion ドライブ変更のフック処理
     }
+
+
+
 }

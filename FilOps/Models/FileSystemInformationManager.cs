@@ -7,7 +7,7 @@ namespace FilOps.Models
     /// <summary>
     /// ファイル情報
     /// </summary>
-    public class FileInformation
+    public class FileItemInformation
     {
         /// <summary>
         /// ディレクトリのフルパス
@@ -46,12 +46,12 @@ namespace FilOps.Models
     }
     #endregion ディレクトリとファイル情報
 
-    public class FileSystemManager
+    public class FileSystemInformationManager
     {
         #region Singleton
-        private static readonly FileSystemManager _instance = new();
-        public static FileSystemManager Instance => _instance;
-        private FileSystemManager() { }
+        private static readonly FileSystemInformationManager _instance = new();
+        public static FileSystemInformationManager Instance => _instance;
+        private FileSystemInformationManager() { }
         #endregion Singleton
 
         #region ディレクトリとファイルのスキャン関連
@@ -84,7 +84,7 @@ namespace FilOps.Models
         /// 特殊フォルダをスキャンして情報を取得します。
         /// </summary>
         /// <returns>特殊フォルダの情報のコレクション</returns>
-        public IEnumerable<FileInformation> SpecialFolderScan()
+        public IEnumerable<FileItemInformation> SpecialFolderScan()
         {
             IEnumerable<string> special_folder_path =
             [
@@ -109,7 +109,7 @@ namespace FilOps.Models
         /// ルートドライブをスキャンして情報を取得します。
         /// </summary>
         /// <returns>ルートドライブのフォルダ情報のコレクション</returns>
-        public static IEnumerable<FileInformation> DriveScan()
+        public static IEnumerable<FileItemInformation> DriveScan()
         {
             foreach (var dir in DriveInfo.GetDrives())
             {
@@ -123,7 +123,7 @@ namespace FilOps.Models
         /// </summary>
         /// <param name="path">スキャンするディレクトリのパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public static IEnumerable<FileInformation> FileItemScan(string path, bool isFilesInclude)
+        public static IEnumerable<FileItemInformation> FileItemScan(string path, bool isFilesInclude)
         {
             IEnumerable<string> folders;
             try
@@ -168,25 +168,25 @@ namespace FilOps.Models
         /// <summary>
         /// 指定されたディレクトリのパスから、FileInformationを生成します。
         /// </summary>
-        /// <param name="path">FileInformationを生成するファイルのフルパス</param>
+        /// <param name="fullPath">FileInformationを生成するファイルのフルパス</param>
         /// <param name="isReady">ドライブが準備されているかどうか。既定値は true です。</param>
         /// <returns>指定されたディレクトリのFileInformation</returns>
         /// <remarks>
         /// メソッドの動作には、指定されたディレクトリが存在することが前提とされています。
         /// </remarks>
-        public static FileInformation GetFileInformationFromDirectorPath(string path)
+        public static FileItemInformation GetFileInformationFromDirectorPath(string fullPath)
         {
-            var driveLetter = path[0].ToString() ?? string.Empty;
+            var driveLetter = fullPath[0].ToString() ?? string.Empty;
             var driveInfo = new DriveInfo(driveLetter);
             var isRemovable = driveInfo.DriveType == DriveType.Removable;
             var isReady = driveInfo.IsReady;
 
-            FileInformation item;
+            FileItemInformation item;
             
-            if (File.Exists(path))
+            if (File.Exists(fullPath))
             {
-                var fileInfo = new FileInfo(path);
-                item = new FileInformation
+                var fileInfo = new FileInfo(fullPath);
+                item = new FileItemInformation
                 {
                     FullPath = fileInfo.FullName,
                     IsDirectory = false,
@@ -199,8 +199,8 @@ namespace FilOps.Models
             }
             else
             {
-                var dirInfo = new DirectoryInfo(path);
-                item = new FileInformation
+                var dirInfo = new DirectoryInfo(fullPath);
+                item = new FileItemInformation
                 {
                     FullPath = dirInfo.FullName,
                     IsDirectory = true,

@@ -7,7 +7,7 @@ namespace FilOps.ViewModels.ExplorerPage
     {
         public ExplorerListItemViewModel() : base() { }
 
-        public ExplorerListItemViewModel(IExplorerPageViewModel explorerVM, FileInformation f) : base(explorerVM, f)
+        public ExplorerListItemViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f)
         {
             LastModifiedDate = f.LastModifiedDate;
             FileSize = f.FileSize;

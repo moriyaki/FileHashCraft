@@ -1,0 +1,139 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace FilOps.ViewModels.ExplorerPage
+{
+    /// <summary>
+    /// カレントディレクトリへの追加削除イベント引数
+    /// </summary>
+    public class CurrentDirectoryFileChangedEventArgs : EventArgs
+    {
+        public string FullPath { get; }
+
+        public CurrentDirectoryFileChangedEventArgs()
+        {
+            throw new NotImplementedException();
+        }
+
+        public CurrentDirectoryFileChangedEventArgs(string fullPath)
+        {
+            FullPath = fullPath;
+        }
+    }
+
+    /// <summary>
+    /// カレントディレクトリへの追加削除イベント引数
+    /// </summary>
+    public class CurrentDirectoryFileRenamedEventArgs : EventArgs
+    {
+        public string OldFullPath { get; }
+        public string NewFullPath { get; }
+
+        public CurrentDirectoryFileRenamedEventArgs()
+        {
+            throw new NotImplementedException();
+        }
+
+        public CurrentDirectoryFileRenamedEventArgs(string fullPath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CurrentDirectoryFileRenamedEventArgs(string oldFullPath, string newFullPath)
+        {
+            OldFullPath = oldFullPath;
+            NewFullPath = newFullPath;
+        }
+    }
+
+    public interface ICurrentDirectoryFIleSystemWatcherService
+    {
+        public void SetCurrentDirectoryWatcher(string currentDirectory);
+        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Created;
+        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Deleted;
+        public event EventHandler<CurrentDirectoryFileRenamedEventArgs>? Renamed;
+    }
+
+    public class CurrentDirectoryFIleSystemWatcherService : ICurrentDirectoryFIleSystemWatcherService
+    {
+        // イベントのデリゲート定義
+        public delegate void FileChangedEventHandler(object sender, CurrentDirectoryFileChangedEventArgs filePath);
+        public event EventHandler<ExplorerPage.CurrentDirectoryFileChangedEventArgs>? Created;
+        public event EventHandler<ExplorerPage.CurrentDirectoryFileChangedEventArgs>? Deleted;
+        public delegate void FileRenamedEventHandler(object sender, CurrentDirectoryFileRenamedEventArgs filePath);
+        public event EventHandler<ExplorerPage.CurrentDirectoryFileRenamedEventArgs>? Renamed;
+
+        #region FileSystemWatcherの宣言
+        private readonly FileSystemWatcher CurrentWatcher = new();
+
+        /// <summary>
+        /// カレントディレクトリに対してファイル変更監視の設定をする
+        /// </summary>
+        /// <param name="rootTreeItem"></param>
+        public void SetCurrentDirectoryWatcher(string currentDirectory)
+        {
+            // System.IO.FileNotFoundException: 'Error reading the C:\Windows\CSC directory.'
+            if (!Path.Exists(currentDirectory)) return;
+            try
+            {
+                CurrentWatcher.Created -= OnCreated;
+                CurrentWatcher.Deleted -= OnDeleted;
+                CurrentWatcher.Renamed -= OnRenamed;
+                CurrentWatcher.Error -= OnError;
+
+                CurrentWatcher.Path = currentDirectory;
+                CurrentWatcher.NotifyFilter
+                    = NotifyFilters.FileName
+                    | NotifyFilters.LastWrite
+                    | NotifyFilters.Size;
+                CurrentWatcher.EnableRaisingEvents = true;
+                CurrentWatcher.IncludeSubdirectories = false;
+
+                CurrentWatcher.Created += OnCreated;
+                CurrentWatcher.Deleted += OnDeleted;
+                CurrentWatcher.Renamed += OnRenamed;
+
+                CurrentWatcher.Error += OnError;
+            }
+            catch (FileNotFoundException) { }
+        }
+        /// <summary>
+        /// FIleSystemWatcherエラーイベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnError(object sender, ErrorEventArgs e)
+        {
+            Debug.WriteLine($"FileSystemWatcher エラー: {e.GetException()}");
+        }
+        #endregion FileSystemWatcherの宣言
+
+        #region ファイル変更通知
+        private void OnCreated(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Created) return;
+            Created?.Invoke(this, new CurrentDirectoryFileChangedEventArgs(e.FullPath));
+        }
+
+        private void OnDeleted(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Deleted) return;
+            Deleted?.Invoke(this, new CurrentDirectoryFileChangedEventArgs(e.FullPath));
+
+        }
+
+        private void OnRenamed(object sender, RenamedEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Renamed) return;
+            Renamed?.Invoke(this, new CurrentDirectoryFileRenamedEventArgs(e.OldFullPath, e.FullPath));
+            
+        }
+        #endregion ファイル変更通知
+    }
+}
