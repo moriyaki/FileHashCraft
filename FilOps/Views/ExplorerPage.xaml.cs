@@ -8,6 +8,8 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using FilOps.Models;
 using FilOps.ViewModels;
+using FilOps.ViewModels.DebugWindow;
+using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.Views

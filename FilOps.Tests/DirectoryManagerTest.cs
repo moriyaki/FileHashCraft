@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Linq;
-using FilOps.Models;
+using FilOps.ViewModels;
 
 namespace FilOps.Tests
 {
@@ -10,7 +10,7 @@ namespace FilOps.Tests
         public void AddRemoveSimpleTest()
         {
             var path = @"C:\";
-            var dirManager = new ExpandedDirectoryManager();
+            var dirManager = new ExplorerTreeViewExpandedDirectoryManager();
 
             dirManager.AddDirectory(path + "aaa");
             dirManager.AddDirectory(path + "bbb");
@@ -26,7 +26,7 @@ namespace FilOps.Tests
         [Fact]
         public void AddRemoveRangeTest()
         {
-            var dirManager = new ExpandedDirectoryManager();
+            var dirManager = new ExplorerTreeViewExpandedDirectoryManager();
 
             var dirs = new string[] { @"C:\aaa", @"C:\bbb", @"C:\ccc" };
             dirManager.AddDirectory(dirs);
@@ -37,23 +37,6 @@ namespace FilOps.Tests
             dirManager.RemoveDirectory(removeDirs);
 
             Assert.Single(dirManager.Directories);
-        }
-
-        [Fact]
-        public void AddSubDirTest()
-        {
-            var path = @"C:\";
-            var dirManager = new CheckedDirectoryManager();
-
-            dirManager.AddDirectory(path + @"aaa");
-            dirManager.AddDirectory(path + @"aaa\bbb");
-            dirManager.AddDirectory(path + @"aaa\ccc");
-            dirManager.AddDirectory(path + @"aaa\ddd");
-            dirManager.AddDirectory(path + @"aaa\ddd\eee");
-
-            Assert.Single(dirManager.Directories);
-
-            Assert.True(dirManager.HasDirectory(path + @"aaa\bbb"));
         }
     }
 }

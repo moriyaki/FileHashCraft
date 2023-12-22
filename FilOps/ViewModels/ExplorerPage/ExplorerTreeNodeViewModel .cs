@@ -3,18 +3,16 @@ using System.ComponentModel;
 using FilOps.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FilOps.ViewModels
+namespace FilOps.ViewModels.ExplorerPage
 {
     public class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
-        ///public ExplorerTreeNodeViewModel() { }
-
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
 
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileInformation f): base(explorerVM, f) { }
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileInformation f) : base(explorerVM, f) { }
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
         {
-            Parent =parent;
+            Parent = parent;
         }
 
         /// <summary>
@@ -87,7 +85,7 @@ namespace FilOps.ViewModels
             get => _HasChildren;
             set
             {
-                if (SetProperty(ref _HasChildren, value) &&  Children.Count == 0)
+                if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
                 {
                     Children.Add(new ExplorerTreeNodeViewModel(ExplorerVM) { Name = "【dummy】" });
 
@@ -181,7 +179,6 @@ namespace FilOps.ViewModels
             }
             IsKicked = true;
         }
-
         #endregion データバインディング用
     }
 }

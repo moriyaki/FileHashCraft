@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FilOps.ViewModels
+namespace FilOps.ViewModels.DebugWindow
 {
     public interface IDebugWindowViewModel
     {
@@ -49,7 +49,7 @@ namespace FilOps.ViewModels
 
         public string PollingStatus
         {
-            get => IsPolling ?  "ポーリング終了" : "ポーリング開始";
+            get => IsPolling ? "ポーリング終了" : "ポーリング開始";
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace FilOps.ViewModels
             timer.Tick += new EventHandler(Polling);
             timer.Interval = TimeSpan.FromSeconds(1);
             PollingCommand = new DelegateCommand(
-                () => 
+                () =>
                 {
                     if (IsPolling)
                     {

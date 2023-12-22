@@ -1,7 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
-using FilOps.Models;
 using FilOps.ViewModels;
+using FilOps.ViewModels.DebugWindow;
+using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps
@@ -83,8 +84,8 @@ namespace FilOps
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddSingleton<IFileSystemWatcherService, FileSystemWatcherService>();
-            services.AddSingleton<IDirectoryManager, ExpandedDirectoryManager>();
-            services.AddSingleton<IDirectoryManager, CheckedDirectoryManager>();
+            services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();
+            services.AddSingleton<IExpandedDirectoryManager, CheckedDirectoryManager>();
 
             return services.BuildServiceProvider();
         }   

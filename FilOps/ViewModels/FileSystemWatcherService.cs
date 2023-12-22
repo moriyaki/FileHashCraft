@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using FilOps.Models;
+using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels

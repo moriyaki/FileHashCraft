@@ -5,10 +5,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FilOps.ViewModels
+namespace FilOps.ViewModels.ExplorerPage
 {
     public class ExplorerItemViewModelBase : ObservableObject, IComparable<ExplorerItemViewModelBase>
     {
+        public ExplorerItemViewModelBase() 
+        {
+            throw new NotImplementedException();
+        }
+
         public ExplorerItemViewModelBase(IExplorerPageViewModel explorerVM)
         {
             ExplorerVM = explorerVM;
@@ -114,10 +119,7 @@ namespace FilOps.ViewModels
         public virtual bool IsReady
         {
             get => _IsReady;
-            set
-            {
-                SetProperty(ref _IsReady, value);
-            }
+            set => SetProperty(ref _IsReady, value);
         }
 
         /// <summary>
@@ -143,7 +145,6 @@ namespace FilOps.ViewModels
         /// <summary>
         /// フォントサイズ
         /// </summary>
-        
         public static double FontSize
         {
             get

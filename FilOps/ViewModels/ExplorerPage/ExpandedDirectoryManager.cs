@@ -1,16 +1,15 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FilOps.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FilOps.Models
+namespace FilOps.ViewModels.ExplorerPage
 {
-    public interface IDirectoryManager
+    public interface IExpandedDirectoryManager
     {
         public List<string> Directories { get; }
     }
 
-    public class ExpandedDirectoryManager : IDirectoryManager
+    public class ExpandedDirectoryManager : IExpandedDirectoryManager
     {
         /// <summary>
         /// 登録したディレクトリのリスト
@@ -21,7 +20,7 @@ namespace FilOps.Models
         /// 登録したディレクトリのリストを取得する
         /// </summary>
         /// <returns></returns>
-        public List<string> Directories{ get => _directories; }
+        public List<string> Directories { get => _directories; }
 
         /// <summary>
         /// パスが登録されているかどうかを調べる。

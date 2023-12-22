@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using FilOps.Models;
 
-namespace FilOps.ViewModels
+namespace FilOps.ViewModels.ExplorerPage
 {
     public class ExplorerListItemViewModel : ExplorerItemViewModelBase
     {
-        //public ExplorerListItemViewModel() : base() { }
+        public ExplorerListItemViewModel() : base() { }
 
         public ExplorerListItemViewModel(IExplorerPageViewModel explorerVM, FileInformation f) : base(explorerVM, f)
         {
