@@ -83,29 +83,6 @@ namespace FilOps.ViewModels.DebugWindow
         #endregion バインディング
 
         /// <summary>
-        /// ポーリング中の処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Polling(object? sender, EventArgs e)
-        {
-            var list = ExpandDirManager.Directories;
-            list.Sort();
-            App.Current?.Dispatcher.Invoke(() =>
-            {
-                DebugText = string.Empty;
-
-                var sb = new StringBuilder();
-                foreach (var dir in list)
-                {
-                    sb.Append(dir);
-                    sb.Append(Environment.NewLine);
-                }
-                DebugText = sb.ToString();
-            });
-        }
-
-        /// <summary>
         /// アプリケーション終了時に必要な後処理をここに入れる
         /// </summary>
         public void Cancel()
@@ -120,7 +97,7 @@ namespace FilOps.ViewModels.DebugWindow
         /// <summary>
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        private readonly IExpandedDirectoryManager ExpandDirManager;
+        private readonly ICheckedDirectoryManager DebugClass;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得する
@@ -129,9 +106,9 @@ namespace FilOps.ViewModels.DebugWindow
         /// <param name="expandDirManager">今はIExpandedDirectoryManager</param>
         public DebugWindowViewModel(
             IMainViewModel mainViewModel,
-            IExpandedDirectoryManager expandDirManager)
+            ICheckedDirectoryManager debugClass)
         {
-            ExpandDirManager = expandDirManager;
+            DebugClass = debugClass;
 
             this.Top = mainViewModel.Top;
             this.Left = mainViewModel.Left + mainViewModel.Width;
@@ -157,5 +134,34 @@ namespace FilOps.ViewModels.DebugWindow
             );
             PollingCommand.Execute(null);
         }
+
+        /// <summary>
+        /// ポーリング中の処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Polling(object? sender, EventArgs e)
+        {
+            List<string> list =
+            [
+                "Directory Only -------------------------------",
+                .. DebugClass.DirectoriesOnly,
+                "With SubDirectories---------------------------",
+                .. DebugClass.DirectoriesWithSubdirectories,
+            ];
+            App.Current?.Dispatcher.Invoke(() =>
+            {
+                DebugText = string.Empty;
+
+                var sb = new StringBuilder();
+                foreach (var dir in list)
+                {
+                    sb.Append(dir);
+                    sb.Append(Environment.NewLine);
+                }
+                DebugText = sb.ToString();
+            });
+        }
+
     }
 }

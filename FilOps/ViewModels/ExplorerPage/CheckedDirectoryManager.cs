@@ -6,30 +6,35 @@ using System.Threading.Tasks;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
-    /* IsChecked用ディレクトリ管理クラス
-     * 
-     * あるディレクトリ A が登録されていたら、その中にある全てのディレクトリ B,C,D も対象とするが追加はしない。
-     * 追加はしないが、B,C,D に問われたら true を返す必要がある。D 内にある E も同様に true だ。
-     * 
-     * ここで仮に C が削除されたら、A を登録解除して、A の中の B,D を登録する。
-     * A は null(混合状態)、C は当然 false、B,D は登録されているので当然 true となる。
-     * 
-     * さらに、改めて C が登録われたら、A の中にあるディレクトリをチェックする。
-     * ディレクトリ全て、すなわち B,C,D が登録されていたら、A を登録して B,C,D を外す、E は変化なし。
-     * 
-     * ここで仮に D が削除されたら、A を null(混合状態) にして、A の中の B,C を登録する。
-     * A,D は当然 false、B,Cは登録されているので当然 true、そして E は D が削除されたので false となる。
-     * 
-     * ここで仮に A が登録されたら、無条件に B,C,D,E は削除され、Aが登録される。
-     * 
-     * Aの混合状態を保持するためのリストが必要になる
-     * 
-     * ディレクトリスキャンを避けるため、この状態遷移はViewModelで行い、結果だけをここに伝える
-     */
+     // ディレクトリスキャンを避けるため、この状態遷移はViewModelで行い、結果だけをここに伝える
     public interface ICheckedDirectoryManager
     {
-        public List<string> CompleteDirectories { get; }
-        public List<string> ImcompleteDirectories { get; }
+        public List<string> DirectoriesWithSubdirectories { get; }
+        public List<string> DirectoriesOnly { get; }
+
+        /// <summary>
+        /// 子ディレクトリを含むディレクトリの登録
+        /// </summary>
+        /// <param name="fullPath">登録するディレクトリのフルパス</param>
+        public void AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(string fullPath);
+
+        /// <summary>
+        /// 子ディレクトリを含むディレクトリの解除
+        /// </summary>
+        /// <param name="fullPath">解除するディレクトリのフルパス</param>
+        public void RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(string fullPath);
+
+        /// <summary>
+        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録
+        /// </summary>
+        /// <param name="fullPath">登録するディレクトリのフルパス</param>
+        public void AddDirectoryOnlyToCheckedDirectoryManager(string fullPath);
+
+        /// <summary>
+        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録
+        /// </summary>
+        /// <param name="fullPath">解除するディレクトリのフルパス</param>
+        public void RemoveDirectoryOnlyToCheckedDirectoryManager(string fullPath);
     }
 
     public class CheckedDirectoryManager : ICheckedDirectoryManager
@@ -37,25 +42,79 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// 登録した、サブディレクトリを含むディレクトリのリスト
         /// </summary>
-        private readonly List<string> _completeDirectories = [];
+        private readonly List<string> _directoriesWithSubdirectories = [];
 
         /// <summary>
         /// 登録した、サブディレクトリを含むディレクトリのリストを取得する
         /// </summary>
         /// <returns></returns>
-        public List<string> CompleteDirectories { get => _completeDirectories; }
+        public List<string> DirectoriesWithSubdirectories { get => _directoriesWithSubdirectories; }
 
         /// <summary>
         /// 登録した、サブディレクトリを含まないディレクトリのリスト
         /// </summary>
-        private readonly List<string> _imcompleteDirectories = [];
+        private readonly List<string> _directoriesOnly = [];
         /// <summary>
         /// 登録した、サブディレクトリを含まないディレクトリのリストを取得する
         /// </summary>
         /// <returns></returns>
-        public List<string> ImcompleteDirectories { get => _imcompleteDirectories; }
+        public List<string> DirectoriesOnly { get => _directoriesOnly; }
 
+        /// <summary>
+        /// 子ディレクトリを含むディレクトリの登録
+        /// </summary>
+        /// <param name="fullPath">登録するディレクトリのフルパス</param>
+        public void AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(string fullPath)
+        {
+            // 既存のディレクトリが含まれている場合は追加しない
+            foreach (string existingDirectory in _directoriesWithSubdirectories)
+            {
+                if (fullPath.StartsWith(existingDirectory, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+            // 新しいディレクトリが既存のディレクトリを含んでいる場合は削除する
+            _directoriesWithSubdirectories.RemoveAll(existingDirectory =>
+                existingDirectory.StartsWith(fullPath, StringComparison.OrdinalIgnoreCase));
 
+            _directoriesWithSubdirectories.Add(fullPath);
+        }
 
+        /// <summary>
+        /// 子ディレクトリを含むディレクトリの解除
+        /// </summary>
+        /// <param name="fullPath">解除するディレクトリのフルパス</param>
+        public void RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(string fullPath)
+        {
+            if (_directoriesWithSubdirectories.Any(existingDirectory => existingDirectory == fullPath))
+            {
+                _directoriesWithSubdirectories.Remove(fullPath);
+            }
+        }
+
+        /// <summary>
+        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録
+        /// </summary>
+        /// <param name="fullPath">登録するディレクトリのフルパス</param>
+        public void AddDirectoryOnlyToCheckedDirectoryManager(string fullPath)
+        {
+            if (!_directoriesOnly.Any(existingDirectory => existingDirectory == fullPath))
+            {
+                _directoriesOnly.Add(fullPath);
+            }
+        }
+
+        /// <summary>
+        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録
+        /// </summary>
+        /// <param name="fullPath">解除するディレクトリのフルパス</param>
+        public void RemoveDirectoryOnlyToCheckedDirectoryManager(string fullPath)
+        {
+            if (_directoriesOnly.Any(existingDirectory => existingDirectory == fullPath))
+            {
+                _directoriesOnly.Remove(fullPath);
+            }
+        }
     }
 }

@@ -29,16 +29,6 @@ namespace FilOps.ViewModels.ExplorerPage
 
         #region データバインディング
         /// <summary>
-        /// チェックボックス
-        /// </summary>
-        private bool _IsChecked = false;
-        public bool IsChecked
-        {
-            get => _IsChecked;
-            set => SetProperty(ref _IsChecked, value);
-        }
-
-        /// <summary>
         /// 表示用の更新日時文字列
         /// </summary>
         public string LastFileUpdate
@@ -65,6 +55,17 @@ namespace FilOps.ViewModels.ExplorerPage
             get => _LastModifiedDate;
             set => SetProperty(ref _LastModifiedDate, value);
         }
+        
+        /// <summary>
+        /// チェックボックス
+        /// </summary>
+        private bool _IsChecked = false;
+        public bool IsChecked
+        {
+            get => _IsChecked;
+            set => SetProperty(ref _IsChecked, value);
+        }
+
 
         /// <summary>
         /// 書式化したファイルのサイズ文字列

@@ -6,7 +6,7 @@ using FilOps.ViewModels.ExplorerPage;
 
 namespace FilOps.Tests
 {
-    public class ModelTest
+    public class DirectoryManagerTest
     {
         [Fact]
         public void AddRemoveSimpleTest()
@@ -64,6 +64,45 @@ namespace FilOps.Tests
 
             dirManager.RemoveDirectory(aaa);
             Assert.True(dirManager.Directories.Where(dir => dir == bbb).Any());
+        }
+    }
+
+    public class CheckedDirectoryManagerTest
+    {
+        [Fact]
+        public void AddSimpleTest()
+        {
+            var path = @"C:\";
+            var dirManager = new CheckedDirectoryManager();
+
+            var aaa = path + "aaa";
+            var bbb = Path.Combine(aaa + "bbb");
+
+            dirManager.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(bbb);
+            dirManager.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(aaa);
+
+            Assert.True(dirManager.DirectoriesWithSubdirectories.Where(dir => dir == aaa).Any());
+            Assert.False(dirManager.DirectoriesWithSubdirectories.Where(dir => dir == bbb).Any());
+        }
+
+        [Fact]
+        public void AddRemoveTest()
+        {
+            var path = @"C:\";
+            var dirManager = new CheckedDirectoryManager();
+
+            var aaa = path + "aaa";
+            var bbb = Path.Combine(aaa + "bbb");
+
+            dirManager.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(aaa);
+            dirManager.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(bbb);
+
+            Assert.True(dirManager.DirectoriesWithSubdirectories.Where(dir => dir == aaa).Any());
+            Assert.False(dirManager.DirectoriesWithSubdirectories.Where(dir => dir == bbb).Any());
+
+            dirManager.RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(aaa);
+
+            Assert.False(dirManager.DirectoriesWithSubdirectories.Where(dir => dir == aaa).Any());
         }
     }
 }

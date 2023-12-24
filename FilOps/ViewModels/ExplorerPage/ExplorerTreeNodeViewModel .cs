@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using FilOps.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
-    public class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
+    public partial class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
 
@@ -57,6 +57,7 @@ namespace FilOps.ViewModels.ExplorerPage
             Children.Add(item);
         }
 
+        //private bool IsUpdating = false;
         /// <summary>
         /// ディレクトリのチェックボックスがチェックされているかどうか
         /// </summary>
@@ -64,7 +65,30 @@ namespace FilOps.ViewModels.ExplorerPage
         public bool? IsChecked
         {
             get => _IsChecked;
-            set => SetProperty(ref _IsChecked, value);
+            set
+            {
+                /*
+                if (IsUpdating)
+                {
+                    SetProperty(ref _IsChecked, value);
+                }
+                else
+                {
+                    IsUpdating = true;
+                */
+                if (FullPath == string.Empty) { return;  }
+                if (value != _IsChecked)
+                {
+                    CheckStatusChanged(this, value);
+                }        
+                SetProperty(ref _IsChecked, value);
+                
+
+                /*
+                    IsUpdating = false;
+                }
+                */
+            }
         }
 
         /// <summary>
@@ -143,23 +167,21 @@ namespace FilOps.ViewModels.ExplorerPage
             {
                 if (SetProperty(ref _IsExpanded, value) && IsReady)
                 {
-                    if (value && !IsKicked)
-                    {
-                        KickChildGet();
-                    }
+                    if (value && !IsKicked) { KickChildGet(); }
                 }
                 if (value)
                 {
                     foreach (var child in Children)
                     {
-                        ExplorerVM.AddDirectoryToExpandedDirManager(child);
+                        ExplorerVM.AddDirectoryToExpandedDirectoryManager(child);
+                        if (IsChecked == true) { child.IsChecked = true; }
                     }
                 }
                 else
                 {
                     foreach (var child in Children)
                     {
-                        ExplorerVM.RemoveDirectoryToExpandedDirManager(child);
+                        ExplorerVM.RemoveDirectoryToExpandedDirectoryManager(child);
                     }
                 }
             }

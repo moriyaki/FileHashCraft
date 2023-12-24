@@ -17,21 +17,80 @@ namespace FilOps.ViewModels.ExplorerPage
     public interface IExplorerPageViewModel
     {
         public void InitializeOnce();
+
+        /// <summary>
+        /// ツリービューへのアクセス
+        /// </summary>
         public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; }
+
+        /// <summary>
+        /// リストビューへのアクセス
+        /// </summary>
         public ObservableCollection<ExplorerItemViewModelBase> ListItems { get; set; }
+        
+        /// <summary>
+        /// カレントディレクトリのフルパスへのアクセス
+        /// </summary>
         public string CurrentDirectory { get; set; }
+
+        /// <summary>
+        /// カレントディレクトリのツリービューアイテムへのアクセス
+        /// </summary>
         public ExplorerTreeNodeViewModel? CurrentDirectoryItem { get; set; }
+
+        /// <summary>
+        /// フォントサイズへのアクセス
+        /// </summary>
         public double FontSize { get; set; }
-        public void AddDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node);
-        public void RemoveDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node);
 
-        // WndProcフック処理関連
+        /// <summary>
+        /// TreeViewItem が展開された時に展開マネージャに通知する
+        /// </summary>
+        /// <param name="node">展開されたノード</param>
+        public void AddDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node);
+
+        /// <summary>
+        /// TreeViewItem が展開された時に展開解除マネージャに通知する
+        /// </summary>
+        /// <param name="node">展開解除されたノード</param>
+        public void RemoveDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node);
+
+        /// <summary>
+        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
+        public void AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
+
+        /// <summary>
+        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
+        public void AddDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
+
+        /// <summary>
+        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
+        public void RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
+
+        /// <summary>
+        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
+        public void RemoveDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
+
+
+
+        /// <summary>
+        /// WndProc をフックして、リムーバブルドライブの着脱を監視する
+        /// </summary>
+        /// <param name="hwndSource"></param>
         public void HwndAddHook(HwndSource? hwndSource);
-        public void HwndRemoveHook();
 
-        // リストビューアイテムを作成する(廃止予定)
-        public ExplorerTreeNodeViewModel CreateTreeViewItem(string path);
-        public ExplorerListItemViewModel CreateListViewItem(string path);
+        /// <summary>
+        /// WNdProc のフック解除して、アプリケーション終了に備える
+        /// </summary>
+        public void HwndRemoveHook();
     }
     #endregion インターフェース
     public partial class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
@@ -136,7 +195,7 @@ namespace FilOps.ViewModels.ExplorerPage
                     _CurrentIDirectorytem.IsSelected = false;
                 }
                 SetProperty(ref _CurrentIDirectorytem, value);
-                
+
                 // 「上へ」ボタンの可否をViewへ反映する
                 ToUpDirectory.RaiseCanExecuteChanged();
 
@@ -185,6 +244,7 @@ namespace FilOps.ViewModels.ExplorerPage
         private readonly IDrivesFileSystemWatcherService DriveWatcherService;
         private readonly ICurrentDirectoryFIleSystemWatcherService CurrentWatcherService;
         private readonly IExpandedDirectoryManager ExpandDirManager;
+        private readonly ICheckedDirectoryManager CheckedDirManager;
         private readonly IFileSystemInformationManager FileSystemInfoManager;
         private readonly IMainViewModel MainViewModel;
 
@@ -192,6 +252,7 @@ namespace FilOps.ViewModels.ExplorerPage
             IDrivesFileSystemWatcherService driveWatcherService,
             ICurrentDirectoryFIleSystemWatcherService currentWatcherService,
             IExpandedDirectoryManager expandDirManager,
+            ICheckedDirectoryManager checkedDirManager,
             IFileSystemInformationManager fileSystemInfoManager,
             IMainViewModel mainViewModel
             )
@@ -199,6 +260,7 @@ namespace FilOps.ViewModels.ExplorerPage
             DriveWatcherService = driveWatcherService;
             CurrentWatcherService = currentWatcherService;
             ExpandDirManager = expandDirManager;
+            CheckedDirManager = checkedDirManager;
             FileSystemInfoManager = fileSystemInfoManager;
             MainViewModel = mainViewModel;
 
@@ -290,32 +352,70 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion アイテムの挿入位置を決定するヘルパー
 
-        public void AddDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node)
+        #region 展開マネージャへの追加削除処理
+        public void AddDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
             ExpandDirManager.AddDirectory(node.FullPath);
-            if (node.IsExpanded) 
+            if (node.IsExpanded)
             {
                 foreach (var child in node.Children)
                 {
-                    AddDirectoryToExpandedDirManager(child);
+                    AddDirectoryToExpandedDirectoryManager(child);
                 }
             }
         }
 
-        public void RemoveDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node)
+        public void RemoveDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
             ExpandDirManager.RemoveDirectory(node.FullPath);
             if (node.HasChildren)
             {
                 foreach (var child in node.Children)
                 {
-                    RemoveDirectoryToExpandedDirManager(child);
+                    RemoveDirectoryToExpandedDirectoryManager(child);
                 }
             }
         }
+        #endregion 展開マネージャへの追加削除処理
 
+        #region チェックマネージャへの追加削除処理
+        /// <summary>
+        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
+        public void AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
+        {
+            CheckedDirManager.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(node.FullPath);
+        }
 
-        #region ファイルアイテム取得(廃止)
+        /// <summary>
+        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
+        public void RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
+        {
+            CheckedDirManager.RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(node.FullPath);
+        }
+
+        /// <summary>
+        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
+        public void AddDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
+        {
+            CheckedDirManager.AddDirectoryOnlyToCheckedDirectoryManager(node.FullPath);
+        }
+
+        /// <summary>
+        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加する
+        /// </summary>
+        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
+        public void RemoveDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
+        {
+            CheckedDirManager.RemoveDirectoryOnlyToCheckedDirectoryManager(node.FullPath);
+        }
+        #endregion  チェックマネージャへの追加削除処理
+        #region ファイルアイテム作成
         /// <summary>
         /// フルパスからツリービューアイテムを作成する
         /// </summary>
@@ -338,7 +438,8 @@ namespace FilOps.ViewModels.ExplorerPage
             var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(fullPath);
             return new ExplorerListItemViewModel(this, fileInformation);
         }
-        #endregion ファイルアイテム取得(廃止予定)
+        #endregion ファイルアイテム作成
+
 
         #region ドライブ変更のフック処理
         // ページのHwndSourceを保持するための変数
