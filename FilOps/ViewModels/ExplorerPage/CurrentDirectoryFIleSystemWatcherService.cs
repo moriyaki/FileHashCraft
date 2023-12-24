@@ -53,7 +53,6 @@ namespace FilOps.ViewModels.ExplorerPage
         }
     }
     #endregion イベント引数
-
     public interface ICurrentDirectoryFIleSystemWatcherService
     {
         public void SetCurrentDirectoryWatcher(string currentDirectory);

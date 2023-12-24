@@ -21,8 +21,11 @@ namespace FilOps
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            var explorerPage = App.Current.Services.GetService<IExplorerPageViewModel>();
-            explorerPage?.HwndRemoveHook();
+            var explorerPageViewModel = App.Current.Services.GetService<IExplorerPageViewModel>();
+            explorerPageViewModel?.HwndRemoveHook();
+
+            var debugViewModel = App.Current.Services.GetService<IDebugWindowViewModel>();
+            debugViewModel?.Cancel();
 
             Application.Current.Shutdown();
         }

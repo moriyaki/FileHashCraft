@@ -5,11 +5,15 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
+using FilOps.Views;
 using FilOps.Models;
+using FilOps.ViewModels;
+using FilOps.ViewModels.DebugWindow;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
+    #region インターフェース
     public interface IExplorerPageViewModel
     {
         public void InitializeOnce();
@@ -18,8 +22,8 @@ namespace FilOps.ViewModels.ExplorerPage
         public string CurrentDirectory { get; set; }
         public ExplorerTreeNodeViewModel? CurrentDirectoryItem { get; set; }
         public double FontSize { get; set; }
-        public void AddDirectoryToExpandedDirManager(string fullPath);
-        public void RemoveDirectoryToExpandedDirManager(string fullPath);
+        public void AddDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node);
+        public void RemoveDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node);
 
         // WndProcフック処理関連
         public void HwndAddHook(HwndSource? hwndSource);
@@ -28,8 +32,8 @@ namespace FilOps.ViewModels.ExplorerPage
         // リストビューアイテムを作成する(廃止予定)
         public ExplorerTreeNodeViewModel CreateTreeViewItem(string path);
         public ExplorerListItemViewModel CreateListViewItem(string path);
-
     }
+    #endregion インターフェース
     public partial class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
     {
         #region データバインディング
@@ -50,6 +54,11 @@ namespace FilOps.ViewModels.ExplorerPage
         /// リストビューダブルクリック時のコマンド
         /// </summary>
         public DelegateCommand FileListViewExecuted { get; set; }
+
+        /// <summary>
+        /// デバッグウィンドウを開く
+        /// </summary>
+        public DelegateCommand DebugOpen { get; set; }
 
         /// <summary>
         /// 選択されているリストビューのアイテム
@@ -170,18 +179,29 @@ namespace FilOps.ViewModels.ExplorerPage
                 }
             }
         }
-        private readonly IDrivesFileSystemWatcherService DriveWatcherService;
-        private readonly ICurrentDirectoryFIleSystemWatcherService CurrentWatcherService;
-        public readonly IExpandedDirectoryManager ExpandDirManager;
         #endregion データバインディング
 
         #region コンストラクタと初期化
+        private readonly IDrivesFileSystemWatcherService DriveWatcherService;
+        private readonly ICurrentDirectoryFIleSystemWatcherService CurrentWatcherService;
+        private readonly IExpandedDirectoryManager ExpandDirManager;
+        private readonly IFileSystemInformationManager FileSystemInfoManager;
+        private readonly IMainViewModel MainViewModel;
+
         public ExplorerPageViewModel(
             IDrivesFileSystemWatcherService driveWatcherService,
             ICurrentDirectoryFIleSystemWatcherService currentWatcherService,
-            IExpandedDirectoryManager expandDirManager
+            IExpandedDirectoryManager expandDirManager,
+            IFileSystemInformationManager fileSystemInfoManager,
+            IMainViewModel mainViewModel
             )
         {
+            DriveWatcherService = driveWatcherService;
+            CurrentWatcherService = currentWatcherService;
+            ExpandDirManager = expandDirManager;
+            FileSystemInfoManager = fileSystemInfoManager;
+            MainViewModel = mainViewModel;
+
             ToUpDirectory = new DelegateCommand(
                 () => { if (CurrentDirectoryItem != null) { CurrentDirectoryItem = CurrentDirectoryItem.Parent; } },
                 () => { return CurrentDirectoryItem != null && CurrentDirectoryItem.Parent != null; }
@@ -208,15 +228,19 @@ namespace FilOps.ViewModels.ExplorerPage
                 }
             });
 
-            ExpandDirManager = expandDirManager;
-            DriveWatcherService = driveWatcherService;
+            DebugOpen = new DelegateCommand(() =>
+            {
+                var debugWindow = new Views.DebugWindow();
+                var debugWindowService = new DebugWindowService(debugWindow);
+                debugWindowService.ShowDebugWindow();
+            });
+
             DriveWatcherService.Changed += DirectoryChanged;
             DriveWatcherService.Created += DirectoryCreated;
             DriveWatcherService.Renamed += DirectoryRenamed;
             DriveWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
             DriveWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
 
-            CurrentWatcherService = currentWatcherService;
             CurrentWatcherService.Created += CurrentDirectoryItemCreated;
             CurrentWatcherService.Deleted += CurrentDirectoryItemDeleted;
             CurrentWatcherService.Renamed += CurrentDirectoryItemRenamed;
@@ -228,7 +252,7 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             if (!IsInitialized)
             {
-                foreach (var rootInfo in FileSystemInformationManager.Instance.SpecialFolderScan())
+                foreach (var rootInfo in FileSystemInfoManager.SpecialFolderScan())
                 {
                     var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                     TreeRoot.Add(item);
@@ -266,14 +290,28 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion アイテムの挿入位置を決定するヘルパー
 
-        public void AddDirectoryToExpandedDirManager(string fullPath)
+        public void AddDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node)
         {
-            ExpandDirManager.AddDirectory(fullPath);
+            ExpandDirManager.AddDirectory(node.FullPath);
+            if (node.IsExpanded) 
+            {
+                foreach (var child in node.Children)
+                {
+                    AddDirectoryToExpandedDirManager(child);
+                }
+            }
         }
 
-        public void RemoveDirectoryToExpandedDirManager(string fullPath)
+        public void RemoveDirectoryToExpandedDirManager(ExplorerTreeNodeViewModel node)
         {
-            ExpandDirManager.RemoveDirectory(fullPath);
+            ExpandDirManager.RemoveDirectory(node.FullPath);
+            if (node.HasChildren)
+            {
+                foreach (var child in node.Children)
+                {
+                    RemoveDirectoryToExpandedDirManager(child);
+                }
+            }
         }
 
 

@@ -21,26 +21,14 @@ namespace FilOps.Views
         public ExplorerPage()
         {
             InitializeComponent();
-            // DataContextをDIコンテナから取得する
-            var explorerPageViewModel = App.Current.Services.GetService<IExplorerPageViewModel>();
-
-            // explorerPageViewModelがnullでないことを確認してから設定
-            if (explorerPageViewModel != null)
-            {
-                DataContext = explorerPageViewModel;
-            }
-            else
-            {
-                throw new NullReferenceException("ExplorerPageViewModelViewModel is null");
-            }
-
+            DataContext = App.Current.Services.GetService<IExplorerPageViewModel>();
         }
 
         // とりあえずのデバッグウィンドウ開く処理        
         private void DebugClick(object sender, RoutedEventArgs e)
         {
-            var windowService = App.Current.Services.GetService<IWindowService>();
-            windowService?.ShowDebugWindow();
+            var debugWindowService = new DebugWindowService(new DebugWindow());
+            debugWindowService.ShowDebugWindow();
         }
 
         /// <summary>

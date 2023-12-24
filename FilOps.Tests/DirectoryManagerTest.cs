@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Linq;
+using FilOps.Models;
 using FilOps.ViewModels;
 using FilOps.ViewModels.ExplorerPage;
 
@@ -11,33 +12,58 @@ namespace FilOps.Tests
         public void AddRemoveSimpleTest()
         {
             var path = @"C:\";
-            var dirManager = new ExpandedDirectoryManager();
+            var dirManager = new ExpandedDirectoryManager(new FileSystemInformationManager());
 
-            dirManager.AddDirectory(path + "aaa");
-            dirManager.AddDirectory(path + "bbb");
-            dirManager.AddDirectory(path + "ccc");
+            var aaa = path + "aaa";
+            var bbb = path + "bbb";
+            var ccc = path + "ccc";
 
-            dirManager.AddDirectory(path + "bbb");
-            Assert.Equal(3, dirManager.Directories.Count);
+            dirManager.AddDirectory(aaa);
+            dirManager.AddDirectory(bbb);
+            dirManager.AddDirectory(ccc);
 
-            dirManager.RemoveDirectory(path + "bbb");
-            Assert.Equal(2, dirManager.Directories.Count);
+            Assert.True(dirManager.Directories.Where(dir => dir == aaa).Any());
+            Assert.True(dirManager.Directories.Where(dir => dir == bbb).Any());
+            Assert.True(dirManager.Directories.Where(dir => dir == ccc).Any());
+
+
+            var count = dirManager.Directories.Count;
+            dirManager.AddDirectory(bbb);
+            Assert.Equal(count, dirManager.Directories.Count);
+
+            dirManager.RemoveDirectory(bbb);
+            Assert.False(dirManager.Directories.Where(dir => dir == bbb).Any());
         }
 
         [Fact]
-        public void AddRemoveRangeTest()
+        public void SpecialFolder() 
         {
-            var dirManager = new ExpandedDirectoryManager();
+            var path = @"C:\Users\moriyaki\Documents";
 
-            var dirs = new string[] { @"C:\aaa", @"C:\bbb", @"C:\ccc" };
-            dirManager.AddDirectory(dirs);
+            var dirManager = new ExpandedDirectoryManager(new FileSystemInformationManager());
+            Assert.True(dirManager.Directories.Where(dir => dir == path).Any());
 
-            Assert.Equal(3, dirManager.Directories.Count);
+            dirManager.RemoveDirectory(path);
+            Assert.True(dirManager.Directories.Where(dir => dir == path).Any());
+        }
 
-            var removeDirs = new string[] { @"C:\bbb", @"C:\ccc" };
-            dirManager.RemoveDirectory(removeDirs);
+        [Fact]
+        public void SubDirectory()
+        {
+            var path = @"C:\";
+            var dirManager = new ExpandedDirectoryManager(new FileSystemInformationManager());
 
-            Assert.Single(dirManager.Directories);
+            var aaa = path + "aaa";
+            var bbb = Path.Combine(aaa + "bbb");
+
+            dirManager.AddDirectory(aaa);
+            dirManager.AddDirectory(bbb);
+
+            Assert.True(dirManager.Directories.Where(dir => dir == aaa).Any());
+            Assert.True(dirManager.Directories.Where(dir => dir == bbb).Any());
+
+            dirManager.RemoveDirectory(aaa);
+            Assert.True(dirManager.Directories.Where(dir => dir == bbb).Any());
         }
     }
 }

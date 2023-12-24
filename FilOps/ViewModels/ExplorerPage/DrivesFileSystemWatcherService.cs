@@ -142,7 +142,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// </summary>
         /// <param name="fullPath">変更されたディレクトリのフルパス</param>
         /// <returns>変更通知を無視していいかどうか</returns>
-        private static bool IsEventNotCatch(string fullPath)
+        private bool IsEventNotCatch(string fullPath)
         {
             if (fullPath.Length == 3) { return true; }
             if (fullPath.Contains(Environment.GetFolderPath(Environment.SpecialFolder.Windows))) return true;
@@ -151,6 +151,7 @@ namespace FilOps.ViewModels.ExplorerPage
             if (fullPath.Contains(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData))) return true;
             if (fullPath.Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles))) return true;
             if (fullPath.Contains(Path.GetTempPath())) return true;
+            if (!(ExpandDirManager.IsExpandedDirectory(fullPath) || ExpandDirManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty))) return true;
 
             try
             {

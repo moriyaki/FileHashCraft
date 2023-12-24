@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilOps.Views"
         mc:Ignorable="d"
-        Title="DebugWindow" Height="450" Width="450">
+        Title="DebugWindow" Height="450" Width="450 " Top="{Binding Top,Mode=TwoWay}" Left="{Binding Left,Mode=TwoWay}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>

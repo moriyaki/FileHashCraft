@@ -23,7 +23,7 @@
                     <MenuItem Header="終了(_X)" />
                 </MenuItem>
                 <MenuItem Header="オプション(_O)"/>
-                <MenuItem Header="デバッグ(_D)" Click="DebugClick"/>
+                <MenuItem Header="デバッグ(_D)" Command="{Binding DebugOpen}"/>
             </Menu>
         </Grid>
         

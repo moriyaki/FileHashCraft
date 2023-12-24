@@ -46,14 +46,12 @@ namespace FilOps.Models
     }
     #endregion ディレクトリとファイル情報
 
-    public class FileSystemInformationManager
+    public interface IFileSystemInformationManager
     {
-        #region Singleton
-        private static readonly FileSystemInformationManager _instance = new();
-        public static FileSystemInformationManager Instance => _instance;
-        private FileSystemInformationManager() { }
-        #endregion Singleton
-
+        public IEnumerable<FileItemInformation> SpecialFolderScan();
+    }
+    public class FileSystemInformationManager : IFileSystemInformationManager
+    {
         #region ディレクトリとファイルのスキャン関連
         /// <summary>
         /// 指定されたディレクトリに子ディレクトリが存在するかどうかを判定します。

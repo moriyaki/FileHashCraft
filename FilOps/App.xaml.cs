@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
+using FilOps.Models;
 using FilOps.ViewModels;
 using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.ExplorerPage;
@@ -79,12 +80,13 @@ namespace FilOps
         {
             var services = new ServiceCollection();
 
-            services.AddTransient<IWindowService, WindowService>();
             services.AddTransient<IMainViewModel, MainViewModel>();
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
+            services.AddTransient<IDebugWindowService, DebugWindowService>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
-            services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
+            services.AddSingleton<IFileSystemInformationManager, FileSystemInformationManager>();
+            services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
             services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();
             services.AddSingleton<ICheckedDirectoryManager, CheckedDirectoryManager>();
 
