@@ -19,7 +19,6 @@ namespace FilOps.ViewModels.ExplorerPage
      * 
      * → DirectoryDeletedは必要なし
      */
-
     public partial class ExplorerPageViewModel
     {
         #region ディレクトリ変更通知処理

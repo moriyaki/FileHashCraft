@@ -142,7 +142,6 @@ namespace FilOps.ViewModels.ExplorerPage
             set => SetProperty(ref _IsDirectory, value);
         }
 
-
         /// <summary>
         /// フォントサイズ
         /// </summary>

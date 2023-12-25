@@ -2,14 +2,12 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Timers;
 using System.Windows;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FilOps.Views;
 using FilOps.Models;
-using FilOps.ViewModels;
 using FilOps.ViewModels.DebugWindow;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
@@ -44,6 +42,12 @@ namespace FilOps.ViewModels.ExplorerPage
         public double FontSize { get; set; }
 
         /// <summary>
+        /// 遅延処理にディレクトリを登録する
+        /// </summary>
+        /// <param name="directory"></param>
+        public void HandleTreeViewNodeCheckedStateChanged(ParentDirectoryCheckedChangedInfo parentChanged);
+
+        /// <summary>
         /// TreeViewItem が展開された時に展開マネージャに通知する
         /// </summary>
         /// <param name="node">展開されたノード</param>
@@ -68,18 +72,10 @@ namespace FilOps.ViewModels.ExplorerPage
         public void AddDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
 
         /// <summary>
-        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加する
-        /// </summary>
-        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
-        public void RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
-
-        /// <summary>
-        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加する
+        /// TreeViewItem の CheckBox が状態変更した時、チェックマネージャーから削除する
         /// </summary>
         /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
-        public void RemoveDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
-
-
+        public void RemoveDirectoryFromDirectoryManager(ExplorerTreeNodeViewModel node);
 
         /// <summary>
         /// WndProc をフックして、リムーバブルドライブの着脱を監視する
@@ -307,6 +303,9 @@ namespace FilOps.ViewModels.ExplorerPage
             CurrentWatcherService.Deleted += CurrentDirectoryItemDeleted;
             CurrentWatcherService.Renamed += CurrentDirectoryItemRenamed;
 
+            // TreeView の遅延処理用
+            _updateTimer = new System.Timers.Timer(300); // 500ミリ秒の遅延
+            _updateTimer.Elapsed += HandleUpdateTimerElapsed;
         }
 
         private bool IsInitialized = false;
@@ -332,6 +331,110 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion コンストラクタと初期化
 
+        #region ツリービューのチェックボックス遅延処理用
+        /// <summary>
+        /// 遅延処理をするノードのリスト
+        /// </summary>
+        private readonly Dictionary<string, ParentDirectoryCheckedChangedInfo> _pendingChanges = [];
+
+        /// <summary>
+        /// 遅延処理のタイマー
+        /// </summary>
+        private readonly System.Timers.Timer _updateTimer;
+
+        /// <summary>
+        /// ツリービューのチェックボックスを遅延処理するハンドラ
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">ElapsedEventArgs</param>
+        private void HandleUpdateTimerElapsed(object? sender, ElapsedEventArgs e)
+        {
+            // 一括で変更通知を処理する
+            ProcessPendingChanges();
+        }
+
+        /// <summary>
+        /// ツリービューのアイテム一括処理
+        /// </summary>
+        private void ProcessPendingChanges()
+        {
+            // 【まずはデバッグとして C:\FLAT まで開いて、C:\ をチェックし C:\FLAT のチェックを外す】
+
+            var keys = _pendingChanges.Keys.ToList();
+            keys.Sort();
+            // _pendingChanges リスト内の変更通知を処理する
+            foreach (var key in keys)
+            {
+                if (key != null && _pendingChanges[key] != null)
+                {
+                    // ここで必要な処理を行う
+                    var currentChecked = _pendingChanges[key].CurrentChecked;
+                    var node = _pendingChanges[key].Node;
+                    if (node == null) { return; }
+
+                    // True ディレクトリの存在チェック
+                    var childHasTrue = node.Children.Any(child => child.IsChecked == true);
+                    // False ディレクトリの存在チェック
+                    var childHasFalse = node.Children.Any(child => child.IsChecked == false);
+
+                    // 大元が true 、親が null なら、親の全てのディレクトリがチェックされたら true 化する
+                    if (currentChecked == true && node.IsChecked == null)
+                    {
+                        if (childHasTrue && !childHasFalse)
+                        {
+                            node.IsChecked = true;
+                        }
+                    }
+
+                    // 大元が false 、親が false 以外なら、状態変化する
+                    if (currentChecked == false)
+                    {
+                        // 親が true なら、null になる
+                        if (node.IsChecked == true)
+                        {
+                            node.IsChecked = null;
+                        }
+
+                        // 親が null なら親の配下ディレクトリが true を持つなら null となる
+                        if (node.IsChecked == null)
+                        {
+                            if (childHasTrue && childHasFalse)
+                            {
+                                node.IsChecked = null;
+                            }
+                        }
+                    }
+
+                    // 大元が null なら、(親が null 以外では)親が null 化する可能性がある
+                    if (currentChecked == null && node.IsChecked != null)
+                    {
+                        if (childHasTrue && childHasTrue)
+                        {
+                            node.IsChecked = null;
+                        }
+                    }
+                }
+            }
+
+            // リストをクリアする
+            _pendingChanges.Clear();
+        }
+
+        /// <summary>
+        /// ツリービューのアイテム遅延処理の為の処理
+        /// </summary>
+        /// <param name="parentChanged"></param>
+        public void HandleTreeViewNodeCheckedStateChanged(ParentDirectoryCheckedChangedInfo parentChanged)
+        {
+            // 変更通知をリストに追加する
+            _pendingChanges[parentChanged.FullPath] = parentChanged;
+
+            // タイマーを再起動する（最後の変更から500ミリ秒後に一括で処理する）
+            _updateTimer.Stop();
+            _updateTimer.Start();
+        }
+        #endregion ツリービューのチェックボックス遅延処理用
+
         #region アイテムの挿入位置を決定するヘルパー
         /// <summary>
         /// ソート済みの位置に挿入するためのヘルパーメソッド
@@ -353,6 +456,10 @@ namespace FilOps.ViewModels.ExplorerPage
         #endregion アイテムの挿入位置を決定するヘルパー
 
         #region 展開マネージャへの追加削除処理
+        /// <summary>
+        /// TreeViewItem が展開された時に展開マネージャに通知する
+        /// </summary>
+        /// <param name="node">展開されたノード</param>
         public void AddDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
             ExpandDirManager.AddDirectory(node.FullPath);
@@ -365,6 +472,10 @@ namespace FilOps.ViewModels.ExplorerPage
             }
         }
 
+        /// <summary>
+        /// TreeViewItem が展開された時に展開解除マネージャに通知する
+        /// </summary>
+        /// <param name="node">展開解除されたノード</param>
         public void RemoveDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
             ExpandDirManager.RemoveDirectory(node.FullPath);
@@ -385,16 +496,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
         public void AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
-            CheckedDirManager.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(node.FullPath);
-        }
-
-        /// <summary>
-        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加する
-        /// </summary>
-        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
-        public void RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
-        {
-            CheckedDirManager.RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(node.FullPath);
+            CheckedDirManager.AddDirectoryWithSubdirectories(node.FullPath);
         }
 
         /// <summary>
@@ -403,18 +505,19 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
         public void AddDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
-            CheckedDirManager.AddDirectoryOnlyToCheckedDirectoryManager(node.FullPath);
+            CheckedDirManager.AddDirectoryOnly(node.FullPath);
         }
 
         /// <summary>
-        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加する
+        /// TreeViewItem の CheckBox が状態変更した時、チェックマネージャから削除する
         /// </summary>
         /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
-        public void RemoveDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
+        public void RemoveDirectoryFromDirectoryManager(ExplorerTreeNodeViewModel node)
         {
-            CheckedDirManager.RemoveDirectoryOnlyToCheckedDirectoryManager(node.FullPath);
+            CheckedDirManager.RemoveDirectory(node.FullPath);
         }
         #endregion  チェックマネージャへの追加削除処理
+ 
         #region ファイルアイテム作成
         /// <summary>
         /// フルパスからツリービューアイテムを作成する
@@ -439,7 +542,6 @@ namespace FilOps.ViewModels.ExplorerPage
             return new ExplorerListItemViewModel(this, fileInformation);
         }
         #endregion ファイルアイテム作成
-
 
         #region ドライブ変更のフック処理
         // ページのHwndSourceを保持するための変数
@@ -570,7 +672,5 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion ドライブ変更のフック処理
     }
-
-
 
 }

@@ -14,10 +14,7 @@ namespace FilOps.ViewModels
 
     public class MainViewModel : ObservableObject, IMainViewModel
     {
-        public MainViewModel() 
-        {
-          
-        }
+        public MainViewModel() { }
 
         /// <summary>
         /// ウィンドウの開始上位置

@@ -66,7 +66,6 @@ namespace FilOps.ViewModels.ExplorerPage
             set => SetProperty(ref _IsChecked, value);
         }
 
-
         /// <summary>
         /// 書式化したファイルのサイズ文字列
         /// </summary>

@@ -115,7 +115,7 @@ namespace FilOps.ViewModels.DebugWindow
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(Polling);
-            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Interval = TimeSpan.FromMilliseconds(200);
             PollingCommand = new DelegateCommand(
                 () =>
                 {
@@ -142,19 +142,22 @@ namespace FilOps.ViewModels.DebugWindow
         /// <param name="e"></param>
         private void Polling(object? sender, EventArgs e)
         {
-            List<string> list =
-            [
-                "Directory Only -------------------------------",
-                .. DebugClass.DirectoriesOnly,
-                "With SubDirectories---------------------------",
-                .. DebugClass.DirectoriesWithSubdirectories,
-            ];
+            var OnlyList = DebugClass.DirectoriesOnly;
+            var SubList = DebugClass.DirectoriesWithSubdirectories;
+
             App.Current?.Dispatcher.Invoke(() =>
             {
                 DebugText = string.Empty;
 
                 var sb = new StringBuilder();
-                foreach (var dir in list)
+                foreach (var dir in OnlyList)
+                {
+                    sb.Append(dir);
+                    sb.Append(Environment.NewLine);
+                }
+                sb.Append("-------------------以下Sub");
+                sb.Append(Environment.NewLine);
+                foreach (var dir in SubList)
                 {
                     sb.Append(dir);
                     sb.Append(Environment.NewLine);

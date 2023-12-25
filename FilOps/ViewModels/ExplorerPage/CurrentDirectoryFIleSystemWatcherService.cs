@@ -116,12 +116,22 @@ namespace FilOps.ViewModels.ExplorerPage
         #endregion FileSystemWatcherの宣言
 
         #region ファイル変更通知
+        /// <summary>
+        /// ファイルが作成された
+        /// </summary>
+        /// <param name="sender">object</param>
+        /// <param name="e">FileSystemEventArgs</param>
         private void OnCreated(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Created) return;
             Created?.Invoke(this, new CurrentDirectoryFileChangedEventArgs(e.FullPath));
         }
 
+        /// <summary>
+        /// ファイルが削除された
+        /// </summary>
+        /// <param name="sender">object</param>
+        /// <param name="e">FileSystemEventArgs</param>
         private void OnDeleted(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
@@ -129,6 +139,11 @@ namespace FilOps.ViewModels.ExplorerPage
 
         }
 
+        /// <summary>
+        /// ファイルが名前変更された
+        /// </summary>
+        /// <param name="sender">object</param>
+        /// <param name="e">FileSystemEventArgs</param>
         private void OnRenamed(object sender, RenamedEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;

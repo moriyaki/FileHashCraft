@@ -57,7 +57,6 @@ namespace FilOps.ViewModels.ExplorerPage
             Children.Add(item);
         }
 
-        //private bool IsUpdating = false;
         /// <summary>
         /// ディレクトリのチェックボックスがチェックされているかどうか
         /// </summary>
@@ -67,27 +66,19 @@ namespace FilOps.ViewModels.ExplorerPage
             get => _IsChecked;
             set
             {
-                /*
-                if (IsUpdating)
-                {
-                    SetProperty(ref _IsChecked, value);
-                }
-                else
-                {
-                    IsUpdating = true;
-                */
                 if (FullPath == string.Empty) { return;  }
                 if (value != _IsChecked)
                 {
-                    CheckStatusChanged(this, value);
+                    CheckCheckBoxStatusChanged(this, value);
                 }        
                 SetProperty(ref _IsChecked, value);
-                
 
-                /*
-                    IsUpdating = false;
+                // 遅延処理にツリービューのチェック変更されたものを追加する
+                var changedParent = GetChangedParent(this);
+                foreach (var parent in changedParent)
+                {
+                    ExplorerVM.HandleTreeViewNodeCheckedStateChanged(parent);
                 }
-                */
             }
         }
 

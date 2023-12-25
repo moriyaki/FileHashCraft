@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using FilOps.Views;
 
 namespace FilOps.ViewModels.DebugWindow
 {

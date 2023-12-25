@@ -1,7 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using CommunityToolkit.Mvvm.ComponentModel;
-using FilOps.Models;
-using Microsoft.Extensions.DependencyInjection;
+﻿using FilOps.Models;
 
 namespace FilOps.ViewModels.ExplorerPage
 {

@@ -58,7 +58,7 @@ namespace FilOps.Models
         /// </summary>
         /// <param name="fullPath">ディレクトリのフルパス</param>
         /// <returns>子ディレクトリが存在する場合は true、それ以外は false</returns>
-        private static bool HasChildrenDirectories(string full_path)
+        public static bool HasChildrenDirectories(string full_path)
         {
             try
             {

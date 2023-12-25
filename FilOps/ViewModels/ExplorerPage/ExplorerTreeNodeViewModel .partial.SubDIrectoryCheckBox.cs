@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using System.Windows.Input;
-using System.Xml.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace FilOps.ViewModels.ExplorerPage
+﻿namespace FilOps.ViewModels.ExplorerPage
 {
     /* 
      * TreeViewItem の IsChecked 用ディレクトリ管理
@@ -43,14 +32,22 @@ namespace FilOps.ViewModels.ExplorerPage
      *      A がサブディレクトリを含む形でチェック管理マネージャに再登録される。
      *      同時に、ここで管理マネージャに直接管理されている B,C は 登録解除される
      */
+    public class ParentDirectoryCheckedChangedInfo
+    {
+        public string FullPath { get; set; } = string.Empty;
+        public ExplorerTreeNodeViewModel? Node { get; set; }
+        public bool? CurrentChecked { get; set; }
+    }
+
     public partial class ExplorerTreeNodeViewModel
     {
+        #region 子ディレクトリのチェック管理
         /// <summary>
         /// TreeViewItem の CheckBox 状態が変更された時の処理
         /// </summary>
         /// <param name="current">CheckBox のチェック状態が変更された TreeViewItem</param>
         /// <param name="value">変更された CheckBox 状態</param>
-        public void CheckStatusChanged(ExplorerTreeNodeViewModel current, bool? value)
+        public void CheckCheckBoxStatusChanged(ExplorerTreeNodeViewModel current, bool? value)
         {
             if (current == null) { return ; }
             if (current.FullPath == string.Empty) { return ; }
@@ -101,7 +98,6 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             // CheckBox のチェックがされていたら、再帰的に子を反映する
             ChildCheckBoxStatusChanged(current, true);
-            ExplorerVM.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(current);
         }
 
         /// <summary>
@@ -113,26 +109,81 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             // CheckBox のチェックが解除されていたら、再帰的に子を反映する
             ChildCheckBoxStatusChanged(current, false);
-            ExplorerVM.RemoveDirectoryWithSubdirectoriesToCheckedDirectoryManager(current);
         }
 
         /// <summary>
-        /// TreeViewItem の CheckBox が混合状態に変更された時の処理
+        /// TreeViewItem の CheckBox がチェック解除された時の処理
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
         /// <param name="value">変更された値</param>
         private void CheckBoxChangeToMixed(ExplorerTreeNodeViewModel current)
         {
-            // 混合状態にされたので、自分自身を単体監視に移行し、チェックされているディレクトリを全体監視に移行
-            ExplorerVM.RemoveDirectoryOnlyToCheckedDirectoryManager(current);
-            ExplorerVM.AddDirectoryOnlyToCheckedDirectoryManager(current);
-            foreach (var child in current.Children)
+            // Mixed は子に反映させる必要がない
+        }
+
+
+
+        #endregion 子ディレクトリのチェック管理
+
+        private static ParentDirectoryCheckedChangedInfo NewParentDirCheckChangedInfo(ExplorerTreeNodeViewModel parent, bool? currentCheckStatus)
+        {
+            var parentInfo = new ParentDirectoryCheckedChangedInfo
             {
-                if (child.IsChecked == true)
+                CurrentChecked = currentCheckStatus,
+                FullPath = parent.FullPath,
+                Node = parent
+            };
+            return parentInfo;      
+        }
+
+        /// <summary>
+        /// 変更が加えられた可能性があるカレントディレクトリの親ディレクトリリストを取得する
+        /// </summary>
+        /// <param name="current">カレントディレクトリのアイテム</param>
+        /// <returns>変更可能性があるディレクトリのリスト</returns>
+        private static List<ParentDirectoryCheckedChangedInfo> GetChangedParent(ExplorerTreeNodeViewModel current)
+        {
+            var changedParentNode = new List<ParentDirectoryCheckedChangedInfo>();
+            var parent = current.Parent;
+            var currentCheckStatus = current.IsChecked;
+
+            /* 自分のチェックボックス状態が true なら
+             *      親の状態が true なら、何もする必要がない
+             *      親の状態が false なら、何もする必要がない
+             *      親の状態が null なら、親が true 化する可能性があるので変更リストに加える
+             * 自分のチェックボックス状態が false なら     
+             *      親の状態が true なら、子の状態により親が null 化する可能性があるので変更リストに加える
+             *      親の状態が false なら、何もする必要がない
+             *      親の状態が null なら、親が false 化する可能性があるので変更リストに加える
+             * 自分のチェックボックス状態が null なら
+             *      親の状態が true なら、親が null 化する可能性があるのでリストに加える
+             *      親の状態が false なら、親が null 化する可能性があるのでリストに加える
+             *      親の状態が null なら、何もする必要がない
+             */
+            while (parent != null)
+            {
+                if (currentCheckStatus == true && parent.IsChecked == null)
                 {
-                    ExplorerVM.AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(child);
+                    // 大元が true なら、親が null の場合のみ true 化する可能性がある
+                    changedParentNode.Add(NewParentDirCheckChangedInfo(parent, currentCheckStatus));
                 }
+                else if (currentCheckStatus == false && parent.IsChecked != false)
+                {
+                    // 大元が false なら、親が false 以外では態変化する可能性がある
+                    changedParentNode.Add(NewParentDirCheckChangedInfo(parent, currentCheckStatus));
+                }
+                else if (currentCheckStatus == null && parent.IsChecked != null)
+                {
+                    // 大元が null なら、親が null 以外では親が null 化する可能性がある
+                    changedParentNode.Add(NewParentDirCheckChangedInfo(parent, currentCheckStatus));
+                }
+                else
+                {
+                    return changedParentNode;
+                }
+                parent = parent.Parent;
             }
+            return changedParentNode;
         }
     }
 }
