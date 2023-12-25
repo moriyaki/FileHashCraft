@@ -74,7 +74,7 @@ namespace FilOps.ViewModels.ExplorerPage
         private readonly FileSystemWatcher CurrentWatcher = new();
 
         /// <summary>
-        /// カレントディレクトリに対してファイル変更監視の設定をする
+        /// カレントディレクトリに対してファイル変更監視の設定をします。
         /// </summary>
         /// <param name="rootTreeItem"></param>
         public void SetCurrentDirectoryWatcher(string currentDirectory)
@@ -105,7 +105,7 @@ namespace FilOps.ViewModels.ExplorerPage
             catch (FileNotFoundException) { }
         }
         /// <summary>
-        /// FIleSystemWatcherエラーイベント
+        /// FIleSystemWatcherエラーイベントの処理をします。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -117,7 +117,7 @@ namespace FilOps.ViewModels.ExplorerPage
 
         #region ファイル変更通知
         /// <summary>
-        /// ファイルが作成された
+        /// ファイルが作成された通知の処理をします。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">FileSystemEventArgs</param>
@@ -128,7 +128,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ファイルが削除された
+        /// ファイルが削除された通知の処理をします。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">FileSystemEventArgs</param>
@@ -140,7 +140,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ファイルが名前変更された
+        /// ファイルが名前変更された通知の処理をします。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">FileSystemEventArgs</param>

@@ -36,6 +36,9 @@ namespace FilOps.ViewModels.DebugWindow
             set => SetProperty(ref _Left, value);
         }
 
+        /// <summary>
+        /// ウィンドウの幅
+        /// </summary>
         private  double _Width = 400d;
         public double Width
         {
@@ -83,7 +86,7 @@ namespace FilOps.ViewModels.DebugWindow
         #endregion バインディング
 
         /// <summary>
-        /// アプリケーション終了時に必要な後処理をここに入れる
+        /// アプリケーション終了時に必要な後処理をします。
         /// </summary>
         public void Cancel()
         {
@@ -95,12 +98,12 @@ namespace FilOps.ViewModels.DebugWindow
         }
 
         /// <summary>
-        /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
+        /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         private readonly ICheckedDirectoryManager DebugClass;
 
         /// <summary>
-        /// コンストラクタ、ポーリングの設定とポーリング対象を獲得する
+        /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         /// <param name="expandDirManager">今はIExpandedDirectoryManager</param>
@@ -136,7 +139,7 @@ namespace FilOps.ViewModels.DebugWindow
         }
 
         /// <summary>
-        /// ポーリング中の処理
+        /// ポーリング中の処理を行います。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

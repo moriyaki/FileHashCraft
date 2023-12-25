@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
-using FilOps.Models;
+using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace FilOps.ViewModels.ExplorerPage
+namespace FilOps.Models
 {
     #region イベント引数
     /// <summary>
@@ -107,7 +107,7 @@ namespace FilOps.ViewModels.ExplorerPage
 
         #region ディレクトリ変更通知処理
         /// <summary>
-        /// ドライブに対して、ファイルアイテム変更監視の設定をする
+        /// ドライブに対して、ファイルアイテム変更監視の設定をします。
         /// </summary>
         /// <param name="rootDrive"></param>
         public void SetRootDirectoryWatcher(FileItemInformation rootDrive)
@@ -138,7 +138,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ディレクトリ監視の変更通知を無視していい物を選別
+        /// ディレクトリ監視の変更通知を無視していい物を選別します。
         /// </summary>
         /// <param name="fullPath">変更されたディレクトリのフルパス</param>
         /// <returns>変更通知を無視していいかどうか</returns>
@@ -169,7 +169,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// FIleSystemWatcherエラーイベント
+        /// FIleSystemWatcherエラーイベントを処理します。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -179,7 +179,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ファイルアイテムが変更された時
+        /// ファイルアイテムが変更された時のイベントをを処理します。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">FileSystemEventArgs</param>
@@ -192,7 +192,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ファイルアイテムが作成された時
+        /// ファイルアイテムが作成された時のイベントをを処理します。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">FileSystemEventArgs</param>
@@ -204,7 +204,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ファイルアイテムが名前変更された時
+        /// ファイルアイテムが名前変更された時のイベントをを処理します。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">RenamedEventArgs</param>
@@ -223,11 +223,11 @@ namespace FilOps.ViewModels.ExplorerPage
         public void InsertOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-             OpticalDriveMediaInserted?.Invoke(this, new DirectoryChangedEventArgs(path));
+            OpticalDriveMediaInserted?.Invoke(this, new DirectoryChangedEventArgs(path));
         }
 
         /// <summary>
-        /// リムーバブルメディアの削除またはイジェクト処理を行います
+        /// リムーバブルメディアの削除またはイジェクト処理を行います。
         /// </summary>
         /// <param name="driveLetter">リムーバブルドライブのドライブレター></param>
         public void EjectOpticalDriveMedia(char driveLetter)

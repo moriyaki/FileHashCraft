@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-      xmlns:local="clr-namespace:FilOps.Views"
+      xmlns:local="clr-namespace:FilOps.ViewModels.ExplorerPage"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ExplorerPage">
@@ -96,7 +96,14 @@
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
+                <!-- 特殊フォルダに対する動的な DataTemplate -->
                 <TreeView.Resources>
+                    <DataTemplate DataType="{x:Type local:SpecialFolderTreeNodeViewModel}">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                            <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
+                        </StackPanel>
+                    </DataTemplate>
                     <Style TargetType="TreeViewItem">
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=Twoway}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />

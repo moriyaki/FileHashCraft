@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Xml.Linq;
 using FilOps.Models;
 
 namespace FilOps.ViewModels.ExplorerPage
@@ -12,7 +13,7 @@ namespace FilOps.ViewModels.ExplorerPage
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f) { }
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
         {
-            Parent = parent;
+            this.Parent = parent;
         }
 
         /// <summary>
@@ -71,15 +72,18 @@ namespace FilOps.ViewModels.ExplorerPage
                 {
                     CheckCheckBoxStatusChanged(this, value);
                 }        
-                SetProperty(ref _IsChecked, value);
+                SetProperty(ref _IsChecked, value, nameof(IsChecked));
 
-                // 遅延処理にツリービューのチェック変更されたものを追加する
-                var changedParent = GetChangedParent(this);
-                foreach (var parent in changedParent)
-                {
-                    ExplorerVM.HandleTreeViewNodeCheckedStateChanged(parent);
-                }
+                ParentCheckBoxChange(this);
+  
+                Debug.WriteLine($"Sync Called : {this.FullPath}");
+                SyncSpecialDirectory(this, value);
             }
+        }
+        public bool? IsCheckedForSync
+        {
+            get => _IsChecked;
+            set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
         }
 
         /// <summary>
@@ -89,7 +93,7 @@ namespace FilOps.ViewModels.ExplorerPage
         public ExplorerTreeNodeViewModel? Parent
         {
             get => _Parent;
-            private set => SetProperty(ref _Parent, value);
+            protected set => SetProperty(ref _Parent, value);
         }
 
         /// <summary>
@@ -166,6 +170,7 @@ namespace FilOps.ViewModels.ExplorerPage
                     {
                         ExplorerVM.AddDirectoryToExpandedDirectoryManager(child);
                         if (IsChecked == true) { child.IsChecked = true; }
+                        
                     }
                 }
                 else
@@ -186,12 +191,32 @@ namespace FilOps.ViewModels.ExplorerPage
             Children.Clear();
             foreach (var child in FileSystemInformationManager.FileItemScan(FullPath, false))
             {
-                var item = new ExplorerTreeNodeViewModel(ExplorerVM, child, this);
+                var item = new SpecialFolderTreeNodeViewModel(ExplorerVM, child, this);
                 Children.Add(item);
-
             }
             IsKicked = true;
         }
         #endregion データバインディング用
+    }
+    public class SpecialFolderTreeNodeViewModel : ExplorerTreeNodeViewModel
+    {
+        public SpecialFolderTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
+
+        public SpecialFolderTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f) { }
+        public SpecialFolderTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f, parent) 
+        {
+            Parent = parent;
+        }
+    }
+
+    public class DirectoryTreeNodeViewModel : ExplorerTreeNodeViewModel
+    {
+        public DirectoryTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
+        public DirectoryTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f) { }
+
+        public DirectoryTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f, parent) 
+        {
+            Parent = parent;
+        }
     }
 }

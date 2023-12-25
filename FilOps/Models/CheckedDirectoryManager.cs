@@ -11,40 +11,40 @@ namespace FilOps.ViewModels.ExplorerPage
         public List<string> DirectoriesOnly { get; }
 
         /// <summary>
-        /// ディレクトリがチェックされているかどうか
+        /// ディレクトリがチェックされているかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">確認するディレクトリのフルパス</param>
         /// <returns>登録されているかどうか</returns>
         public bool HasDirectory(string fullPath);
 
         /// <summary>
-        /// ディレクトリがサブディレクトリを含む形でチェックされているかどうか
+        /// ディレクトリがサブディレクトリを含む形でチェックされているかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">確認するディレクトリのフルパス</param>
         /// <returns>登録されているかどうか</returns>
         public bool HasDirectoriesWithSubdirectories(string fullPath);
 
         /// <summary>
-        /// ディレクトリが単独でチェックされているかどうか
+        /// ディレクトリが単独でチェックされているかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">確認するディレクトリのフルパス</param>
         /// <returns>登録されているかどうか</returns>
         public bool HasDirectoriesOnly(string fullPath);
 
         /// <summary>
-        /// 子ディレクトリを含むディレクトリの登録
+        /// 子ディレクトリを含むディレクトリの登録をします。
         /// </summary>
         /// <param name="fullPath">登録するディレクトリのフルパス</param>
         public void AddDirectoryWithSubdirectories(string fullPath);
 
         /// <summary>
-        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録
+        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録をします。
         /// </summary>
         /// <param name="fullPath">登録するディレクトリのフルパス</param>
         public void AddDirectoryOnly(string fullPath);
 
         /// <summary>
-        /// 自分自身のディレクトリの登録解除
+        /// 自分自身のディレクトリの登録を解除します。
         /// </summary>
         /// <param name="fullPath">解除するディレクトリのフルパス</param>
         public void RemoveDirectory(string fullPath);
@@ -53,15 +53,16 @@ namespace FilOps.ViewModels.ExplorerPage
 
     public class CheckedDirectoryManager : ICheckedDirectoryManager
     {
+        #region 変数宣言
         /// <summary>
         /// 登録した、サブディレクトリを含むディレクトリのリスト
         /// </summary>
         private readonly List<string> _directoriesWithSubdirectories = [];
 
         /// <summary>
-        /// 登録した、サブディレクトリを含むディレクトリのリストを取得する
+        /// 登録した、サブディレクトリを含むディレクトリのリストを取得するします。
         /// </summary>
-        /// <returns></returns>
+        /// <returns>サブディレクトリを含むディレクトリのリスト</returns>
         public List<string> DirectoriesWithSubdirectories { get => _directoriesWithSubdirectories; }
 
         /// <summary>
@@ -73,9 +74,11 @@ namespace FilOps.ViewModels.ExplorerPage
         /// </summary>
         /// <returns></returns>
         public List<string> DirectoriesOnly { get => _directoriesOnly; }
+        #endregion 変数宣言
 
+        #region メソッド
         /// <summary>
-        /// ディレクトリがチェックされているかどうか
+        /// ディレクトリがチェックされているかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">確認するディレクトリのフルパス</param>
         /// <returns>登録されているかどうか</returns>
@@ -87,7 +90,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ディレクトリがサブディレクトリを含む形でチェックされているかどうか
+        /// ディレクトリがサブディレクトリを含む形でチェックされているかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">確認するディレクトリのフルパス</param>
         /// <returns>登録されているかどうか</returns>
@@ -97,7 +100,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ディレクトリがサブディレクトリを含む形でチェックされているかどうか
+        /// ディレクトリがサブディレクトリを含む形でチェックされているかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">確認するディレクトリのフルパス</param>
         /// <returns>登録されているかどうか</returns>
@@ -111,7 +114,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ディレクトリが単独でチェックされているかどうか
+        /// ディレクトリが単独でチェックされているかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">確認するディレクトリのフルパス</param>
         /// <returns>登録されているかどうか</returns>
@@ -121,7 +124,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// 子ディレクトリを含むディレクトリの登録
+        /// 子ディレクトリを含むディレクトリの登録をします。
         /// </summary>
         /// <param name="fullPath">登録するディレクトリのフルパス</param>
         public void AddDirectoryWithSubdirectories(string fullPath)
@@ -151,7 +154,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録
+        /// 子ディレクトリを含まない、自分自身のみディレクトリの登録をします。
         /// </summary>
         /// <param name="fullPath">登録するディレクトリのフルパス</param>
         public void AddDirectoryOnly(string fullPath)
@@ -177,7 +180,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ディレクトリの登録解除
+        /// ディレクトリの登録を解除します。
         /// </summary>
         /// <param name="fullPath">解除するディレクトリのフルパス</param>
         public void RemoveDirectory(string fullPath)
@@ -215,5 +218,6 @@ namespace FilOps.ViewModels.ExplorerPage
                 }
             }
         }
+        #endregion メソッド
     }
 }

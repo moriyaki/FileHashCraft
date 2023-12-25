@@ -1,4 +1,7 @@
-﻿namespace FilOps.ViewModels.ExplorerPage
+﻿using System.Diagnostics;
+using System.Windows;
+
+namespace FilOps.ViewModels.ExplorerPage
 {
     /* 
      * TreeViewItem の IsChecked 用ディレクトリ管理
@@ -43,14 +46,14 @@
     {
         #region 子ディレクトリのチェック管理
         /// <summary>
-        /// TreeViewItem の CheckBox 状態が変更された時の処理
+        /// TreeViewItem の CheckBox 状態が変更された時の処理をします。
         /// </summary>
         /// <param name="current">CheckBox のチェック状態が変更された TreeViewItem</param>
         /// <param name="value">変更された CheckBox 状態</param>
-        public void CheckCheckBoxStatusChanged(ExplorerTreeNodeViewModel current, bool? value)
+        public static void CheckCheckBoxStatusChanged(ExplorerTreeNodeViewModel current, bool? value)
         {
-            if (current == null) { return ; }
-            if (current.FullPath == string.Empty) { return ; }
+            if (current == null) { return; }
+            if (current.FullPath == string.Empty) { return; }
             if (current.IsChecked == value) { return; }
 
             // 自分のチェック状態により処理を振り分け
@@ -63,13 +66,13 @@
                     CheckBoxChangeToUnchecked(current);
                     break;
                 default:
-                    CheckBoxChangeToMixed(current);
+                    //CheckBoxChangeToMixed(current);
                     break;
             };
         }
 
         /// <summary>
-        /// 再帰的に子の CheckBox 状態を変更する
+        /// 再帰的に子の CheckBox 状態を変更します。
         /// </summary>
         /// <param name="node">チェック状態を変更する ExplorerTreeNodeViewModel</param>
         /// <param name="value">変更された CheckBox 状態</param>
@@ -90,100 +93,135 @@
         }
 
         /// <summary>
-        /// TreeViewItem の CheckBox がチェックされた時の処理
+        /// TreeViewItem の CheckBox がチェックされた時の処理をします。
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
         /// <param name="value">変更された値</param>
-        private void CheckBoxChangeToChecked(ExplorerTreeNodeViewModel current)
+        private static void CheckBoxChangeToChecked(ExplorerTreeNodeViewModel current)
         {
             // CheckBox のチェックがされていたら、再帰的に子を反映する
             ChildCheckBoxStatusChanged(current, true);
         }
 
         /// <summary>
-        /// TreeViewItem の CheckBox がチェック解除された時の処理
+        /// TreeViewItem の CheckBox がチェック解除された時の処理をします。
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
         /// <param name="value">変更された値</param>
-        private void CheckBoxChangeToUnchecked(ExplorerTreeNodeViewModel current)
+        private static void CheckBoxChangeToUnchecked(ExplorerTreeNodeViewModel current)
         {
             // CheckBox のチェックが解除されていたら、再帰的に子を反映する
             ChildCheckBoxStatusChanged(current, false);
         }
 
         /// <summary>
-        /// TreeViewItem の CheckBox がチェック解除された時の処理
+        /// TreeViewItem の CheckBox がチェック解除された時の処理をします。
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
         /// <param name="value">変更された値</param>
-        private void CheckBoxChangeToMixed(ExplorerTreeNodeViewModel current)
+        /*
+        private static void CheckBoxChangeToMixed(ExplorerTreeNodeViewModel current)
         {
             // Mixed は子に反映させる必要がない
         }
-
-
+        */
 
         #endregion 子ディレクトリのチェック管理
-
-        private static ParentDirectoryCheckedChangedInfo NewParentDirCheckChangedInfo(ExplorerTreeNodeViewModel parent, bool? currentCheckStatus)
-        {
-            var parentInfo = new ParentDirectoryCheckedChangedInfo
-            {
-                CurrentChecked = currentCheckStatus,
-                FullPath = parent.FullPath,
-                Node = parent
-            };
-            return parentInfo;      
-        }
 
         /// <summary>
         /// 変更が加えられた可能性があるカレントディレクトリの親ディレクトリリストを取得する
         /// </summary>
         /// <param name="current">カレントディレクトリのアイテム</param>
         /// <returns>変更可能性があるディレクトリのリスト</returns>
-        private static List<ParentDirectoryCheckedChangedInfo> GetChangedParent(ExplorerTreeNodeViewModel current)
+        /// 
+        private static void ParentCheckBoxChange(ExplorerTreeNodeViewModel current)
         {
             var changedParentNode = new List<ParentDirectoryCheckedChangedInfo>();
             var parent = current.Parent;
-            var currentCheckStatus = current.IsChecked;
-
-            /* 自分のチェックボックス状態が true なら
-             *      親の状態が true なら、何もする必要がない
-             *      親の状態が false なら、何もする必要がない
-             *      親の状態が null なら、親が true 化する可能性があるので変更リストに加える
-             * 自分のチェックボックス状態が false なら     
-             *      親の状態が true なら、子の状態により親が null 化する可能性があるので変更リストに加える
-             *      親の状態が false なら、何もする必要がない
-             *      親の状態が null なら、親が false 化する可能性があるので変更リストに加える
-             * 自分のチェックボックス状態が null なら
-             *      親の状態が true なら、親が null 化する可能性があるのでリストに加える
-             *      親の状態が false なら、親が null 化する可能性があるのでリストに加える
-             *      親の状態が null なら、何もする必要がない
-             */
+            var currentChecked = current.IsChecked;
+        
             while (parent != null)
             {
-                if (currentCheckStatus == true && parent.IsChecked == null)
+                // True ディレクトリの存在チェック
+                var childHasTrue = parent.Children.Any(child => child.IsChecked == true);
+                // False ディレクトリの存在チェック
+                var childHasFalse = parent.Children.Any(child => child.IsChecked == false);
+
+                // 大元が true 、親が null なら、親の全てのディレクトリがチェックされたら true 化する
+                if (currentChecked == true && current.IsChecked == null)
                 {
-                    // 大元が true なら、親が null の場合のみ true 化する可能性がある
-                    changedParentNode.Add(NewParentDirCheckChangedInfo(parent, currentCheckStatus));
+                    if (childHasTrue && !childHasFalse)
+                    {
+                        parent.IsChecked = true;
+                    }
                 }
-                else if (currentCheckStatus == false && parent.IsChecked != false)
+
+                // 大元が false 、親が false 以外なら、状態変化する
+                if (currentChecked == false)
                 {
-                    // 大元が false なら、親が false 以外では態変化する可能性がある
-                    changedParentNode.Add(NewParentDirCheckChangedInfo(parent, currentCheckStatus));
+                    // 親が true なら、null になる
+                    if (parent.IsChecked == true)
+                    {
+                        parent.IsChecked = null;
+                    }
+
+                    // 親が null なら親の配下ディレクトリが true を持つなら null となる
+                    if (parent.IsChecked == null)
+                    {
+                        if (childHasTrue && childHasFalse)
+                        {
+                            parent.IsChecked = null;
+                        }
+                    }
                 }
-                else if (currentCheckStatus == null && parent.IsChecked != null)
+
+                // 大元が null なら、(親が null 以外では)親が null 化する可能性がある
+                if (currentChecked == null && parent.IsChecked != null)
                 {
-                    // 大元が null なら、親が null 以外では親が null 化する可能性がある
-                    changedParentNode.Add(NewParentDirCheckChangedInfo(parent, currentCheckStatus));
-                }
-                else
-                {
-                    return changedParentNode;
+                    if (childHasTrue && childHasTrue)
+                    {
+                        parent.IsChecked = null;
+                    }
                 }
                 parent = parent.Parent;
             }
-            return changedParentNode;
+        }
+
+        /// <summary>
+        /// 変更を特殊フォルダに反映します。
+        /// </summary>
+        /// <param name="changedNode">特殊フォルダの TreeViewItem</param>
+        /// <param name="value">変更された値</param>
+        private void SyncSpecialDirectory(ExplorerTreeNodeViewModel changedNode, bool? value)
+        {
+            if (!ExplorerVM.IsExpandDirectory(changedNode)) { return; }
+            
+            foreach (var root in ExplorerVM.TreeRoot)
+            {
+                if (root is SpecialFolderTreeNodeViewModel specialFolder)
+                {
+                    ChangeExpandedSpecialFolder(specialFolder, changedNode.FullPath, value);
+                }
+            }
+        }
+
+        private static void ChangeExpandedSpecialFolder(ExplorerTreeNodeViewModel searchNode, string fullPath, bool? value)
+        {
+            // ノード自身が探しているパスなら反映します
+            if (searchNode.FullPath == fullPath)
+            {
+                searchNode.IsCheckedForSync = value;
+                return;
+            }
+
+            // TreeViewItem が展開されていたら、再帰的に検索します
+            if (searchNode.IsExpanded || searchNode.IsKicked)
+            {
+                foreach (var child in searchNode.Children)
+                {
+                    ChangeExpandedSpecialFolder(child, fullPath, value);
+                }
+            }
         }
     }
 }

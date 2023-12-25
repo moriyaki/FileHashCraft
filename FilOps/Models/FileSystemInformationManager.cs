@@ -117,16 +117,16 @@ namespace FilOps.Models
         }
 
         /// <summary>
-        /// 指定したディレクトリ内のフォルダとファイルをスキャンします
+        /// 指定したディレクトリ内のフォルダとファイルをスキャンします。
         /// </summary>
-        /// <param name="path">スキャンするディレクトリのパス</param>
+        /// <param name="fullPath">スキャンするディレクトリのパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public static IEnumerable<FileItemInformation> FileItemScan(string path, bool isFilesInclude)
+        public static IEnumerable<FileItemInformation> FileItemScan(string fullPath, bool isFilesInclude)
         {
-            IEnumerable<string> folders;
+            IEnumerable<string> directories;
             try
             {
-                folders = Directory.EnumerateDirectories(path);
+                directories = Directory.EnumerateDirectories(fullPath);
             }
             catch (Exception ex)
             {
@@ -134,19 +134,19 @@ namespace FilOps.Models
                 throw;
             }
 
-
-            foreach (var folder in folders)
+            // ディレクトリを取得します
+            foreach (var dir in directories)
             {
-                FileAttributes attributes = File.GetAttributes(folder);
+                FileAttributes attributes = File.GetAttributes(dir);
                 if ((attributes & FileAttributes.System) != FileAttributes.System)
                 {
-                    var fi = GetFileInformationFromDirectorPath(folder);
+                    var fi = GetFileInformationFromDirectorPath(dir);
                     if (fi != null) yield return fi;
                 }
             }
             if (isFilesInclude)
             {
-                foreach (var file in Directory.EnumerateFiles(path))
+                foreach (var file in Directory.EnumerateFiles(fullPath))
                 {
                     try
                     {

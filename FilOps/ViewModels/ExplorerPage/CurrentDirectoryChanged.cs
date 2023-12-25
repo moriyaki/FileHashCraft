@@ -105,8 +105,8 @@ namespace FilOps.ViewModels.ExplorerPage
 
         #region カレントディレクトリのファイル変更通知関連
         /// <summary>
-        /// カレントディレクトリにファイルが作成された
-        /// ディレクトリの場合、TreeViewは全ドライブ監視が処理してくれる
+        /// カレントディレクトリにファイルが作成されたディレクトリの場合、
+        /// TreeViewは全ドライブ監視が処理してくれます。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">作成されたファイルのフルパスが入っている</param>
@@ -125,8 +125,8 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// カレントディレクトリのファイルが削除された
-        /// ディレクトリの場合、TreeViewは全ドライブ監視が処理してくれる
+        /// カレントディレクトリのファイルが削除されたディレクトリの場合、
+        /// TreeViewは全ドライブ監視が処理してくれます。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">削除されたファイルのフルパスが入っている</param>
@@ -143,8 +143,8 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// カレントディレクトリのファイル名が変更された
-        /// ディレクトリの場合、TreeViewは全ドライブ監視が処理してくれる
+        /// カレントディレクトリのファイル名が変更されたディレクトリの場合、
+        /// TreeViewは全ドライブ監視が処理してくれます。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">名前変更されたファイルの新旧フルパスが入っている</param>

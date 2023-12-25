@@ -2,22 +2,74 @@
 
 namespace FilOps.ViewModels.ExplorerPage
 {
+    #region インターフェース
     public interface IExpandedDirectoryManager
     {
         public List<string> Directories { get; }
+        /// <summary>
+        /// 展開されたディレクトリかどうかを調べます。
+        /// </summary>
+        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <returns>展開されたディレクトリかどうか</returns>
         public bool IsExpandedDirectory(string path);
+        /// <summary>
+        /// 特殊フォルダの配下かどうかを調べます。
+        /// </summary>
+        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <returns>TreeViewで展開されているかどうか</returns>
+        public bool HasSpecialSubFolder(string fullPath);
+        /// <summary>
+        /// 指定したパスを管理対象に追加します。
+        /// </summary>
+        /// <param name="fullPath">追加するディレクトリのフルパス</param>
         public void AddDirectory(string path);
+
+        /// <summary>
+        /// 指定したパスを管理対象から外します。
+        /// </summary>
+        /// <param name="fullPath">削除するディレクトリのフルパス</param>
         public void RemoveDirectory(string path);
     }
+    #endregion インターフェース
 
     // TODO : 削除するパスの特殊フォルダは除外
     public class ExpandedDirectoryManager : IExpandedDirectoryManager
     {
+        public ExpandedDirectoryManager(IFileSystemInformationManager fileSystemInfoManager)
+        {
+            FileSystemInfoManager = fileSystemInfoManager;
+            foreach (var rootInfo in FileSystemInfoManager.SpecialFolderScan())
+            {
+                _specialDirectoriesRoot.Add(rootInfo.FullPath);
+            }
+        }
+
+        #region 変数宣言
+        /// <summary>
+        /// 登録したディレクトリのリスト
+        /// </summary>
+        private readonly List<string> _normalDirectories = [];
+
+        /// <summary>
+        /// 登録した特殊フォルダのリスト
+        /// </summary>
+        private readonly List<string> _specialSubDirectories = [] ;
+
+        /// <summary>
+        /// /特殊フォルダのリスト
+        /// </summary>
+        private readonly List<string> _specialDirectoriesRoot = [];
+
+        private readonly IFileSystemInformationManager FileSystemInfoManager;
+        #endregion 変数宣言
+
+        #region メソッドとプロパティ
         /// <summary>
         /// 登録したディレクトリのリストを取得する
         /// </summary>
         /// <returns></returns>
-        public List<string> Directories {
+        public List<string> Directories
+        {
             get
             {
                 var allList = new List<string>();
@@ -29,78 +81,62 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// 登録したディレクトリのリスト
+        /// 展開されたディレクトリかどうかを調べます。
         /// </summary>
-        private readonly List<string> _normalDirectories = [];
+        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <returns>展開されたディレクトリかどうか</returns>
+        public bool IsExpandedDirectory(string path) => HasDirectory(path) || IsSpecialSubFolder(path);
 
         /// <summary>
-        /// 登録した特殊ディレクトリのリスト
+        /// 特殊フォルダかどうかを調べます。
         /// </summary>
-        private readonly List<string> _specialSubDirectories = [] ;
+        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <returns>TreeViewで展開されているかどうか</returns>
+        public bool IsSpecialFolder(string fullPath) => _specialDirectoriesRoot.Any(dir => dir == fullPath);
+
 
         /// <summary>
-        /// /特殊ディレクトリのリスト
-        /// </summary>
-        private readonly List<string> _specialDirectoriesRoot = [];
-
-        private readonly IFileSystemInformationManager FileSystemInfoManager;
-
-        public ExpandedDirectoryManager(IFileSystemInformationManager fileSystemInfoManager)
-        {
-            FileSystemInfoManager = fileSystemInfoManager;
-            foreach (var rootInfo in FileSystemInfoManager.SpecialFolderScan())
-            {
-                _specialDirectoriesRoot.Add(rootInfo.FullPath);
-            }
-        }
-
-        public bool IsExpandedDirectory(string path)
-        {
-            return HasDirectory(path) || HasSpecialSubDirectory(path) || IsSpecialDirectory(path);
-        }
-
-        /// <summary>
-        /// 特殊ディレクトリかどうか
+        /// 特殊フォルダに含まれているサブディレクトリかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">ディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
-        private bool IsSpecialDirectory(string fullPath) => _specialDirectoriesRoot.Any(dir => dir == fullPath);
+        public bool IsSpecialSubFolder(string fullPath) => _specialDirectoriesRoot.Any(dir => dir == fullPath);
+
 
         /// <summary>
-        /// 特殊ディレクトリかどうか
+        /// 特殊フォルダか、そこに含まれているディレクトリかどうかを取得します。
         /// </summary>
         /// <param name="fullPath">ディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
-        private bool IsSpecialSubDirectory(string fullPath) => _specialDirectoriesRoot.Any(root => fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase));
-
-
+        public bool IsSpecialSubFolderOrSub(string fullPath) => IsSpecialFolder(fullPath) || IsSpecialSubFolder(fullPath);
 
         /// <summary>
-        /// 特殊ディレクトリに含まれているかどうか
+        /// 特殊フォルダの配下かどうかを調べます。
         /// </summary>
-        /// <param name="fullPath">ディレクトリのフルパス</param>
+        /// <param name="path">チェックするディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
-        private bool HasSpecialSubDirectory(string fullPath) => _specialSubDirectories.Any(dir => dir == fullPath);
-
+        public bool HasSpecialSubFolder(string fullPath) => _specialDirectoriesRoot.Any(root => fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase));
 
         /// <summary>
-        /// 特殊ディレクトリ以外で、ディレクトリがTreeViewで展開されているかどうか
+        /// 特殊フォルダ以外で、ディレクトリがTreeViewで展開されているかどうかを調べます。
         /// </summary>
-        /// <param name="fullPath">ディレクトリのフルパス</param>
+        /// <param name="path">チェックするディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
-        public bool HasDirectory(string fullPath) => _normalDirectories.Where(dir => dir == fullPath).Any();
+        public bool HasDirectory(string fullPath) => _normalDirectories.Any(dir => dir == fullPath);
+        #endregion メソッドとプロパティ
 
+        #region 追加削除メソッド
         /// <summary>
-        /// 指定したパスを管理対象に追加する。
+        /// 指定したパスを管理対象に追加します。
         /// </summary>
-        /// <param name="fullPath">追加するパス</param>
+        /// <param name="fullPath">追加するディレクトリのフルパス</param>
         public void AddDirectory(string fullPath)
         {
-            // 特殊ディレクトリそのものであれば登録しない
-            if (IsSpecialDirectory(fullPath)) { return; }
+            // 特殊フォルダそのものであれば登録しない
+            if (IsSpecialFolder(fullPath)) { return; }
 
-            // 特殊ディレクトリの配下時の処理
-            if (IsSpecialSubDirectory(fullPath) && !HasSpecialSubDirectory(fullPath)) 
+            // 特殊フォルダの配下時の処理
+            if (IsSpecialSubFolder(fullPath) && !HasSpecialSubFolder(fullPath)) 
             { 
                 _specialSubDirectories.Add(fullPath);
                 return;
@@ -114,15 +150,16 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// 指定したパスを管理対象から外す。
+        /// 指定したパスを管理対象から外します。
         /// </summary>
-        /// <param name="fullPath">削除するパス</param>
+        /// <param name="fullPath">削除するディレクトリのフルパス</param>
         public void RemoveDirectory(string fullPath)
         {
-            if (IsSpecialDirectory(fullPath)) { return; }
+            // 特殊フォルダそのものであれば削除しない
+            if (IsSpecialFolder(fullPath)) { return; }
 
-            // 特殊ディレクトリの配下時の処理
-            if (IsSpecialSubDirectory(fullPath))
+            // 特殊フォルダの配下時の処理
+            if (IsSpecialSubFolder(fullPath))
             {
                 _specialSubDirectories.Remove(fullPath);
                 return;
@@ -134,5 +171,6 @@ namespace FilOps.ViewModels.ExplorerPage
                 return;
             }
         }
+        #endregion 追加削除メソッド
     }
 }

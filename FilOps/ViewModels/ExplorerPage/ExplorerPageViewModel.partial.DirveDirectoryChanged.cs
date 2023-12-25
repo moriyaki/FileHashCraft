@@ -30,9 +30,9 @@ namespace FilOps.ViewModels.ExplorerPage
         private static bool IsRoot(string path) => path.Split('\\').Length == 2;
 
         /// <summary>
-        /// ディレクトリが変更された
-        /// 特に重要なのはドライブルートのアイテム削除は $RECYCLE.BIN を利用してしか不可
-        /// 削除処理を DirectoryDeleted で取得できないため、ここでは削除処理を行う
+        /// ディレクトリが変更された時の処理をします。
+        /// 特に重要なのはドライブルートのアイテム削除は $RECYCLE.BIN を利用してしか不可で、
+        /// 削除処理を DirectoryDeleted で取得できないため、ここでは削除処理を行います。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">DirectoryChangedEventArgs</param>
@@ -82,8 +82,8 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ディレクトリが作成された
-        /// ドライブルートでも、サブディレクトリでも発生
+        /// ディレクトリが作成されたイベントを処理します。
+        /// ドライブルートでも、サブディレクトリでも発生します。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">DirectoryChangedEventArgs</param>
@@ -129,8 +129,8 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ディレクトリが名前変更された
-        /// ドライブルートでも、サブディレクトリでも発生
+        /// ディレクトリが名前変更されたイベントの処理をします。
+        /// ドライブルートでも、サブディレクトリでも発生します。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -207,7 +207,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// サブディレクトリが削除された時の処理
+        /// サブディレクトリが削除された時の処理をします。
         /// </summary>
         /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
         /// <param name="deletedItemName">削除されたアイテムのコレクション</param>
@@ -244,7 +244,8 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ドライブルートのアイテムが削除された時の処理
+        /// ドライブルートのアイテムが削除された時の処理をします。
+        /// これは、DirectoryCreated のイベントから、削除されたファイルを検出しています。
         /// </summary>
         /// <param name="fullPath">削除されたファイルアイテムのフルパス</param>
         /// <returns>Task</returns>
@@ -285,7 +286,7 @@ namespace FilOps.ViewModels.ExplorerPage
 
         #region リムーバブルドライブドライブ変更通知処理
         /// <summary>
-        /// リムーバブルドライブが追加または挿入された
+        /// リムーバブルドライブが追加または挿入された時の処理をします。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">DirectoryChangedEventArgs</param>
@@ -355,7 +356,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// リムーバブルメディアがイジェクトされた
+        /// リムーバブルメディアがイジェクトされた時の処理をします。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -410,7 +411,7 @@ namespace FilOps.ViewModels.ExplorerPage
 
         #region TreeNode取得関連
         /// <summary>
-        /// 変更が加えられたファイルアイテムのディレクトリツリーアイテム
+        /// 変更が加えられたファイルアイテムのディレクトリツリーアイテムを検索します。
         /// </summary>
         /// <param name="fullPath">ファイルアイテムのパス</param>
         /// <returns>変更する必要があるディレクトリツリーアイテム</returns>
@@ -439,7 +440,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// 特殊ユーザーディレクトリルートからツリーアイテムを探す
+        /// 特殊ユーザーディレクトリルートからツリーアイテムを探します。
         /// </summary>
         /// <param name="fullPath">特殊ユーザーディレクトリが含まれることを期待するパス</param>
         /// <returns>特殊ユーザーディレクトリ内のツリーアイテム</returns>
@@ -470,7 +471,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// 再帰的に、パスと等しいツリービューアイテムを探して SpecialTreeItem に追加する
+        /// 再帰的に、パスと等しいツリービューアイテムを探して SpecialTreeItem に追加します。
         /// </summary>
         /// <param name="treeItem">検索中のツリービューアイテム</param>
         /// <param name="path">探し出すファイルのフルパス</param>

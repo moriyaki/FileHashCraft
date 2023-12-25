@@ -14,7 +14,7 @@ namespace FilOps
     public partial class App : Application
     {
         /// <summary>
-        /// 古いDPI Aware
+        /// 古い DPI Aware
         /// </summary>
         /// <returns></returns>
         [System.Runtime.InteropServices.LibraryImport("user32.dll")]
@@ -30,6 +30,9 @@ namespace FilOps
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool SetProcessDpiAwareness(ProcessDpiAwareness awareness);
 
+        /// <summary>
+        /// 新しい DPI Aware で使う引数
+        /// </summary>
         private enum ProcessDpiAwareness
         {
             ProcessDpiUnaware = 0,
@@ -37,6 +40,9 @@ namespace FilOps
             ProcessPerMonitorDpiAware = 2
         }
 
+        /// <summary>
+        /// サービスの登録
+        /// </summary>
         public App()
         {
             Services = ConfigureServices();
@@ -76,6 +82,10 @@ namespace FilOps
         /// </summary>
         public IServiceProvider Services { get; }
 
+        /// <summary>
+        /// サービスをここで登録する
+        /// </summary>
+        /// <returns></returns>
         private static IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();

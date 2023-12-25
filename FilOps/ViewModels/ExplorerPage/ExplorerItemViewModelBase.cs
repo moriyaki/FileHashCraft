@@ -9,18 +9,34 @@ namespace FilOps.ViewModels.ExplorerPage
 {
     public class ExplorerItemViewModelBase : ObservableObject, IComparable<ExplorerItemViewModelBase>
     {
+        /// <summary>
+        /// IExplorerPageViewModel を引数に持たないコンストラクタは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public ExplorerItemViewModelBase() 
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// コンストラクタで、IExplorerPageViewModelの設定をします
+        /// </summary>
+        /// <param name="explorerVM">IExplorerPageViewModel</param>
         public ExplorerItemViewModelBase(IExplorerPageViewModel explorerVM)
         {
             ExplorerVM = explorerVM;
         }
 
+        /// <summary>
+        /// IExplorerPageViewModel
+        /// </summary>
         protected readonly IExplorerPageViewModel ExplorerVM;
 
+        /// <summary>
+        /// コンストラクタで、IExplorerPageViewModelとファイル情報の設定をします
+        /// </summary>
+        /// <param name="explorerPageVM"></param>
+        /// <param name="f"></param>
         public ExplorerItemViewModelBase(IExplorerPageViewModel explorerPageVM, FileItemInformation f)
         {
             ExplorerVM = explorerPageVM;
@@ -33,7 +49,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// ソートのための比較関数
+        /// ソートのための比較関数です。
         /// </summary>
         /// <param name="other">ExplorerListItemViewModel?</param>
         /// <returns><bool/returns>
@@ -43,6 +59,7 @@ namespace FilOps.ViewModels.ExplorerPage
             return FullPath.CompareTo(other?.FullPath);
         }
 
+        #region データバインディング
         /// <summary>
         /// ファイルの表示名
         /// </summary>
@@ -101,7 +118,6 @@ namespace FilOps.ViewModels.ExplorerPage
             set => SetProperty(ref _FileType, value);
         }
 
-
         /// <summary>
         /// ディレクトリがディレクトリを持つかどうか
         /// </summary>
@@ -153,5 +169,6 @@ namespace FilOps.ViewModels.ExplorerPage
                 return explorerVM?.FontSize ?? SystemFonts.MessageFontSize;
             }
         }
+        #endregion データバインディング
     }
 }

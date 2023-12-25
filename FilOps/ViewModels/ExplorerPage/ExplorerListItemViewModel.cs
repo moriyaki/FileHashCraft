@@ -14,7 +14,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// PageのViewModelからフォントサイズの変更を受け取る
+        /// PageのViewModelからフォントサイズの変更を受け取ります。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
