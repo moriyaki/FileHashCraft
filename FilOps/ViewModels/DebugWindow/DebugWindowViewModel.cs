@@ -145,14 +145,18 @@ namespace FilOps.ViewModels.DebugWindow
         /// <param name="e"></param>
         private void Polling(object? sender, EventArgs e)
         {
+            /*
             var OnlyList = DebugClass.DirectoriesOnly;
             var SubList = DebugClass.DirectoriesWithSubdirectories;
+            */
 
             App.Current?.Dispatcher.Invoke(() =>
             {
                 DebugText = string.Empty;
 
                 var sb = new StringBuilder();
+                sb.Append(DebugClass.ToString());
+                /*
                 foreach (var dir in OnlyList)
                 {
                     sb.Append(dir);
@@ -165,6 +169,7 @@ namespace FilOps.ViewModels.DebugWindow
                     sb.Append(dir);
                     sb.Append(Environment.NewLine);
                 }
+                */
                 DebugText = sb.ToString();
             });
         }

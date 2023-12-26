@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
@@ -25,7 +27,12 @@ namespace FilOps.ViewModels.ExplorerPage
         /// リストビューへのアクセス
         /// </summary>
         public ObservableCollection<ExplorerItemViewModelBase> ListItems { get; set; }
-        
+
+        /// <summary>
+        /// ツリービューのチェックボックスの表示状態を取得
+        /// </summary>
+        public Visibility IsCheckBoxVisible { get; }
+
         /// <summary>
         /// カレントディレクトリのフルパスへのアクセス
         /// </summary>
@@ -61,24 +68,6 @@ namespace FilOps.ViewModels.ExplorerPage
         public bool IsExpandDirectory(ExplorerTreeNodeViewModel node);
 
         /// <summary>
-        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加します。
-        /// </summary>
-        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
-        public void AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
-
-        /// <summary>
-        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加します。
-        /// </summary>
-        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
-        public void AddDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node);
-
-        /// <summary>
-        /// TreeViewItem の CheckBox が状態変更した時、チェックマネージャーから削除します。
-        /// </summary>
-        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
-        public void RemoveDirectoryFromDirectoryManager(ExplorerTreeNodeViewModel node);
-
-        /// <summary>
         /// WndProc をフックして、リムーバブルドライブの着脱を監視します。
         /// </summary>
         /// <param name="hwndSource">hwndSource?</param>
@@ -90,6 +79,7 @@ namespace FilOps.ViewModels.ExplorerPage
         public void HwndRemoveHook();
     }
     #endregion インターフェース
+
     public partial class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
     {
         #region データバインディング
@@ -124,6 +114,16 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             get => _SelectedListViewItem;
             set => SetProperty(ref _SelectedListViewItem, value);
+        }
+
+        /// <summary>
+        /// チェックボックスの表示状態の設定
+        /// </summary>
+        private Visibility _IsCheckBoxVisible = Visibility.Visible;
+        public Visibility IsCheckBoxVisible
+        {
+            get => _IsCheckBoxVisible;
+            private set => _IsCheckBoxVisible = value;
         }
 
         /// <summary>
@@ -171,6 +171,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 {
                     CurrentDirectoryItem = FolderSelectedChanged(changedDir);
                 }
+
             }
         }
 
@@ -207,6 +208,7 @@ namespace FilOps.ViewModels.ExplorerPage
 
                 // カレントディレクトリの文字列を更新する
                 CurrentDirectory = value.FullPath;
+
             }
         }
 
@@ -302,12 +304,6 @@ namespace FilOps.ViewModels.ExplorerPage
             CurrentWatcherService.Created += CurrentDirectoryItemCreated;
             CurrentWatcherService.Deleted += CurrentDirectoryItemDeleted;
             CurrentWatcherService.Renamed += CurrentDirectoryItemRenamed;
-
-            /*
-            // TreeView の遅延処理用
-            _updateTimer = new System.Timers.Timer(300); // 300ミリ秒の遅延
-            _updateTimer.Elapsed += HandleUpdateTimerElapsed;
-            */
         }
 
         private bool IsInitialized = false;
@@ -318,6 +314,7 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             if (!IsInitialized)
             {
+                IsCheckBoxVisible = Visibility.Visible;
                 foreach (var rootInfo in FileSystemInfoManager.SpecialFolderScan())
                 {
                     var item = new SpecialFolderTreeNodeViewModel(this, rootInfo);
@@ -400,35 +397,6 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion 展開マネージャへの追加削除処理
 
-        #region チェックマネージャへの追加削除処理
-        /// <summary>
-        /// TreeViewItem の CheckBox がチェックされた時、子ディレクトリを含む形でをチェックマネージャに追加する。
-        /// </summary>
-        /// <param name="node">CHeckBOx がチェックされた TreeViewItem</param>
-        public void AddDirectoryWithSubdirectoriesToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
-        {
-            CheckedDirManager.AddDirectoryWithSubdirectories(node.FullPath);
-        }
-
-        /// <summary>
-        /// TreeViewItem の CheckBox が状態変更した時、自分自身のディレクトリのみをチェックマネージャに追加する。
-        /// </summary>
-        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
-        public void AddDirectoryOnlyToCheckedDirectoryManager(ExplorerTreeNodeViewModel node)
-        {
-            CheckedDirManager.AddDirectoryOnly(node.FullPath);
-        }
-
-        /// <summary>
-        /// TreeViewItem の CheckBox が状態変更した時、チェックマネージャから削除する。
-        /// </summary>
-        /// <param name="node">CheckBox の状態が変更された TreeViewItem</param>
-        public void RemoveDirectoryFromDirectoryManager(ExplorerTreeNodeViewModel node)
-        {
-            CheckedDirManager.RemoveDirectory(node.FullPath);
-        }
-        #endregion  チェックマネージャへの追加削除処理
- 
         #region ファイルアイテム作成
         /// <summary>
         /// フルパスからツリービューアイテムを作成する。

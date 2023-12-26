@@ -1,19 +1,49 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
 using System.Xml.Linq;
 using FilOps.Models;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
+    /*
+    /// <summary>
+    /// TreeView の CheckBox を隠せるようにするために必要
+    /// </summary>
+    public class BooleanToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is bool boolValue && targetType == typeof(Visibility))
+            {
+                return boolValue ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    */
+
     public partial class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) 
+        {
+        }
 
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f) { }
+        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f)
+        {
+        }
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
         {
-            this.Parent = parent;
+            Parent = parent;
         }
 
         /// <summary>
@@ -53,11 +83,23 @@ namespace FilOps.ViewModels.ExplorerPage
             set => SetProperty(ref _Children, value);
         }
 
+        /// <summary>
+        /// 子にディレクトリアイテムを追加する
+        /// </summary>
+        /// <param name="item">追加するアイテム</param>
         public void AddChildren(ExplorerTreeNodeViewModel item)
         {
             Children.Add(item);
         }
 
+        /// <summary>
+        /// チェックボックスの表示状態の設定
+        /// </summary>
+        public Visibility IsCheckBoxVisible
+        {
+            get => ExplorerVM.IsCheckBoxVisible;
+        }
+        
         /// <summary>
         /// ディレクトリのチェックボックスがチェックされているかどうか
         /// </summary>

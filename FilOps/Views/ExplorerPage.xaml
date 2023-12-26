@@ -4,11 +4,15 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:vm="clr-namespace:FilOps.ViewModels.ExplorerPage"
       xmlns:local="clr-namespace:FilOps.ViewModels.ExplorerPage"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ExplorerPage">
 
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Page.Resources>
     <Grid PreviewMouseWheel="OnMouseWheel">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -89,18 +93,20 @@
                     <HierarchicalDataTemplate DataType="DirectoryItem"
                                               ItemsSource="{Binding Path=Children}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"
-                                   />
-                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                            <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                      Visibility="{Binding IsCheckBoxVisible}"/>
                             <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
                 <!-- 特殊フォルダに対する動的な DataTemplate -->
                 <TreeView.Resources>
-                    <DataTemplate DataType="{x:Type local:SpecialFolderTreeNodeViewModel}">
+                    <DataTemplate DataType="{x:Type vm:SpecialFolderTreeNodeViewModel}">
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                            <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                      Visibility="{Binding IsCheckBoxVisible}"/>
                             <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
                         </StackPanel>
                     </DataTemplate>
