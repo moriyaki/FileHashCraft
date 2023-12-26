@@ -123,7 +123,7 @@ namespace FilOps.Views
 
             if (explorerVM != null)
             {
-                explorerVM.CurrentDirectory = WindowsAPI.GetPath(KnownFolder.User);
+                explorerVM.CurrentFullPath = WindowsAPI.GetPath(KnownFolder.User);
             }
 
             HwndSource? hwndSource;

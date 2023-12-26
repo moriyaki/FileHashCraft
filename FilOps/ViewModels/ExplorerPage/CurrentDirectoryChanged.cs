@@ -25,7 +25,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 }));
             }
         }
-
+        /*
         /// <summary>
         /// カレントディレクトリが変更されたときの処理を行います。
         /// </summary>
@@ -60,6 +60,7 @@ namespace FilOps.ViewModels.ExplorerPage
                         if (Path.Equals(directory, changedPath))
                         {
                             // カレントディレクトリが見つかった
+                            selectingVM.IsSelected = true;
                             return child;
                         }
                         else
@@ -72,35 +73,7 @@ namespace FilOps.ViewModels.ExplorerPage
             }
             return null;
         }
-
-        /// <summary>
-        /// 親ディレクトリから順に、現在のディレクトリまでのコレクションを取得します。
-        /// </summary>
-        /// <param name="path">コレクションを取得するディレクトリ</param>
-        /// <returns>親ディレクトリからのコレクション</returns>
-        public static IEnumerable<string> GetDirectoryNames(string path)
-        {
-            // パスの区切り文字に関係なく分割する
-            var pathSeparated = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            string fullPath = string.Empty;
-
-            foreach (var directoryName in pathSeparated)
-            {
-                if (string.IsNullOrEmpty(fullPath))
-                {
-                    // ルートディレクトリの場合、区切り文字を含めて追加
-                    fullPath = directoryName + Path.DirectorySeparatorChar;
-                }
-                else
-                {
-                    // パスを結合
-                    fullPath = Path.Combine(fullPath, directoryName);
-                }
-
-                yield return fullPath;
-            }
-        }
+        */
         #endregion カレントディレクトリ移動関連
 
         #region カレントディレクトリのファイル変更通知関連

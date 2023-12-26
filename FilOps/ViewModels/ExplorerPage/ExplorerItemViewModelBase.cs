@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
 using System.IO;
-using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
@@ -23,15 +21,17 @@ namespace FilOps.ViewModels.ExplorerPage
         /// コンストラクタで、IExplorerPageViewModelの設定をします
         /// </summary>
         /// <param name="explorerVM">IExplorerPageViewModel</param>
-        public ExplorerItemViewModelBase(IExplorerPageViewModel explorerVM)
+        public ExplorerItemViewModelBase(ExplorerPageViewModel explorerVM)
         {
             ExplorerVM = explorerVM;
+            ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
+            
         }
 
         /// <summary>
         /// IExplorerPageViewModel
         /// </summary>
-        protected readonly IExplorerPageViewModel ExplorerVM;
+        protected readonly ExplorerPageViewModel ExplorerVM;
  
         /// <summary>
         /// PageのViewModelからフォントサイズの変更を受け取ります。
@@ -43,8 +43,8 @@ namespace FilOps.ViewModels.ExplorerPage
             if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
             {
                 // ExplorerPageViewModel の FontSize が変更された場合、ExplorerItemViewModelBase のプロパティも更新
-                FontSize = ExplorerVM.FontSize;
-                OnPropertyChanged(nameof(FontSize));
+                OnPropertyChanged(nameof(ExplorerVM.FontSize));
+                
             }
         }
         /// <summary>
@@ -52,10 +52,8 @@ namespace FilOps.ViewModels.ExplorerPage
         /// </summary>
         /// <param name="explorerPageVM"></param>
         /// <param name="f"></param>
-        public ExplorerItemViewModelBase(IExplorerPageViewModel explorerPageVM, FileItemInformation f)
+        public ExplorerItemViewModelBase(ExplorerPageViewModel explorerPageVM, FileItemInformation f) : this(explorerPageVM)
         {
-            ExplorerVM = explorerPageVM;
-
             FullPath = f.FullPath;
             IsReady = f.IsReady;
             IsRemovable = f.IsRemovable;
@@ -179,11 +177,6 @@ namespace FilOps.ViewModels.ExplorerPage
         public double FontSize
         {
             get => ExplorerVM.FontSize;
-            set
-            {
-                ExplorerVM.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
-            }
         }
 
         #endregion データバインディング

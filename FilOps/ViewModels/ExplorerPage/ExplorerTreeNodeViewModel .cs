@@ -11,14 +11,14 @@ namespace FilOps.ViewModels.ExplorerPage
 {
     public partial class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) 
+        public ExplorerTreeNodeViewModel(ExplorerPageViewModel explorerVM) : base(explorerVM) 
         {
         }
 
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f)
+        public ExplorerTreeNodeViewModel(ExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f)
         {
         }
-        public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
+        public ExplorerTreeNodeViewModel(ExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f)
         {
             Parent = parent;
         }
@@ -158,7 +158,7 @@ namespace FilOps.ViewModels.ExplorerPage
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        ExplorerVM.CurrentDirectoryItem = this;
+                        ExplorerVM.CurrentFullPath = this.FullPath;
                         if (!IsKicked) { KickChildGet(); }
                     }
                 }
@@ -187,17 +187,19 @@ namespace FilOps.ViewModels.ExplorerPage
                 {
                     foreach (var child in Children)
                     {
-                        ExplorerVM.AddDirectoryToExpandedDirectoryManager(child);
+                        //ExplorerVM.AddDirectoryToExpandedDirectoryManager(child);
                         if (IsChecked == true) { child.IsChecked = true; }
                         
                     }
                 }
                 else
                 {
+                    /*
                     foreach (var child in Children)
                     {
                         ExplorerVM.RemoveDirectoryToExpandedDirectoryManager(child);
                     }
+                    */
                 }
             }
         }

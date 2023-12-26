@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
 using FilOps.ViewModels.DebugWindow;
 
@@ -33,18 +35,20 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// カレントディレクトリのフルパスへのアクセス
         /// </summary>
-        public string CurrentDirectory { get; set; }
+        public string CurrentFullPath { get; set; }
 
+        /*
         /// <summary>
         /// カレントディレクトリのツリービューアイテムへのアクセス
         /// </summary>
         public ExplorerTreeNodeViewModel? CurrentDirectoryItem { get; set; }
-
+        */
         /// <summary>
         /// フォントサイズへのアクセス
         /// </summary>
         public double FontSize { get; set; }
 
+        /*
         /// <summary>
         /// TreeViewItem が展開された時に展開マネージャに通知します。
         /// </summary>
@@ -63,6 +67,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <param name="node"></param>
         /// <returns></returns>
         public bool IsExpandDirectory(ExplorerTreeNodeViewModel node);
+        */
 
         /// <summary>
         /// WndProc をフックして、リムーバブルドライブの着脱を監視します。
@@ -127,51 +132,56 @@ namespace FilOps.ViewModels.ExplorerPage
         /// カレントディレクトリ
         /// </summary>
         private string _currentDirectory = string.Empty;
-        public string CurrentDirectory
+        public string CurrentFullPath
         {
             get => _currentDirectory;
             set
             {
-                string changedDir = value;
+                string changedDirectory = value;
 
                 if (_currentDirectory.Length == 1 && value.Length == 2)
                 {
                     // 1文字から2文字になった時は、'\\' を追加する
-                    changedDir = changedDir.ToUpper() + Path.DirectorySeparatorChar;
+                    changedDirectory = changedDirectory.ToUpper() + Path.DirectorySeparatorChar;
                 }
-                else if (changedDir.Length < 3)
+                else if (changedDirectory.Length == 3)
                 {
-                    // 3文字未満なら返る
-                    SetProperty(ref _currentDirectory, value);
+                    changedDirectory = value.ToUpper();
+                    // 3文字なら返る
+                    SetProperty(ref _currentDirectory, changedDirectory);
                     return;
                 }
 
                 // 可能なら、表示を大文字小文字正しいものを取得
                 if (Directory.Exists(value))
                 {
-                    var dirName = Path.GetDirectoryName(changedDir);
+                    var dirName = Path.GetDirectoryName(changedDirectory);
                     if (dirName is not null)
                     {
                         var dirs = Directory.GetDirectories(dirName);
-                        changedDir = dirs?.FirstOrDefault(dir => dir.Equals(value, StringComparison.OrdinalIgnoreCase)) ?? value;
+                        changedDirectory = dirs?.FirstOrDefault(dir => dir.Equals(value, StringComparison.OrdinalIgnoreCase)) ?? value;
                     }
                 }
 
                 // 同じ値ならセットしない
-                if (Path.Equals(_currentDirectory, changedDir)) return;
+                if (Path.Equals(_currentDirectory, changedDirectory)) return;
 
                 // 値のセット
-                if (!SetProperty(ref _currentDirectory, changedDir)) return;
+                if (!SetProperty(ref _currentDirectory, changedDirectory)) return;
 
                 // ディレクトリが存在するなら、CurrentItemを設定
-                if (Directory.Exists(changedDir))
+                if (Directory.Exists(changedDirectory))
                 {
-                    CurrentDirectoryItem = FolderSelectedChanged(changedDir);
+                    //FolderSelectedChanged(value);
+                    ToUpDirectory.RaiseCanExecuteChanged();
+                    ListViewUpdater.Execute(null);
+                    WeakReferenceMessenger.Default.Send(new CurrentChangeMessage(changedDirectory));
                 }
 
             }
         }
 
+        /*
         /// <summary>
         /// カレントディレクトリの情報
         /// </summary>
@@ -195,7 +205,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 ToUpDirectory.RaiseCanExecuteChanged();
 
                 // カレントディレクトリが変更されたので、監視対象を移す
-                _currentDirectoryFIleSystemWatcherService.SetCurrentDirectoryWatcher(value.FullPath);
+                _currentDirectoryWatcherService.SetCurrentDirectoryWatcher(value.FullPath);
 
                 // 選択ディレクトリを移す
                 value.IsSelected = true;
@@ -208,6 +218,7 @@ namespace FilOps.ViewModels.ExplorerPage
 
             }
         }
+        */
 
         /// <summary>
         /// ユーザーコマンドの文字列
@@ -236,7 +247,7 @@ namespace FilOps.ViewModels.ExplorerPage
         #region コンストラクタと初期化
         private readonly IMainViewModel _mainViewModel;
         private readonly IDrivesFileSystemWatcherService _drivesFileSystemWatcherService;
-        private readonly ICurrentDirectoryFIleSystemWatcherService _currentDirectoryFIleSystemWatcherService;
+        private readonly ICurrentDirectoryFIleSystemWatcherService _currentDirectoryWatcherService;
         private readonly IExpandedDirectoryManager _expandedDirectoryManager;
         private readonly ICheckedDirectoryManager _checkedDirectoryManager;
         private readonly IFileSystemInformationManager _fileSystemInformationManager;
@@ -250,24 +261,42 @@ namespace FilOps.ViewModels.ExplorerPage
             )
         {
             _drivesFileSystemWatcherService = driveWatcherService;
-            _currentDirectoryFIleSystemWatcherService = currentWatcherService;
+            _currentDirectoryWatcherService = currentWatcherService;
             _expandedDirectoryManager = expandDirManager;
             _checkedDirectoryManager = checkedDirManager;
             _fileSystemInformationManager = fileSystemInfoManager;
             _mainViewModel = mainViewModel;
 
+            
             ToUpDirectory = new DelegateCommand(
-                () => { if (CurrentDirectoryItem != null) { CurrentDirectoryItem = CurrentDirectoryItem.Parent; } },
-                () => { return CurrentDirectoryItem != null && CurrentDirectoryItem.Parent != null; }
+                () => {
+                    var ParentPath = Path.GetDirectoryName(CurrentFullPath);
+                    if (ParentPath != null) { CurrentFullPath = ParentPath; }
+
+                },
+                () => { return Directory.Exists(Path.GetDirectoryName(CurrentFullPath)); }
             );
+
 
             ListViewUpdater = new DelegateCommand(async () =>
             {
                 ListItems.Clear();
-                if (CurrentDirectoryItem != null)
-                {
-                    await Task.Run(() => FolderFileListScan(CurrentDirectoryItem.FullPath));
-                }
+               await Task.Run(() =>
+               {
+                   foreach (var folderFile in FileSystemInformationManager.FileItemScan(CurrentFullPath, true))
+                   {
+                       // フォルダやファイルの情報を ViewModel に変換
+                       var item = new ExplorerListItemViewModel(this, folderFile);
+
+                       // UI スレッドでリストビューを更新
+                       App.Current?.Dispatcher?.Invoke((Action)(() =>
+                       {
+                           ListItems.Add(item);
+                       }));
+                   }
+               });
+
+               
             });
 
             FileListViewExecuted = new DelegateCommand(() =>
@@ -277,7 +306,7 @@ namespace FilOps.ViewModels.ExplorerPage
                     var newDir = SelectedListViewItem.FullPath;
                     if (Directory.Exists(newDir))
                     {
-                        CurrentDirectory = newDir;
+                        CurrentFullPath = newDir;
                     }
                 }
             });
@@ -289,15 +318,20 @@ namespace FilOps.ViewModels.ExplorerPage
                 debugWindowService.ShowDebugWindow();
             });
 
+            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (recipient, message) =>
+            {
+                CurrentFullPath = message.CurrentFullPath;
+            });
+
             _drivesFileSystemWatcherService.Changed += DirectoryChanged;
             _drivesFileSystemWatcherService.Created += DirectoryCreated;
             _drivesFileSystemWatcherService.Renamed += DirectoryRenamed;
             _drivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
             _drivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
 
-            _currentDirectoryFIleSystemWatcherService.Created += CurrentDirectoryItemCreated;
-            _currentDirectoryFIleSystemWatcherService.Deleted += CurrentDirectoryItemDeleted;
-            _currentDirectoryFIleSystemWatcherService.Renamed += CurrentDirectoryItemRenamed;
+            _currentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
+            _currentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
+            _currentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
         }
 
         private bool IsInitialized = false;
@@ -350,6 +384,7 @@ namespace FilOps.ViewModels.ExplorerPage
         #endregion アイテムの挿入位置を決定するヘルパー
 
         #region 展開マネージャへの追加削除処理
+        /*
         /// <summary>
         /// TreeViewItem が展開された時に展開マネージャに通知します。
         /// </summary>
@@ -391,6 +426,7 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             return _expandedDirectoryManager.IsExpandedDirectory(node.FullPath);
         }
+        */
         #endregion 展開マネージャへの追加削除処理
 
         #region ファイルアイテム作成

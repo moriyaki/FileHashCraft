@@ -45,7 +45,7 @@
                    Margin="3"
                    Name="CurrentDir"
                    FontSize="{Binding FontSize}"
-                   Text="{Binding CurrentDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                   Text="{Binding CurrentFullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
 

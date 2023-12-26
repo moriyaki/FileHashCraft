@@ -269,7 +269,7 @@ namespace FilOps.ViewModels.ExplorerPage
                         if (deletedTreeItem != null) { root.Children.Remove(deletedTreeItem); }
 
                         // リストビューにも表示されていたら、そちらも更新
-                        if (deletedTreeItem != null && root == CurrentDirectoryItem)
+                        if (deletedTreeItem != null && root.FullPath == CurrentFullPath)
                         {
                             var listItem = ListItems.FirstOrDefault(i => i.FullPath == deletedTreeItem.FullPath);
                             if (listItem != null) { ListItems.Remove(listItem); }
@@ -410,6 +410,35 @@ namespace FilOps.ViewModels.ExplorerPage
         #endregion リムーバブルドライブドライブ変更通知処理
 
         #region TreeNode取得関連
+        /// <summary>
+        /// 親ディレクトリから順に、現在のディレクトリまでのコレクションを取得します。
+        /// </summary>
+        /// <param name="path">コレクションを取得するディレクトリ</param>
+        /// <returns>親ディレクトリからのコレクション</returns>
+        public static IEnumerable<string> GetDirectoryNames(string path)
+        {
+            // パスの区切り文字に関係なく分割する
+            var pathSeparated = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            string fullPath = string.Empty;
+
+            foreach (var directoryName in pathSeparated)
+            {
+                if (string.IsNullOrEmpty(fullPath))
+                {
+                    // ルートディレクトリの場合、区切り文字を含めて追加
+                    fullPath = directoryName + Path.DirectorySeparatorChar;
+                }
+                else
+                {
+                    // パスを結合
+                    fullPath = Path.Combine(fullPath, directoryName);
+                }
+
+                yield return fullPath;
+            }
+        }
+
         /// <summary>
         /// 変更が加えられたファイルアイテムのディレクトリツリーアイテムを検索します。
         /// </summary>

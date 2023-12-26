@@ -1,6 +1,7 @@
 ﻿using System.DirectoryServices.ActiveDirectory;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Views;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -71,6 +72,7 @@ namespace FilOps.ViewModels
                 if (8 <= value && value <= 24)
                 {
                     SetProperty(ref _FontSize, value, nameof(FontSize));
+                    WeakReferenceMessenger.Default.Send<FontChanged>(new FontChanged(value));
                 }
             }
         }

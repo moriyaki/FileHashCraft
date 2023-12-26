@@ -194,7 +194,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <param name="value">変更された値</param>
         private void SyncSpecialDirectory(ExplorerTreeNodeViewModel changedNode, bool? value)
         {
-            if (!ExplorerVM.IsExpandDirectory(changedNode)) { return; }
+            //if (!ExplorerVM.IsExpandDirectory(changedNode)) { return; }
             
             foreach (var root in ExplorerVM.TreeRoot)
             {

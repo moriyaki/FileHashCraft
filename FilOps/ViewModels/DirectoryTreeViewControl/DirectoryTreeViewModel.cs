@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
-using FilOps.ViewModels.ExplorerPage;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.ViewModels.DirectoryTreeViewControl
 {
@@ -26,16 +20,21 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// コンストラクタで、DirectoryTreeViewControlViewModelの設定をします
+        /// </summary>
+        /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
         public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm)
         {
             ControlVM = vm;
+            ControlVM.PropertyChanged += ControlVM_PropertyChanged;
         }
 
         /// <summary>
         /// コンストラクタで、DirectoryTreeViewControlViewModelとファイル情報の設定をします
         /// </summary>
-        /// <param name="explorerPageVM"></param>
-        /// <param name="f"></param>
+        /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
+        /// <param name="f">ファイル情報</param>
         public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm, FileItemInformation f) : this(vm)
         {
             FullPath = f.FullPath;
@@ -48,9 +47,9 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// コンストラクタで、DirectoryTreeViewControlViewModelとファイル情報、親ディレクトリの設定をします
         /// </summary>
-        /// <param name="vm"></param>
-        /// <param name="f"></param>
-        /// <param name="parent"></param>
+        /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
+        /// <param name="f">ファイル情報</param>
+        /// <param name="parent">親ディレクトリ</param>
         public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm, FileItemInformation f, DirectoryTreeViewModel parent) : this(vm, f) 
         {
             Parent = parent;
@@ -68,6 +67,18 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             return FullPath.CompareTo(other?.FullPath);
         }
 
+        /// <summary>
+        /// コントロールのフォントサイズ変更を受け取ります
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">PropertyChangedEventArgs</param>
+        private void ControlVM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DirectoryTreeViewControlViewModel.FontSize))
+            {
+                OnPropertyChanged(nameof(ControlVM.FontSize));
+            }
+        }
         #region データバインディング
         /// <summary>
         /// ファイルの表示名
@@ -176,13 +187,10 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// フォントサイズ：現在は IExplorerPageViewModel からの取得だけど、MainView に持たせる
         /// </summary>
-        public static double FontSize
+
+        public double FontSize
         {
-            get
-            {
-                var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-                return explorerVM?.FontSize ?? SystemFonts.MessageFontSize;
-            }
+            get => ControlVM.FontSize;
         }
 
         /// <summary>
@@ -266,9 +274,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        // すぐにメッセージ発行へ移行
-                        //var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-                        //explorerVM?.CurrentDirectoryItem = this;
+                        ControlVM.CurrentFullPath = this.FullPath;
                         if (!IsKicked) { KickChildGet(); }
                     }
                 }
@@ -297,7 +303,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                 {
                     foreach (var child in Children)
                     {
-                        //AddDirectoryToExpandedDirectoryManager(child);
+                        ControlVM.AddDirectoryToExpandedDirectoryManager(child);
                         if (IsChecked == true) { child.IsChecked = true; }
 
                     }
@@ -306,7 +312,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                 {
                     foreach (var child in Children)
                     {
-                        //RemoveDirectoryToExpandedDirectoryManager(child);
+                        ControlVM.RemoveDirectoryToExpandedDirectoryManager(child);
                     }
                 }
             }
@@ -325,8 +331,6 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             }
             IsKicked = true;
         }
-
-
         #endregion データバインディング
     }
 
