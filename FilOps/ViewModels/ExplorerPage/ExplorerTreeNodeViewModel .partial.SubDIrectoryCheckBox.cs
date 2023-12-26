@@ -198,7 +198,7 @@ namespace FilOps.ViewModels.ExplorerPage
             
             foreach (var root in ExplorerVM.TreeRoot)
             {
-                if (root is SpecialFolderTreeNodeViewModel specialFolder)
+                if (root is ExplorerTreeNodeViewModel specialFolder)
                 {
                     ChangeExpandedSpecialFolder(specialFolder, changedNode.FullPath, value);
                 }

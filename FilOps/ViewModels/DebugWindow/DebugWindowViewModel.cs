@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using FilOps.Models;
+using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.ExplorerPage;
 
 namespace FilOps.ViewModels.DebugWindow
@@ -81,7 +83,7 @@ namespace FilOps.ViewModels.DebugWindow
         /// <summary>
         /// ポーリング用タイマー
         /// </summary>
-        private readonly DispatcherTimer timer;
+        //private readonly DispatcherTimer timer;
         public DelegateCommand PollingCommand { get; set; }
         #endregion バインディング
 
@@ -102,6 +104,9 @@ namespace FilOps.ViewModels.DebugWindow
         /// </summary>
         private readonly ICheckedDirectoryManager DebugClass;
 
+        private readonly IFileSystemInformationManager _FileSystemInformationManager;
+        private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
+
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
@@ -109,48 +114,68 @@ namespace FilOps.ViewModels.DebugWindow
         /// <param name="expandDirManager">今はIExpandedDirectoryManager</param>
         public DebugWindowViewModel(
             IMainViewModel mainViewModel,
-            ICheckedDirectoryManager debugClass)
+            IFileSystemInformationManager fileSystemInformationManager,
+            ICheckedDirectoryManager debugClass,
+            IDirectoryTreeViewControlViewModel directoryTreeViewControlViewModel
+            )
         {
+            _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
+            _FileSystemInformationManager = fileSystemInformationManager;
             DebugClass = debugClass;
+            PollingCommand = new DelegateCommand(() => { });
 
             this.Top = mainViewModel.Top;
             this.Left = mainViewModel.Left + mainViewModel.Width;
 
-            timer = new DispatcherTimer();
-            timer.Tick += new EventHandler(Polling);
-            timer.Interval = TimeSpan.FromMilliseconds(200);
-            PollingCommand = new DelegateCommand(
-                () =>
-                {
-                    if (IsPolling)
-                    {
-                        timer.Stop();
-                        IsPolling = false;
-                        DebugText = string.Empty;
-                    }
-                    else
-                    {
-                        timer.Start();
-                        IsPolling = true;
-                    }
-                }
-            );
-            PollingCommand.Execute(null);
-        }
+            // TreeView用
+            foreach (var rootInfo in _FileSystemInformationManager.SpecialFolderScan())
+            {
+                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
+            }
+            foreach (var rootInfo in FileSystemInformationManager.DriveScan())
+            {
+                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
+            }
 
-        /// <summary>
-        /// ポーリング中の処理を行います。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Polling(object? sender, EventArgs e)
-        {
-            /*
-            var OnlyList = DebugClass.DirectoriesOnly;
-            var SubList = DebugClass.DirectoriesWithSubdirectories;
-            */
 
-            App.Current?.Dispatcher.Invoke(() =>
+
+
+                /*
+                timer = new DispatcherTimer();
+                timer.Tick += new EventHandler(Polling);
+                timer.Interval = TimeSpan.FromMilliseconds(200);
+                PollingCommand = new DelegateCommand(
+                    () =>
+                    {
+                        if (IsPolling)
+                        {
+                            timer.Stop();
+                            IsPolling = false;
+                            DebugText = string.Empty;
+                        }
+                        else
+                        {
+                            timer.Start();
+                            IsPolling = true;
+                        }
+                    }
+                );
+                //PollingCommand.Execute(null);
+            }
+
+            /// <summary>
+            /// ポーリング中の処理を行います。
+            /// </summary>
+            /// <param name="sender"></param>
+            /// <param name="e"></param>
+            private void Polling(object? sender, EventArgs e)
+            {
+                /*
+                var OnlyList = DebugClass.DirectoriesOnly;
+                var SubList = DebugClass.DirectoriesWithSubdirectories;
+                */
+
+                App.Current?.Dispatcher.Invoke(() =>
             {
                 DebugText = string.Empty;
 

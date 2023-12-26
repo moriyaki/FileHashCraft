@@ -13,19 +13,7 @@ namespace FilOps.ViewModels.ExplorerPage
             FileSize = f.FileSize;
         }
 
-        /// <summary>
-        /// PageのViewModelからフォントサイズの変更を受け取ります。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
-            {
-                // ExplorerPageViewModel の FontSize が変更された場合、ExplorerListItemViewModel のプロパティも更新
-                OnPropertyChanged(nameof(FontSize));
-            }
-        }
+ 
 
         #region データバインディング
         /// <summary>

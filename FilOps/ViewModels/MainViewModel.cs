@@ -1,4 +1,5 @@
 ﻿using System.DirectoryServices.ActiveDirectory;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,8 @@ namespace FilOps.ViewModels
         public double Top { get; set; }
         public double Left { get; set; }
         public double Width {  get; set; }
+        public double Height { get; set; }
+        public double FontSize { get; set; }
     }
 
     public class MainViewModel : ObservableObject, IMainViewModel
@@ -54,6 +57,22 @@ namespace FilOps.ViewModels
         {
             get => _Height;
             set => SetProperty(ref _Height, value);
+        }
+
+        /// <summary>
+        /// フォントサイズの変更
+        /// </summary>
+        private double _FontSize = SystemFonts.MessageFontSize;
+        public double FontSize
+        {
+            get => _FontSize;
+            set
+            {
+                if (8 <= value && value <= 24)
+                {
+                    SetProperty(ref _FontSize, value, nameof(FontSize));
+                }
+            }
         }
     }
 }

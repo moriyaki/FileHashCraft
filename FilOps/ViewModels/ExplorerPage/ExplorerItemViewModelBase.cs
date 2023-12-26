@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -31,7 +32,21 @@ namespace FilOps.ViewModels.ExplorerPage
         /// IExplorerPageViewModel
         /// </summary>
         protected readonly IExplorerPageViewModel ExplorerVM;
-
+ 
+        /// <summary>
+        /// PageのViewModelからフォントサイズの変更を受け取ります。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
+            {
+                // ExplorerPageViewModel の FontSize が変更された場合、ExplorerItemViewModelBase のプロパティも更新
+                FontSize = ExplorerVM.FontSize;
+                OnPropertyChanged(nameof(FontSize));
+            }
+        }
         /// <summary>
         /// コンストラクタで、IExplorerPageViewModelとファイル情報の設定をします
         /// </summary>
@@ -161,14 +176,16 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// フォントサイズ
         /// </summary>
-        public static double FontSize
+        public double FontSize
         {
-            get
+            get => ExplorerVM.FontSize;
+            set
             {
-                var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
-                return explorerVM?.FontSize ?? SystemFonts.MessageFontSize;
+                ExplorerVM.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
             }
         }
+
         #endregion データバインディング
     }
 }

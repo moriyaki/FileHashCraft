@@ -3,6 +3,7 @@ using System.Windows;
 using FilOps.Models;
 using FilOps.ViewModels;
 using FilOps.ViewModels.DebugWindow;
+using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -91,7 +92,9 @@ namespace FilOps
             var services = new ServiceCollection();
 
             services.AddTransient<IMainViewModel, MainViewModel>();
+            
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
+            services.AddSingleton<IDirectoryTreeViewControlViewModel, DirectoryTreeViewControlViewModel>();
             services.AddTransient<IDebugWindowService, DebugWindowService>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();

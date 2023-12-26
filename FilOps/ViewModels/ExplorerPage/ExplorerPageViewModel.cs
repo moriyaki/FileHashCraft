@@ -1,11 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
@@ -198,7 +195,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 ToUpDirectory.RaiseCanExecuteChanged();
 
                 // カレントディレクトリが変更されたので、監視対象を移す
-                CurrentWatcherService.SetCurrentDirectoryWatcher(value.FullPath);
+                _currentDirectoryFIleSystemWatcherService.SetCurrentDirectoryWatcher(value.FullPath);
 
                 // 選択ディレクトリを移す
                 value.IsSelected = true;
@@ -225,27 +222,24 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// フォントサイズの変更
         /// </summary>
-        private double _FontSize = SystemFonts.MessageFontSize;
         public double FontSize
         {
-            get => _FontSize;
+            get => _mainViewModel.FontSize;
             set
             {
-                if (8 <= value && value <= 24)
-                {
-                    SetProperty(ref _FontSize, value);
-                }
+                _mainViewModel.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
             }
         }
         #endregion データバインディング
 
         #region コンストラクタと初期化
-        private readonly IDrivesFileSystemWatcherService DriveWatcherService;
-        private readonly ICurrentDirectoryFIleSystemWatcherService CurrentWatcherService;
-        private readonly IExpandedDirectoryManager ExpandDirManager;
-        private readonly ICheckedDirectoryManager CheckedDirManager;
-        private readonly IFileSystemInformationManager FileSystemInfoManager;
-        private readonly IMainViewModel MainViewModel;
+        private readonly IMainViewModel _mainViewModel;
+        private readonly IDrivesFileSystemWatcherService _drivesFileSystemWatcherService;
+        private readonly ICurrentDirectoryFIleSystemWatcherService _currentDirectoryFIleSystemWatcherService;
+        private readonly IExpandedDirectoryManager _expandedDirectoryManager;
+        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
+        private readonly IFileSystemInformationManager _fileSystemInformationManager;
         public ExplorerPageViewModel(
             IDrivesFileSystemWatcherService driveWatcherService,
             ICurrentDirectoryFIleSystemWatcherService currentWatcherService,
@@ -255,12 +249,12 @@ namespace FilOps.ViewModels.ExplorerPage
             IMainViewModel mainViewModel
             )
         {
-            DriveWatcherService = driveWatcherService;
-            CurrentWatcherService = currentWatcherService;
-            ExpandDirManager = expandDirManager;
-            CheckedDirManager = checkedDirManager;
-            FileSystemInfoManager = fileSystemInfoManager;
-            MainViewModel = mainViewModel;
+            _drivesFileSystemWatcherService = driveWatcherService;
+            _currentDirectoryFIleSystemWatcherService = currentWatcherService;
+            _expandedDirectoryManager = expandDirManager;
+            _checkedDirectoryManager = checkedDirManager;
+            _fileSystemInformationManager = fileSystemInfoManager;
+            _mainViewModel = mainViewModel;
 
             ToUpDirectory = new DelegateCommand(
                 () => { if (CurrentDirectoryItem != null) { CurrentDirectoryItem = CurrentDirectoryItem.Parent; } },
@@ -295,15 +289,15 @@ namespace FilOps.ViewModels.ExplorerPage
                 debugWindowService.ShowDebugWindow();
             });
 
-            DriveWatcherService.Changed += DirectoryChanged;
-            DriveWatcherService.Created += DirectoryCreated;
-            DriveWatcherService.Renamed += DirectoryRenamed;
-            DriveWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
-            DriveWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
+            _drivesFileSystemWatcherService.Changed += DirectoryChanged;
+            _drivesFileSystemWatcherService.Created += DirectoryCreated;
+            _drivesFileSystemWatcherService.Renamed += DirectoryRenamed;
+            _drivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
+            _drivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
 
-            CurrentWatcherService.Created += CurrentDirectoryItemCreated;
-            CurrentWatcherService.Deleted += CurrentDirectoryItemDeleted;
-            CurrentWatcherService.Renamed += CurrentDirectoryItemRenamed;
+            _currentDirectoryFIleSystemWatcherService.Created += CurrentDirectoryItemCreated;
+            _currentDirectoryFIleSystemWatcherService.Deleted += CurrentDirectoryItemDeleted;
+            _currentDirectoryFIleSystemWatcherService.Renamed += CurrentDirectoryItemRenamed;
         }
 
         private bool IsInitialized = false;
@@ -315,19 +309,21 @@ namespace FilOps.ViewModels.ExplorerPage
             if (!IsInitialized)
             {
                 IsCheckBoxVisible = Visibility.Visible;
-                foreach (var rootInfo in FileSystemInfoManager.SpecialFolderScan())
+                foreach (var rootInfo in _fileSystemInformationManager.SpecialFolderScan())
                 {
-                    var item = new SpecialFolderTreeNodeViewModel(this, rootInfo);
+                    var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                     TreeRoot.Add(item);
-                    ExpandDirManager.AddDirectory(rootInfo.FullPath);
+                    _expandedDirectoryManager.AddDirectory(rootInfo.FullPath);
                 }
                 foreach (var rootInfo in FileSystemInformationManager.DriveScan())
                 {
-                    var item = new DirectoryTreeNodeViewModel(this, rootInfo);
+                    var item = new ExplorerTreeNodeViewModel(this, rootInfo);
                     TreeRoot.Add(item);
-                    ExpandDirManager.AddDirectory(rootInfo.FullPath);
-                    DriveWatcherService.SetRootDirectoryWatcher(rootInfo);
+                    _expandedDirectoryManager.AddDirectory(rootInfo.FullPath);
+                    _drivesFileSystemWatcherService.SetRootDirectoryWatcher(rootInfo);
                 }
+                var debugWindowService = new DebugWindowService(new FilOps.Views.DebugWindow());
+                debugWindowService.ShowDebugWindow();
                 IsInitialized = true;
             }
         }
@@ -360,7 +356,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <param name="node">展開されたノード</param>
         public void AddDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
-            ExpandDirManager.AddDirectory(node.FullPath);
+            _expandedDirectoryManager.AddDirectory(node.FullPath);
             if (node.IsExpanded)
             {
                 foreach (var child in node.Children)
@@ -376,7 +372,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <param name="node">展開解除されたノード</param>
         public void RemoveDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
         {
-            ExpandDirManager.RemoveDirectory(node.FullPath);
+            _expandedDirectoryManager.RemoveDirectory(node.FullPath);
             if (node.HasChildren)
             {
                 foreach (var child in node.Children)
@@ -393,7 +389,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <returns></returns>
         public bool IsExpandDirectory(ExplorerTreeNodeViewModel node)
         {
-            return ExpandDirManager.IsExpandedDirectory(node.FullPath);
+            return _expandedDirectoryManager.IsExpandedDirectory(node.FullPath);
         }
         #endregion 展開マネージャへの追加削除処理
 
@@ -525,7 +521,7 @@ namespace FilOps.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
-                    DriveWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    _drivesFileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
@@ -542,7 +538,7 @@ namespace FilOps.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
-                    DriveWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    _drivesFileSystemWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     
                     break;
             }

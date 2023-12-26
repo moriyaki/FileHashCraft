@@ -5,20 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FilOps.Views"
         mc:Ignorable="d"
-        Title="DebugWindow" Height="450" Width="450 " Top="{Binding Top,Mode=TwoWay}" Left="{Binding Left,Mode=TwoWay}">
+        Title="DebugWindow" Height="800" Width="600 " Top="{Binding Top,Mode=TwoWay}" Left="{Binding Left,Mode=TwoWay}">
     <Grid>
+        <local:DirectoryTreeViewControl/>
+        <!--
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <Button x:Name="Polling" Grid.Row="0"
                 Content="{Binding PollingStatus}" 
-                Command="{Binding PollingCommand}"
-                />
+                Command="{Binding PollingCommand}"/>
         <TextBox x:Name="DebugLog" Grid.Row="1" 
                    Text="{Binding DebugText}"
                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
                    ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+        -->
     </Grid>
 </Window>

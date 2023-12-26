@@ -20,6 +20,7 @@ namespace FilOps.ViewModels.DebugWindow
         public DebugWindowService(Window debugWindow)
         {
             _debugWindow = debugWindow;
+            
         }
         public void ShowDebugWindow()
         {

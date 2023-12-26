@@ -9,29 +9,6 @@ using FilOps.Models;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
-    /*
-    /// <summary>
-    /// TreeView の CheckBox を隠せるようにするために必要
-    /// </summary>
-    public class BooleanToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is bool boolValue && targetType == typeof(Visibility))
-            {
-                return boolValue ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            return Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    */
-
     public partial class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
         public ExplorerTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) 
@@ -233,32 +210,11 @@ namespace FilOps.ViewModels.ExplorerPage
             Children.Clear();
             foreach (var child in FileSystemInformationManager.FileItemScan(FullPath, false))
             {
-                var item = new SpecialFolderTreeNodeViewModel(ExplorerVM, child, this);
+                var item = new ExplorerTreeNodeViewModel(ExplorerVM, child, this);
                 Children.Add(item);
             }
             IsKicked = true;
         }
         #endregion データバインディング用
-    }
-    public class SpecialFolderTreeNodeViewModel : ExplorerTreeNodeViewModel
-    {
-        public SpecialFolderTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
-
-        public SpecialFolderTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f) { }
-        public SpecialFolderTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f, parent) 
-        {
-            Parent = parent;
-        }
-    }
-
-    public class DirectoryTreeNodeViewModel : ExplorerTreeNodeViewModel
-    {
-        public DirectoryTreeNodeViewModel(IExplorerPageViewModel explorerVM) : base(explorerVM) { }
-        public DirectoryTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f) : base(explorerVM, f) { }
-
-        public DirectoryTreeNodeViewModel(IExplorerPageViewModel explorerVM, FileItemInformation f, ExplorerTreeNodeViewModel parent) : base(explorerVM, f, parent) 
-        {
-            Parent = parent;
-        }
     }
 }
