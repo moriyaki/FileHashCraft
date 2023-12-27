@@ -9,14 +9,14 @@ using FilOps.Models;
 
 namespace FilOps.ViewModels.DirectoryTreeViewControl
 {
-    public class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>
+    public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>
     {
         /// <summary>
         /// 引数を持たないコンストラクタは許容しませｓん
         /// </summary>
         /// <exception cref="NotImplementedException">許容されないコンストラクタ呼び出し</exception>
-        public DirectoryTreeViewModel() 
-        { 
+        public DirectoryTreeViewModel()
+        {
             throw new NotImplementedException();
         }
 
@@ -50,7 +50,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
         /// <param name="f">ファイル情報</param>
         /// <param name="parent">親ディレクトリ</param>
-        public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm, FileItemInformation f, DirectoryTreeViewModel parent) : this(vm, f) 
+        public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm, FileItemInformation f, DirectoryTreeViewModel parent) : this(vm, f)
         {
             Parent = parent;
         }
@@ -141,7 +141,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリがディレクトリを持つかどうか
         /// </summary>
-        private bool _HasChildren= false;
+        private bool _HasChildren = false;
         public bool HasChildren
         {
             get => _HasChildren;
@@ -185,9 +185,8 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
-        /// フォントサイズ：現在は IExplorerPageViewModel からの取得だけど、MainView に持たせる
+        /// MainViewから伝搬したユーザーコントロールのフォントサイズを利用する
         /// </summary>
-
         public double FontSize
         {
             get => ControlVM.FontSize;
@@ -201,15 +200,6 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         {
             get => _Children;
             set => SetProperty(ref _Children, value);
-        }
-
-        /// <summary>
-        /// 子にディレクトリアイテムを追加する
-        /// </summary>
-        /// <param name="item">追加するアイテム</param>
-        public void AddChildren(DirectoryTreeViewModel item)
-        {
-            Children.Add(item);
         }
 
         /// <summary>
@@ -234,16 +224,17 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                 if (FullPath == string.Empty) { return; }
                 if (value != _IsChecked)
                 {
-                    //CheckCheckBoxStatusChanged(this, value);
+                    CheckCheckBoxStatusChanged(this, value);
                 }
                 SetProperty(ref _IsChecked, value, nameof(IsChecked));
 
-                //ParentCheckBoxChange(this);
+                ParentCheckBoxChange(this);
 
                 Debug.WriteLine($"Sync Called : {this.FullPath}");
-                //SyncSpecialDirectory(this, value);
+                SyncSpecialDirectory(this, value);
             }
         }
+
         public bool? IsCheckedForSync
         {
             get => _IsChecked;
@@ -333,6 +324,5 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         }
         #endregion データバインディング
     }
-
-
 }
+    

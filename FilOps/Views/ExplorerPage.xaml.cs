@@ -9,6 +9,7 @@ using System.Windows.Navigation;
 using FilOps.Models;
 using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.ExplorerPage;
+using FilOps.ViewModels.FileSystemWatch;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.Views

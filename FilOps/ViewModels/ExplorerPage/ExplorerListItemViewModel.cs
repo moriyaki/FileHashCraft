@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using FilOps.Models;
+﻿using FilOps.Models;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
@@ -12,8 +11,6 @@ namespace FilOps.ViewModels.ExplorerPage
             LastModifiedDate = f.LastModifiedDate;
             FileSize = f.FileSize;
         }
-
- 
 
         #region データバインディング
         /// <summary>

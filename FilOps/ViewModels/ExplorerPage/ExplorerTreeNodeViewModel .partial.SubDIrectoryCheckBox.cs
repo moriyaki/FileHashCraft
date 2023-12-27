@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
-
-namespace FilOps.ViewModels.ExplorerPage
+﻿namespace FilOps.ViewModels.ExplorerPage
 {
     /* 
      * TreeViewItem の IsChecked 用ディレクトリ管理
@@ -35,12 +32,15 @@ namespace FilOps.ViewModels.ExplorerPage
      *      A がサブディレクトリを含む形でチェック管理マネージャに再登録される。
      *      同時に、ここで管理マネージャに直接管理されている B,C は 登録解除される
      */
+
+    /*
     public class ParentDirectoryCheckedChangedInfo
     {
         public string FullPath { get; set; } = string.Empty;
         public ExplorerTreeNodeViewModel? Node { get; set; }
         public bool? CurrentChecked { get; set; }
     }
+    */
 
     public partial class ExplorerTreeNodeViewModel
     {
@@ -119,15 +119,12 @@ namespace FilOps.ViewModels.ExplorerPage
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
         /// <param name="value">変更された値</param>
-        /*
         private static void CheckBoxChangeToMixed(ExplorerTreeNodeViewModel current)
         {
             // Mixed は子に反映させる必要がない
         }
-        */
-
+        
         #endregion 子ディレクトリのチェック管理
-
         /// <summary>
         /// 変更が加えられた可能性があるカレントディレクトリの親ディレクトリリストを取得する
         /// </summary>
@@ -136,7 +133,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// 
         private static void ParentCheckBoxChange(ExplorerTreeNodeViewModel current)
         {
-            var changedParentNode = new List<ParentDirectoryCheckedChangedInfo>();
+            //var changedParentNode = new List<ParentDirectoryCheckedChangedInfo>();
             var parent = current.Parent;
             var currentChecked = current.IsChecked;
         
@@ -150,38 +147,27 @@ namespace FilOps.ViewModels.ExplorerPage
                 // 大元が true 、親が null なら、親の全てのディレクトリがチェックされたら true 化する
                 if (currentChecked == true && current.IsChecked == null)
                 {
-                    if (childHasTrue && !childHasFalse)
-                    {
-                        parent.IsChecked = true;
-                    }
+                    if (childHasTrue && !childHasFalse) { parent.IsChecked = true; }
                 }
 
                 // 大元が false 、親が false 以外なら、状態変化する
                 if (currentChecked == false)
                 {
                     // 親が true なら、null になる
-                    if (parent.IsChecked == true)
-                    {
-                        parent.IsChecked = null;
-                    }
+                    if (parent.IsChecked == true) { parent.IsChecked = null; }
 
                     // 親が null なら親の配下ディレクトリが true を持つなら null となる
                     if (parent.IsChecked == null)
                     {
-                        if (childHasTrue && childHasFalse)
-                        {
-                            parent.IsChecked = null;
-                        }
+                        if (childHasTrue && childHasFalse) { parent.IsChecked = null; }
                     }
                 }
 
                 // 大元が null なら、(親が null 以外では)親が null 化する可能性がある
                 if (currentChecked == null && parent.IsChecked != null)
                 {
-                    if (childHasTrue && childHasTrue)
-                    {
-                        parent.IsChecked = null;
-                    }
+                    // 子がチェックされた物とされてない物の両方があるなら null となる
+                    if (childHasTrue && childHasTrue) { parent.IsChecked = null; }
                 }
                 parent = parent.Parent;
             }

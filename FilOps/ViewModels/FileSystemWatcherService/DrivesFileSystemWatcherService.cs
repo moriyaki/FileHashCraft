@@ -2,11 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using FilOps.Models;
 using FilOps.ViewModels.ExplorerPage;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace FilOps.Models
+namespace FilOps.ViewModels.FileSystemWatch
 {
     #region イベント引数
     /// <summary>

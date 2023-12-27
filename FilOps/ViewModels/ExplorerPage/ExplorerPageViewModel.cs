@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -9,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
 using FilOps.ViewModels.DebugWindow;
+using FilOps.ViewModels.FileSystemWatch;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
@@ -303,10 +303,10 @@ namespace FilOps.ViewModels.ExplorerPage
             {
                 if (SelectedListViewItem is not null)
                 {
-                    var newDir = SelectedListViewItem.FullPath;
-                    if (Directory.Exists(newDir))
+                    var newDirectory = SelectedListViewItem.FullPath;
+                    if (Directory.Exists(newDirectory))
                     {
-                        CurrentFullPath = newDir;
+                        CurrentFullPath = newDirectory;
                     }
                 }
             });
@@ -363,7 +363,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion コンストラクタと初期化
 
-        #region アイテムの挿入位置を決定するヘルパー
+        #region アイテムの挿入位置を決定するヘルパー/これはこのまま
         /// <summary>
         /// ソート済みの位置に挿入するためのヘルパーメソッド、挿入する位置を取得します。
         /// </summary>
@@ -383,7 +383,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion アイテムの挿入位置を決定するヘルパー
 
-        #region 展開マネージャへの追加削除処理
+        #region 展開マネージャへの追加削除処理(全コメント済)
         /*
         /// <summary>
         /// TreeViewItem が展開された時に展開マネージャに通知します。
@@ -429,7 +429,7 @@ namespace FilOps.ViewModels.ExplorerPage
         */
         #endregion 展開マネージャへの追加削除処理
 
-        #region ファイルアイテム作成
+        #region ファイルアイテム作成/削除する
         /// <summary>
         /// フルパスからツリービューアイテムを作成する。
         /// </summary>
@@ -454,7 +454,66 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion ファイルアイテム作成
 
-        #region ドライブ変更のフック処理
+        #region カレントディレクトリのファイル変更通知関連/これはこのまま
+        /// <summary>
+        /// カレントディレクトリにファイルが作成されたディレクトリの場合、
+        /// TreeViewは全ドライブ監視が処理してくれます。
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">作成されたファイルのフルパスが入っている</param>
+        public void CurrentDirectoryItemCreated(object? sender, CurrentDirectoryFileChangedEventArgs e)
+        {
+            // 追加されたファイルの情報を取得する
+            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
+
+            // リストビューに追加されたファイルを追加する
+            var newListItem = new ExplorerListItemViewModel(this, fileInformation);
+            int newListIndex = FindIndexToInsert(ListItems, newListItem);
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                ListItems.Insert(newListIndex, newListItem);
+            });
+        }
+
+        /// <summary>
+        /// カレントディレクトリのファイルが削除されたディレクトリの場合、
+        /// TreeViewは全ドライブ監視が処理してくれます。
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">削除されたファイルのフルパスが入っている</param>
+        public void CurrentDirectoryItemDeleted(object? sender, CurrentDirectoryFileChangedEventArgs e)
+        {
+            // リストビューの削除されたアイテムを探す
+            var listItem = ListItems.FirstOrDefault(i => i.FullPath == e.FullPath);
+
+            // リストビューから削除されたファイルを取り除く
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                if (listItem != null) { ListItems.Remove(listItem); }
+            });
+        }
+
+        /// <summary>
+        /// カレントディレクトリのファイル名が変更されたディレクトリの場合、
+        /// TreeViewは全ドライブ監視が処理してくれます。
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">名前変更されたファイルの新旧フルパスが入っている</param>
+
+        public void CurrentDirectoryItemRenamed(object? sender, CurrentDirectoryFileRenamedEventArgs e)
+        {
+            // リストビューの名前変更されたアイテムを探す
+            var listItem = ListItems.FirstOrDefault(i => i.FullPath == e.OldFullPath);
+
+            // リストビューに新しい名前を反映する
+            App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                if (listItem != null) { listItem.FullPath = e.FullPath; }
+            });
+        }
+        #endregion カレントディレクトリのファイル変更通知関連
+
+        #region ドライブ変更のフック処理/これはこのまま
         // ページのHwndSourceを保持するための変数
         private HwndSource? hwndSource;
 

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using FilOps.ViewModels.ExplorerPage;
 
-namespace FilOps.ViewModels.ExplorerPage
+namespace FilOps.ViewModels.FileSystemWatch
 {
     #region イベント引数
     /// <summary>
@@ -148,7 +143,7 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;
             Renamed?.Invoke(this, new CurrentDirectoryFileRenamedEventArgs(e.OldFullPath, e.FullPath));
-            
+
         }
         #endregion ファイル変更通知
     }

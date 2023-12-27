@@ -5,6 +5,7 @@ using FilOps.ViewModels;
 using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.ExplorerPage;
+using FilOps.ViewModels.FileSystemWatch;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps

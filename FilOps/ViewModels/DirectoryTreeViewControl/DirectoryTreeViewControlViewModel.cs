@@ -1,13 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
-using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.ExplorerPage;
 
 namespace FilOps.ViewModels.DirectoryTreeViewControl

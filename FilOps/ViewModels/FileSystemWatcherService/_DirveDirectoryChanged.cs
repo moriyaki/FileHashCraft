@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography.Xml;
-using System.Windows;
 using System.Windows.Media.Imaging;
 using FilOps.Models;
+using FilOps.ViewModels.FileSystemWatch;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
