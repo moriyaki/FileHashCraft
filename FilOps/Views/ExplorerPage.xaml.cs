@@ -116,7 +116,7 @@ namespace FilOps.Views
         {
             var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
             if (explorerVM == null) { throw new NullReferenceException(nameof(explorerVM)); }
-            explorerVM.InitializeOnce();
+            //explorerVM.InitializeOnce();
 
             FileWatcherService = App.Current.Services.GetService<IDrivesFileSystemWatcherService>();
             if (FileWatcherService == null) { throw new NullReferenceException(nameof(FileWatcherService)); }

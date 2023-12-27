@@ -4,8 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-      xmlns:vm="clr-namespace:FilOps.ViewModels.ExplorerPage"
-      xmlns:local="clr-namespace:FilOps.ViewModels.ExplorerPage"
+      xmlns:local="clr-namespace:FilOps.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ExplorerPage">
@@ -19,6 +18,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*" />
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -48,6 +48,34 @@
                    Text="{Binding CurrentFullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
+        <Grid Grid.Row="4">
+            <TreeView Name="DirectoryTreeRoot" Grid.Column="0"
+                      ItemsSource="{Binding TreeRoot, Mode=OneWay}"
+                      SelectedItemChanged="DirectoryTreeRoot_SelectedItemChanged">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="DirectoryItem"
+                                              ItemsSource="{Binding Path=Children}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                                      Visibility="{Binding IsCheckBoxVisible}"/>
+                            <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.Resources>
+                    <Style TargetType="TreeViewItem">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=Twoway}" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    </Style>
+                    <Style TargetType="CheckBox">
+                        <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=TwoWay}" />
+                    </Style>
+                </TreeView.Resources>
+            </TreeView>
+
+        </Grid>
+        
 
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
@@ -81,35 +109,13 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <local:DirectoryTreeViewControl Grid.Column="0"/>
+
             <GridSplitter
 			    Grid.Column="1"
 			    Width="3"
 			    HorizontalAlignment="Stretch" />
 
-            <TreeView Name="DirectoryTreeRoot" Grid.Column="0"
-                      ItemsSource="{Binding TreeRoot, Mode=OneWay}"
-                      SelectedItemChanged="DirectoryTreeRoot_SelectedItemChanged">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate DataType="DirectoryItem"
-                                              ItemsSource="{Binding Path=Children}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
-                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                                      Visibility="{Binding IsCheckBoxVisible}"/>
-                            <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-               <TreeView.Resources>
-                    <Style TargetType="TreeViewItem">
-                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=Twoway}" />
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                    </Style>
-                    <Style TargetType="CheckBox">
-                        <Setter Property="IsChecked" Value="{Binding IsChecked, Mode=TwoWay}" />
-                    </Style>
-                </TreeView.Resources>
-            </TreeView>
 
             <ListView Name="FileItemsList" Grid.Column="2"
                          ItemsSource="{Binding ListItems, Mode=OneWay}"

@@ -41,7 +41,7 @@
         public bool? CurrentChecked { get; set; }
     }
     */
-
+    /*
     public partial class ExplorerTreeNodeViewModel
     {
         #region 子ディレクトリのチェック管理
@@ -210,4 +210,5 @@
             }
         }
     }
+    */
 }

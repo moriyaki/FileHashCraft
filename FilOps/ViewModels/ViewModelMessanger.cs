@@ -86,16 +86,16 @@ namespace FilOps.ViewModels
     /// <summary>
     /// ディレクトリ監視から、何らかのディレクトリが削除されたメッセージ
     /// </summary>
-    public class SomethingDirectoryDeleted
+    public class Removed
     {
-        public string ParentFullPath { get; } = string.Empty;
-        public SomethingDirectoryDeleted()
+        public string FullPath { get; } = string.Empty;
+        public Removed()
         {
             throw new NotImplementedException();
         }
-        public SomethingDirectoryDeleted(string parentFullPath)
+        public Removed(string fullPath)
         {
-            ParentFullPath = parentFullPath;
+            FullPath = fullPath;
         }
     }
 
@@ -131,23 +131,5 @@ namespace FilOps.ViewModels
         }
     }
     #endregion FileChangeTreeSync用
-
-    #region ViewModel用
-    /// <summary>
-    /// ディレクトリが追加されたメッセージ
-    /// </summary>
-    public class AddDirectory
-    {
-        public string FullPath { get; } = string.Empty;
-        public AddDirectory()
-        {
-            throw new NotImplementedException();
-        }
-        public AddDirectory(string fullPath)
-        {
-            FullPath = fullPath;
-        }
-    }
-    #endregion ViewModel用
 
 }

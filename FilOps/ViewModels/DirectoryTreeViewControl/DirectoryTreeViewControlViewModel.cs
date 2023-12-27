@@ -43,7 +43,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 
     }
 
-    public class DirectoryTreeViewControlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
+    public partial class DirectoryTreeViewControlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
     {
         #region バインディング
         /// <summary>
@@ -155,7 +155,10 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 
             // ルートディレクトリにある場合は選択状態に設定して終了
             var selectedRoot = TreeRoot.FirstOrDefault(root => Path.Equals(root.FullPath, changedPath));
-            if (selectedRoot != null) { return; }
+            if (selectedRoot != null) { 
+                selectedRoot.IsSelected = true;
+                return;
+            }
 
             // サブディレクトリ内の場合は一部一致するルートディレクトリを特定し、ルートディレクトリを展開
             var subDirectoryRoot = TreeRoot.FirstOrDefault(root => changedPath.Contains(root.FullPath));

@@ -6,7 +6,7 @@ using FilOps.Models;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
-    public partial class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
+    public class ExplorerTreeNodeViewModel : ExplorerItemViewModelBase
     {
         public ExplorerTreeNodeViewModel(ExplorerPageViewModel explorerVM) : base(explorerVM) 
         {
@@ -81,7 +81,8 @@ namespace FilOps.ViewModels.ExplorerPage
         public bool? IsChecked
         {
             get => _IsChecked;
-            set
+            set => SetProperty(ref _IsChecked, value);
+            /*
             {
                 if (FullPath == string.Empty) { return;  }
                 if (value != _IsChecked)
@@ -95,6 +96,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 Debug.WriteLine($"Sync Called : {this.FullPath}");
                 SyncSpecialDirectory(this, value);
             }
+            */
         }
         public bool? IsCheckedForSync
         {

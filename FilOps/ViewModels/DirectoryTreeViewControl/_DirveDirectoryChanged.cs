@@ -476,7 +476,7 @@ namespace FilOps.ViewModels.ExplorerPage
         {
             var specialTreeItems = new List<ExplorerTreeNodeViewModel>();
 
-            foreach (var rootInfo in _fileSystemInformationManager.SpecialFolderScan())
+            foreach (var rootInfo in _FileSystemInformationManager.SpecialFolderScan())
             {
                 // 特殊ユーザーディレクトリのパスを持つアイテムを抽出
 
