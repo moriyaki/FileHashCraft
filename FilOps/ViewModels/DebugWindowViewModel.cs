@@ -1,18 +1,14 @@
 ﻿using System.Text;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FilOps.Models;
-using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.ExplorerPage;
 
-namespace FilOps.ViewModels.DebugWindow
+namespace FilOps.ViewModels
 {
     public interface IDebugWindowViewModel
     {
-        public double Top {  get; set; }
+        public double Top { get; set; }
         public double Left { get; set; }
-        
-        public void Cancel();
     }
     public class DebugWindowViewModel : ObservableObject, IDebugWindowViewModel
     {
@@ -100,18 +96,6 @@ namespace FilOps.ViewModels.DebugWindow
         #endregion バインディング
 
         /// <summary>
-        /// アプリケーション終了時に必要な後処理をします。
-        /// </summary>
-        public void Cancel()
-        {
-            if (_IsPolling)
-            {
-                IsPolling = false;
-                PollingCommand.Execute(null);
-            }
-        }
-
-        /// <summary>
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
@@ -128,8 +112,8 @@ namespace FilOps.ViewModels.DebugWindow
         {
             _ExpandedDirectoryManager = expandedDirectoryManager;
 
-            this.Top = mainViewModel.Top;
-            this.Left = mainViewModel.Left + mainViewModel.Width;
+            Top = mainViewModel.Top;
+            Left = mainViewModel.Left + mainViewModel.Width;
 
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(Polling);

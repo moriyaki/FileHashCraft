@@ -2,7 +2,6 @@
 using FilOps.ViewModels;
 using FilOps.ViewModels.ExplorerPage;
 using FilOps.Views;
-using FilOps.ViewModels.DebugWindow;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FilOps
@@ -24,10 +23,6 @@ namespace FilOps
             var explorerPageViewModel = Ioc.Default.GetService<ExplorerPageViewModel>();
             explorerPageViewModel?.HwndRemoveHook();
             
-
-            var debugViewModel = Ioc.Default.GetService<IDebugWindowViewModel>();
-            debugViewModel?.Cancel();
-
             Application.Current.Shutdown();
         }
     }

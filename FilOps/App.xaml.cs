@@ -2,7 +2,6 @@
 using System.Windows;
 using FilOps.Models;
 using FilOps.ViewModels;
-using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.ExplorerPage;
 using FilOps.ViewModels.FileSystemWatch;
@@ -98,7 +97,7 @@ namespace FilOps
             
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IDirectoryTreeViewControlViewModel, DirectoryTreeViewControlViewModel>();
-            services.AddSingleton<IDebugWindowService, DebugWindowService>();
+            //services.AddSingleton<IDebugWindowService, DebugWindowService>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();

@@ -7,7 +7,7 @@ using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
-using FilOps.ViewModels.DebugWindow;
+using FilOps.ViewModels;
 using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.FileSystemWatch;
 
@@ -236,8 +236,7 @@ namespace FilOps.ViewModels.ExplorerPage
             DebugOpen = new DelegateCommand(() =>
             {
                 var debugWindow = new Views.DebugWindow();
-                var debugWindowService = new DebugWindowService(debugWindow);
-                debugWindowService.ShowDebugWindow();
+                debugWindow.Show();
             });
 
             // TreeViewにルートアイテムを登録する

@@ -4,7 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FilOps.Models;
-using FilOps.ViewModels.DebugWindow;
+using FilOps.ViewModels;
 using FilOps.ViewModels.ExplorerPage;
 using FilOps.ViewModels.FileSystemWatch;
 
@@ -24,8 +24,8 @@ namespace FilOps.Views
         // とりあえずのデバッグウィンドウ開く処理        
         private void DebugClick(object sender, RoutedEventArgs e)
         {
-            var debugWindowService = new DebugWindowService(new DebugWindow());
-            debugWindowService.ShowDebugWindow();
+            var debugWindow = new Views.DebugWindow();
+            debugWindow.Show();
         }
 
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using FilOps.ViewModels.DebugWindow;
-
+using FilOps.ViewModels;
 
 namespace FilOps.Views
 {

@@ -12,7 +12,7 @@ namespace FilOps.Tests
         public void AddRemoveSimpleTest()
         {
             var path = @"C:\";
-            var dirManager = new ExpandedDirectoryManager(new FileSystemInformationManager());
+            var dirManager = new ExpandedDirectoryManager();
 
             var aaa = path + "aaa";
             var bbb = path + "bbb";
@@ -40,7 +40,7 @@ namespace FilOps.Tests
         {
             var path = @"C:\Users\moriyaki\Documents";
 
-            var dirManager = new ExpandedDirectoryManager(new FileSystemInformationManager());
+            var dirManager = new ExpandedDirectoryManager();
             Assert.True(dirManager.Directories.Where(dir => dir == path).Any());
 
             dirManager.RemoveDirectory(path);
@@ -51,7 +51,7 @@ namespace FilOps.Tests
         public void SubDirectory()
         {
             var path = @"C:\";
-            var dirManager = new ExpandedDirectoryManager(new FileSystemInformationManager());
+            var dirManager = new ExpandedDirectoryManager();
 
             var aaa = path + "aaa";
             var bbb = Path.Combine(aaa + "bbb");
