@@ -11,6 +11,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 {
     public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>
     {
+
         /// <summary>
         /// 引数を持たないコンストラクタは許容しませｓん
         /// </summary>
@@ -315,7 +316,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         public void KickChildGet()
         {
             Children.Clear();
-            foreach (var child in FileSystemInformationManager.FileItemScan(FullPath, false))
+            foreach (var child in FileSystemInformationManager.ScanFileItems(FullPath, false))
             {
                 var item = new DirectoryTreeViewModel(ControlVM, child, this);
                 Children.Add(item);

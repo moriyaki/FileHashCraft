@@ -84,7 +84,7 @@ namespace FilOps.ViewModels.FileSystemWatch
         public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaInserted;
         public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaEjected;
 
-        private readonly IExpandedDirectoryManager ExpandDirManager;
+        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
 
         /// <summary>
         /// ドライブ内のディレクトリ変更を監視するインスタンス
@@ -94,10 +94,10 @@ namespace FilOps.ViewModels.FileSystemWatch
         /// <summary>
         /// IExpandedDirectoryManager を注入するコンストラクタ
         /// </summary>
-        /// <param name="expandedDirManager">IExpandedDirectoryManager</param>
-        public DrivesFileSystemWatcherService(IExpandedDirectoryManager expandedDirManager)
+        /// <param name="expandedDirectoryManager">IExpandedDirectoryManager</param>
+        public DrivesFileSystemWatcherService(IExpandedDirectoryManager expandedDirectoryManager)
         {
-            ExpandDirManager = expandedDirManager;
+            _ExpandedDirectoryManager = expandedDirectoryManager;
         }
 
         public DrivesFileSystemWatcherService()
@@ -152,7 +152,7 @@ namespace FilOps.ViewModels.FileSystemWatch
             if (fullPath.Contains(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData))) return true;
             if (fullPath.Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles))) return true;
             if (fullPath.Contains(Path.GetTempPath())) return true;
-            if (!(ExpandDirManager.IsExpandedDirectory(fullPath) || ExpandDirManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty))) return true;
+            if (!(_ExpandedDirectoryManager.IsExpandedDirectory(fullPath) || _ExpandedDirectoryManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty))) return true;
 
             try
             {
@@ -188,7 +188,6 @@ namespace FilOps.ViewModels.FileSystemWatch
         {
             if (e.ChangeType != WatcherChangeTypes.Changed) return;
             if (IsEventNotCatch(e.FullPath)) return;
-
             Changed?.Invoke(this, new DirectoryChangedEventArgs(e.FullPath));
         }
 

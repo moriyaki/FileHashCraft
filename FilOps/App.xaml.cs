@@ -99,7 +99,6 @@ namespace FilOps
             services.AddTransient<IDebugWindowService, DebugWindowService>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
-            services.AddSingleton<IFileSystemInformationManager, FileSystemInformationManager>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
             services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();
             services.AddSingleton<ICheckedDirectoryManager, CheckedDirectoryManager>();

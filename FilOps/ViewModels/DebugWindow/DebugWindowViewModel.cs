@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.Models;
 using FilOps.ViewModels.DirectoryTreeViewControl;
@@ -15,8 +16,20 @@ namespace FilOps.ViewModels.DebugWindow
     }
     public class DebugWindowViewModel : ObservableObject, IDebugWindowViewModel
     {
+        enum PollingTarget
+        {
+            None,
+            ExpandDirectoryManager,
+            CheckedDirectoryManager,
+        }
+        /// <summary>
+        /// ここでポーリング対象を決める
+        /// </summary>
+        private readonly PollingTarget pollingTarget = PollingTarget.ExpandDirectoryManager;
+
+
         #region バインディング
-        
+
         /// <summary>
         /// 画面の上端設定
         /// </summary>
@@ -40,7 +53,7 @@ namespace FilOps.ViewModels.DebugWindow
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
-        private  double _Width = 400d;
+        private double _Width = 400d;
         public double Width
         {
             get => _Width;
@@ -82,7 +95,7 @@ namespace FilOps.ViewModels.DebugWindow
         /// <summary>
         /// ポーリング用タイマー
         /// </summary>
-        //private readonly DispatcherTimer timer;
+        private readonly DispatcherTimer timer;
         public DelegateCommand PollingCommand { get; set; }
         #endregion バインディング
 
@@ -101,10 +114,7 @@ namespace FilOps.ViewModels.DebugWindow
         /// <summary>
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        private readonly ICheckedDirectoryManager DebugClass;
-
-        private readonly IFileSystemInformationManager _FileSystemInformationManager;
-        private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
+        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
@@ -112,91 +122,66 @@ namespace FilOps.ViewModels.DebugWindow
         /// </summary>
         /// <param name="expandDirManager">今はIExpandedDirectoryManager</param>
         public DebugWindowViewModel(
-            IMainViewModel mainViewModel,
-            IFileSystemInformationManager fileSystemInformationManager,
-            ICheckedDirectoryManager debugClass,
-            IDirectoryTreeViewControlViewModel directoryTreeViewControlViewModel
+            IExpandedDirectoryManager expandedDirectoryManager,
+            IMainViewModel mainViewModel
             )
         {
-            _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
-            _FileSystemInformationManager = fileSystemInformationManager;
-            DebugClass = debugClass;
-            PollingCommand = new DelegateCommand(() => { });
+            _ExpandedDirectoryManager = expandedDirectoryManager;
 
             this.Top = mainViewModel.Top;
             this.Left = mainViewModel.Left + mainViewModel.Width;
 
-            // TreeView用
-            foreach (var rootInfo in _FileSystemInformationManager.SpecialFolderScan())
-            {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
-            }
-            foreach (var rootInfo in FileSystemInformationManager.DriveScan())
-            {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
-            }
-
-
-
-
-                /*
-                timer = new DispatcherTimer();
-                timer.Tick += new EventHandler(Polling);
-                timer.Interval = TimeSpan.FromMilliseconds(200);
-                PollingCommand = new DelegateCommand(
-                    () =>
+            timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(Polling);
+            timer.Interval = TimeSpan.FromMilliseconds(200);
+            PollingCommand = new DelegateCommand(
+                () =>
+                {
+                    if (IsPolling)
                     {
-                        if (IsPolling)
-                        {
-                            timer.Stop();
-                            IsPolling = false;
-                            DebugText = string.Empty;
-                        }
-                        else
-                        {
-                            timer.Start();
-                            IsPolling = true;
-                        }
+                        timer.Stop();
+                        IsPolling = false;
+                        DebugText = string.Empty;
                     }
-                );
-                //PollingCommand.Execute(null);
+                    else
+                    {
+                        timer.Start();
+                        IsPolling = true;
+                    }
+                }
+            );
+            PollingCommand.Execute(null);
+        }
+
+
+        /// <summary>
+        /// ポーリング中の処理を行います。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Polling(object? sender, EventArgs e)
+        {
+            var sb = new StringBuilder();
+
+            switch (pollingTarget)
+            {
+                case PollingTarget.ExpandDirectoryManager:
+                    foreach (var item in _ExpandedDirectoryManager.Directories)
+                    {
+                        sb.AppendLine(item);
+                    }
+                    break;
+                case PollingTarget.CheckedDirectoryManager:
+                    break;
+                default:
+                    break;
             }
 
-            /// <summary>
-            /// ポーリング中の処理を行います。
-            /// </summary>
-            /// <param name="sender"></param>
-            /// <param name="e"></param>
-            private void Polling(object? sender, EventArgs e)
-            {
-                /*
-                var OnlyList = DebugClass.DirectoriesOnly;
-                var SubList = DebugClass.DirectoriesWithSubdirectories;
-                */
-
-                App.Current?.Dispatcher.Invoke(() =>
+            App.Current?.Dispatcher.Invoke(() =>
             {
                 DebugText = string.Empty;
-
-                var sb = new StringBuilder();
-                sb.Append(DebugClass.ToString());
-                /*
-                foreach (var dir in OnlyList)
-                {
-                    sb.Append(dir);
-                    sb.Append(Environment.NewLine);
-                }
-                sb.Append("-------------------以下Sub");
-                sb.Append(Environment.NewLine);
-                foreach (var dir in SubList)
-                {
-                    sb.Append(dir);
-                    sb.Append(Environment.NewLine);
-                }
-                */
                 DebugText = sb.ToString();
             });
         }
-
     }
 }

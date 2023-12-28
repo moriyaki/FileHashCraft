@@ -35,10 +35,9 @@ namespace FilOps.ViewModels.ExplorerPage
     // TODO : 削除するパスの特殊フォルダは除外
     public class ExpandedDirectoryManager : IExpandedDirectoryManager
     {
-        public ExpandedDirectoryManager(IFileSystemInformationManager fileSystemInfoManager)
+        public ExpandedDirectoryManager()
         {
-            FileSystemInfoManager = fileSystemInfoManager;
-            foreach (var rootInfo in FileSystemInfoManager.SpecialFolderScan())
+            foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
             {
                 _specialDirectoriesRoot.Add(rootInfo.FullPath);
             }
@@ -60,7 +59,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// </summary>
         private readonly List<string> _specialDirectoriesRoot = [];
 
-        private readonly IFileSystemInformationManager FileSystemInfoManager;
+        
         #endregion 変数宣言
 
         #region メソッドとプロパティ

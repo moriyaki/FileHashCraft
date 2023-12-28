@@ -240,7 +240,6 @@ namespace FilOps.ViewModels.ExplorerPage
         #endregion データバインディング
 
         #region コンストラクタと初期化
-        private readonly IFileSystemInformationManager _FileSystemInformationManager;
         private readonly ICurrentDirectoryFIleSystemWatcherService _CurrentDirectoryWatcherService;
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
@@ -248,20 +247,18 @@ namespace FilOps.ViewModels.ExplorerPage
         private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
         private readonly IMainViewModel _MainViewModel;
         public ExplorerPageViewModel(
-            IFileSystemInformationManager fileSystemInfoManager,
-            ICurrentDirectoryFIleSystemWatcherService currentWatcherService,
-            IDrivesFileSystemWatcherService driveWatcherService,
-            IExpandedDirectoryManager expandDirManager,
-            ICheckedDirectoryManager checkedDirManager,
+            ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
+            IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
+            IExpandedDirectoryManager expandedDirectoryManager,
+            ICheckedDirectoryManager checkedDirectoryManager,
             IDirectoryTreeViewControlViewModel directoryTreeViewControlViewModel,
             IMainViewModel mainViewModel
             )
         {
-            _DrivesFileSystemWatcherService = driveWatcherService;
-            _CurrentDirectoryWatcherService = currentWatcherService;
-            _ExpandedDirectoryManager = expandDirManager;
-            _CheckedDirectoryManager = checkedDirManager;
-            _FileSystemInformationManager = fileSystemInfoManager;
+            _CurrentDirectoryWatcherService = currentDirectoryFIleSystemWatcherService;
+            _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
+            _ExpandedDirectoryManager = expandedDirectoryManager;
+            _CheckedDirectoryManager = checkedDirectoryManager;
             _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
             _MainViewModel = mainViewModel;
 
@@ -281,7 +278,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 ListItems.Clear();
                await Task.Run(() =>
                {
-                   foreach (var folderFile in FileSystemInformationManager.FileItemScan(CurrentFullPath, true))
+                   foreach (var folderFile in FileSystemInformationManager.ScanFileItems(CurrentFullPath, true))
                    {
                        // フォルダやファイルの情報を ViewModel に変換
                        var item = new ExplorerListItemViewModel(this, folderFile);
@@ -317,11 +314,11 @@ namespace FilOps.ViewModels.ExplorerPage
             });
 
             // TreeView用
-            foreach (var rootInfo in _FileSystemInformationManager.SpecialFolderScan())
+            foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
             {
                 _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
             }
-            foreach (var rootInfo in FileSystemInformationManager.DriveScan())
+            foreach (var rootInfo in FileSystemInformationManager.ScanDrives())
             {
                 _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
             }
@@ -330,13 +327,13 @@ namespace FilOps.ViewModels.ExplorerPage
             {
                 CurrentFullPath = message.CurrentFullPath;
             });
-
+            /*
             _DrivesFileSystemWatcherService.Changed += DirectoryChanged;
             _DrivesFileSystemWatcherService.Created += DirectoryCreated;
             _DrivesFileSystemWatcherService.Renamed += DirectoryRenamed;
             _DrivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
             _DrivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
-
+            */
             _CurrentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
             _CurrentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
             _CurrentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;

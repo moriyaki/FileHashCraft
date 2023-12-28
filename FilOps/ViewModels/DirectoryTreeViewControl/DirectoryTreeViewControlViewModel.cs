@@ -5,9 +5,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
 using FilOps.ViewModels.ExplorerPage;
+using FilOps.ViewModels.FileSystemWatch;
 
 namespace FilOps.ViewModels.DirectoryTreeViewControl
 {
+    #region インターフェース
     public interface IDirectoryTreeViewControlViewModel
     {
         /// <summary>
@@ -42,6 +44,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         public bool IsExpandDirectory(ExplorerTreeNodeViewModel node);
 
     }
+    #endregion インターフェース
 
     public partial class DirectoryTreeViewControlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
     {
@@ -91,8 +94,9 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         #endregion バインディング
 
         #region 初期処理
-        private readonly IMainViewModel _MainWindowViewModel;
+        private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
+        private readonly IMainViewModel _MainWindowViewModel;
 
         /// <summary>
         /// 引数なしで生成はさせない
@@ -105,9 +109,11 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 
         // 通常コンストラクタ
         public DirectoryTreeViewControlViewModel(
+            IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             IExpandedDirectoryManager expandDirManager,
             IMainViewModel mainViewModel)
         {
+            _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
             _ExpandedDirectoryManager = expandDirManager;
             _MainWindowViewModel = mainViewModel;
 
@@ -124,6 +130,17 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             {
                 FontSize = message.FontSize;
             });
+
+            foreach (var root in FileSystemInformationManager.ScanDrives())
+            {
+                _ExpandedDirectoryManager.AddDirectory(root.FullPath);
+                _DrivesFileSystemWatcherService.SetRootDirectoryWatcher(root);
+            }
+            _DrivesFileSystemWatcherService.Changed += DirectoryChanged;
+            _DrivesFileSystemWatcherService.Created += DirectoryCreated;
+            _DrivesFileSystemWatcherService.Renamed += DirectoryRenamed;
+            _DrivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
+            _DrivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
         }
         #endregion 初期処理
 

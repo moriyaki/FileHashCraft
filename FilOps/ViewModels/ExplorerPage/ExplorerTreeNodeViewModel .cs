@@ -209,7 +209,7 @@ namespace FilOps.ViewModels.ExplorerPage
         public void KickChildGet()
         {
             Children.Clear();
-            foreach (var child in FileSystemInformationManager.FileItemScan(FullPath, false))
+            foreach (var child in FileSystemInformationManager.ScanFileItems(FullPath, false))
             {
                 var item = new ExplorerTreeNodeViewModel(ExplorerVM, child, this);
                 Children.Add(item);

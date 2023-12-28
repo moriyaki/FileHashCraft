@@ -47,7 +47,7 @@ namespace FilOps.ViewModels
     }
     #endregion MainView用
 
-    #region FileChangeTreeSync用
+    #region DirectoryTreeViewControlViewModelから発信
 
     /// <summary>
     /// ディレクトリ監視から、ディレクトリが作成されたメッセージ
@@ -86,14 +86,14 @@ namespace FilOps.ViewModels
     /// <summary>
     /// ディレクトリ監視から、何らかのディレクトリが削除されたメッセージ
     /// </summary>
-    public class Removed
+    public class DirectoryRemoved
     {
         public string FullPath { get; } = string.Empty;
-        public Removed()
+        public DirectoryRemoved()
         {
             throw new NotImplementedException();
         }
-        public Removed(string fullPath)
+        public DirectoryRemoved(string fullPath)
         {
             FullPath = fullPath;
         }

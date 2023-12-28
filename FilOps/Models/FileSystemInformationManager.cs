@@ -46,11 +46,8 @@ namespace FilOps.Models
     }
     #endregion ディレクトリとファイル情報
 
-    public interface IFileSystemInformationManager
-    {
-        public IEnumerable<FileItemInformation> SpecialFolderScan();
-    }
-    public class FileSystemInformationManager : IFileSystemInformationManager
+
+    public class FileSystemInformationManager
     {
         #region ディレクトリとファイルのスキャン関連
         /// <summary>
@@ -82,7 +79,7 @@ namespace FilOps.Models
         /// 特殊フォルダをスキャンして情報を取得します。
         /// </summary>
         /// <returns>特殊フォルダの情報のコレクション</returns>
-        public IEnumerable<FileItemInformation> SpecialFolderScan()
+        public static IEnumerable<FileItemInformation> ScanSpecialFolders()
         {
             IEnumerable<string> special_folder_path =
             [
@@ -107,7 +104,7 @@ namespace FilOps.Models
         /// ルートドライブをスキャンして情報を取得します。
         /// </summary>
         /// <returns>ルートドライブのフォルダ情報のコレクション</returns>
-        public static IEnumerable<FileItemInformation> DriveScan()
+        public static IEnumerable<FileItemInformation> ScanDrives()
         {
             foreach (var dir in DriveInfo.GetDrives())
             {
@@ -121,7 +118,7 @@ namespace FilOps.Models
         /// </summary>
         /// <param name="fullPath">スキャンするディレクトリのパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public static IEnumerable<FileItemInformation> FileItemScan(string fullPath, bool isFilesInclude)
+        public static IEnumerable<FileItemInformation> ScanFileItems(string fullPath, bool isFilesInclude)
         {
             IEnumerable<string> directories;
             try
