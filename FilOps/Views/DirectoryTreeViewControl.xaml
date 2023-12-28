@@ -9,10 +9,11 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <TreeView Name="DirectoryTreeRoot" Grid.Column="0"
-                      ItemsSource="{Binding TreeRoot, Mode=OneWay}">
+                  SelectedItemChanged="DirectoryTreeRoot_SelectedItemChanged"
+                  ItemsSource="{Binding TreeRoot, Mode=OneWay}">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="DirectoryItem"
-                                              ItemsSource="{Binding Path=Children}">
+                                          ItemsSource="{Binding Path=Children}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"

@@ -6,7 +6,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using FilOps.Models;
 using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.ExplorerPage;
-using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.FileSystemWatch;
 
 namespace FilOps.Views
@@ -51,49 +50,7 @@ namespace FilOps.Views
                 base.OnMouseWheel(e);
             }
         }
-        /* どうにかする
-        /// <summary>
-        /// ツリービューのディレクトリ選択状況が変わった時、選択されたアイテムまでスクロールします
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DirectoryTreeRoot_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-    {
-            if (e.NewValue is ExplorerTreeNodeViewModel)
-            {
-                var item = e.NewValue as ExplorerTreeNodeViewModel;
-
-                // 対応するTreeViewItemを取得
-                var treeViewItem = FindTreeViewItem(DirectoryTreeRoot, item);
-                // 対応するTreeViewItemが存在する場合、それを表示するようにスクロール
-                treeViewItem?.BringIntoView();
-            }
-        }
-
-        /// <summary>
-        /// 選択されているアイテムを再帰的に検索して取得します。
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        private static TreeViewItem? FindTreeViewItem(ItemsControl parent, ExplorerTreeNodeViewModel? data)
-        {
-            TreeViewItem? result = null;
-            foreach (object item in parent.Items)
-            {
-                if (parent.ItemContainerGenerator?.ContainerFromItem(item) is TreeViewItem treeViewItem)
-                {
-                    if (treeViewItem.DataContext == data) { return treeViewItem; }
-
-                    // 子アイテムを再帰的に検索
-                    result = FindTreeViewItem(treeViewItem, data);
-                    if (result != null) { break; }
-                }
-            }
-            return result;
-        }
-        */
-
+    
         /// <summary>
         /// ウィンドウプロシージャをオーバーライド
         /// </summary>
