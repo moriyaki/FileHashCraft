@@ -84,7 +84,7 @@ namespace FilOps.ViewModels.FileSystemWatch
         public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaInserted;
         public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaEjected;
 
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
+        private readonly IExpandedDirectoryManager ExpandDirManager;
 
         /// <summary>
         /// ドライブ内のディレクトリ変更を監視するインスタンス
@@ -94,10 +94,10 @@ namespace FilOps.ViewModels.FileSystemWatch
         /// <summary>
         /// IExpandedDirectoryManager を注入するコンストラクタ
         /// </summary>
-        /// <param name="expandedDirectoryManager">IExpandedDirectoryManager</param>
-        public DrivesFileSystemWatcherService(IExpandedDirectoryManager expandedDirectoryManager)
+        /// <param name="expandedDirManager">IExpandedDirectoryManager</param>
+        public DrivesFileSystemWatcherService(IExpandedDirectoryManager expandedDirManager)
         {
-            _ExpandedDirectoryManager = expandedDirectoryManager;
+            ExpandDirManager = expandedDirManager;
         }
 
         public DrivesFileSystemWatcherService()
@@ -152,7 +152,17 @@ namespace FilOps.ViewModels.FileSystemWatch
             if (fullPath.Contains(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData))) return true;
             if (fullPath.Contains(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles))) return true;
             if (fullPath.Contains(Path.GetTempPath())) return true;
-            if (!(_ExpandedDirectoryManager.IsExpandedDirectory(fullPath) || _ExpandedDirectoryManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty))) return true;
+            // ごみ箱は通知を必要とする
+            if (fullPath.Contains("$RECYCLE.BIN"))
+            {
+                return false;
+            }
+            // 展開マネージャに登録されてないディレクトリ、またはその親が登録されてない場合は通知しない
+            if (!(ExpandDirManager.IsExpandedDirectory(fullPath) || ExpandDirManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
+            {
+                return true;
+            }
+
 
             try
             {
@@ -186,8 +196,8 @@ namespace FilOps.ViewModels.FileSystemWatch
         /// <param name="e">FileSystemEventArgs</param>
         private void OnChanged(object? sender, FileSystemEventArgs e)
         {
-            if (e.ChangeType != WatcherChangeTypes.Changed) return;
             if (IsEventNotCatch(e.FullPath)) return;
+
             Changed?.Invoke(this, new DirectoryChangedEventArgs(e.FullPath));
         }
 

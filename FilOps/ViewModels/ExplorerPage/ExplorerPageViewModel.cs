@@ -239,7 +239,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion データバインディング
 
-        #region コンストラクタと初期化
+        #region コンストラクタ
         private readonly ICurrentDirectoryFIleSystemWatcherService _CurrentDirectoryWatcherService;
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
@@ -323,54 +323,104 @@ namespace FilOps.ViewModels.ExplorerPage
                 _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
             }
 
+            // カレントディレクトリ変更のメッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (recipient, message) =>
             {
                 CurrentFullPath = message.CurrentFullPath;
             });
-            /*
-            _DrivesFileSystemWatcherService.Changed += DirectoryChanged;
-            _DrivesFileSystemWatcherService.Created += DirectoryCreated;
-            _DrivesFileSystemWatcherService.Renamed += DirectoryRenamed;
-            _DrivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
-            _DrivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
-            */
+
             _CurrentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
             _CurrentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
             _CurrentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
+
+            // ディレクトリ作成のメッセージ受信
+            WeakReferenceMessenger.Default.Register<DirectoryCreated>(this, (recipient, message) =>
+            {
+                CurrentDirectoryItemCreated(message.FullPath);
+            });
+
+            // ディレクトリ名前変更のメッセージ受信
+            WeakReferenceMessenger.Default.Register<DirectoryRenamed>(this, (recipient, message) =>
+            {
+                CurrentDirectoryItemRenamed(message.OldFullPath, message.NewFullPath);
+            });
+            WeakReferenceMessenger.Default.Register<DirectoryDeleted>(this, (recipient, message) =>
+            {
+                CurrentDirectoryItemDeleted(message.FullPath);
+            });
+        }
+        #endregion コンストラクタ
+
+        #region リストビューの更新通知処理
+        /// <summary>
+        /// カレントディレクトリにディレクトリが追加された
+        /// </summary>
+        /// <param name="FullPath">作成されたディレクトリのフルパス</param>
+        public async void CurrentDirectoryItemCreated(string FullPath)
+        {
+            if (CurrentFullPath != Path.GetDirectoryName(FullPath)) return;
+
+            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(FullPath);
+            var addListItem = new ExplorerListItemViewModel(this, fileInformation);
+            int newListIndex = FindIndexToInsert(ListItems, addListItem);
+            await App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                ListItems.Insert(newListIndex, addListItem);
+            });
         }
 
-        /*
-        private bool IsInitialized = false;
         /// <summary>
-        /// 初期化処理を行います。
+        /// カレントディレクトリのディレクトリが名前変更された
         /// </summary>
-        public void InitializeOnce()
+        /// <param name="OldFullPath">古いディレクトリのフルパス</param>
+        /// <param name="NewFullPath">新しいディレクトリのフルパス</param>
+        public async void CurrentDirectoryItemRenamed(string OldFullPath, string NewFullPath)
         {
-            if (!IsInitialized)
+            // リストビューにも表示されていたら、そちらも更新
+            if (CurrentFullPath != Path.GetDirectoryName(NewFullPath)) return;
+
+            var listItem = ListItems.FirstOrDefault(item => item.FullPath == OldFullPath);
+            if (listItem == null) return;
+
+            await App.Current.Dispatcher.InvokeAsync(() =>
             {
-                
-                IsCheckBoxVisible = Visibility.Visible;
-                foreach (var rootInfo in _fileSystemInformationManager.SpecialFolderScan())
+                try
                 {
-                    var item = new ExplorerTreeNodeViewModel(this, rootInfo);
-                    TreeRoot.Add(item);
-                    _expandedDirectoryManager.AddDirectory(rootInfo.FullPath);
-                }
-                foreach (var rootInfo in FileSystemInformationManager.DriveScan())
-                {
-                    var item = new ExplorerTreeNodeViewModel(this, rootInfo);
-                    TreeRoot.Add(item);
-                    _expandedDirectoryManager.AddDirectory(rootInfo.FullPath);
-                    _drivesFileSystemWatcherService.SetRootDirectoryWatcher(rootInfo);
-                }
-                var debugWindowService = new DebugWindowService(new FilOps.Views.DebugWindow());
-                debugWindowService.ShowDebugWindow();
+                    // 一度名前変更前のアイテムを除去
+                    ListItems.Remove(listItem);
                 
-                IsInitialized = true;
-            }
+                    // 名前変更後のアイテムを再追加
+                    listItem.FullPath = NewFullPath;
+                    int newListIndex = FindIndexToInsert(ListItems, listItem);
+                    ListItems.Insert(newListIndex, listItem);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Exception in DirectoryRenamed: {ex.Message}");
+                }
+            });
         }
-        */
-        #endregion コンストラクタと初期化
+
+        public async void CurrentDirectoryItemDeleted(string FullPath)
+        {
+            if (CurrentFullPath != Path.GetDirectoryName(FullPath)) return;
+            var listItem = ListItems.FirstOrDefault(item => item.FullPath == FullPath);
+            if (listItem == null) { return; }
+
+            await App.Current.Dispatcher.InvokeAsync(() =>
+            {
+                try
+                {
+                    ListItems.Remove(listItem);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Exception in DirectoryRenamed: {ex.Message}");
+                }
+            });
+        }
+
+        #endregion リストビューの更新通知処理
 
         #region アイテムの挿入位置を決定するヘルパー/これはこのまま
         /// <summary>
@@ -437,31 +487,6 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         */
         #endregion 展開マネージャへの追加削除処理
-
-        #region ファイルアイテム作成/削除する
-        /// <summary>
-        /// フルパスからツリービューアイテムを作成する。
-        /// </summary>
-        /// <param name="fullPath">ファイルフルパス</param>
-        /// <returns>ツリービューアイテム</returns>
-        public ExplorerTreeNodeViewModel CreateTreeViewItem(string fullPath)
-        {
-            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(fullPath);
-            return new ExplorerTreeNodeViewModel(this, fileInformation);
-
-        }
-
-        /// <summary>
-        /// フルパスからリストビューアイテムを作成する。
-        /// </summary>
-        /// <param name="fullPath">ファイルフルパス</param>
-        /// <returns>リストビューアイテム</returns>
-        public ExplorerListItemViewModel CreateListViewItem(string fullPath)
-        {
-            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(fullPath);
-            return new ExplorerListItemViewModel(this, fileInformation);
-        }
-        #endregion ファイルアイテム作成
 
         #region カレントディレクトリのファイル変更通知関連/これはこのまま
         /// <summary>

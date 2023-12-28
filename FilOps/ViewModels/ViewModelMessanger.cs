@@ -84,48 +84,16 @@ namespace FilOps.ViewModels
     }
 
     /// <summary>
-    /// ディレクトリ監視から、何らかのディレクトリが削除されたメッセージ
+    /// ディレクトリ監視から、ディレクトリが削除されたメッセージ
     /// </summary>
-    public class DirectoryRemoved
+    public class DirectoryDeleted
     {
         public string FullPath { get; } = string.Empty;
-        public DirectoryRemoved()
+        public DirectoryDeleted()
         {
             throw new NotImplementedException();
         }
-        public DirectoryRemoved(string fullPath)
-        {
-            FullPath = fullPath;
-        }
-    }
-
-    /// <summary>
-    /// ディレクトリ監視から、リムーバブルドライブが追加/挿入されたメッセージ
-    /// </summary>
-    public class OpticalDriveMediaInserted
-    {
-        public string FullPath { get; } = string.Empty;
-        public OpticalDriveMediaInserted() 
-        {
-            throw new NotImplementedException();
-        }
-        public OpticalDriveMediaInserted(string fullPath)
-        {
-            FullPath = fullPath;
-        }
-    }
-
-    /// <summary>
-    /// ディレクトリ監視から、リムーバブルドライブがイジェクトされたメッセージ
-    /// </summary>
-    public class OpticalDriveMediaEjected
-    {
-        public string FullPath { get; } = string.Empty;
-        public OpticalDriveMediaEjected()
-        {
-            throw new NotImplementedException();
-        }
-        public OpticalDriveMediaEjected(string fullPath)
+        public DirectoryDeleted(string fullPath)
         {
             FullPath = fullPath;
         }
