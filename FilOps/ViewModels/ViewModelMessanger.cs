@@ -99,5 +99,4 @@ namespace FilOps.ViewModels
         }
     }
     #endregion FileChangeTreeSync用
-
 }

@@ -35,14 +35,6 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="node">展開解除されたノード</param>
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
-
-        /// <summary>
-        /// ノードが展開されているかどうかを調べます。
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public bool IsExpandDirectory(ExplorerTreeNodeViewModel node);
-
     }
     #endregion インターフェース
 
@@ -90,7 +82,6 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                 }
             }
         }
-
         #endregion バインディング
 
         #region 初期処理
@@ -133,7 +124,6 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 
             foreach (var root in FileSystemInformationManager.ScanDrives())
             {
-                _ExpandedDirectoryManager.AddDirectory(root.FullPath);
                 _DrivesFileSystemWatcherService.SetRootDirectoryWatcher(root);
             }
             _DrivesFileSystemWatcherService.Changed += DirectoryChanged;
@@ -142,7 +132,6 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             _DrivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
             _DrivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
         }
-        #endregion 初期処理
 
         /// <summary>
         /// チェックボックスを表示するかどうかを設定します。
@@ -159,7 +148,10 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         {
             var info = new DirectoryTreeViewModel(this, item);
             TreeRoot.Add(info);
+            _ExpandedDirectoryManager.AddDirectory(item.FullPath);
         }
+        #endregion 初期処理
+
         #region カレントディレクトリ移動
         /// <summary>
         /// カレントディレクトリが変更されたときの処理を行います。
@@ -274,18 +266,6 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                 }
             }
         }
-
-        /// <summary>
-        /// ノードが展開されているかどうかを調べます。
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public bool IsExpandDirectory(ExplorerTreeNodeViewModel node)
-        {
-            return _ExpandedDirectoryManager.IsExpandedDirectory(node.FullPath);
-        }
         #endregion 展開マネージャへの追加削除処理
-
-
     }
 }

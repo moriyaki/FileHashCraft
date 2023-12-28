@@ -1,6 +1,7 @@
 ﻿using System.Windows;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using FilOps.ViewModels.DebugWindow;
-using Microsoft.Extensions.DependencyInjection;
+
 
 namespace FilOps.Views
 {
@@ -12,7 +13,7 @@ namespace FilOps.Views
         public DebugWindow()
         {
             InitializeComponent();
-            DataContext = App.Current.Services.GetService<IDebugWindowViewModel>();
+            DataContext = Ioc.Default.GetService<IDebugWindowViewModel>();
         }
 
         private static readonly object lockObject = new();

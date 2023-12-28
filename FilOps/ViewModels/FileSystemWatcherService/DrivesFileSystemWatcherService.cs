@@ -1,11 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using FilOps.Models;
 using FilOps.ViewModels.ExplorerPage;
-using Microsoft.Extensions.DependencyInjection;
-
 
 namespace FilOps.ViewModels.FileSystemWatch
 {
@@ -72,7 +68,7 @@ namespace FilOps.ViewModels.FileSystemWatch
 
     public class DrivesFileSystemWatcherService : IDrivesFileSystemWatcherService
     {
-        #region イベントのデリゲート定義とコンストラクタ
+        #region イベントのデリゲート定義
         // イベントのデリゲート定義
         public delegate void FileChangedEventHandler(object sender, CurrentDirectoryFileChangedEventArgs filePath);
         public event EventHandler<DirectoryChangedEventArgs>? Changed;
@@ -84,27 +80,36 @@ namespace FilOps.ViewModels.FileSystemWatch
         public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaInserted;
         public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaEjected;
 
-        private readonly IExpandedDirectoryManager ExpandDirManager;
-
-        /// <summary>
+         /// <summary>
         /// ドライブ内のディレクトリ変更を監視するインスタンス
         /// </summary>
         private readonly List<FileSystemWatcher> DrivesWatcher = [];
+        #endregion イベントのデリゲート定義
+
+        #region コンストラクタ
+        /// <summary>
+        /// 展開ディレクトリマネージャのインターフェース
+        /// </summary>
+        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
 
         /// <summary>
-        /// IExpandedDirectoryManager を注入するコンストラクタ
+        /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
-        /// <param name="expandedDirManager">IExpandedDirectoryManager</param>
-        public DrivesFileSystemWatcherService(IExpandedDirectoryManager expandedDirManager)
-        {
-            ExpandDirManager = expandedDirManager;
-        }
-
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         public DrivesFileSystemWatcherService()
         {
             throw new NotImplementedException();
         }
-        #endregion イベントのデリゲート定義とコンストラクタ
+
+        /// <summary>
+        /// コンストラクタでIExpandedDirectoryManagerを設定する
+        /// </summary>
+        /// <param name="expandedDirectoryManager">IExpandedDirectoryManager</param>
+        public DrivesFileSystemWatcherService(IExpandedDirectoryManager expandedDirectoryManager)
+        {
+            _ExpandedDirectoryManager = expandedDirectoryManager;
+        }
+        #endregion コンストラクタ
 
         #region ディレクトリ変更通知処理
         /// <summary>
@@ -158,11 +163,10 @@ namespace FilOps.ViewModels.FileSystemWatch
                 return false;
             }
             // 展開マネージャに登録されてないディレクトリ、またはその親が登録されてない場合は通知しない
-            if (!(ExpandDirManager.IsExpandedDirectory(fullPath) || ExpandDirManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
+            if (!(_ExpandedDirectoryManager.IsExpandedDirectory(fullPath) || _ExpandedDirectoryManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
             {
                 return true;
             }
-
 
             try
             {
@@ -197,7 +201,6 @@ namespace FilOps.ViewModels.FileSystemWatch
         private void OnChanged(object? sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-
             Changed?.Invoke(this, new DirectoryChangedEventArgs(e.FullPath));
         }
 

@@ -48,6 +48,8 @@ namespace FilOps.ViewModels.FileSystemWatch
         }
     }
     #endregion イベント引数
+
+    #region インターフェース
     public interface ICurrentDirectoryFIleSystemWatcherService
     {
         public void SetCurrentDirectoryWatcher(string currentDirectory);
@@ -55,7 +57,7 @@ namespace FilOps.ViewModels.FileSystemWatch
         public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Deleted;
         public event EventHandler<CurrentDirectoryFileRenamedEventArgs>? Renamed;
     }
-
+    #endregion インターフェース
     public class CurrentDirectoryFIleSystemWatcherService : ICurrentDirectoryFIleSystemWatcherService
     {
         #region FileSystemWatcherの宣言
@@ -131,7 +133,6 @@ namespace FilOps.ViewModels.FileSystemWatch
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
             Deleted?.Invoke(this, new CurrentDirectoryFileChangedEventArgs(e.FullPath));
-
         }
 
         /// <summary>
@@ -143,7 +144,6 @@ namespace FilOps.ViewModels.FileSystemWatch
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;
             Renamed?.Invoke(this, new CurrentDirectoryFileRenamedEventArgs(e.OldFullPath, e.FullPath));
-
         }
         #endregion ファイル変更通知
     }

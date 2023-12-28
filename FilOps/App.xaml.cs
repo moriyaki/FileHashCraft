@@ -6,6 +6,7 @@ using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.ExplorerPage;
 using FilOps.ViewModels.FileSystemWatch;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps
@@ -48,6 +49,7 @@ namespace FilOps
         public App()
         {
             Services = ConfigureServices();
+            Ioc.Default.ConfigureServices(Services);
         }
 
         /// <summary>
@@ -96,7 +98,7 @@ namespace FilOps
             
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IDirectoryTreeViewControlViewModel, DirectoryTreeViewControlViewModel>();
-            services.AddTransient<IDebugWindowService, DebugWindowService>();
+            services.AddSingleton<IDebugWindowService, DebugWindowService>();
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();

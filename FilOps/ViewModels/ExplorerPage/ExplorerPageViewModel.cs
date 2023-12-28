@@ -16,17 +16,10 @@ namespace FilOps.ViewModels.ExplorerPage
     #region インターフェース
     public interface IExplorerPageViewModel
     {
-        //public void InitializeOnce();
-
-        /// <summary>
-        /// ツリービューへのアクセス
-        /// </summary>
-        public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; }
-
         /// <summary>
         /// リストビューへのアクセス
         /// </summary>
-        public ObservableCollection<ExplorerItemViewModelBase> ListItems { get; set; }
+        public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; }
 
         /// <summary>
         /// ツリービューのチェックボックスの表示状態を取得
@@ -38,37 +31,10 @@ namespace FilOps.ViewModels.ExplorerPage
         /// </summary>
         public string CurrentFullPath { get; set; }
 
-        /*
-        /// <summary>
-        /// カレントディレクトリのツリービューアイテムへのアクセス
-        /// </summary>
-        public ExplorerTreeNodeViewModel? CurrentDirectoryItem { get; set; }
-        */
         /// <summary>
         /// フォントサイズへのアクセス
         /// </summary>
         public double FontSize { get; set; }
-
-        /*
-        /// <summary>
-        /// TreeViewItem が展開された時に展開マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開されたノード</param>
-        public void AddDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node);
-
-        /// <summary>
-        /// TreeViewItem が展開された時に展開解除マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開解除されたノード</param>
-        public void RemoveDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node);
-
-        /// <summary>
-        /// ノードが展開されているかどうかを調べます。
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public bool IsExpandDirectory(ExplorerTreeNodeViewModel node);
-        */
 
         /// <summary>
         /// WndProc をフックして、リムーバブルドライブの着脱を監視します。
@@ -82,12 +48,10 @@ namespace FilOps.ViewModels.ExplorerPage
         public void HwndRemoveHook();
     }
     #endregion インターフェース
-
     public partial class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
     {
         #region データバインディング
-        public ObservableCollection<ExplorerItemViewModelBase> TreeRoot { get; set; } = [];
-        public ObservableCollection<ExplorerItemViewModelBase> ListItems { get; set; } = [];
+        public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
 
         /// <summary>
         /// 「上へ」コマンド
@@ -176,45 +140,6 @@ namespace FilOps.ViewModels.ExplorerPage
             }
         }
 
-        /*
-        /// <summary>
-        /// カレントディレクトリの情報
-        /// </summary>
-        private ExplorerTreeNodeViewModel? _CurrentIDirectorytem = null;
-        public ExplorerTreeNodeViewModel? CurrentDirectoryItem
-        {
-            get => _CurrentIDirectorytem;
-            set
-            {
-                if (value is null) { return; }
-                if (_CurrentIDirectorytem == value) { return; }
-
-                // 選択が変更されたら、明示的に今までの選択を外す
-                if (_CurrentIDirectorytem is not null && _CurrentIDirectorytem != value)
-                {
-                    _CurrentIDirectorytem.IsSelected = false;
-                }
-                SetProperty(ref _CurrentIDirectorytem, value);
-
-                // 「上へ」ボタンの可否をViewへ反映する
-                ToUpDirectory.RaiseCanExecuteChanged();
-
-                // カレントディレクトリが変更されたので、監視対象を移す
-                _currentDirectoryWatcherService.SetCurrentDirectoryWatcher(value.FullPath);
-
-                // 選択ディレクトリを移す
-                value.IsSelected = true;
-
-                // リストビューをカレントディレクトリに更新する
-                ListViewUpdater.Execute(null);
-
-                // カレントディレクトリの文字列を更新する
-                CurrentDirectory = value.FullPath;
-
-            }
-        }
-        */
-
         /// <summary>
         /// ユーザーコマンドの文字列
         /// </summary>
@@ -262,7 +187,7 @@ namespace FilOps.ViewModels.ExplorerPage
             _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
             _MainViewModel = mainViewModel;
 
-            
+            // 「上へ」ボタンのコマンド
             ToUpDirectory = new DelegateCommand(
                 () => {
                     var ParentPath = Path.GetDirectoryName(CurrentFullPath);
@@ -272,7 +197,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 () => { return Directory.Exists(Path.GetDirectoryName(CurrentFullPath)); }
             );
 
-
+            // リストビューの更新コマンド
             ListViewUpdater = new DelegateCommand(async () =>
             {
                 ListItems.Clear();
@@ -294,6 +219,7 @@ namespace FilOps.ViewModels.ExplorerPage
                
             });
 
+            // リストビューアイテムがダブルクリックされた時のコマンド
             FileListViewExecuted = new DelegateCommand(() =>
             {
                 if (SelectedListViewItem is not null)
@@ -306,6 +232,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 }
             });
 
+            // デバッグウィンドウを開くコマンド
             DebugOpen = new DelegateCommand(() =>
             {
                 var debugWindow = new Views.DebugWindow();
@@ -313,7 +240,7 @@ namespace FilOps.ViewModels.ExplorerPage
                 debugWindowService.ShowDebugWindow();
             });
 
-            // TreeView用
+            // TreeViewにルートアイテムを登録する
             foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
             {
                 _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
@@ -344,6 +271,8 @@ namespace FilOps.ViewModels.ExplorerPage
             {
                 CurrentDirectoryItemRenamed(message.OldFullPath, message.NewFullPath);
             });
+
+            // ディレクトリ削除のメッセージ受信
             WeakReferenceMessenger.Default.Register<DirectoryDeleted>(this, (recipient, message) =>
             {
                 CurrentDirectoryItemDeleted(message.FullPath);
@@ -351,9 +280,9 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion コンストラクタ
 
-        #region リストビューの更新通知処理
+        #region リストビューのディレクトリ更新通知処理
         /// <summary>
-        /// カレントディレクトリにディレクトリが追加された
+        /// カレントディレクトリにディレクトリが追加された時の処理です。
         /// </summary>
         /// <param name="FullPath">作成されたディレクトリのフルパス</param>
         public async void CurrentDirectoryItemCreated(string FullPath)
@@ -370,7 +299,7 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// カレントディレクトリのディレクトリが名前変更された
+        /// カレントディレクトリのディレクトリが名前変更された時の処理です。
         /// </summary>
         /// <param name="OldFullPath">古いディレクトリのフルパス</param>
         /// <param name="NewFullPath">新しいディレクトリのフルパス</param>
@@ -401,6 +330,10 @@ namespace FilOps.ViewModels.ExplorerPage
             });
         }
 
+        /// <summary>
+        /// カレントディレクトリのディレクトリが削除された時の処理です。
+        /// </summary>
+        /// <param name="FullPath"></param>
         public async void CurrentDirectoryItemDeleted(string FullPath)
         {
             if (CurrentFullPath != Path.GetDirectoryName(FullPath)) return;
@@ -420,9 +353,6 @@ namespace FilOps.ViewModels.ExplorerPage
             });
         }
 
-        #endregion リストビューの更新通知処理
-
-        #region アイテムの挿入位置を決定するヘルパー/これはこのまま
         /// <summary>
         /// ソート済みの位置に挿入するためのヘルパーメソッド、挿入する位置を取得します。
         /// </summary>
@@ -440,55 +370,9 @@ namespace FilOps.ViewModels.ExplorerPage
             }
             return indexToInsert;
         }
-        #endregion アイテムの挿入位置を決定するヘルパー
+        #endregion リストビューの更新通知処理
 
-        #region 展開マネージャへの追加削除処理(全コメント済)
-        /*
-        /// <summary>
-        /// TreeViewItem が展開された時に展開マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開されたノード</param>
-        public void AddDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
-        {
-            _expandedDirectoryManager.AddDirectory(node.FullPath);
-            if (node.IsExpanded)
-            {
-                foreach (var child in node.Children)
-                {
-                    AddDirectoryToExpandedDirectoryManager(child);
-                }
-            }
-        }
-
-        /// <summary>
-        /// TreeViewItem が展開された時に展開解除マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開解除されたノード</param>
-        public void RemoveDirectoryToExpandedDirectoryManager(ExplorerTreeNodeViewModel node)
-        {
-            _expandedDirectoryManager.RemoveDirectory(node.FullPath);
-            if (node.HasChildren)
-            {
-                foreach (var child in node.Children)
-                {
-                    RemoveDirectoryToExpandedDirectoryManager(child);
-                }
-            }
-        }
-
-        /// <summary>
-        /// ノードが展開されているかどうかを調べます。
-        /// </summary>
-        /// <param name="node"></param>
-        /// <returns></returns>
-        public bool IsExpandDirectory(ExplorerTreeNodeViewModel node)
-        {
-            return _expandedDirectoryManager.IsExpandedDirectory(node.FullPath);
-        }
-        */
-        #endregion 展開マネージャへの追加削除処理
-
-        #region カレントディレクトリのファイル変更通知関連/これはこのまま
+        #region リストビューのファイル更新通知処理
         /// <summary>
         /// カレントディレクトリにファイルが作成されたディレクトリの場合、
         /// TreeViewは全ドライブ監視が処理してくれます。
@@ -545,10 +429,12 @@ namespace FilOps.ViewModels.ExplorerPage
                 if (listItem != null) { listItem.FullPath = e.FullPath; }
             });
         }
-        #endregion カレントディレクトリのファイル変更通知関連
+        #endregion リストビューのファイル更新通知処理
 
-        #region ドライブ変更のフック処理/これはこのまま
-        // ページのHwndSourceを保持するための変数
+        #region ドライブ変更のフック処理
+        /// <summary>
+        /// ページのHwndSourceを保持するための変数
+        /// </summary>
         private HwndSource? hwndSource;
 
         /// <summary>
@@ -676,5 +562,4 @@ namespace FilOps.ViewModels.ExplorerPage
         }
         #endregion ドライブ変更のフック処理
     }
-
 }

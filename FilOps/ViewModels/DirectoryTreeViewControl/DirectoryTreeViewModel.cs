@@ -11,9 +11,15 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 {
     public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>
     {
+        #region コンストラクタ
 
         /// <summary>
-        /// 引数を持たないコンストラクタは許容しませｓん
+        /// TreeVIew コントロールのViewModelです。
+        /// </summary>
+        private readonly DirectoryTreeViewControlViewModel ControlVM;
+
+        /// <summary>
+        /// 引数を持たないコンストラクタは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">許容されないコンストラクタ呼び出し</exception>
         public DirectoryTreeViewModel()
@@ -55,9 +61,9 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         {
             Parent = parent;
         }
+        #endregion コンストラクタ
 
-        private readonly DirectoryTreeViewControlViewModel ControlVM;
-
+        #region メソッド
         /// <summary>
         /// ソートのための比較関数です。
         /// </summary>
@@ -80,6 +86,8 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                 OnPropertyChanged(nameof(ControlVM.FontSize));
             }
         }
+        #endregion メソッド
+
         #region データバインディング
         /// <summary>
         /// ファイルの表示名

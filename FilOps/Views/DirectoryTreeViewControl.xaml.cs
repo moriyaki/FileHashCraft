@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using FilOps.ViewModels.DirectoryTreeViewControl;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.Views
@@ -25,7 +26,7 @@ namespace FilOps.Views
         public DirectoryTreeViewControl()
         {
             InitializeComponent();
-            DataContext = App.Current.Services.GetService<IDirectoryTreeViewControlViewModel>();
+            DataContext = Ioc.Default.GetService<IDirectoryTreeViewControlViewModel>();
         }
     }
 }

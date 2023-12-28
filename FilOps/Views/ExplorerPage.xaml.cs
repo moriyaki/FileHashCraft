@@ -1,16 +1,13 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Navigation;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using FilOps.Models;
 using FilOps.ViewModels.DebugWindow;
 using FilOps.ViewModels.ExplorerPage;
+using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.FileSystemWatch;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FilOps.Views
 {
@@ -22,7 +19,7 @@ namespace FilOps.Views
         public ExplorerPage()
         {
             InitializeComponent();
-            DataContext = App.Current.Services.GetService<IExplorerPageViewModel>();
+            DataContext = Ioc.Default.GetService<IExplorerPageViewModel>();
         }
 
         // とりあえずのデバッグウィンドウ開く処理        
@@ -41,26 +38,27 @@ namespace FilOps.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
+                var explorerVM = Ioc.Default.GetService<IExplorerPageViewModel>();
                 if (explorerVM is not null)
                 {
-                    if (e.Delta > 0) { explorerVM.FontSize += 1;}
-                    else             { explorerVM.FontSize -= 1; }
+                    if (e.Delta > 0) { explorerVM.FontSize += 1; }
+                    else { explorerVM.FontSize -= 1; }
                 }
                 e.Handled = true;
             }
             else
-                {
-                    base.OnMouseWheel(e);
-                }
+            {
+                base.OnMouseWheel(e);
             }
-            /// <summary>
-            /// ツリービューのディレクトリ選択状況が変わった時、選択されたアイテムまでスクロールします
-            /// </summary>
-            /// <param name="sender"></param>
-            /// <param name="e"></param>
-            private void DirectoryTreeRoot_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
+        }
+        /* どうにかする
+        /// <summary>
+        /// ツリービューのディレクトリ選択状況が変わった時、選択されたアイテムまでスクロールします
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DirectoryTreeRoot_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
             if (e.NewValue is ExplorerTreeNodeViewModel)
             {
                 var item = e.NewValue as ExplorerTreeNodeViewModel;
@@ -94,6 +92,7 @@ namespace FilOps.Views
             }
             return result;
         }
+        */
 
         /// <summary>
         /// ウィンドウプロシージャをオーバーライド
@@ -114,13 +113,11 @@ namespace FilOps.Views
         /// <param name="e">RoutedEventArgs</param>
         private void ExplorerPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var explorerVM = App.Current.Services.GetService<IExplorerPageViewModel>();
+            var explorerVM = Ioc.Default.GetService<IExplorerPageViewModel>();
             if (explorerVM == null) { throw new NullReferenceException(nameof(explorerVM)); }
-            //explorerVM.InitializeOnce();
 
-            FileWatcherService = App.Current.Services.GetService<IDrivesFileSystemWatcherService>();
+            FileWatcherService = Ioc.Default.GetService<IDrivesFileSystemWatcherService>();
             if (FileWatcherService == null) { throw new NullReferenceException(nameof(FileWatcherService)); }
-
 
             if (explorerVM != null)
             {

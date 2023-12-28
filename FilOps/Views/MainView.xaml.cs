@@ -3,7 +3,7 @@ using FilOps.ViewModels;
 using FilOps.ViewModels.ExplorerPage;
 using FilOps.Views;
 using FilOps.ViewModels.DebugWindow;
-using Microsoft.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FilOps
 {
@@ -15,16 +15,17 @@ namespace FilOps
 　      public MainView()
         {
             InitializeComponent();
-            DataContext = App.Current.Services.GetService<IMainViewModel>();
+            DataContext = Ioc.Default.GetService<IMainViewModel>();
             MainFrame.Navigate(new ExplorerPage());
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            var explorerPageViewModel = App.Current.Services.GetService<IExplorerPageViewModel>();
+            var explorerPageViewModel = Ioc.Default.GetService<ExplorerPageViewModel>();
             explorerPageViewModel?.HwndRemoveHook();
+            
 
-            var debugViewModel = App.Current.Services.GetService<IDebugWindowViewModel>();
+            var debugViewModel = Ioc.Default.GetService<IDebugWindowViewModel>();
             debugViewModel?.Cancel();
 
             Application.Current.Shutdown();

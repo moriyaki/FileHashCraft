@@ -38,14 +38,13 @@
         {
             foreach (var child in node.Children)
             {
-                if (child.IsChecked != value)
+                if (child.IsChecked == value) continue;
+
+                child.IsChecked = value;
+                if (node.HasChildren && node.IsKicked)
                 {
-                    child.IsChecked = value;
-                    if (node.HasChildren && node.IsKicked)
-                    {
-                        // 子がいたら再帰処理
-                        ChildCheckBoxStatusChanged(child, value);
-                    }
+                    // 子がいたら再帰処理
+                    ChildCheckBoxStatusChanged(child, value);
                 }
             }
         }
@@ -140,7 +139,6 @@
                 current = parent;
                 parent = parent.Parent;
                 currentChecked = parent?.IsChecked;
-
             }
         }
         #endregion 親ディレクトリのチェック管理
