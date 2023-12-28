@@ -149,6 +149,11 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             var info = new DirectoryTreeViewModel(this, item);
             TreeRoot.Add(info);
             _ExpandedDirectoryManager.AddDirectory(item.FullPath);
+            /* ルートドライブが追加された時、特殊フォルダは追加されている
+             * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
+             * 特殊フォルダに IsCHecked の変化があったら、内部的に Kick しておいた方にも反映する
+             * 
+             */
         }
         #endregion 初期処理
 
@@ -159,46 +164,38 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// <param name="changedPath">変更されたカレントディレクトリのパス</param>
         public void FolderSelectedChanged(string changedPath)
         {
-            // パスの最後がディレクトリセパレータで終わる場合は除去
-            changedPath = changedPath.Length == 3 ? changedPath : changedPath.TrimEnd(Path.DirectorySeparatorChar);
+            // ツリールートから一部一致するルートディレクトリを特定する
+            var searchNode = TreeRoot.FirstOrDefault(root => changedPath.Contains(root.FullPath));
+            if (searchNode == null) { return; }
 
-            // ルートディレクトリにある場合は選択状態に設定して終了
-            var selectedRoot = TreeRoot.FirstOrDefault(root => Path.Equals(root.FullPath, changedPath));
-            if (selectedRoot != null) { 
-                selectedRoot.IsSelected = true;
+            if (searchNode.FullPath == changedPath)
+            {
+                // ツリーノードのトップと等しければ選択して終了
+                searchNode.IsSelected = true;
                 return;
             }
+            // ノードを展開する
+            searchNode.IsExpanded = true;
 
-            // サブディレクトリ内の場合は一部一致するルートディレクトリを特定し、ルートディレクトリを展開
-            var subDirectoryRoot = TreeRoot.FirstOrDefault(root => changedPath.Contains(root.FullPath));
-            if (subDirectoryRoot == null) return;
-
-            if (subDirectoryRoot is not DirectoryTreeViewModel selectingVM) return;
-            selectingVM.IsExpanded = true;
-
-            var directories = GetDirectoryNames(changedPath).ToList();
+            var directories = GetDirectoryNames(changedPath);
 
             // パス内の各ディレクトリに対して処理を実行
             foreach (var directory in directories)
             {
-                // 親ディレクトリの各子ディレクトリに対して処理を実行
-                foreach (var child in selectingVM.Children)
+                var child = searchNode.Children.FirstOrDefault(c => c.FullPath == directory);
+
+                // 子ディレクトリに対して処理を実行
+                if (child != null)
                 {
-                    if (child.FullPath == directory)
+                    if (directory == changedPath.TrimEnd('\\'))
                     {
-                        selectingVM = child;
-                        if (Path.Equals(directory, changedPath))
-                        {
-                            // カレントディレクトリが見つかった
-                            child.IsSelected = true;
-                            return;
-                        }
-                        else
-                        {
-                            // サブディレクトリを展開する
-                            child.IsExpanded = true;
-                        }
+                        // カレントディレクトリが見つかった
+                        child.IsSelected = true;
+                        return;
                     }
+                    searchNode = child;
+                    // サブディレクトリを展開する
+                    searchNode.IsExpanded = true;
                 }
             }
             return;
@@ -209,28 +206,17 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="path">コレクションを取得するディレクトリ</param>
         /// <returns>親ディレクトリからのコレクション</returns>
-        public static IEnumerable<string> GetDirectoryNames(string path)
+        public static IList<string> GetDirectoryNames(string path)
         {
-            // パスの区切り文字に関係なく分割する
-            var pathSeparated = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            string fullPath = string.Empty;
-
-            foreach (var directoryName in pathSeparated)
+            var list = new List<string>();
+            string? parent = path;
+            list.Add(path);
+            while ((parent = Path.GetDirectoryName(parent)) != null)
             {
-                if (string.IsNullOrEmpty(fullPath))
-                {
-                    // ルートディレクトリの場合、区切り文字を含めて追加
-                    fullPath = directoryName + Path.DirectorySeparatorChar;
-                }
-                else
-                {
-                    // パスを結合
-                    fullPath = Path.Combine(fullPath, directoryName);
-                }
-
-                yield return fullPath;
+                list.Add(parent);
             }
+            list.Reverse();
+            return list;
         }
         #endregion カレントディレクトリ移動
 

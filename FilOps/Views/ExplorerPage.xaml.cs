@@ -4,7 +4,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FilOps.Models;
-using FilOps.ViewModels;
 using FilOps.ViewModels.ExplorerPage;
 using FilOps.ViewModels.FileSystemWatch;
 

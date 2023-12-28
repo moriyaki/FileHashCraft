@@ -104,39 +104,49 @@ namespace FilOps.ViewModels.ExplorerPage
             {
                 string changedDirectory = value;
 
+                // 同じディレクトリなら値をセットして終了
+                if (_currentDirectory.TrimEnd(Path.DirectorySeparatorChar) == changedDirectory.TrimEnd(Path.DirectorySeparatorChar))
+                {
+                    SetProperty(ref _currentDirectory, changedDirectory);
+                    return;
+                }
+                var isDirectoreySeparatorEnd = value.EndsWith(Path.DirectorySeparatorChar);
+
                 if (changedDirectory.Length <= 3)
                 {
                     // 3文字なら大文字化
                     changedDirectory = value.ToUpper();
                 }
-                else
+                else if (Directory.Exists(value))
                 {
-                    // 可能なら、表示を大文字小文字正しいものを取得
-                    if (Directory.Exists(value))
+                    // ディレクトリの大文字小文字正しいものを取得
+                    var sepalatedPath = value.Split(Path.DirectorySeparatorChar);
+                    var makeTruthPath = sepalatedPath[0].ToUpper();
+                    var index = 1;
+                    while (changedDirectory.TrimEnd(Path.DirectorySeparatorChar).Length > makeTruthPath.Length)
                     {
-                        var dirName = Path.GetDirectoryName(changedDirectory);
-                        if (dirName is not null)
-                        {
-                            var dirs = Directory.GetDirectories(dirName);
-                            changedDirectory = dirs?.FirstOrDefault(dir => dir.Equals(value, StringComparison.OrdinalIgnoreCase)) ?? value;
-                        }
+                        var dirs = Directory.EnumerateDirectories(makeTruthPath + Path.DirectorySeparatorChar);
+                        makeTruthPath = makeTruthPath + Path.DirectorySeparatorChar + sepalatedPath[index];
+                        makeTruthPath = dirs.FirstOrDefault(dir => dir.Contains(makeTruthPath, StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
+                        index++;
                     }
+
+                    changedDirectory = makeTruthPath;
+
+                    // 入力値がパス区切り文字で終わってたら追加
+                    if (isDirectoreySeparatorEnd) { changedDirectory += Path.DirectorySeparatorChar; }
                 }
-                // 同じ値ならセットしない
-                if (Path.Equals(_currentDirectory, changedDirectory)) return;
 
                 // 値のセット
                 if (!SetProperty(ref _currentDirectory, changedDirectory)) return;
-
-                // ディレクトリが存在するなら、CurrentItemを設定
+                // 異なるディレクトリに移動した時の処理
                 if (Directory.Exists(changedDirectory))
                 {
                     //FolderSelectedChanged(value);
                     ToUpDirectory.RaiseCanExecuteChanged();
                     ListViewUpdater.Execute(null);
                     WeakReferenceMessenger.Default.Send(new CurrentChangeMessage(changedDirectory));
-                }
-
+            }
             }
         }
 
