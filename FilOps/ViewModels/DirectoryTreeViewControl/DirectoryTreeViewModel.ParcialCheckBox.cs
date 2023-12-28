@@ -168,7 +168,7 @@
             // ノード自身が探しているパスなら反映します
             if (searchNode.FullPath == fullPath)
             {
-                searchNode.IsCheckedForSync = value;
+                searchNode.IsChecked = value;
                 return;
             }
 

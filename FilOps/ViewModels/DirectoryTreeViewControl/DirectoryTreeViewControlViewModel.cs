@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -146,14 +147,38 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// <param name="item">追加する FileItemInformation</param>
         public void AddRoot(FileItemInformation item)
         {
-            var info = new DirectoryTreeViewModel(this, item);
-            TreeRoot.Add(info);
+            var node = new DirectoryTreeViewModel(this, item);
+            TreeRoot.Add(node);
             _ExpandedDirectoryManager.AddDirectory(item.FullPath);
-            /* ルートドライブが追加された時、特殊フォルダは追加されている
+            /* 
+             * ルートドライブが追加された時、特殊フォルダは追加されている
              * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
-             * 特殊フォルダに IsCHecked の変化があったら、内部的に Kick しておいた方にも反映する
-             * 
+             * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
              */
+            if (item.FullPath.Length == 3)
+            {
+                var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(node.FullPath));
+                if (driveNode != null)
+                {
+                    foreach (var drive in driveNode)
+                    {
+                        Debug.WriteLine(drive.FullPath);
+                        var dirs = GetDirectoryNames(drive.FullPath);
+                        if (node == null) continue;
+                        var child = node;
+
+                        dirs.RemoveAt(0);
+                        foreach (var directory in dirs)
+                        {
+                            if (child == null) break;
+                            Debug.WriteLine($"\t{child.FullPath}");
+                            child.KickChild();
+                            child = child.Children.FirstOrDefault(c => c.FullPath == directory);
+                        }
+                    }
+                }
+            }
+
         }
         #endregion 初期処理
 
@@ -177,10 +202,8 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             // ノードを展開する
             searchNode.IsExpanded = true;
 
-            var directories = GetDirectoryNames(changedPath);
-
             // パス内の各ディレクトリに対して処理を実行
-            foreach (var directory in directories)
+            foreach (var directory in GetDirectoryNames(changedPath))
             {
                 var child = searchNode.Children.FirstOrDefault(c => c.FullPath == directory);
 

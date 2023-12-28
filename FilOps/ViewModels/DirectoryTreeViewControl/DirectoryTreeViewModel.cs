@@ -275,16 +275,11 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                     if (value)
                     {
                         ControlVM.CurrentFullPath = this.FullPath;
-                        if (!IsKicked) { KickChildGet(); }
+                        KickChild();
                     }
                 }
             }
         }
-
-        /// <summary>
-        /// 子ディレクトリを取得しているかどうか
-        /// </summary>
-        private bool IsKicked = false;
 
         /// <summary>
         /// ディレクトリが展開されているかどうか
@@ -297,7 +292,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             {
                 if (SetProperty(ref _IsExpanded, value) && IsReady)
                 {
-                    if (value && !IsKicked) { KickChildGet(); }
+                    if (value && !IsKicked) { KickChild(); }
                 }
                 if (value)
                 {
@@ -319,15 +314,24 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
+        /// 子ディレクトリを取得しているかどうか
+        /// </summary>
+        private bool IsKicked = false;
+
+        /// <summary>
         /// 子ノードを設定する
         /// </summary>
-        public void KickChildGet()
+        public void KickChild(bool force = false)
         {
-            Children.Clear();
-            foreach (var child in FileSystemInformationManager.ScanFileItems(FullPath, false))
+            if (!IsKicked || force)
             {
-                var item = new DirectoryTreeViewModel(ControlVM, child, this);
-                Children.Add(item);
+                Debug.WriteLine($"{FullPath} is kicked.");
+                Children.Clear();
+                foreach (var child in FileSystemInformationManager.ScanFileItems(FullPath, false))
+                {
+                    var item = new DirectoryTreeViewModel(ControlVM, child, this);
+                    Children.Add(item);
+                }
             }
             IsKicked = true;
         }
