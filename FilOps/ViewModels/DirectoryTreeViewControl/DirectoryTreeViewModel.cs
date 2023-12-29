@@ -231,16 +231,21 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             set
             {
                 if (FullPath == string.Empty) { return; }
-                if (value != _IsChecked)
-                {
-                    CheckCheckBoxStatusChanged(this, value);
-                }
+                if (value == _IsChecked) return;
+
+                // サブディレクトリのチェック状態を変更する
+                CheckCheckBoxStatusChanged(this, value);
+
+                // 値をセットする
                 SetProperty(ref _IsChecked, value, nameof(IsChecked));
 
+                // 親ディレクトリのチェック状態を変更する
                 ParentCheckBoxChange(this);
 
-                Debug.WriteLine($"Sync Called : {this.FullPath}");
+                // 特殊フォルダのチェック状態を変更する
                 SyncSpecialDirectory(this, value);
+
+                
             }
         }
 
@@ -292,7 +297,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             {
                 if (SetProperty(ref _IsExpanded, value) && IsReady)
                 {
-                    if (value && !IsKicked) { KickChild(); }
+                    if (value && !_IsKicked) { KickChild(); }
                 }
                 if (value)
                 {
@@ -316,16 +321,16 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// 子ディレクトリを取得しているかどうか
         /// </summary>
-        private bool IsKicked = false;
+        private bool _IsKicked = false;
+        public bool IsKicked { get => _IsKicked; }
 
         /// <summary>
         /// 子ノードを設定する
         /// </summary>
         public void KickChild(bool force = false)
         {
-            if (!IsKicked || force)
+            if (!_IsKicked || force)
             {
-                Debug.WriteLine($"{FullPath} is kicked.");
                 Children.Clear();
                 foreach (var child in FileSystemInformationManager.ScanFileItems(FullPath, false))
                 {
@@ -333,7 +338,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                     Children.Add(item);
                 }
             }
-            IsKicked = true;
+            _IsKicked = true;
         }
         #endregion データバインディング
     }

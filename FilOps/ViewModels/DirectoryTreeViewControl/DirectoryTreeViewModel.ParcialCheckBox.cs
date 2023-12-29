@@ -41,7 +41,7 @@
                 if (child.IsChecked == value) continue;
 
                 child.IsChecked = value;
-                if (node.HasChildren && node.IsKicked)
+                if (node.HasChildren && node._IsKicked)
                 {
                     // 子がいたら再帰処理
                     ChildCheckBoxStatusChanged(child, value);
@@ -173,7 +173,7 @@
             }
 
             // TreeViewItem が展開されていたら、再帰的に検索します
-            if (searchNode.IsExpanded || searchNode.IsKicked)
+            if (searchNode.IsExpanded || searchNode._IsKicked)
             {
                 foreach (var child in searchNode.Children)
                 {

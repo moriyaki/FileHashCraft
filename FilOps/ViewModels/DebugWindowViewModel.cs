@@ -2,6 +2,7 @@
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FilOps.ViewModels.ExplorerPage;
+using FilOps.Models;
 
 namespace FilOps.ViewModels
 {
@@ -19,9 +20,9 @@ namespace FilOps.ViewModels
             CheckedDirectoryManager,
         }
         /// <summary>
-        /// ここでポーリング対象を決める
+        /// 【ここでポーリング対象を決める】
         /// </summary>
-        private readonly PollingTarget pollingTarget = PollingTarget.ExpandDirectoryManager;
+        private readonly PollingTarget pollingTarget = PollingTarget.CheckedDirectoryManager;
 
 
         #region バインディング
@@ -99,6 +100,7 @@ namespace FilOps.ViewModels
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
+        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
@@ -107,10 +109,12 @@ namespace FilOps.ViewModels
         /// <param name="expandDirManager">今はIExpandedDirectoryManager</param>
         public DebugWindowViewModel(
             IExpandedDirectoryManager expandedDirectoryManager,
+            ICheckedDirectoryManager checkedDirectoryManager,
             IMainViewModel mainViewModel
             )
         {
             _ExpandedDirectoryManager = expandedDirectoryManager;
+            _CheckedDirectoryManager = checkedDirectoryManager;
 
             Top = mainViewModel.Top;
             Left = mainViewModel.Left + mainViewModel.Width;
@@ -156,6 +160,17 @@ namespace FilOps.ViewModels
                     }
                     break;
                 case PollingTarget.CheckedDirectoryManager:
+                    sb.AppendLine("サブディレクトリを含む管理");
+                    foreach (var item in _CheckedDirectoryManager.NestedDirectories)
+                    {
+                        sb.AppendLine($"\t{item}");
+                    }
+                    sb.AppendLine("-------------------------------");
+                    sb.AppendLine("サブディレクトリを含まない管理");
+                    foreach (var item in _CheckedDirectoryManager.NonNestedDirectories)
+                    {
+                        sb.AppendLine($"\t{item}");
+                    }
                     break;
                 default:
                     break;

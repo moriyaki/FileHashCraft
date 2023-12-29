@@ -57,6 +57,9 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             private set => _IsCheckBoxVisible = value;
         }
 
+        /// <summary>
+        /// フォントサイズの設定
+        /// </summary>
         private double _FontSize = SystemFonts.MessageFontSize;
         public double FontSize
         {
@@ -87,6 +90,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 
         #region 初期処理
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
+        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
         private readonly IMainViewModel _MainWindowViewModel;
 
@@ -102,11 +106,13 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         // 通常コンストラクタ
         public DirectoryTreeViewControlViewModel(
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
-            IExpandedDirectoryManager expandDirManager,
+            ICheckedDirectoryManager checkedDirectoryManager,
+            IExpandedDirectoryManager expandDirectoryManager,
             IMainViewModel mainViewModel)
         {
             _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
-            _ExpandedDirectoryManager = expandDirManager;
+            _CheckedDirectoryManager = checkedDirectoryManager;
+            _ExpandedDirectoryManager = expandDirectoryManager;
             _MainWindowViewModel = mainViewModel;
 
             // カレントディレクトリの変更メッセージ
@@ -155,30 +161,25 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
              * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
              * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
              */
-            if (item.FullPath.Length == 3)
-            {
-                var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(node.FullPath));
-                if (driveNode != null)
-                {
-                    foreach (var drive in driveNode)
-                    {
-                        Debug.WriteLine(drive.FullPath);
-                        var dirs = GetDirectoryNames(drive.FullPath);
-                        if (node == null) continue;
-                        var child = node;
+            if (item.FullPath.Length != 3) { return; }
 
-                        dirs.RemoveAt(0);
-                        foreach (var directory in dirs)
-                        {
-                            if (child == null) break;
-                            Debug.WriteLine($"\t{child.FullPath}");
-                            child.KickChild();
-                            child = child.Children.FirstOrDefault(c => c.FullPath == directory);
-                        }
-                    }
+            var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(node.FullPath));
+            if (driveNode == null) { return; }
+
+            foreach (var drive in driveNode)
+            {
+                var dirs = GetDirectoryNames(drive.FullPath);
+                if (node == null) continue;
+                var child = node;
+
+                dirs.RemoveAt(0);
+                foreach (var directory in dirs)
+                {
+                    if (child == null) break;
+                    child.KickChild();
+                    child = child.Children.FirstOrDefault(c => c.FullPath == directory);
                 }
             }
-
         }
         #endregion 初期処理
 
@@ -208,20 +209,18 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
                 var child = searchNode.Children.FirstOrDefault(c => c.FullPath == directory);
 
                 // 子ディレクトリに対して処理を実行
-                if (child != null)
+                if (child == null) break;
+
+                if (directory == changedPath.TrimEnd('\\'))
                 {
-                    if (directory == changedPath.TrimEnd('\\'))
-                    {
-                        // カレントディレクトリが見つかった
-                        child.IsSelected = true;
-                        return;
-                    }
-                    searchNode = child;
-                    // サブディレクトリを展開する
-                    searchNode.IsExpanded = true;
+                    // カレントディレクトリが見つかった
+                    child.IsSelected = true;
+                    return;
                 }
+                searchNode = child;
+                // サブディレクトリを展開する
+                searchNode.IsExpanded = true;
             }
-            return;
         }
 
         /// <summary>
@@ -251,12 +250,11 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         public void AddDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
         {
             _ExpandedDirectoryManager.AddDirectory(node.FullPath);
-            if (node.IsExpanded)
+            if (!node.IsExpanded) return;
+
+            foreach (var child in node.Children)
             {
-                foreach (var child in node.Children)
-                {
-                    AddDirectoryToExpandedDirectoryManager(child);
-                }
+                AddDirectoryToExpandedDirectoryManager(child);
             }
         }
 
@@ -267,14 +265,21 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
         {
             _ExpandedDirectoryManager.RemoveDirectory(node.FullPath);
-            if (node.HasChildren)
+            if (!node.HasChildren) { return; }
+
+            foreach (var child in node.Children)
             {
-                foreach (var child in node.Children)
-                {
-                    RemoveDirectoryToExpandedDirectoryManager(child);
-                }
+                RemoveDirectoryToExpandedDirectoryManager(child);
             }
         }
         #endregion 展開マネージャへの追加削除処理
+
+        #region チェックボックスマネージャへの追加削除処理
+        public void ScanAllTreeNodeCheckStatus()
+        {
+
+        }
+
+        #endregion チェックボックスマネージャへの追加削除処理
     }
 }

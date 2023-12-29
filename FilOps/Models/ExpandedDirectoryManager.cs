@@ -1,6 +1,4 @@
-﻿using FilOps.Models;
-
-namespace FilOps.ViewModels.ExplorerPage
+﻿namespace FilOps.Models
 {
     #region インターフェース
     public interface IExpandedDirectoryManager
