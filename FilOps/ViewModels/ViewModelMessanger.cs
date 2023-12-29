@@ -45,6 +45,7 @@ namespace FilOps.ViewModels
             FontSize = fontSize;
         }
     }
+
     #endregion MainView用
 
     #region DirectoryTreeViewControlViewModelから発信
@@ -55,10 +56,7 @@ namespace FilOps.ViewModels
     public class DirectoryCreated
     {
         public string FullPath { get; } = string.Empty;
-        public DirectoryCreated()
-        {
-            throw new NotImplementedException();
-        }
+        public DirectoryCreated() { }
         public DirectoryCreated(string fullPath)
         {
             FullPath = fullPath;
@@ -72,10 +70,7 @@ namespace FilOps.ViewModels
     {
         public string OldFullPath { get; } = string.Empty;
         public string NewFullPath { get; } = string.Empty;
-        public DirectoryRenamed()
-        {
-            throw new NotSupportedException();
-        }
+        public DirectoryRenamed() { }
         public DirectoryRenamed(string oldPath, string newPath)
         {
             OldFullPath = oldPath;
@@ -89,10 +84,7 @@ namespace FilOps.ViewModels
     public class DirectoryDeleted
     {
         public string FullPath { get; } = string.Empty;
-        public DirectoryDeleted()
-        {
-            throw new NotImplementedException();
-        }
+        public DirectoryDeleted() { }
         public DirectoryDeleted(string fullPath)
         {
             FullPath = fullPath;

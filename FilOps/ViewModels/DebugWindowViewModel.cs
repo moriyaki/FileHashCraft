@@ -160,14 +160,14 @@ namespace FilOps.ViewModels
                     }
                     break;
                 case PollingTarget.CheckedDirectoryManager:
-                    sb.AppendLine("サブディレクトリを含む管理");
-                    foreach (var item in _CheckedDirectoryManager.NestedDirectories)
+                    sb.AppendLine("サブディレクトリを含まない管理");
+                    foreach (var item in _CheckedDirectoryManager.NonNestedDirectories)
                     {
                         sb.AppendLine($"\t{item}");
                     }
                     sb.AppendLine("-------------------------------");
-                    sb.AppendLine("サブディレクトリを含まない管理");
-                    foreach (var item in _CheckedDirectoryManager.NonNestedDirectories)
+                    sb.AppendLine("サブディレクトリを含む管理");
+                    foreach (var item in _CheckedDirectoryManager.NestedDirectories)
                     {
                         sb.AppendLine($"\t{item}");
                     }

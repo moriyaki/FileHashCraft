@@ -91,7 +91,13 @@
         private void CheckedTrue(string fullPath)
         {
             if (_nestedDirectories.Contains(fullPath)) { return; }
+
+            // fullPath で始まる要素を全削除
             _nestedDirectories.RemoveAll(c => c.StartsWith(fullPath));
+            
+            // 含まれているディレクトリで始まる fullPath なら追加しない
+            if (_nestedDirectories.Any(c => fullPath.StartsWith(c))) { return; }
+
             _nonNestedDirectories.Remove(fullPath);
             _nestedDirectories.Add(fullPath);
         }
@@ -103,7 +109,7 @@
         private void CheckedFalse(string fullPath)
         {
             _nonNestedDirectories.Remove(fullPath);
-            _nestedDirectories.Remove(fullPath);
+            _nestedDirectories.RemoveAll(c => c.StartsWith(fullPath));
         }
 
         /// <summary>
@@ -113,6 +119,7 @@
         private void CheckedNull(string fullPath)
         {
             _nestedDirectories.Remove(fullPath);
+            if (_nonNestedDirectories.Any(c => c == fullPath)) { return; }
             _nonNestedDirectories.Add(fullPath);
         }
     }

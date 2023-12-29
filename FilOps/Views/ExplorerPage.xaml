@@ -59,17 +59,17 @@
             <TextBox Grid.Column="1"
                    Margin="3"
                    Name="UserCommand"
-                   FontSize="{Binding FontSize}"
-                   Text="{Binding CommandText, Mode=OneWay, 
-                   UpdateSourceTrigger=PropertyChanged}"/>
+                   Text="{Binding CommandText, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"
+                   FontSize="{Binding FontSize}"/>
             <Button Grid.Column="2"
                     Margin="3"
-                    FontSize="{Binding FontSize}"
-                    Content="コマンド実行"/>
+                    Content="コマンド実行"
+                    FontSize="{Binding FontSize}"/>
             <Button Grid.Column="3"
                     Margin="3"
-                    FontSize="{Binding FontSize}"
-                    Content="ハッシュ管理"/>
+                    Content="ハッシュ管理"
+                    Command="{Binding HashCalc}"
+                    FontSize="{Binding FontSize}"/>
         </Grid>
 
         <Grid Grid.Row="2">
@@ -86,18 +86,17 @@
 			    Width="3"
 			    HorizontalAlignment="Stretch" />
 
-
             <ListView Name="FileItemsList" Grid.Column="2"
-                         ItemsSource="{Binding ListItems, Mode=OneWay}"
-                         SelectedItem="{Binding SelectedListViewItem}"
-                         VirtualizingStackPanel.IsVirtualizing="True"
-                         VirtualizingPanel.VirtualizationMode="Recycling"
-                         SelectionMode="Single"
-                         FontSize="{Binding FontSize}">
+                      ItemsSource="{Binding ListItems, Mode=OneWay}"
+                      SelectedItem="{Binding SelectedListViewItem}"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
+                      SelectionMode="Single"
+                      FontSize="{Binding FontSize}">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn
-                               x:Name="FileName"
+                            x:Name="FileName"
 						    Width="180"
 						    Header="ファイル名">
                             <GridViewColumn.CellTemplate>

@@ -14,6 +14,11 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
     public interface IDirectoryTreeViewControlViewModel
     {
         /// <summary>
+        /// TreeViewのコレクションにアクセス
+        /// </summary>
+        public ObservableCollection<DirectoryTreeViewModel> TreeRoot { get; }
+
+        /// <summary>
         /// チェックボックスを表示するかどうかを設定します。
         /// </summary>
         /// <param name="isVisible">表示するかどうか</param>
@@ -273,13 +278,5 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             }
         }
         #endregion 展開マネージャへの追加削除処理
-
-        #region チェックボックスマネージャへの追加削除処理
-        public void ScanAllTreeNodeCheckStatus()
-        {
-
-        }
-
-        #endregion チェックボックスマネージャへの追加削除処理
     }
 }

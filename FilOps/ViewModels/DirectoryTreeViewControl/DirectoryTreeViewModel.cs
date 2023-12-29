@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
 
 namespace FilOps.ViewModels.DirectoryTreeViewControl
@@ -244,15 +245,16 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
 
                 // 特殊フォルダのチェック状態を変更する
                 SyncSpecialDirectory(this, value);
-
-                
             }
         }
 
         public bool? IsCheckedForSync
         {
             get => _IsChecked;
-            set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
+            set
+            {
+                SetProperty(ref _IsChecked, value, nameof(IsChecked));
+            }
         }
 
         /// <summary>

@@ -1,8 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,6 +12,7 @@ using FilOps.Models;
 using FilOps.ViewModels;
 using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.FileSystemWatch;
+using FilOps.Views;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
@@ -67,6 +70,11 @@ namespace FilOps.ViewModels.ExplorerPage
         /// リストビューダブルクリック時のコマンド
         /// </summary>
         public DelegateCommand FileListViewExecuted { get; set; }
+
+        /// <summary>
+        /// ハッシュ管理ウィンドウ実行のコマンド
+        /// </summary>
+        public DelegateCommand HashCalc { get; set; }
 
         /// <summary>
         /// デバッグウィンドウを開く
@@ -225,8 +233,6 @@ namespace FilOps.ViewModels.ExplorerPage
                        }));
                    }
                });
-
-               
             });
 
             // リストビューアイテムがダブルクリックされた時のコマンド
@@ -240,6 +246,14 @@ namespace FilOps.ViewModels.ExplorerPage
                         CurrentFullPath = newDirectory;
                     }
                 }
+            });
+
+            // ハッシュ管理ウィンドウ実行のコマンド
+            HashCalc = new DelegateCommand(() =>
+            {
+                CreateCheckBoxManager();
+                var debugWindow = new Views.DebugWindow();
+                debugWindow.Show();
             });
 
             // デバッグウィンドウを開くコマンド
@@ -288,6 +302,26 @@ namespace FilOps.ViewModels.ExplorerPage
             });
         }
         #endregion コンストラクタ
+
+        #region チェックボックスマネージャ登録
+        private void CreateCheckBoxManager()
+        {
+            foreach (var root in _DirectoryTreeViewControlViewModel.TreeRoot)
+            {
+                RecursiveTreeNodeCheck(root);
+            }
+        }
+
+        private void RecursiveTreeNodeCheck(DirectoryTreeViewModel node)
+        {
+            _CheckedDirectoryManager.CheckChanged(node.FullPath, node.IsChecked);
+            foreach (var child in node.Children)
+            {
+                if (child.FullPath != string.Empty)
+                RecursiveTreeNodeCheck(child);
+            }
+        }
+        #endregion チェックボックスマネージャ登録
 
         #region リストビューのディレクトリ更新通知処理
         /// <summary>
