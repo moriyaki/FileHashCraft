@@ -1,18 +1,14 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
-using FilOps.ViewModels;
 using FilOps.ViewModels.DirectoryTreeViewControl;
 using FilOps.ViewModels.FileSystemWatch;
-using FilOps.Views;
 
 namespace FilOps.ViewModels.ExplorerPage
 {
@@ -51,7 +47,7 @@ namespace FilOps.ViewModels.ExplorerPage
         public void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
+    public partial class ExplorerPageViewModel : ViewModelBase, IExplorerPageViewModel
     {
         #region データバインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
@@ -76,6 +72,10 @@ namespace FilOps.ViewModels.ExplorerPage
         /// </summary>
         public DelegateCommand HashCalc { get; set; }
 
+        /// <summary>
+        /// 設定画面を開く
+        /// </summary>
+        public DelegateCommand SettingsOpen { get; set; }
         /// <summary>
         /// デバッグウィンドウを開く
         /// </summary>
@@ -255,6 +255,8 @@ namespace FilOps.ViewModels.ExplorerPage
                 var debugWindow = new Views.DebugWindow();
                 debugWindow.Show();
             });
+
+            SettingsOpen = new DelegateCommand(() => { WeakReferenceMessenger.Default.Send(new ToSettingsPage()); });
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new DelegateCommand(() =>

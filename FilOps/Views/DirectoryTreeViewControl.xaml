@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FilOps.Views"
-             xmlns:node="clr-namespace:FilOps.ViewModels.DirectoryTreeViewControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -22,18 +21,7 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
-            <!-- 特殊フォルダに対する動的な DataTemplate -->
             <TreeView.Resources>
-                <!--
-                <DataTemplate DataType="{x:Type node:SpecialFolderTreeNodeViewModel}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                                      Visibility="{Binding IsCheckBoxVisible}"/>
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneWay}" FontSize="{Binding FontSize}"/>
-                    </StackPanel>
-                </DataTemplate>
-                -->
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=Twoway}" />
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />

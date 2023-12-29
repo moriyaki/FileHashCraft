@@ -1,6 +1,12 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using FilOps.ViewModels.ExplorerPage;
+using FilOps.Views;
 
 namespace FilOps.ViewModels
 {
@@ -11,17 +17,17 @@ namespace FilOps.ViewModels
         public double Width {  get; set; }
         public double Height { get; set; }
         public double FontSize { get; set; }
+        public FontFamily Font { get; set; }
     }
 
-    public class MainViewModel : ObservableObject, IMainViewModel
+    public class MainViewModel : ViewModelBase, IMainViewModel
     {
-        public MainViewModel() { }
-
+        #region データバインディング
         /// <summary>
         /// ウィンドウの開始上位置
         /// </summary>
         private double _Top = 100d;
-        public double Top 
+        public double Top
         {
             get => _Top;
             set => SetProperty(ref _Top, value);
@@ -73,5 +79,27 @@ namespace FilOps.ViewModels
                 }
             }
         }
+
+        private FontFamily _Font = SystemFonts.MessageFontFamily;
+        public FontFamily Font
+        {
+            get => _Font;
+            set => SetProperty(ref _Font, value);
+        }
+        #endregion データバインディング
+
+        /*
+        private Uri? _CurrentPageUri;
+
+        public Uri? CurrentPageUri
+        {
+            get => _CurrentPageUri;
+            set => SetProperty(ref _CurrentPageUri, value);
+        }
+        public void ToExplorerPage()
+        {
+            CurrentPageUri = new Uri("ExplorerPage.xaml", UriKind.Relative);
+        }
+        */
     }
 }

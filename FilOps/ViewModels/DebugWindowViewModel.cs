@@ -11,7 +11,7 @@ namespace FilOps.ViewModels
         public double Top { get; set; }
         public double Left { get; set; }
     }
-    public class DebugWindowViewModel : ObservableObject, IDebugWindowViewModel
+    public class DebugWindowViewModel : ViewModelBase, IDebugWindowViewModel
     {
         enum PollingTarget
         {

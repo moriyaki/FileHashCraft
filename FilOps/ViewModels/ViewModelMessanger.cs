@@ -45,11 +45,22 @@ namespace FilOps.ViewModels
             FontSize = fontSize;
         }
     }
-
     #endregion MainView用
 
-    #region DirectoryTreeViewControlViewModelから発信
+    #region ページ移動用
+    public class ToExplorerPage
+    {
+        public ToExplorerPage() { }
+    }
 
+    public class ToSettingsPage
+    {
+        public ToSettingsPage() { }
+    }
+
+    #endregion ページ移動用
+
+    #region DirectoryTreeViewControlViewModelから発信
     /// <summary>
     /// ディレクトリ監視から、ディレクトリが作成されたメッセージ
     /// </summary>

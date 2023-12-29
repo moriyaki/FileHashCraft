@@ -93,11 +93,12 @@ namespace FilOps
         {
             var services = new ServiceCollection();
 
-            services.AddTransient<IMainViewModel, MainViewModel>();
-            
+            services.AddSingleton<IMainViewModel, MainViewModel>();
+
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IDirectoryTreeViewControlViewModel, DirectoryTreeViewControlViewModel>();
-            //services.AddSingleton<IDebugWindowService, DebugWindowService>();
+            services.AddSingleton<ISettingsPageViewModel, SettingsPageViewModel>();
+
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();

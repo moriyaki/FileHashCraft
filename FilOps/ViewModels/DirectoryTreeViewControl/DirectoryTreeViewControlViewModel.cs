@@ -44,7 +44,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
     }
     #endregion インターフェース
 
-    public partial class DirectoryTreeViewControlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
+    public partial class DirectoryTreeViewControlViewModel : ViewModelBase, IDirectoryTreeViewControlViewModel
     {
         #region バインディング
         /// <summary>
