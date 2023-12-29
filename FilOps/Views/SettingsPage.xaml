@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:FilOps.Views"
+      xmlns:vm="clr-namespace:FilOps.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SettingsPage">
@@ -13,20 +14,38 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="5" Grid.Column="2" Margin="5" Content="設定終了" Command="{Binding ToExplorer}"/>
-        <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Content="フォント"/>
-        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" />
-        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Content="フォントサイズ"/>
+
+        <Button Grid.Row="6" Grid.Column="2" Margin="5" Command="{Binding ToExplorer}"
+                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}"/>
+
+        <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" 
+               Content="Language"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  ItemsSource="{Binding Languages}"
+                  SelectedValue="{Binding SelectedLanguage}"
+                  SelectedValuePath="Lang"
+                  DisplayMemberPath="Name"/>
+
+        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" 
+               Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontString, Mode=OneWay}"/>
         <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" />
+        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
+               Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontSizeString, Mode=OneWay}"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" />
+        <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" 
+               Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
+        <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" />
     </Grid>
 </Page>

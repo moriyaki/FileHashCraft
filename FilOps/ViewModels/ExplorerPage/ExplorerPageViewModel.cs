@@ -47,7 +47,7 @@ namespace FilOps.ViewModels.ExplorerPage
         public void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class ExplorerPageViewModel : ViewModelBase, IExplorerPageViewModel
+    public partial class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
     {
         #region データバインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];

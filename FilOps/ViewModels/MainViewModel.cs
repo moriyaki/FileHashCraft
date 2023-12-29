@@ -20,7 +20,7 @@ namespace FilOps.ViewModels
         public FontFamily Font { get; set; }
     }
 
-    public class MainViewModel : ViewModelBase, IMainViewModel
+    public class MainViewModel : ObservableObject, IMainViewModel
     {
         #region データバインディング
         /// <summary>
@@ -87,19 +87,5 @@ namespace FilOps.ViewModels
             set => SetProperty(ref _Font, value);
         }
         #endregion データバインディング
-
-        /*
-        private Uri? _CurrentPageUri;
-
-        public Uri? CurrentPageUri
-        {
-            get => _CurrentPageUri;
-            set => SetProperty(ref _CurrentPageUri, value);
-        }
-        public void ToExplorerPage()
-        {
-            CurrentPageUri = new Uri("ExplorerPage.xaml", UriKind.Relative);
-        }
-        */
     }
 }

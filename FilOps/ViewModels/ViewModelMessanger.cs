@@ -45,6 +45,14 @@ namespace FilOps.ViewModels
             FontSize = fontSize;
         }
     }
+
+    /// <summary>
+    /// エクスプローラー風画面にページを移動する
+    /// </summary>
+    public class ToExplorer
+    {
+        public ToExplorer() { }
+    }
     #endregion MainView用
 
     #region ページ移動用

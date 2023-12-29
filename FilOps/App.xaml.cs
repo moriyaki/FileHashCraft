@@ -94,6 +94,7 @@ namespace FilOps
             var services = new ServiceCollection();
 
             services.AddSingleton<IMainViewModel, MainViewModel>();
+            services.AddSingleton<IResourceService, ResourceService>();
 
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IDirectoryTreeViewControlViewModel, DirectoryTreeViewControlViewModel>();

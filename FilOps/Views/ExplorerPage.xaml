@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:FilOps.Views"
+      xmlns:vm="clr-namespace:FilOps.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ExplorerPage">
@@ -22,11 +23,13 @@
 
         <Grid Grid.Row="0">
             <Menu x:Name="FolderMenu" DockPanel.Dock="Top">
-                <MenuItem Header="ファイル(_F)">
-                    <MenuItem Header="終了(_X)" />
+                <MenuItem Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuFile, Mode=OneWay}">
+                    <MenuItem Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuFile, Mode=OneWay}" />
                 </MenuItem>
-                <MenuItem Header="設定(_S)" Command="{Binding SettingsOpen}"/>
-                <MenuItem Header="デバッグ(_D)" Command="{Binding DebugOpen}"/>
+                <MenuItem Command="{Binding SettingsOpen}" 
+                          Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
+                <MenuItem Command="{Binding DebugOpen}"
+                          Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
             </Menu>
         </Grid>
         
@@ -38,7 +41,8 @@
             </Grid.ColumnDefinitions>
             <Button Content="↑" Grid.Column="0" Margin="3"
                     Command="{Binding ToUpDirectory}"/>
-            <Label Content="カレントディレクトリ" Grid.Column="1" FontSize="{Binding FontSize}"/>
+            <Label Grid.Column="1" FontSize="{Binding FontSize}"
+                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCurrentDirectory, Mode=OneWay}"/>
             <TextBox 
                    Grid.Column="2"
                    Margin="3"
@@ -55,7 +59,8 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <Label Content="コマンド" Grid.Column="0" FontSize="{Binding FontSize}"/>
+            <Label Grid.Column="0" FontSize="{Binding FontSize}"
+                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCommand, Mode=OneWay}" />
             <TextBox Grid.Column="1"
                    Margin="3"
                    Name="UserCommand"
@@ -63,11 +68,11 @@
                    FontSize="{Binding FontSize}"/>
             <Button Grid.Column="2"
                     Margin="3"
-                    Content="コマンド実行"
+                    Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ButtonExecuteCommand, Mode=OneWay}"
                     FontSize="{Binding FontSize}"/>
             <Button Grid.Column="3"
                     Margin="3"
-                    Content="ハッシュ管理"
+                    Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ButtonHashManagement, Mode=OneWay}"
                     Command="{Binding HashCalc}"
                     FontSize="{Binding FontSize}"/>
         </Grid>
@@ -98,7 +103,7 @@
                         <GridViewColumn
                             x:Name="FileName"
 						    Width="180"
-						    Header="ファイル名">
+						    Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewName, Mode=OneWay}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -113,15 +118,15 @@
 						    x:Name="UpdateDate"
 						    Width="100"
 						    DisplayMemberBinding="{Binding LastFileUpdate, Mode=OneWay}"
-                               Header="更新日時" />
+                            Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewDataModified, Mode=OneWay}" />
                         <GridViewColumn
 						    x:Name="FileType"
 						    Width="100"
 						    DisplayMemberBinding="{Binding FileType, Mode=OneWay}"
-						    Header="種類" />
+						    Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewType, Mode=OneWay}" />
                         <GridViewColumn
 						    x:Name="FileSize"
-						    Header="サイズ"
+						    Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewSize, Mode=OneWay}"
                                Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>

@@ -18,6 +18,7 @@ namespace FilOps
             InitializeComponent();
             DataContext = Ioc.Default.GetService<IMainViewModel>();
             MainFrame.Navigate(new ExplorerPage());
+            //MainFrame.Navigate(new SettingsPage());
 
             WeakReferenceMessenger.Default.Register<ToExplorerPage>(this, (recipient, message) =>
             {
