@@ -5,6 +5,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace FilOps.ViewModels
 {
@@ -30,29 +31,36 @@ namespace FilOps.ViewModels
             CurrentFullPath = currentFullPath;
         }
     }
+    /// <summary>
+    /// フォントの変更メッセージ
+    /// </summary>
+    public class FontChanged
+    {
+        public FontFamily Font { get; } = SystemFonts.MessageFontFamily;
+
+        public FontChanged() { }
+
+        public FontChanged(FontFamily font)
+        {
+            Font = font;
+        }
+    }
 
     /// <summary>
     /// フォントサイズの変更メッセージ
     /// </summary>
-    public class FontChanged
+    public class FontSizeChanged
     {
         public double FontSize { get; } = SystemFonts.MessageFontSize;
 
-        public FontChanged() { }
+        public FontSizeChanged() { }
 
-        public FontChanged(double fontSize)
+        public FontSizeChanged(double fontSize)
         {
             FontSize = fontSize;
         }
     }
 
-    /// <summary>
-    /// エクスプローラー風画面にページを移動する
-    /// </summary>
-    public class ToExplorer
-    {
-        public ToExplorer() { }
-    }
     #endregion MainView用
 
     #region ページ移動用

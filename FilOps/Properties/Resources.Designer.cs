@@ -88,6 +88,33 @@ namespace FilOps.Properties {
         }
         
         /// <summary>
+        ///   Light but deprecated に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HashAlgorithm_MD5 {
+            get {
+                return ResourceManager.GetString("HashAlgorithm_MD5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Next-Gen Security に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HashAlgorithm_SHA_3 {
+            get {
+                return ResourceManager.GetString("HashAlgorithm_SHA-3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   High Security に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HashAlgorithm_SHA256 {
+            get {
+                return ResourceManager.GetString("HashAlgorithm_SHA256", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Command に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelCommand {

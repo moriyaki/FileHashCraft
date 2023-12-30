@@ -129,6 +129,18 @@
     <value>Exit</value>
     <comment>Button/Menu</comment>
   </data>
+  <data name="HashAlgorithm_MD5" xml:space="preserve">
+    <value>Light but deprecated</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA-3" xml:space="preserve">
+    <value>Next-Gen Security</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA256" xml:space="preserve">
+    <value>High Security</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
   <data name="LabelCommand" xml:space="preserve">
     <value>Command</value>
     <comment>Label/ExplorerPage</comment>

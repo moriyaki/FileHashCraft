@@ -129,7 +129,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             });
 
             // フォントの変更メッセージ
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (recipient, message) =>
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (recipient, message) =>
             {
                 FontSize = message.FontSize;
             });

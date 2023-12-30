@@ -31,11 +31,6 @@ namespace FilOps.ViewModels.ExplorerPage
         public string CurrentFullPath { get; set; }
 
         /// <summary>
-        /// フォントサイズへのアクセス
-        /// </summary>
-        public double FontSize { get; set; }
-
-        /// <summary>
         /// WndProc をフックして、リムーバブルドライブの着脱を監視します。
         /// </summary>
         /// <param name="hwndSource">hwndSource?</param>
@@ -169,16 +164,13 @@ namespace FilOps.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// フォントサイズの変更
+        /// フォントサイズの設定
         /// </summary>
+        private double _FontSize;
         public double FontSize
         {
             get => _MainViewModel.FontSize;
-            set
-            {
-                _MainViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
-            }
+            set => SetProperty(ref _FontSize, value);
         }
         #endregion データバインディング
 
@@ -285,6 +277,12 @@ namespace FilOps.ViewModels.ExplorerPage
             _CurrentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
             _CurrentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
 
+            // メインウィンドウからのフォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (recipient, message) =>
+            {
+                FontSize = message.FontSize;
+            });
+
             // ディレクトリ作成のメッセージ受信
             WeakReferenceMessenger.Default.Register<DirectoryCreated>(this, (recipient, message) =>
             {
@@ -302,6 +300,8 @@ namespace FilOps.ViewModels.ExplorerPage
             {
                 CurrentDirectoryItemDeleted(message.FullPath);
             });
+
+
         }
         #endregion コンストラクタ
 

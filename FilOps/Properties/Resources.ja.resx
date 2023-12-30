@@ -129,6 +129,18 @@
     <value>終了</value>
     <comment>Button</comment>
   </data>
+  <data name="HashAlgorithm_MD5" xml:space="preserve">
+    <value>軽量だけど非推奨</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA-3" xml:space="preserve">
+    <value>次世代セキュリティ</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA256" xml:space="preserve">
+    <value>高セキュリティ</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
   <data name="LabelCommand" xml:space="preserve">
     <value>コマンド</value>
     <comment>Label/ExplorerPage</comment>

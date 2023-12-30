@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FilOps.Models;
+using FilOps.ViewModels;
 using FilOps.ViewModels.ExplorerPage;
 using FilOps.ViewModels.FileSystemWatch;
 
@@ -36,11 +37,11 @@ namespace FilOps.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var explorerVM = Ioc.Default.GetService<IExplorerPageViewModel>();
-                if (explorerVM is not null)
+                var mainViewVM = Ioc.Default.GetService<IMainViewModel>();
+                if (mainViewVM is not null)
                 {
-                    if (e.Delta > 0) { explorerVM.FontSize += 1; }
-                    else { explorerVM.FontSize -= 1; }
+                    if (e.Delta > 0) { mainViewVM.FontSizePlus(); }
+                    else { mainViewVM.FontSizeMinus(); }
                 }
                 e.Handled = true;
             }

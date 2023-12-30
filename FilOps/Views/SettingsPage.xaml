@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SettingsPage">
 
-    <Grid>
+    <Grid PreviewMouseWheel="OnMouseWheel">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -30,6 +30,7 @@
         <Button Grid.Row="6" Grid.Column="2" Margin="5" Command="{Binding ToExplorer}"
                 Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}"/>
 
+        <!-- Language Select -->
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" 
                Content="Language"/>
         <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
@@ -38,14 +39,36 @@
                   SelectedValuePath="Lang"
                   DisplayMemberPath="Name"/>
 
+        <!-- Font Select -->
         <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" 
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontString, Mode=OneWay}"/>
-        <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" />
+        <ComboBox x:Name="FontComboBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  ItemsSource="{Binding FontFamilies}"
+                  SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontFamily="{Binding}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <!-- Font Size Select -->
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontSizeString, Mode=OneWay}"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" />
+        <ComboBox x:Name="FontSizeComboBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  ItemsSource="{Binding FontSizes}"
+                  SelectedValue="{Binding SelectedFontSize}"
+                  SelectedValuePath="Size"
+                  DisplayMemberPath="SizeString"/>
+
+        <!-- Hash Algorithm Select -->
         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" 
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
-        <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" />
+        <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  ItemsSource="{Binding HashAlgorithms}"
+                  SelectedValue="{Binding SelectedHashAlgorithm}"
+                  SelectedValuePath="Algorithm"
+                  DisplayMemberPath="Name"/>
     </Grid>
 </Page>
