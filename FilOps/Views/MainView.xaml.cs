@@ -16,7 +16,7 @@ namespace FilOps
 　      public MainView()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IMainViewModel>();
+            DataContext = Ioc.Default.GetService<IMainWindowViewModel>();
             //MainFrame.Navigate(new ExplorerPage());
             MainFrame.Navigate(new SettingsPage());
 

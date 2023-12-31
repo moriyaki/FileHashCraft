@@ -110,7 +110,7 @@ namespace FilOps.ViewModels
         public DebugWindowViewModel(
             IExpandedDirectoryManager expandedDirectoryManager,
             ICheckedDirectoryManager checkedDirectoryManager,
-            IMainViewModel mainViewModel
+            IMainWindowViewModel mainViewModel
             )
         {
             _ExpandedDirectoryManager = expandedDirectoryManager;

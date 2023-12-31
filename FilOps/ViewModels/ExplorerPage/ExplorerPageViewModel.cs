@@ -71,6 +71,7 @@ namespace FilOps.ViewModels.ExplorerPage
         /// 設定画面を開く
         /// </summary>
         public DelegateCommand SettingsOpen { get; set; }
+ 
         /// <summary>
         /// デバッグウィンドウを開く
         /// </summary>
@@ -166,11 +167,14 @@ namespace FilOps.ViewModels.ExplorerPage
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _FontSize;
         public double FontSize
         {
             get => _MainViewModel.FontSize;
-            set => SetProperty(ref _FontSize, value);
+            set
+            {
+                _MainViewModel.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
+            }
         }
         #endregion データバインディング
 
@@ -180,14 +184,14 @@ namespace FilOps.ViewModels.ExplorerPage
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
-        private readonly IMainViewModel _MainViewModel;
+        private readonly IMainWindowViewModel _MainViewModel;
         public ExplorerPageViewModel(
             ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             IExpandedDirectoryManager expandedDirectoryManager,
             ICheckedDirectoryManager checkedDirectoryManager,
             IDirectoryTreeViewControlViewModel directoryTreeViewControlViewModel,
-            IMainViewModel mainViewModel
+            IMainWindowViewModel mainViewModel
             )
         {
             _CurrentDirectoryWatcherService = currentDirectoryFIleSystemWatcherService;
@@ -276,7 +280,7 @@ namespace FilOps.ViewModels.ExplorerPage
             _CurrentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
             _CurrentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
             _CurrentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
-
+            
             // メインウィンドウからのフォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (recipient, message) =>
             {

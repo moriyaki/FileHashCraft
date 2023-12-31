@@ -56,8 +56,8 @@ namespace FilOps.ViewModels
             get => _SelectedFontFamily;
             set
             {
+                UsingFont = value;
                 SetProperty(ref _SelectedFontFamily, value);
-                _MainViewModel.Font = value;
             }
         }
 
@@ -73,7 +73,14 @@ namespace FilOps.ViewModels
         public double SelectedFontSize
         {
             get => _SelectedFontSize;
-            set => SetProperty(ref _SelectedFontSize, value);
+            set
+            {
+                if (SelectedFontSize != value)
+                {
+                    FontSize = value;
+                    SetProperty(ref _SelectedFontSize, value);
+                }
+            }
         }
 
         /// <summary>
@@ -97,14 +104,27 @@ namespace FilOps.ViewModels
         }
 
         /// <summary>
+        /// フォントの設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => _MainWindowViewModel.UsingFont;
+            set
+            {
+                _MainWindowViewModel.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
         /// フォントサイズの設定
         /// </summary>
         public double FontSize
         {
-            get => _MainViewModel.FontSize;
+            get => _MainWindowViewModel.FontSize;
             set
             {
-                _MainViewModel.FontSize = value;
+                _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -115,12 +135,12 @@ namespace FilOps.ViewModels
         public DelegateCommand ToExplorer { get; set; }
         #endregion バインディング
 
-        private readonly IMainViewModel _MainViewModel;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
 
         public SettingsPageViewModel(
-            IMainViewModel mainViewModel)
+            IMainWindowViewModel mainViewModel)
         {
-            _MainViewModel = mainViewModel;
+            _MainWindowViewModel = mainViewModel;
 
             // TODO : MainViewModel から言語を読み込むようにする
             SelectedLanguage = CultureInfo.CurrentCulture.Name;
@@ -130,13 +150,21 @@ namespace FilOps.ViewModels
             // TODO : MainViewModel からフォント設定を読み込むようにする
 
             // フォントサイズの一覧取得とバインド
-            foreach (var fontSize in _MainViewModel.GetSelectableFontSize())
+            foreach (var fontSize in _MainWindowViewModel.GetSelectableFontSize())
             {
                 FontSizes.Add(new FontSize(fontSize));
             }
             // TODO : MainViewModel からフォントサイズを読み込むようにする
 
             ToExplorer = new DelegateCommand(() => { WeakReferenceMessenger.Default.Send(new ToExplorerPage()); });
+
+            // メインウィンドウからのフォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (recipient, message) =>
+            {
+                FontSize = message.FontSize;
+                SelectedFontSize = message.FontSize;
+            });
+
         }
 
         /// <summary>

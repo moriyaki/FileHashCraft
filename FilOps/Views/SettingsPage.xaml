@@ -7,6 +7,7 @@
       xmlns:vm="clr-namespace:FilOps.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      
       Title="SettingsPage">
 
     <Grid PreviewMouseWheel="OnMouseWheel">
@@ -26,23 +27,33 @@
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
 
+        <!-- For MouseWheel Border -->
+        <Border Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent"/>
 
+        <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent"/>
         <Button Grid.Row="6" Grid.Column="2" Margin="5" Command="{Binding ToExplorer}"
+                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}"/>
 
         <!-- Language Select -->
+        <Border Grid.Row="1" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" 
+               FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="Language"/>
         <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                   ItemsSource="{Binding Languages}"
                   SelectedValue="{Binding SelectedLanguage}"
                   SelectedValuePath="Lang"
                   DisplayMemberPath="Name"/>
 
         <!-- Font Select -->
+        <Border Grid.Row="2" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" 
+               FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontString, Mode=OneWay}"/>
         <ComboBox x:Name="FontComboBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  FontSize="{Binding FontSize}"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   ItemsSource="{Binding FontFamilies}"
                   SelectedItem="{Binding SelectedFontFamily, Mode=TwoWay}">
@@ -54,18 +65,25 @@
         </ComboBox>
 
         <!-- Font Size Select -->
+        <Border Grid.Row="3" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
+               FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontSizeString, Mode=OneWay}"/>
         <ComboBox x:Name="FontSizeComboBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                   ItemsSource="{Binding FontSizes}"
                   SelectedValue="{Binding SelectedFontSize}"
                   SelectedValuePath="Size"
                   DisplayMemberPath="SizeString"/>
 
         <!-- Hash Algorithm Select -->
+        <Border Grid.Row="4" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" 
+               FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
+
         <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
+                  FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                   ItemsSource="{Binding HashAlgorithms}"
                   SelectedValue="{Binding SelectedHashAlgorithm}"
                   SelectedValuePath="Algorithm"

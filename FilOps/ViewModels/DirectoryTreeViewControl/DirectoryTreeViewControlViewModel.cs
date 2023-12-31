@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FilOps.Models;
@@ -63,13 +64,29 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
+        /// フォントの設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => _MainWindowViewModel.UsingFont;
+            set
+            {
+                _MainWindowViewModel.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _FontSize = SystemFonts.MessageFontSize;
         public double FontSize
         {
-            get => _FontSize;
-            set => SetProperty(ref _FontSize, value);
+            get => _MainWindowViewModel.FontSize;
+            set
+            {
+                _MainWindowViewModel.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
+            }
         }
 
         /// <summary>
@@ -97,7 +114,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
-        private readonly IMainViewModel _MainWindowViewModel;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
         /// 引数なしで生成はさせない
@@ -113,7 +130,7 @@ namespace FilOps.ViewModels.DirectoryTreeViewControl
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             ICheckedDirectoryManager checkedDirectoryManager,
             IExpandedDirectoryManager expandDirectoryManager,
-            IMainViewModel mainViewModel)
+            IMainWindowViewModel mainViewModel)
         {
             _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
             _CheckedDirectoryManager = checkedDirectoryManager;

@@ -37,7 +37,7 @@ namespace FilOps.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var mainViewVM = Ioc.Default.GetService<IMainViewModel>();
+                var mainViewVM = Ioc.Default.GetService<IMainWindowViewModel>();
                 if (mainViewVM is not null)
                 {
                     if (e.Delta > 0) { mainViewVM.FontSizePlus(); }

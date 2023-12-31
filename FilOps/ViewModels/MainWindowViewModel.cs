@@ -10,20 +10,31 @@ using FilOps.Views;
 
 namespace FilOps.ViewModels
 {
-    public interface IMainViewModel 
+    public interface IMainWindowViewModel 
     {
         public double Top { get; set; }
         public double Left { get; set; }
         public double Width {  get; set; }
         public double Height { get; set; }
         public double FontSize { get; set; }
-        public FontFamily Font { get; set; }
+        public FontFamily UsingFont { get; set; }
+        /// <summary>
+        /// フォントサイズを取得する
+        /// </summary>
+        /// <returns>設定できるフォントサイズリスト</returns>
         public IEnumerable<double> GetSelectableFontSize();
+
+        /// <summary>
+        /// フォントサイズを大きくする
+        /// </summary>
         public void FontSizePlus();
+        /// <summary>
+        /// フォントサイズを小さくする
+        /// </summary>
         public void FontSizeMinus();
     }
 
-    public class MainViewModel : ObservableObject, IMainViewModel
+    public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     {
         #region データバインディング
         /// <summary>
@@ -68,29 +79,45 @@ namespace FilOps.ViewModels
 
         /// <summary>
         /// フォントの変更
+        /// MainWindowを参照できる所には以下のコード
         /// </summary>
-        private FontFamily _Font = SystemFonts.MessageFontFamily;
-        public FontFamily Font
+        private FontFamily _UsingFont = SystemFonts.MessageFontFamily;
+        public FontFamily UsingFont
         {
-            get => _Font;
+            get => _UsingFont;
             set
             {
-                SetProperty(ref _Font, value);
-                WeakReferenceMessenger.Default.Send(new FontChanged(value));
+                if (value != _UsingFont)
+                {
+                    SetProperty(ref _UsingFont, value);
+                    WeakReferenceMessenger.Default.Send(new FontChanged(value));
+
+                }
             }
         }
 
+        /// <summary>
+        /// フォントサイズの変更
+        /// MainWindowを参照できる所には以下のコード
+        /// </summary>
         private double _FontSize = SystemFonts.MessageFontSize;
         public double FontSize
         {
             get => _FontSize;
             set
             {
-                SetProperty(ref _FontSize, value, nameof(FontSize));
-                WeakReferenceMessenger.Default.Send(new FontSizeChanged(value));
+                if (value != _FontSize)
+                {
+                    SetProperty(ref _FontSize, value, nameof(FontSize));
+                    WeakReferenceMessenger.Default.Send(new FontSizeChanged(value));
+
+                }
             }
         }
-
+ 
+        /// <summary>
+        /// ハッシュ計算アルゴリズムの変更
+        /// </summary>
         private string _HashAlgorithm = "SHA-256";
         public string HashAlgorithm
         {
@@ -102,6 +129,40 @@ namespace FilOps.ViewModels
         }
         #endregion データバインディング
 
+        /* 
+        フォント関連の XAML はこう
+        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+        
+        ViewModel ではこう
+
+        /// <summary>
+        /// フォントの設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => _MainWindowViewModel.UsingFont;
+            set
+            {
+                _MainWindowViewModel.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
+        /// フォントサイズの設定
+        /// </summary>
+        public double FontSize
+        {
+            get => _MainWindowViewModel.FontSize;
+            set
+            {
+                _MainWindowViewModel.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
+            }
+        }
+         */
+
+
         /// <summary>
         /// 設定できるフォントサイズ
         /// </summary>
@@ -111,7 +172,7 @@ namespace FilOps.ViewModels
         /// <summary>
         /// フォントサイズを取得する
         /// </summary>
-        /// <returns></returns>
+        /// <returns>設定できるフォントサイズリスト</returns>
         public IEnumerable<double> GetSelectableFontSize()
         {
             foreach (var fontSize in FontSizes) { yield return fontSize; }
