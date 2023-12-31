@@ -1,8 +1,4 @@
-using System.Diagnostics;
-using System.Linq;
 using FileHashCraft.Models;
-using FileHashCraft.ViewModels;
-using FileHashCraft.ViewModels.ExplorerPage;
 
 namespace FileHashCraft.Tests
 {
@@ -11,59 +7,58 @@ namespace FileHashCraft.Tests
         [Fact]
         public void AddRemoveSimpleTest()
         {
-            var path = @"C:\";
+            const string path = @"C:\";
             var dirManager = new ExpandedDirectoryManager();
 
-            var aaa = path + "aaa";
-            var bbb = path + "bbb";
-            var ccc = path + "ccc";
+            const string aaa = path + "aaa";
+            const string bbb = path + "bbb";
+            const string ccc = path + "ccc";
 
             dirManager.AddDirectory(aaa);
             dirManager.AddDirectory(bbb);
             dirManager.AddDirectory(ccc);
 
-            Assert.True(dirManager.Directories.Where(dir => dir == aaa).Any());
-            Assert.True(dirManager.Directories.Where(dir => dir == bbb).Any());
-            Assert.True(dirManager.Directories.Where(dir => dir == ccc).Any());
-
+            Assert.Contains(dirManager.Directories, dir => dir == aaa);
+            Assert.Contains(dirManager.Directories, dir => dir == bbb);
+            Assert.Contains(dirManager.Directories, dir => dir == ccc);
 
             var count = dirManager.Directories.Count;
             dirManager.AddDirectory(bbb);
             Assert.Equal(count, dirManager.Directories.Count);
 
             dirManager.RemoveDirectory(bbb);
-            Assert.False(dirManager.Directories.Where(dir => dir == bbb).Any());
+            Assert.DoesNotContain(dirManager.Directories, dir => dir == bbb);
         }
 
         [Fact]
-        public void SpecialFolder() 
+        public void SpecialFolder()
         {
-            var path = @"C:\Users\moriyaki\Documents";
+            const string path = @"C:\Users\moriyaki\Documents";
 
             var dirManager = new ExpandedDirectoryManager();
-            Assert.True(dirManager.Directories.Where(dir => dir == path).Any());
+            Assert.Contains(dirManager.Directories, dir => dir == path);
 
             dirManager.RemoveDirectory(path);
-            Assert.True(dirManager.Directories.Where(dir => dir == path).Any());
+            Assert.Contains(dirManager.Directories, dir => dir == path);
         }
 
         [Fact]
         public void SubDirectory()
         {
-            var path = @"C:\";
+            const string path = @"C:\";
             var dirManager = new ExpandedDirectoryManager();
 
-            var aaa = path + "aaa";
+            const string aaa = path + "aaa";
             var bbb = Path.Combine(aaa + "bbb");
 
             dirManager.AddDirectory(aaa);
             dirManager.AddDirectory(bbb);
 
-            Assert.True(dirManager.Directories.Where(dir => dir == aaa).Any());
-            Assert.True(dirManager.Directories.Where(dir => dir == bbb).Any());
+            Assert.Contains(dirManager.Directories, dir => dir == aaa);
+            Assert.Contains(dirManager.Directories, dir => dir == bbb);
 
             dirManager.RemoveDirectory(aaa);
-            Assert.True(dirManager.Directories.Where(dir => dir == bbb).Any());
+            Assert.Contains(dirManager.Directories, dir => dir == bbb);
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FileHashCraft.Models;
+﻿using FileHashCraft.Models;
 
 namespace FileHashCraft.Tests
 {
@@ -15,7 +10,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestRootChecked()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, true);
 
@@ -29,7 +24,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestSubChecked()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var a = Path.Combine(root, "a");
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, true);
@@ -44,7 +39,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestSubFirstChecked()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var a = Path.Combine(root, "a");
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(a, true);
@@ -60,7 +55,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestRootFirstChecked()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var a = Path.Combine(root, "a");
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, true);
@@ -76,7 +71,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestSubNotRegistered()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var a = Path.Combine(root, "a");
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, true);
@@ -90,7 +85,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestUnchecked()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, true);
             manager.CheckChanged(root, false);
@@ -105,7 +100,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestSubUnCecked()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var a = Path.Combine(root, "a");
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, false);
@@ -119,7 +114,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestMixChecked()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, null);
 
@@ -132,7 +127,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestMixExistNotNested()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, null);
 
@@ -146,7 +141,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestMixExistRemove()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, null);
             manager.CheckChanged(root, false);
@@ -158,7 +153,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestAddRepeat()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, true);
             manager.CheckChanged(root, true);
@@ -173,7 +168,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void TestAddRemoveAdd()
         {
-            var root = @"C:\";
+            const string root = @"C:\";
             var manager = new CheckedDirectoryManager();
             manager.CheckChanged(root, true);
             manager.CheckChanged(root, false);

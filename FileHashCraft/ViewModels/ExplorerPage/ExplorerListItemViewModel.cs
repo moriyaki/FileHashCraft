@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.IO;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Models;
@@ -24,7 +25,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         {
             ExplorerVM = explorerVM;
             ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
-
         }
 
         /// <summary>
@@ -60,7 +60,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             {
                 // ExplorerPageViewModel の FontSize が変更された場合、ExplorerItemViewModelBase のプロパティも更新
                 OnPropertyChanged(nameof(ExplorerVM.FontSize));
-
             }
         }
 
@@ -176,14 +175,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// フォントサイズ
-        /// </summary>
-        public double FontSize
-        {
-            get => ExplorerVM.FontSize;
-        }
-
-        /// <summary>
         /// 表示用の更新日時文字列
         /// </summary>
         public string LastFileUpdate
@@ -231,6 +222,32 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 if (FileSize == null || IsDirectory) return string.Empty;
                 var kb_filesize = (long)FileSize / 1024;
                 return kb_filesize.ToString("N") + "KB";
+            }
+        }
+
+        /// <summary>
+        /// フォントの設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => ExplorerVM.UsingFont;
+            set
+            {
+                ExplorerVM.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
+        /// フォントサイズの設定
+        /// </summary>
+        public double FontSize
+        {
+            get => ExplorerVM.FontSize;
+            set
+            {
+                ExplorerVM.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
             }
         }
         #endregion データバインディング

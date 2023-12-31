@@ -130,15 +130,19 @@
     <comment>Button</comment>
   </data>
   <data name="HashAlgorithm_MD5" xml:space="preserve">
-    <value>軽量だけど非推奨</value>
-    <comment>SettingsPage/Security</comment>
-  </data>
-  <data name="HashAlgorithm_SHA-3" xml:space="preserve">
-    <value>次世代セキュリティ</value>
+    <value>MD5 (低セキュリティ：衝突のリスクがあり非推奨、計算は速い)</value>
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA256" xml:space="preserve">
-    <value>高セキュリティ</value>
+    <value>SHA-256 (高セキュリティ：信頼性は高いが計算がやや遅い、標準として推奨)</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA384" xml:space="preserve">
+    <value>SHA-384 (高セキュリティ：SHA-256よりも高いセキュリティ強度を持つが、計算が遅い)</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA512" xml:space="preserve">
+    <value>SHA-512 (最高セキュリティ：非常に高いセキュリティ強度を持つが、計算が非常に遅い)</value>
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="LabelCommand" xml:space="preserve">
@@ -192,5 +196,8 @@
   <data name="MenuSettings" xml:space="preserve">
     <value>設定(_S)</value>
     <comment>MenuItem</comment>
+  </data>
+  <data name="String" xml:space="preserve">
+    <value>SettingsPage/Security</value>
   </data>
 </root>

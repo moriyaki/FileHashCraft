@@ -1,12 +1,19 @@
 # FileHashCraft
 
-ChatGPT 3.5 さんの命名です、今の所検索に引っかかってないので頂きました。
+## License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+This project uses NLog, which is distributed under the BSD 3-Clause License.
+See [NLog License](https://github.com/NLog/NLog/blob/main/LICENSE.txt) for details.
+
+## このソフトについて
+
+ChatGPT 3.5 さんの命名です、今の所検索に引っかかってないので頂きました。
 (GPT と GTP が混同してしまう人は、GTP = Go Text Protocol = 碁のテキストプロトコル、と覚えておきましょう)
 
 一応、アプリケーションは日本語と同時に英語にも対応しています。
-
-ドキュメントは作っていません、ドキュメント書く所まで作れていません。
+しかし、ドキュメントは作っていません、ドキュメントを書く所まで作れていません。
 
 ## 考えている事
 
@@ -15,8 +22,7 @@ ChatGPT 3.5 さんの命名です、今の所検索に引っかかってない�
 - ファイルハッシュによる重複ファイルの削除支援
 - 正規表現を含めたファイルの管理支援
 
-です。まだどちらも実装していません。
-
+という機能を考えています。まだどちらも実装していません。
 ファイルハッシュでの重複ファイル削除支援を優先して作る予定です。
 
 FileHashCraft とは、このファイルをハッシュで「芸術的に」処理するとかいう過ぎた名前です。
@@ -28,16 +34,14 @@ FileHashCraft とは、このファイルをハッシュで「芸術的に」処
 Windows only です。それも Windows 7 での動作確認でさえ、できていない状況です。Windows 11 はまだ入れていません。
 なので実質 Windows 10 only ですね。
 
-## ライセンス
+## ライセンスの補足
 
 みんな大好きGPLじゃなくて、MITライセンスを適用します。
-
 理由は簡単で「使ったソースコードの公開義務はない」のが気に入っています。
 
-一部分を流用して使う分には、
+流用して使う分には
 
 > Copyright (c) 2023 moriyaki
 
 と明記して、MITライセンス全文にアクセスできるようにしておけば、ライセンスに引っかかることもないでしょう。
-
 「moriyaki is 誰」状態ですけど、moriyaki は日本語表記だと「もりゃき」です、Mastodonやってます。

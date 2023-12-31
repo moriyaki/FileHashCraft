@@ -130,15 +130,19 @@
     <comment>Button/Menu</comment>
   </data>
   <data name="HashAlgorithm_MD5" xml:space="preserve">
-    <value>Light but deprecated</value>
-    <comment>SettingsPage/Security</comment>
-  </data>
-  <data name="HashAlgorithm_SHA-3" xml:space="preserve">
-    <value>Next-Gen Security</value>
+    <value>MD5 (Low Security: Deprecated due to collision risk, computations are fast)</value>
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA256" xml:space="preserve">
-    <value>High Security</value>
+    <value>SHA-256 (High Security: Reliable, but computations are moderately slow; recommended as standard)</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA384" xml:space="preserve">
+    <value>SHA-384 (High Security: Higher security strength than SHA-256, but computations are slower)</value>
+    <comment>SettingsPage/Security</comment>
+  </data>
+  <data name="HashAlgorithm_SHA512" xml:space="preserve">
+    <value>SHA-512 (Maximum Security: Very high security strength, but computations are very slow)</value>
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="LabelCommand" xml:space="preserve">

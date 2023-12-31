@@ -10,25 +10,18 @@ namespace FileHashCraft
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    /// 
+    ///
     public partial class MainView : Window
     {
-　      public MainView()
+        public MainView()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<IMainWindowViewModel>();
             MainFrame.Navigate(new ExplorerPage());
             //MainFrame.Navigate(new SettingsPage());
 
-            WeakReferenceMessenger.Default.Register<ToExplorerPage>(this, (recipient, message) =>
-            {
-                MainFrame.Navigate(new ExplorerPage());
-            });
-            WeakReferenceMessenger.Default.Register<ToSettingsPage>(this, (recipient, message) =>
-            {
-                MainFrame.Navigate(new SettingsPage());
-            });
-
+            WeakReferenceMessenger.Default.Register<ToExplorerPage>(this, (__, _) => MainFrame.Navigate(new ExplorerPage()));
+            WeakReferenceMessenger.Default.Register<ToSettingsPage>(this, (__, _) => MainFrame.Navigate(new SettingsPage()));
         }
 
         /// <summary>
@@ -43,6 +36,5 @@ namespace FileHashCraft
 
             Application.Current.Shutdown();
         }
-
     }
 }

@@ -2,7 +2,6 @@
 
 namespace FileHashCraft.Models
 {
-
     #region ディレクトリとファイル情報
     /// <summary>
     /// ファイル情報
@@ -42,12 +41,10 @@ namespace FileHashCraft.Models
         /// ファイルのサイズ
         /// </summary>
         public long FileSize { get; set; } = 0;
-
     }
     #endregion ディレクトリとファイル情報
 
-
-    public class FileSystemInformationManager
+    public static class FileSystemInformationManager
     {
         #region ディレクトリとファイルのスキャン関連
         /// <summary>
@@ -55,11 +52,11 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="fullPath">ディレクトリのフルパス</param>
         /// <returns>子ディレクトリが存在する場合は true、それ以外は false</returns>
-        public static bool HasChildrenDirectories(string full_path)
+        public static bool HasChildrenDirectories(string fullPath)
         {
             try
             {
-                var HasDirectory = Directory.EnumerateDirectories(full_path).Any();
+                var HasDirectory = Directory.EnumerateDirectories(fullPath).Any();
                 if (HasDirectory) { return true; }
             }
             catch (Exception ex)
@@ -160,11 +157,11 @@ namespace FileHashCraft.Models
 
         #endregion ディレクトリとファイルのスキャン関連
 
+        #region フルパスからFileItemInformationを取得
         /// <summary>
         /// 指定されたディレクトリのパスから、FileInformationを生成します。
         /// </summary>
         /// <param name="fullPath">FileInformationを生成するファイルのフルパス</param>
-        /// <param name="isReady">ドライブが準備されているかどうか。既定値は true です。</param>
         /// <returns>指定されたディレクトリのFileInformation</returns>
         /// <remarks>
         /// メソッドの動作には、指定されたディレクトリが存在することが前提とされています。
@@ -175,12 +172,11 @@ namespace FileHashCraft.Models
             var driveInfo = new DriveInfo(driveLetter);
             var isRemovable = driveInfo.DriveType == DriveType.Removable;
             var isReady = driveInfo.IsReady;
-            FileItemInformation item;
 
             if (File.Exists(fullPath))
             {
                 var fileInfo = new FileInfo(fullPath);
-                item = new FileItemInformation
+                return new FileItemInformation
                 {
                     FullPath = fileInfo.FullName,
                     IsDirectory = false,
@@ -194,7 +190,7 @@ namespace FileHashCraft.Models
             else
             {
                 var dirInfo = new DirectoryInfo(fullPath);
-                item = new FileItemInformation
+                return new FileItemInformation
                 {
                     FullPath = dirInfo.FullName,
                     IsDirectory = true,
@@ -204,7 +200,7 @@ namespace FileHashCraft.Models
                     HasChildren = HasChildrenDirectories(dirInfo.FullName),
                 };
             }
-            return item;
         }
+        #endregion フルパスからFileItemInformationを取得
     }
 }

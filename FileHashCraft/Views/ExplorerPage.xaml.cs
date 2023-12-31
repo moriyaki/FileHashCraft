@@ -80,11 +80,8 @@ namespace FileHashCraft.Views
             {
                 explorerVM.CurrentFullPath = WindowsAPI.GetPath(KnownFolder.User);
             }
-
-            HwndSource? hwndSource;
-
             // HwndSourceを取得
-            hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+            HwndSource? hwndSource = PresentationSource.FromVisual(this) as HwndSource;
             explorerVM?.HwndAddHook(hwndSource);
         }
     }

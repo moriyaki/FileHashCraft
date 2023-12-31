@@ -135,7 +135,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             _MainWindowViewModel = mainViewModel;
 
             // カレントディレクトリの変更メッセージ
-            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (recipient, message) =>
+            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) =>
             {
                 if (CurrentFullPath == message.CurrentFullPath) return;
                 CurrentFullPath = message.CurrentFullPath;
@@ -143,10 +143,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             });
 
             // フォントの変更メッセージ
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (recipient, message) =>
-            {
-                FontSize = message.FontSize;
-            });
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
 
             foreach (var root in FileSystemInformationManager.ScanDrives())
             {

@@ -11,7 +11,7 @@
         public static void CheckCheckBoxStatusChanged(DirectoryTreeViewModel current, bool? value)
         {
             if (current == null) { return; }
-            if (current.FullPath == string.Empty) { return; }
+            if (current.FullPath?.Length == 0) { return; }
             if (current.IsChecked == value) { return; }
 
             // 自分のチェック状態により処理を振り分け
@@ -26,7 +26,7 @@
                 default:
                     //CheckBoxChangeToMixed(current);
                     break;
-            };
+            }
         }
 
         /// <summary>
@@ -52,7 +52,6 @@
         /// TreeViewItem の CheckBox がチェックされた時の処理をします。
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
-        /// <param name="value">変更された値</param>
         private static void CheckBoxChangeToChecked(DirectoryTreeViewModel current)
         {
             // CheckBox のチェックがされていたら、再帰的に子を反映する
@@ -63,7 +62,6 @@
         /// TreeViewItem の CheckBox がチェック解除された時の処理をします。
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
-        /// <param name="value">変更された値</param>
         private static void CheckBoxChangeToUnchecked(DirectoryTreeViewModel current)
         {
             // CheckBox のチェックが解除されていたら、再帰的に子を反映する
@@ -73,21 +71,17 @@
         /// <summary>
         /// TreeViewItem の CheckBox がチェック解除された時の処理をします。
         /// </summary>
-        /// <param name="current">ExplorerTreeNodeViewModel</param>
-        /// <param name="value">変更された値</param>
-        /*
-        private static void CheckBoxChangeToMixed(ExplorerTreeNodeViewModel current)
+        private static void CheckBoxChangeToMixed()
         {
             // Mixed は子に反映させる必要がない
         }
-        */
         #endregion 子ディレクトリのチェック管理
 
         #region 親ディレクトリのチェック管理
         /// <summary>
         /// 変更が加えられた可能性があるカレントディレクトリの親ディレクトリリストを取得する
         /// </summary>
-        /// <param name="current">カレントディレクトリのアイテム</param>
+        /// <param name="currentNode">カレントディレクトリのアイテム</param>
         /// <returns>変更可能性があるディレクトリのリスト</returns>
         private static void ParentCheckBoxChange(DirectoryTreeViewModel currentNode)
         {

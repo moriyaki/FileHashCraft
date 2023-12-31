@@ -1,8 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Globalization;
-using System.Security.Cryptography;
-using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -22,7 +19,7 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         ///  選択できる言語
         /// </summary>
-        public ObservableCollection<Language> Languages { get; private set; } =
+        public ObservableCollection<Language> Languages { get; } =
             [
                 new Language("en-US", "English"),
                 new Language("ja-JP", "日本語"),
@@ -31,27 +28,35 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 選択されている言語
         /// </summary>
-        private string _SelectedLanguage = string.Empty;
         public string SelectedLanguage
         {
-            get => _SelectedLanguage;
+            get => _MainWindowViewModel.SelectedLanguage;
             set
             {
-                ResourceService.Current.ChangeCulture(value);
-                OnPropertyChanged("Resources");
-                SetProperty(ref _SelectedLanguage, value);
+                _MainWindowViewModel.SelectedLanguage = value;
+                var currentHashAlgorithms = SelectedHashAlgorithm;
+                HashAlgorithms.Clear();
+                HashAlgorithms =
+                    [
+                        new("SHA-256", Resources.HashAlgorithm_SHA256),
+                        new("SHA-384", Resources.HashAlgorithm_SHA384),
+                        new("SHA-512", Resources.HashAlgorithm_SHA512),
+                        new("MD5", Resources.HashAlgorithm_MD5),
+                    ];
+                OnPropertyChanged(nameof(HashAlgorithms));
+                SelectedHashAlgorithm = currentHashAlgorithms;
             }
         }
 
         /// <summary>
         /// フォントファミリーの一覧
         /// </summary>
-        public ObservableCollection<FontFamily> FontFamilies { get; private set; }
+        public ObservableCollection<FontFamily> FontFamilies { get; }
 
         /// <summary>
         /// 選択されているフォント
         /// </summary>
-        private FontFamily _SelectedFontFamily = SystemFonts.MessageFontFamily;
+        private FontFamily _SelectedFontFamily;
         public FontFamily SelectedFontFamily
         {
             get => _SelectedFontFamily;
@@ -65,12 +70,12 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// フォントサイズの一覧
         /// </summary>
-        public ObservableCollection<FontSize> FontSizes { get; private set; } = [];
+        public ObservableCollection<FontSize> FontSizes { get; } = [];
 
         /// <summary>
         /// 選択されたフォントサイズ
         /// </summary>
-        private double _SelectedFontSize = SystemFonts.MessageFontSize;
+        private double _SelectedFontSize;
         public double SelectedFontSize
         {
             get => _SelectedFontSize;
@@ -87,20 +92,25 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ハッシュ計算アルゴリズムの一覧
         /// </summary>
-        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; private set; } =
+        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
             [
                 new("SHA-256", Resources.HashAlgorithm_SHA256),
-                new("SHA-3", Resources.HashAlgorithm_SHA_3),
+                new("SHA-384", Resources.HashAlgorithm_SHA384),
+                new("SHA-512", Resources.HashAlgorithm_SHA512),
                 new("MD5", Resources.HashAlgorithm_MD5),
             ];
 
-        private string _SelectedHashAlgorithm = "SHA-256";
+        private string _SelectedHashAlgorithm;
         public string SelectedHashAlgorithm
         {
             get => _SelectedHashAlgorithm;
             set
             {
-                SetProperty(ref _SelectedHashAlgorithm, value);
+                if (SelectedHashAlgorithm != value)
+                {
+                    HashAlgorithm = value;
+                    SetProperty(ref _SelectedHashAlgorithm, value);
+                }
             }
         }
 
@@ -129,6 +139,15 @@ namespace FileHashCraft.ViewModels
                 OnPropertyChanged(nameof(FontSize));
             }
         }
+        public string HashAlgorithm
+        {
+            get => _MainWindowViewModel.HashAlgorithm;
+            set
+            {
+                _MainWindowViewModel.HashAlgorithm = value;
+                OnPropertyChanged(nameof(HashAlgorithm));
+            }
+        }
 
         /// <summary>
         /// エクスプローラー風画面にページに移動
@@ -144,29 +163,50 @@ namespace FileHashCraft.ViewModels
         {
             _MainWindowViewModel = mainViewModel;
 
-            // TODO : MainViewModel から言語を読み込むようにする
-            SelectedLanguage = CultureInfo.CurrentCulture.Name;
+            // 利用言語の読み込み
+            SelectedLanguage = _MainWindowViewModel.SelectedLanguage;
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
-            // TODO : MainViewModel からフォント設定を読み込むようにする
+
+            // MainViewModel からフォント設定を読み込むようにする
+            _SelectedFontFamily = _MainWindowViewModel.UsingFont;
+            OnPropertyChanged(nameof(SelectedFontFamily));
+
+            _SelectedFontSize = _MainWindowViewModel.FontSize;
+            OnPropertyChanged(nameof(SelectedFontSize));
 
             // フォントサイズの一覧取得とバインド
             foreach (var fontSize in _MainWindowViewModel.GetSelectableFontSize())
             {
                 FontSizes.Add(new FontSize(fontSize));
             }
-            // TODO : MainViewModel からフォントサイズを読み込むようにする
 
-            ToExplorer = new DelegateCommand(() => { WeakReferenceMessenger.Default.Send(new ToExplorerPage()); });
+            // MainViewModel からハッシュアルゴリズム設定を読み込むようにする
+            _SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
+
+            ToExplorer = new DelegateCommand(() => WeakReferenceMessenger.Default.Send(new ToExplorerPage()));
+
+            // メインウィンドウからのフォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) =>
+            {
+                UsingFont = message.UsingFont;
+                SelectedFontFamily = message.UsingFont;
+            });
 
             // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (recipient, message) =>
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
             {
                 FontSize = message.FontSize;
                 SelectedFontSize = message.FontSize;
             });
 
+            // メインウィンドウからのハッシュアルゴリズム変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<HashAlgorithmChanged>(this, (_, message) =>
+            {
+                HashAlgorithm = message.HashAlgorithm;
+                SelectedHashAlgorithm = message.HashAlgorithm;
+            });
         }
 
         /// <summary>
@@ -262,8 +302,7 @@ namespace FileHashCraft.ViewModels
         public HashAlgorithm(string algorithm, string algorithmCaption)
         {
             Algorithm = algorithm;
-            Name = $"{algorithm} ({algorithmCaption})";
-
+            Name = algorithmCaption;
         }
     }
     #endregion 設定画面表示用クラス

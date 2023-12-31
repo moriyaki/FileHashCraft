@@ -12,17 +12,8 @@ namespace FileHashCraft.ViewModels
 
     public class ResourceService : ObservableObject, IResourceService
     {
-        /// <summary>
-        /// 現在のリソースサービス
-        /// </summary>
-        private static readonly ResourceService _current = new();
-        public static ResourceService Current { get => _current; }
-
-        /// <summary>
-        /// 現在のリソース
-        /// </summary>
-        private readonly Resources _resources = new();
-        public Resources Resources { get => _resources; }
+        public static ResourceService Current { get; } = new();
+        public Resources Resources { get; } = new();
 
         /// <summary>
         /// 言語カルチャを変更する

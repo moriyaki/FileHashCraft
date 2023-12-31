@@ -108,7 +108,6 @@ namespace FileHashCraft.ViewModels
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        /// <param name="expandDirManager">今はIExpandedDirectoryManager</param>
         public DebugWindowViewModel(
             IExpandedDirectoryManager expandedDirectoryManager,
             ICheckedDirectoryManager checkedDirectoryManager,
@@ -122,7 +121,7 @@ namespace FileHashCraft.ViewModels
             Left = mainViewModel.Left + mainViewModel.Width;
 
             timer = new DispatcherTimer();
-            timer.Tick += new EventHandler(Polling);
+            timer.Tick += Polling;
             timer.Interval = TimeSpan.FromMilliseconds(200);
             PollingCommand = new DelegateCommand(
                 () =>
@@ -144,6 +143,7 @@ namespace FileHashCraft.ViewModels
         }
         #endregion コンストラクタと初期化
 
+        #region ポーリング処理
         /// <summary>
         /// ポーリング中の処理を行います。
         /// </summary>
@@ -165,13 +165,13 @@ namespace FileHashCraft.ViewModels
                     sb.AppendLine("サブディレクトリを含まない管理");
                     foreach (var item in _CheckedDirectoryManager.NonNestedDirectories)
                     {
-                        sb.AppendLine($"\t{item}");
+                        sb.Append('\t').AppendLine(item);
                     }
                     sb.AppendLine("-------------------------------");
                     sb.AppendLine("サブディレクトリを含む管理");
                     foreach (var item in _CheckedDirectoryManager.NestedDirectories)
                     {
-                        sb.AppendLine($"\t{item}");
+                        sb.Append('\t').AppendLine(item);
                     }
                     break;
                 default:
@@ -184,5 +184,6 @@ namespace FileHashCraft.ViewModels
                 DebugText = sb.ToString();
             });
         }
+        #endregion ポーリング処理
     }
 }

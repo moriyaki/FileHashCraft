@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 
 namespace FileHashCraft.ViewModels
 {
-    /* 
+    /*
         メッセージ送信サンプル
             WeakReferenceMessenger.Default.Send(new FontChanged(value));
         メッセージ受信サンプル
@@ -36,13 +30,13 @@ namespace FileHashCraft.ViewModels
     /// </summary>
     public class FontChanged
     {
-        public FontFamily Font { get; } = SystemFonts.MessageFontFamily;
+        public FontFamily UsingFont { get; } = SystemFonts.MessageFontFamily;
 
         public FontChanged() { }
 
-        public FontChanged(FontFamily font)
+        public FontChanged(FontFamily usingFont)
         {
-            Font = font;
+            UsingFont = usingFont;
         }
     }
 
@@ -58,6 +52,21 @@ namespace FileHashCraft.ViewModels
         public FontSizeChanged(double fontSize)
         {
             FontSize = fontSize;
+        }
+    }
+
+    /// <summary>
+    /// ハッシュ計算アルゴリズムの変更メッセージ
+    /// </summary>
+    public class HashAlgorithmChanged
+    {
+        public string HashAlgorithm { get; } = "SHA-256";
+
+        public HashAlgorithmChanged() { }
+
+        public HashAlgorithmChanged(string hashAlgorithm)
+        {
+            HashAlgorithm = hashAlgorithm;
         }
     }
     #endregion MainView用

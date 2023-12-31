@@ -8,7 +8,6 @@ using System.Windows.Media.Imaging;
 
 namespace FileHashCraft.Models
 {
-
     /// <summary>
     /// 特殊フォルダの列挙子
     /// </summary>
@@ -27,26 +26,27 @@ namespace FileHashCraft.Models
     /// <summary>
     /// SHGetFIleInfoの第4引数で指定する、取得する情報のパラメータです。
     /// </summary>
+    [Flags]
     public enum SHGFI : uint
     {
-        SHGFI_ADDOVERLAYS = 0x000000020,// 適切なオーバーレイをアイコンに適用(SHGFI_ICON必要)
-        SHGFI_ATTR_SPECIFIED = 0x000020000, // SHGFI_ATTRIBUTES変更を示し、psfiのdwAttributesに必要な属性が含まれる(SHGFI_ICON不可)
-        SHGFI_ATTRIBUTES = 0x000000800, // アイテムの属性をpsfiのdwAttributesに
-        SHGFI_DISPLAYNAME = 0x000000200,// ファイルの表示名をpsfiのszDisplayNameに
-        SHGFI_EXETYPE = 0x000002000,// 実行可能ファイルの場合、そのタイプを戻り値に(他フラグと併用不可)
-        SHGFI_ICON = 0x000000100,   // ファイルを表すアイコンのハンドルと、システムイメージリストのアイコンインデックスをpsfiのhIconとiIconに
-        SHGFI_ICONLOCATION = 0x000001000,   // アイコンが含まれるファイルパスをpsfiのszDisplayNameに、インデックスをpsfiのiIconに
         SHGFI_LARGEICON = 0x000000000,  // SHGFI_ICONの設定必要、大きいアイコン(32x32)取得
-        SHGFI_LINKOVERLAY = 0x000008000,// SHGFI_ICONの設定必要、リンクを示す絵を加える
-        SHGFI_OPENICON = 0x000000002,   // SHGFI_ICONとSHGFI_SYSICONINDEXの設定必要、開いた状態のアイコンを取得
-        SHGFI_OVERLAYINDEX = 0x000000040,   // Ver5.0より SHGFI_ICONの設定必要、オーバーレイアイコンのインデックスを取得 psfiのiIcon上位8ビット
-        SHGFI_PIDL = 0x000000008,   // パスではなく ITEMIDLIST でデータを取得する
-        SHGFI_SELECTED = 0x000010000,   // SHGFI_ICONの設定必要、システムのハイライト色とブレンドさせる
-        SHGFI_SHELLICONSIZE = 0x000000004,  // SHGFI_ICONの設定必要、シェルサイズのアイコン取得
         SHGFI_SMALLICON = 0x000000001,  // SHGFI_ICONの設定必要、小さいアイコン(16x16)取得
-        SHGFI_SYSICONINDEX = 0x000004000,   // システムイメージリストアイコンのインデックス取得、psfiのiIconにコピーされたアイコンのみ有効
-        SHGFI_TYPENAME = 0x000000400,   // ファイルの種類を説明する文字列をpsfiのszTypeNameに
+        SHGFI_OPENICON = 0x000000002,   // SHGFI_ICONとSHGFI_SYSICONINDEXの設定必要、開いた状態のアイコンを取得
+        SHGFI_SHELLICONSIZE = 0x000000004,  // SHGFI_ICONの設定必要、シェルサイズのアイコン取得
+        SHGFI_PIDL = 0x000000008,   // パスではなく ITEMIDLIST でデータを取得する
         SHGFI_USEFILEATTRIBUTES = 0x000000010,  // ファイルにアクセスしない事を示し、属性を取得する
+        SHGFI_ADDOVERLAYS = 0x000000020,// 適切なオーバーレイをアイコンに適用(SHGFI_ICON必要)
+        SHGFI_OVERLAYINDEX = 0x000000040,   // Ver5.0より SHGFI_ICONの設定必要、オーバーレイアイコンのインデックスを取得 psfiのiIcon上位8ビット
+        SHGFI_ICON = 0x000000100,   // ファイルを表すアイコンのハンドルと、システムイメージリストのアイコンインデックスをpsfiのhIconとiIconに
+        SHGFI_DISPLAYNAME = 0x000000200,// ファイルの表示名をpsfiのszDisplayNameに
+        SHGFI_TYPENAME = 0x000000400,   // ファイルの種類を説明する文字列をpsfiのszTypeNameに
+        SHGFI_ATTRIBUTES = 0x000000800, // アイテムの属性をpsfiのdwAttributesに
+        SHGFI_ICONLOCATION = 0x000001000,   // アイコンが含まれるファイルパスをpsfiのszDisplayNameに、インデックスをpsfiのiIconに
+        SHGFI_EXETYPE = 0x000002000,// 実行可能ファイルの場合、そのタイプを戻り値に(他フラグと併用不可)
+        SHGFI_SYSICONINDEX = 0x000004000,   // システムイメージリストアイコンのインデックス取得、psfiのiIconにコピーされたアイコンのみ有効
+        SHGFI_LINKOVERLAY = 0x000008000,// SHGFI_ICONの設定必要、リンクを示す絵を加える
+        SHGFI_SELECTED = 0x000010000,   // SHGFI_ICONの設定必要、システムのハイライト色とブレンドさせる
+        SHGFI_ATTR_SPECIFIED = 0x000020000, // SHGFI_ATTRIBUTES変更を示し、psfiのdwAttributesに必要な属性が含まれる(SHGFI_ICON不可)
     }
 
     /// <summary>
@@ -110,6 +110,7 @@ namespace FileHashCraft.Models
             Guid rfid, uint dwFlags, nint hToken, out string @return);
         #endregion WindowsAPIへのLibraryImport]
 
+        #region WindowsAPIを使うメソッド
         /// <summary>
         /// KnownFolderをキーにGUIDを取得する辞書
         /// </summary>
@@ -169,7 +170,9 @@ namespace FileHashCraft.Models
                 return (icon, Utf16StringMarshaller.ConvertToManaged(shinfo.szTypeName) ?? String.Empty);
             }
         }
+        #endregion WindowsAPIを使うメソッド
 
+        #region ファイルのアイコンと種類をキャッシュしながら管理する
         /// <summary>
         /// キャッシュに指定されたキーが登録されていない場合、指定されたファイルの情報を取得して登録します。
         /// </summary>
@@ -223,7 +226,9 @@ namespace FileHashCraft.Models
         // ファイルのアイコンと種類のキャッシュ
         private static readonly Dictionary<string, BitmapSource> FileIconCache = [];
         private static readonly Dictionary<string, string> FileTypeCache = [];
+        #endregion ファイルのアイコンと種類をキャッシュしながら管理する
 
+        #region 外部からのアクセスメソッド
         /// <summary>
         /// ファイルのアイコンを取得します。
         /// </summary>
@@ -309,5 +314,6 @@ namespace FileHashCraft.Models
             // キャッシュされた特殊フォルダのパスと一致するか確認
             return _specialFolder.ContainsValue(path);
         }
+        #endregion 外部からのアクセスメソッド
     }
 }

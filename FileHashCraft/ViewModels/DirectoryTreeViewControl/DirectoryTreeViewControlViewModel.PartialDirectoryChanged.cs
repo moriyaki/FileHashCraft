@@ -23,7 +23,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     public partial class DirectoryTreeViewControlViewModel
     {
         #region ディレクトリ変更通知処理
-         /// <summary>
+        /// <summary>
         /// ディレクトリが変更された時の処理をします。
         /// 特に重要なのはドライブルートのアイテム削除は $RECYCLE.BIN を利用してしか不可で、
         /// 削除処理を DirectoryDeleted で取得できないため、ここでは削除処理を行います。
@@ -69,7 +69,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 Debug.WriteLine($"Exception in DirectoryChanged: {ex.Message}");
             }
-
         }
 
         /// <summary>
@@ -98,7 +97,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     Debug.WriteLine($"Exception in DirectoryDeleted: {ex.Message}");
                 }
-
             });
             // TODO : 特殊フォルダ内にも存在したら反映
             //FindChangedSpecialDirectoryTreeItem(e.FullPath);
@@ -136,7 +134,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     modifiedTreeItem.Children.Insert(newTreeIndex, addTreeItem);
                 }
-                catch (Exception ex) 
+                catch (Exception ex)
                 {
                     Debug.WriteLine($"Exception in DirectoryCreated: {ex.Message}");
                 }
@@ -180,7 +178,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     Debug.WriteLine($"Exception in DirectoryRenamed Remove: {ex.Message}");
                 }
-
             });
 
             // 名前変更後のアイテムを再追加
@@ -230,7 +227,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     icon = WindowsAPI.GetIcon(e.FullPath);
                     name = WindowsAPI.GetDisplayName(e.FullPath);
-
                 }
 
                 // 変更されるまで 100ms 待機しながら 120回繰り返す
@@ -262,17 +258,13 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     var addNewInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
                     var newTreeItem = new DirectoryTreeViewModel(this, addNewInformation);
                     int newTreeIndex = FindIndexToInsert(TreeRoot, newTreeItem);
-                    App.Current?.Dispatcher?.Invoke(() =>
-                    {
-                        TreeRoot.Insert(newTreeIndex, newTreeItem);
-                    });
+                    App.Current?.Dispatcher?.Invoke(() => TreeRoot.Insert(newTreeIndex, newTreeItem));
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception in OpticalDriveMediaInserted: {ex.Message}");
             }
-
         }
 
         /// <summary>

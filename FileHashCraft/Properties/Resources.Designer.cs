@@ -88,7 +88,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Light but deprecated に類似しているローカライズされた文字列を検索します。
+        ///   MD5 (Low Security: Deprecated due to collision risk, computations are fast) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_MD5 {
             get {
@@ -97,20 +97,29 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Next-Gen Security に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string HashAlgorithm_SHA_3 {
-            get {
-                return ResourceManager.GetString("HashAlgorithm_SHA-3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   High Security に類似しているローカライズされた文字列を検索します。
+        ///   SHA-256 (High Security: Reliable, but computations are moderately slow; recommended as standard) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_SHA256 {
             get {
                 return ResourceManager.GetString("HashAlgorithm_SHA256", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   SHA-384 (High Security: Higher security strength than SHA-256, but computations are slower) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HashAlgorithm_SHA384 {
+            get {
+                return ResourceManager.GetString("HashAlgorithm_SHA384", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   SHA-512 (Maximum Security: Very high security strength, but computations are very slow) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HashAlgorithm_SHA512 {
+            get {
+                return ResourceManager.GetString("HashAlgorithm_SHA512", resourceCulture);
             }
         }
         

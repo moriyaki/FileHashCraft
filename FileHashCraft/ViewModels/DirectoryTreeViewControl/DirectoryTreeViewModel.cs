@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Models;
@@ -193,14 +194,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
-        /// MainViewから伝搬したユーザーコントロールのフォントサイズを利用する
-        /// </summary>
-        public double FontSize
-        {
-            get => ControlVM.FontSize;
-        }
-
-        /// <summary>
         /// このディレクトリの子ディレクトリのコレクション
         /// </summary>
         private ObservableCollection<DirectoryTreeViewModel> _Children = [];
@@ -229,7 +222,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             get => _IsChecked;
             set
             {
-                if (FullPath == string.Empty) { return; }
+                if (FullPath?.Length == 0) { return; }
                 if (value == _IsChecked) return;
 
                 // サブディレクトリのチェック状態を変更する
@@ -305,7 +298,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     {
                         ControlVM.AddDirectoryToExpandedDirectoryManager(child);
                         if (IsChecked == true) { child.IsChecked = true; }
-
                     }
                 }
                 else
@@ -339,6 +331,32 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
             }
             _IsKicked = true;
+        }
+
+        /// <summary>
+        /// フォントの設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => ControlVM.UsingFont;
+            set
+            {
+                ControlVM.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
+        /// フォントサイズの設定
+        /// </summary>
+        public double FontSize
+        {
+            get => ControlVM.FontSize;
+            set
+            {
+                ControlVM.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
+            }
         }
         #endregion データバインディング
     }

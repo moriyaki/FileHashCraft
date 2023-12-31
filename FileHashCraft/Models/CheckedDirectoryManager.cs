@@ -8,7 +8,6 @@
      * false が来たら、その下のディレクトリを全て管理から外す、上位下位はUI任せ
      * null  が来たら、そのディレクトリを単独監視にする
      */
-
     #region インターフェース
     public interface ICheckedDirectoryManager
     {
@@ -35,23 +34,17 @@
         /// サブディレクトリを含まないチェックされているリスト
         /// </summary>
         public List<string> NonNestedDirectories { get; }
-
     }
     #endregion インターフェース
 
     public class CheckedDirectoryManager : ICheckedDirectoryManager
     {
-        /// <summary>
-        /// サブディレクトリを含むチェックされているリスト
-        /// </summary>
-        private readonly List<string> _nestedDirectories = [];
-        public List<string> NestedDirectories { get => _nestedDirectories;}
+        #region リスト
+        public List<string> NestedDirectories { get; } = [];
+        public List<string> NonNestedDirectories { get; } = [];
+        #endregion リスト
 
-        /// <summary>
-        /// サブディレクトリを含まないチェックされているリスト
-        /// </summary>
-        private readonly List<string> _nonNestedDirectories = [];
-        public List<string> NonNestedDirectories { get => _nonNestedDirectories; }
+        #region メソッド
         /// <summary>
         /// そのディレクトリがチェックされているかどうかを調べる。
         /// </summary>
@@ -59,8 +52,8 @@
         /// <returns>チェックされているかどうか</returns>
         public bool IsChecked(string fullPath)
         {
-            if (_nonNestedDirectories.Any(o => o == fullPath)) { return true; }
-            return _nestedDirectories.Any(d => fullPath.Contains(d));
+            if (NonNestedDirectories.Any(o => o == fullPath)) { return true; }
+            return NestedDirectories.Any(d => fullPath.Contains(d));
         }
 
         /// <summary>
@@ -90,16 +83,16 @@
         /// <param name="fullPath">チェック状態になったディレクトリのフルパス</param>
         private void CheckedTrue(string fullPath)
         {
-            if (_nestedDirectories.Contains(fullPath)) { return; }
+            if (NestedDirectories.Contains(fullPath)) { return; }
 
             // fullPath で始まる要素を全削除
-            _nestedDirectories.RemoveAll(c => c.StartsWith(fullPath));
+            NestedDirectories.RemoveAll(c => c.StartsWith(fullPath));
 
             // 含まれているディレクトリで始まる fullPath なら追加しない
-            if (_nestedDirectories.Any(c => fullPath.StartsWith(c))) { return; }
+            if (NestedDirectories.Any(c => fullPath.StartsWith(c))) { return; }
 
-            _nonNestedDirectories.Remove(fullPath);
-            _nestedDirectories.Add(fullPath);
+            NonNestedDirectories.Remove(fullPath);
+            NestedDirectories.Add(fullPath);
         }
 
         /// <summary>
@@ -108,8 +101,8 @@
         /// <param name="fullPath"></param>
         private void CheckedFalse(string fullPath)
         {
-            _nonNestedDirectories.Remove(fullPath);
-            _nestedDirectories.RemoveAll(c => c.StartsWith(fullPath));
+            NonNestedDirectories.Remove(fullPath);
+            NestedDirectories.RemoveAll(c => c.StartsWith(fullPath));
         }
 
         /// <summary>
@@ -118,9 +111,10 @@
         /// <param name="fullPath"></param>
         private void CheckedNull(string fullPath)
         {
-            _nestedDirectories.Remove(fullPath);
-            if (_nonNestedDirectories.Any(c => c == fullPath)) { return; }
-            _nonNestedDirectories.Add(fullPath);
+            NestedDirectories.Remove(fullPath);
+            if (NonNestedDirectories.Any(c => c == fullPath)) { return; }
+            NonNestedDirectories.Add(fullPath);
         }
+        #endregion メソッド
     }
 }

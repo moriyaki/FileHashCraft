@@ -73,7 +73,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <summary>
         /// カレントディレクトリに対してファイル変更監視の設定をします。
         /// </summary>
-        /// <param name="rootTreeItem"></param>
+        /// <param name="currentDirectory">カレントディレクトリのフルパス</param>
         public void SetCurrentDirectoryWatcher(string currentDirectory)
         {
             // System.IO.FileNotFoundException: 'Error reading the C:\Windows\CSC directory.'

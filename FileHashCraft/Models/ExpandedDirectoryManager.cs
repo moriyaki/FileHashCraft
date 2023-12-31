@@ -13,20 +13,20 @@
         /// <summary>
         /// 特殊フォルダの配下かどうかを調べます。
         /// </summary>
-        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <param name="fullPath">チェックするディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
         public bool HasSpecialSubFolder(string fullPath);
         /// <summary>
         /// 指定したパスを管理対象に追加します。
         /// </summary>
         /// <param name="fullPath">追加するディレクトリのフルパス</param>
-        public void AddDirectory(string path);
+        public void AddDirectory(string fullPath);
 
         /// <summary>
         /// 指定したパスを管理対象から外します。
         /// </summary>
         /// <param name="fullPath">削除するディレクトリのフルパス</param>
-        public void RemoveDirectory(string path);
+        public void RemoveDirectory(string fullPath);
     }
     #endregion インターフェース
 
@@ -50,7 +50,7 @@
         /// <summary>
         /// 登録した特殊フォルダのリスト
         /// </summary>
-        private readonly List<string> _specialSubDirectories = [] ;
+        private readonly List<string> _specialSubDirectories = [];
 
         /// <summary>
         /// /特殊フォルダのリスト
@@ -85,10 +85,9 @@
         /// <summary>
         /// 特殊フォルダかどうかを調べます。
         /// </summary>
-        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <param name="fullPath">チェックするディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
         public bool IsSpecialFolder(string fullPath) => _specialDirectoriesRoot.Any(dir => dir == fullPath);
-
 
         /// <summary>
         /// 特殊フォルダに含まれているサブディレクトリかどうかを取得します。
@@ -96,7 +95,6 @@
         /// <param name="fullPath">ディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
         public bool IsSpecialSubFolder(string fullPath) => _specialDirectoriesRoot.Any(dir => dir == fullPath);
-
 
         /// <summary>
         /// 特殊フォルダか、そこに含まれているディレクトリかどうかを取得します。
@@ -108,14 +106,14 @@
         /// <summary>
         /// 特殊フォルダの配下かどうかを調べます。
         /// </summary>
-        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <param name="fullPath">チェックするディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
         public bool HasSpecialSubFolder(string fullPath) => _specialDirectoriesRoot.Any(root => fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase));
 
         /// <summary>
         /// 特殊フォルダ以外で、ディレクトリがTreeViewで展開されているかどうかを調べます。
         /// </summary>
-        /// <param name="path">チェックするディレクトリのフルパス</param>
+        /// <param name="fullPath">チェックするディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
         public bool HasDirectory(string fullPath) => _normalDirectories.Any(dir => dir == fullPath);
         #endregion メソッドとプロパティ
@@ -132,10 +130,10 @@
 
             // 特殊フォルダの配下時の処理
             if (IsSpecialSubFolder(fullPath) && !HasSpecialSubFolder(fullPath))
-            { 
+            {
                 _specialSubDirectories.Add(fullPath);
                 return;
-            } 
+            }
 
             if (!HasDirectory(fullPath))
             {

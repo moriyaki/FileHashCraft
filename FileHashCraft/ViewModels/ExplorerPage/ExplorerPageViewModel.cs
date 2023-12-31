@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
@@ -90,12 +91,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// チェックボックスの表示状態の設定
         /// </summary>
-        private Visibility _IsCheckBoxVisible = Visibility.Visible;
-        public Visibility IsCheckBoxVisible
-        {
-            get => _IsCheckBoxVisible;
-            private set => _IsCheckBoxVisible = value;
-        }
+        public Visibility IsCheckBoxVisible { get; set; } = Visibility.Visible;
 
         /// <summary>
         /// カレントディレクトリ
@@ -126,13 +122,11 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     // ディレクトリの大文字小文字正しいものを取得
                     var sepalatedPath = value.Split(Path.DirectorySeparatorChar);
                     var makeTruthPath = sepalatedPath[0].ToUpper();
-                    var index = 1;
-                    while (changedDirectory.TrimEnd(Path.DirectorySeparatorChar).Length > makeTruthPath.Length)
+                    for (var index = 1; changedDirectory.TrimEnd(Path.DirectorySeparatorChar).Length > makeTruthPath.Length; index++)
                     {
                         var dirs = Directory.EnumerateDirectories(makeTruthPath + Path.DirectorySeparatorChar);
                         makeTruthPath = makeTruthPath + Path.DirectorySeparatorChar + sepalatedPath[index];
                         makeTruthPath = dirs.FirstOrDefault(dir => dir.Contains(makeTruthPath, StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
-                        index++;
                     }
 
                     changedDirectory = makeTruthPath;
@@ -150,7 +144,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     ToUpDirectory.RaiseCanExecuteChanged();
                     ListViewUpdater.Execute(null);
                     WeakReferenceMessenger.Default.Send(new CurrentChangeMessage(changedDirectory));
-            }
+                }
             }
         }
 
@@ -165,14 +159,27 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
 
         /// <summary>
+        /// フォントの設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => _MainWindowViewModel.UsingFont;
+            set
+            {
+                _MainWindowViewModel.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
         /// フォントサイズの設定
         /// </summary>
         public double FontSize
         {
-            get => _MainViewModel.FontSize;
+            get => _MainWindowViewModel.FontSize;
             set
             {
-                _MainViewModel.FontSize = value;
+                _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -184,14 +191,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
-        private readonly IMainWindowViewModel _MainViewModel;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
         public ExplorerPageViewModel(
             ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             IExpandedDirectoryManager expandedDirectoryManager,
             ICheckedDirectoryManager checkedDirectoryManager,
             IDirectoryTreeViewControlViewModel directoryTreeViewControlViewModel,
-            IMainWindowViewModel mainViewModel
+            IMainWindowViewModel mainWindowViewModel
             )
         {
             _CurrentDirectoryWatcherService = currentDirectoryFIleSystemWatcherService;
@@ -199,36 +206,33 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _ExpandedDirectoryManager = expandedDirectoryManager;
             _CheckedDirectoryManager = checkedDirectoryManager;
             _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
-            _MainViewModel = mainViewModel;
+            _MainWindowViewModel = mainWindowViewModel;
 
             // 「上へ」ボタンのコマンド
             ToUpDirectory = new DelegateCommand(
-                () => {
+                () =>
+                {
                     var ParentPath = Path.GetDirectoryName(CurrentFullPath);
                     if (ParentPath != null) { CurrentFullPath = ParentPath; }
-
                 },
-                () => { return Directory.Exists(Path.GetDirectoryName(CurrentFullPath)); }
+                () => Directory.Exists(Path.GetDirectoryName(CurrentFullPath))
             );
 
             // リストビューの更新コマンド
             ListViewUpdater = new DelegateCommand(async () =>
             {
                 ListItems.Clear();
-               await Task.Run(() =>
-               {
-                   foreach (var folderFile in FileSystemInformationManager.ScanFileItems(CurrentFullPath, true))
-                   {
-                       // フォルダやファイルの情報を ViewModel に変換
-                       var item = new ExplorerListItemViewModel(this, folderFile);
+                await Task.Run(() =>
+                {
+                    foreach (var folderFile in FileSystemInformationManager.ScanFileItems(CurrentFullPath, true))
+                    {
+                        // フォルダやファイルの情報を ViewModel に変換
+                        var item = new ExplorerListItemViewModel(this, folderFile);
 
-                       // UI スレッドでリストビューを更新
-                       App.Current?.Dispatcher?.Invoke((Action)(() =>
-                       {
-                           ListItems.Add(item);
-                       }));
-                   }
-               });
+                        // UI スレッドでリストビューを更新
+                        App.Current?.Dispatcher?.Invoke((Action)(() => ListItems.Add(item)));
+                    }
+                });
             });
 
             // リストビューアイテムがダブルクリックされた時のコマンド
@@ -252,7 +256,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 debugWindow.Show();
             });
 
-            SettingsOpen = new DelegateCommand(() => { WeakReferenceMessenger.Default.Send(new ToSettingsPage()); });
+            SettingsOpen = new DelegateCommand(() => WeakReferenceMessenger.Default.Send(new ToSettingsPage()));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new DelegateCommand(() =>
@@ -272,40 +276,23 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             }
 
             // カレントディレクトリ変更のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (recipient, message) =>
-            {
-                CurrentFullPath = message.CurrentFullPath;
-            });
+            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) => CurrentFullPath = message.CurrentFullPath);
 
             _CurrentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
             _CurrentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
             _CurrentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
 
             // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (recipient, message) =>
-            {
-                FontSize = message.FontSize;
-            });
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
 
             // ディレクトリ作成のメッセージ受信
-            WeakReferenceMessenger.Default.Register<DirectoryCreated>(this, (recipient, message) =>
-            {
-                CurrentDirectoryItemCreated(message.FullPath);
-            });
+            WeakReferenceMessenger.Default.Register<DirectoryCreated>(this, (_, message) => CurrentDirectoryItemCreated(message.FullPath));
 
             // ディレクトリ名前変更のメッセージ受信
-            WeakReferenceMessenger.Default.Register<DirectoryRenamed>(this, (recipient, message) =>
-            {
-                CurrentDirectoryItemRenamed(message.OldFullPath, message.NewFullPath);
-            });
+            WeakReferenceMessenger.Default.Register<DirectoryRenamed>(this, (_, message) => CurrentDirectoryItemRenamed(message.OldFullPath, message.NewFullPath));
 
             // ディレクトリ削除のメッセージ受信
-            WeakReferenceMessenger.Default.Register<DirectoryDeleted>(this, (recipient, message) =>
-            {
-                CurrentDirectoryItemDeleted(message.FullPath);
-            });
-
-
+            WeakReferenceMessenger.Default.Register<DirectoryDeleted>(this, (_, message) => CurrentDirectoryItemDeleted(message.FullPath));
         }
         #endregion コンストラクタ
 
@@ -324,7 +311,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             foreach (var child in node.Children)
             {
                 if (child.FullPath != string.Empty)
-                RecursiveTreeNodeCheck(child);
+                    RecursiveTreeNodeCheck(child);
             }
         }
         #endregion チェックボックスマネージャ登録
@@ -341,10 +328,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(FullPath);
             var addListItem = new ExplorerListItemViewModel(this, fileInformation);
             int newListIndex = FindIndexToInsert(ListItems, addListItem);
-            await App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                ListItems.Insert(newListIndex, addListItem);
-            });
+            await App.Current.Dispatcher.InvokeAsync(() => ListItems.Insert(newListIndex, addListItem));
         }
 
         /// <summary>
@@ -436,10 +420,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             // リストビューに追加されたファイルを追加する
             var newListItem = new ExplorerListItemViewModel(this, fileInformation);
             int newListIndex = FindIndexToInsert(ListItems, newListItem);
-            App.Current.Dispatcher.InvokeAsync(() =>
-            {
-                ListItems.Insert(newListIndex, newListItem);
-            });
+            App.Current.Dispatcher.InvokeAsync(() => ListItems.Insert(newListIndex, newListItem));
         }
 
         /// <summary>
@@ -466,7 +447,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">名前変更されたファイルの新旧フルパスが入っている</param>
-
         public void CurrentDirectoryItemRenamed(object? sender, CurrentDirectoryFileRenamedEventArgs e)
         {
             // リストビューの名前変更されたアイテムを探す
