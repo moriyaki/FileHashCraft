@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.Models;
 
 namespace FileHashCraft.ViewModels

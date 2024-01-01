@@ -70,11 +70,29 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Hash calculation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonHashCalc {
+            get {
+                return ResourceManager.GetString("ButtonHashCalc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Hash Management に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ButtonHashManagement {
             get {
                 return ResourceManager.GetString("ButtonHashManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Return に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonReturn {
+            get {
+                return ResourceManager.GetString("ButtonReturn", resourceCulture);
             }
         }
         
@@ -97,7 +115,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   SHA-256 (High security: reliable, runs fast enough, faster than MD5 on some storage. Recommended as standard) に類似しているローカライズされた文字列を検索します。
+        ///   SHA-256 (High security: More reliable, generally faster than MD5. Recommended as standard) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_SHA256 {
             get {
@@ -106,7 +124,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   SHA-384 (High Security: Higher security strength than SHA-256, but computations are slower) に類似しているローカライズされた文字列を検索します。
+        ///   SHA-384 (High security: higher security strength than SHA-256, but slower computation) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_SHA384 {
             get {
@@ -115,7 +133,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   SHA-512 (Maximum Security: Very high security strength, but computations are very slow) に類似しているローカライズされた文字列を検索します。
+        ///   SHA-512 (maximum security: very high security strength, but slow computation) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_SHA512 {
             get {

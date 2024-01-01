@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using FileHashCraft.Models;
-using FileHashCraft.ViewModels.ExplorerPage;
 
 namespace FileHashCraft.ViewModels.FileSystemWatch
 {
@@ -190,7 +188,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <param name="e"></param>
         private void OnError(object sender, ErrorEventArgs e)
         {
-            Debug.WriteLine($"FileSystemWatcher エラー: {e.GetException()}");
+            LogManager.DebugLog($"FileSystemWatcher エラー: {e.GetException()}", LogLevel.Exception);
         }
 
         /// <summary>

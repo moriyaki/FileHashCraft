@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
-using System.IO;
-using FileHashCraft.ViewModels.ExplorerPage;
+﻿using System.IO;
+using FileHashCraft.Models;
 
 namespace FileHashCraft.ViewModels.FileSystemWatch
 {
@@ -108,7 +107,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <param name="e"></param>
         private void OnError(object sender, ErrorEventArgs e)
         {
-            Debug.WriteLine($"FileSystemWatcher エラー: {e.GetException()}");
+            LogManager.DebugLog($"FileSystemWatcher : {e.GetException()}", LogLevel.Exception);
         }
         #endregion FileSystemWatcherの宣言
 

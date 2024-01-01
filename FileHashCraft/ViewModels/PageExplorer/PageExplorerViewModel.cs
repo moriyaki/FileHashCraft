@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -252,12 +251,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             HashCalc = new DelegateCommand(() =>
             {
                 CreateCheckBoxManager();
-                var debugWindow = new Views.DebugWindow();
-                debugWindow.Show();
+                WeakReferenceMessenger.Default.Send(new ToPageTargetFileSetting());
             });
 
+            // 設定画面ページに移動するコマンド
             SettingsOpen = new DelegateCommand(() =>
-                WeakReferenceMessenger.Default.Send(new ToSettingPage(ReturnPageEnum.PageExplorer)));
+                WeakReferenceMessenger.Default.Send(new ToPageSetting(ReturnPageEnum.PageExplorer)));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new DelegateCommand(() =>
@@ -282,6 +281,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _CurrentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
             _CurrentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
             _CurrentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
+
+            // メインウィンドウからのフォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) => UsingFont = message.UsingFont);
 
             // メインウィンドウからのフォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
@@ -359,7 +361,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Exception in DirectoryRenamed: {ex.Message}");
+                    LogManager.DebugLog($"Exception in CurrentDirectoryItemRenamed: {ex.Message}", LogLevel.Exception);
                 }
             });
         }
@@ -382,7 +384,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Exception in DirectoryRenamed: {ex.Message}");
+                    LogManager.DebugLog($"Exception in CurrentDirectoryItemRenamed: {ex.Message}", LogLevel.Exception);
                 }
             });
         }
@@ -474,7 +476,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public void HwndAddHook(HwndSource? hwndSource)
         {
             if (hwndSource != null) { hwndSource.AddHook(WndProc); }
-            else { Debug.WriteLine("HwndSourceを取得できませんでした。"); }
+            else { LogManager.DebugLog("HwndSourceを取得できませんでした。", LogLevel.Error); }
         }
 
         /// <summary>
@@ -565,7 +567,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                             }
                         }
                     }
-                    catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
+                    catch (Exception ex) { LogManager.DebugLog($"WndProcで例外が発生しました: {ex.Message}", LogLevel.Exception); }
                     _DrivesFileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
@@ -581,7 +583,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                             }
                         }
                     }
-                    catch (Exception ex) { Debug.WriteLine($"WndProcで例外が発生しました: {ex.Message}"); }
+                    catch (Exception ex) { LogManager.DebugLog($"WndProcで例外が発生しました: {ex.Message}", LogLevel.Exception); }
                     _DrivesFileSystemWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }

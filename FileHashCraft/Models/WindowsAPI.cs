@@ -154,7 +154,7 @@ namespace FileHashCraft.Models
             if (shFileInfoResult == IntPtr.Zero || shinfo.hIcon == IntPtr.Zero)
             {
                 int lastError = Marshal.GetLastWin32Error();
-                Debug.WriteLine($"SHGetFileInfo Failed with error code {lastError}");
+                LogManager.DebugLog($"SHGetFileInfo Failed with error code {lastError}", LogLevel.Error);
                 return (null, string.Empty);
             }
 

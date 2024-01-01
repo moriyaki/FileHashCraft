@@ -4,15 +4,6 @@ using System.Windows.Media;
 
 namespace FileHashCraft.ViewModels
 {
-    /*
-        メッセージ送信サンプル
-            WeakReferenceMessenger.Default.Send(new FontChanged(value));
-        メッセージ受信サンプル
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (recipient, message) =>
-            {
-                FontSize = message.FontSize;
-            });
-     */
     #region MainView用
     /// <summary>
     /// カレントディレクトリの変更メッセージ
@@ -75,11 +66,27 @@ namespace FileHashCraft.ViewModels
     #region ページ移動用
 
     /// <summary>
-    /// エクスプローラー風画面にページに移動するメッセージ
+    /// エクスプローラー風画面ページに移動するメッセージ
     /// </summary>
-    public class ToExplorerPage
+    public class ToPageExplorer
     {
-        public ToExplorerPage() { }
+        public ToPageExplorer() { }
+    }
+
+    /// <summary>
+    /// ハッシュ計算対象選択ページに移動するメッセージ
+    /// </summary>
+    public class ToPageTargetFileSetting
+    {
+        public ToPageTargetFileSetting() { }
+    }
+
+    /// <summary>
+    /// ハッシュ計算画面ページに移動するメッセージ
+    /// </summary>
+    public class ToPageHashCalcing
+    {
+        public ToPageHashCalcing() { }
     }
 
     /// <summary>
@@ -89,18 +96,19 @@ namespace FileHashCraft.ViewModels
     {
         PageExplorer,
         PageSettings,
+        PageTargetFileSelect,
         PageHashCalcing,
     }
 
     /// <summary>
     /// 戻るページを指定して設定画面に移動するメッセージ
     /// </summary>
-    public class ToSettingPage
+    public class ToPageSetting
     {
         public ReturnPageEnum ReturnPage { get; }
 
-        public ToSettingPage() { throw new NotImplementedException(); }
-        public ToSettingPage(ReturnPageEnum returnPage)
+        public ToPageSetting() { throw new NotImplementedException(); }
+        public ToPageSetting(ReturnPageEnum returnPage)
         {
             ReturnPage = returnPage;
         }

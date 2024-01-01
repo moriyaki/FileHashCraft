@@ -19,8 +19,8 @@ namespace FileHashCraft
         /// 古い DPI Aware
         /// </summary>
         /// <returns></returns>
-        [System.Runtime.InteropServices.LibraryImport("user32.dll")]
-        [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+        [LibraryImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool SetProcessDPIAware();
 
         /// <summary>
@@ -105,6 +105,9 @@ namespace FileHashCraft
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
             services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();
             services.AddSingleton<ICheckedDirectoryManager, CheckedDirectoryManager>();
+
+            services.AddSingleton<IPageTargetFileSelectViewModel, PageTargetFileSelectViewModel>();
+            services.AddSingleton<IPageHashCalcingViewModel, PageHashCalcingViewModel>();
 
             return services.BuildServiceProvider();
         }

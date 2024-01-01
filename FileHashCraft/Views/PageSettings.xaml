@@ -27,15 +27,13 @@
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border -->
-        <Border Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="7" Background="Transparent"/>
 
-        <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent"/>
         <Button Grid.Row="6" Grid.Column="2" Margin="5" Command="{Binding ReturnPage}"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}"/>
 
         <!-- Language Select -->
-        <Border Grid.Row="1" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="Language"/>
@@ -47,7 +45,6 @@
                   DisplayMemberPath="Name"/>
 
         <!-- Font Select -->
-        <Border Grid.Row="2" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontString, Mode=OneWay}"/>
@@ -64,7 +61,6 @@
         </ComboBox>
 
         <!-- Font Size Select -->
-        <Border Grid.Row="3" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFontSizeString, Mode=OneWay}"/>
@@ -76,7 +72,6 @@
                   DisplayMemberPath="SizeString"/>
 
         <!-- Hash Algorithm Select -->
-        <Border Grid.Row="4" Grid.Column="0" Background="Transparent"/>
         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right"
                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>

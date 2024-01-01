@@ -119,11 +119,19 @@
   </resheader>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>Execute Command</value>
-    <comment>Button/ExplorerPage</comment>
+    <comment>Button/PageExplorer</comment>
+  </data>
+  <data name="ButtonHashCalc" xml:space="preserve">
+    <value>Hash calculation</value>
+    <comment>Button/PageTargetFileSetting</comment>
   </data>
   <data name="ButtonHashManagement" xml:space="preserve">
     <value>Hash Management</value>
-    <comment>Button/ExplorerPage</comment>
+    <comment>Button/PageExplorer</comment>
+  </data>
+  <data name="ButtonReturn" xml:space="preserve">
+    <value>Return</value>
+    <comment>Button/PageTargetFileSetting</comment>
   </data>
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
@@ -131,39 +139,39 @@
   </data>
   <data name="HashAlgorithm_MD5" xml:space="preserve">
     <value>MD5 (Low Security: Prone to collision risks, deprecated. Tends to be fast on HDDs.)</value>
-    <comment>SettingsPage/Security</comment>
+    <comment>PageSettings/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA256" xml:space="preserve">
-    <value>SHA-256 (High security: reliable, runs fast enough, faster than MD5 on some storage. Recommended as standard)</value>
-    <comment>SettingsPage/Security</comment>
+    <value>SHA-256 (High security: More reliable, generally faster than MD5. Recommended as standard)</value>
+    <comment>PageSettings/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA384" xml:space="preserve">
-    <value>SHA-384 (High Security: Higher security strength than SHA-256, but computations are slower)</value>
-    <comment>SettingsPage/Security</comment>
+    <value>SHA-384 (High security: higher security strength than SHA-256, but slower computation)</value>
+    <comment>PageSettings/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA512" xml:space="preserve">
-    <value>SHA-512 (Maximum Security: Very high security strength, but computations are very slow)</value>
-    <comment>SettingsPage/Security</comment>
+    <value>SHA-512 (maximum security: very high security strength, but slow computation)</value>
+    <comment>PageSettings/Security</comment>
   </data>
   <data name="LabelCommand" xml:space="preserve">
     <value>Command</value>
-    <comment>Label/ExplorerPage</comment>
+    <comment>Label/PageExplorer</comment>
   </data>
   <data name="LabelCurrentDirectory" xml:space="preserve">
     <value>Current Directory</value>
-    <comment>Label/ExplorerPage</comment>
+    <comment>Label/PageExplorer</comment>
   </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>Algorithm for file hash calculation</value>
-    <comment>Label</comment>
+    <comment>Label/PageSettings</comment>
   </data>
   <data name="LabelFontSizeString" xml:space="preserve">
     <value>Font Size</value>
-    <comment>Label</comment>
+    <comment>Label/PageSettings</comment>
   </data>
   <data name="LabelFontString" xml:space="preserve">
     <value>Font</value>
-    <comment>Label</comment>
+    <comment>Label/PageSettings</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>Data Modified</value>

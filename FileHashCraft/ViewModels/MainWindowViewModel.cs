@@ -246,41 +246,6 @@ namespace FileHashCraft.ViewModels
         }
         #endregion データバインディング
 
-        #region 各ウィンドウでのフォントとフォントサイズ設定方法
-        /*
-        フォント関連の XAML はこう
-        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-
-        ViewModel ではこう
-
-        /// <summary>
-        /// フォントの設定
-        /// </summary>
-        public FontFamily UsingFont
-        {
-            get => _MainWindowViewModel.UsingFont;
-            set
-            {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの設定
-        /// </summary>
-        public double FontSize
-        {
-            get => _MainWindowViewModel.FontSize;
-            set
-            {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
-            }
-        }
-         */
-        #endregion 各ウィンドウでのフォントとフォントサイズ設定方法
-
         #region メソッド
         /// <summary>
         /// 設定できるフォントサイズ

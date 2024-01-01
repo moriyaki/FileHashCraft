@@ -19,26 +19,38 @@ namespace FileHashCraft
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<IMainWindowViewModel>();
-            MainFrame.Navigate(new ExplorerPage());
+            MainFrame.Navigate(new PageExplorer());
             //MainFrame.Navigate(new SettingsPage());
 
-            WeakReferenceMessenger.Default.Register<ToExplorerPage>(this, (_, _) => 
-                MainFrame.Navigate(new ExplorerPage()));
+            // PageExplorer へ移動のメッセージ受信したので移動
+            WeakReferenceMessenger.Default.Register<ToPageExplorer>(this, (_, _) =>
+                MainFrame.Navigate(new PageExplorer()));
+            // PageTargetFileSetting へ移動のメッセージ受信したので移動
+            WeakReferenceMessenger.Default.Register<ToPageTargetFileSetting>(this, (_, _) =>
+                MainFrame.Navigate(new PageTargetFileSetting()));
+            // PageHashCalcing へ移動のメッセージ受信したので移動
+            WeakReferenceMessenger.Default.Register<ToPageHashCalcing>(this, (_, _) =>
+                MainFrame.Navigate(new PageHashCalcing()));
+            // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
+            WeakReferenceMessenger.Default.Register<ToPageSetting>(this, (_, message) =>
+            {
+                FromPage = message.ReturnPage;
+                MainFrame.Navigate(new SettingsPage());
+            });
+            // PageSetting の終了メッセージを受信したので、元のページへ移動
             WeakReferenceMessenger.Default.Register<ReturnPageFromSettings>(this, (_, _) =>
             {
                 switch (FromPage)
                 {
                     case ReturnPageEnum.PageExplorer:
-                        MainFrame.Navigate(new ExplorerPage());
+                        MainFrame.Navigate(new PageExplorer());
+                        break;
+                    case ReturnPageEnum.PageTargetFileSelect:
+                        MainFrame.Navigate(new PageTargetFileSetting());
                         break;
                     default:
                         break;
                 }
-            });
-            WeakReferenceMessenger.Default.Register<ToSettingPage>(this, (_, message) =>
-            {
-                FromPage = message.ReturnPage;
-                MainFrame.Navigate(new SettingsPage());
             });
         }
 
