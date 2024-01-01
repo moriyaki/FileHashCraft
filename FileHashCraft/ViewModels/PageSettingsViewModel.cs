@@ -13,7 +13,7 @@ namespace FileHashCraft.ViewModels
     }
     #endregion インターフェース
 
-    public class SettingsPageViewModel : ObservableObject, ISettingsPageViewModel
+    public class PageSettingsViewModel : ObservableObject, ISettingsPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -152,13 +152,13 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// エクスプローラー風画面にページに移動
         /// </summary>
-        public DelegateCommand ToExplorer { get; set; }
+        public DelegateCommand ReturnPage { get; set; }
         #endregion バインディング
 
         #region コンストラクタと初期化
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
-        public SettingsPageViewModel(
+        public PageSettingsViewModel(
             IMainWindowViewModel mainViewModel)
         {
             _MainWindowViewModel = mainViewModel;
@@ -185,7 +185,8 @@ namespace FileHashCraft.ViewModels
             // MainViewModel からハッシュアルゴリズム設定を読み込むようにする
             _SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
 
-            ToExplorer = new DelegateCommand(() => WeakReferenceMessenger.Default.Send(new ToExplorerPage()));
+            ReturnPage = new DelegateCommand(
+                () => WeakReferenceMessenger.Default.Send(new ReturnPageFromSettings()));
 
             // メインウィンドウからのフォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) =>

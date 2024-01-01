@@ -20,7 +20,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
      *
      * → DirectoryDeletedは必要なし
      */
-    public partial class DirectoryTreeViewControlViewModel
+    public partial class ControDirectoryTreeViewlViewModel
     {
         #region ディレクトリ変更通知処理
         /// <summary>

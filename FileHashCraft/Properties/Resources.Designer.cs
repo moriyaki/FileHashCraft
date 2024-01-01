@@ -88,7 +88,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   MD5 (Low Security: Deprecated due to collision risk, computations are fast) に類似しているローカライズされた文字列を検索します。
+        ///   MD5 (Low Security: Prone to collision risks, deprecated. Tends to be fast on HDDs.) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_MD5 {
             get {
@@ -97,7 +97,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   SHA-256 (High Security: Reliable, but computations are moderately slow; recommended as standard) に類似しているローカライズされた文字列を検索します。
+        ///   SHA-256 (High security: reliable, runs fast enough, faster than MD5 on some storage. Recommended as standard) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_SHA256 {
             get {
@@ -210,24 +210,6 @@ namespace FileHashCraft.Properties {
         public static string MenuDebug {
             get {
                 return ResourceManager.GetString("MenuDebug", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Exit(_X) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string MenuExit {
-            get {
-                return ResourceManager.GetString("MenuExit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   File(_F) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string MenuFile {
-            get {
-                return ResourceManager.GetString("MenuFile", resourceCulture);
             }
         }
         

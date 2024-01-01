@@ -13,7 +13,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
-        protected readonly ExplorerPageViewModel ExplorerVM;
+        protected readonly PageExplorerViewModel ExplorerVM;
 
         public ExplorerListItemViewModel() { throw new NotImplementedException(); }
 
@@ -21,7 +21,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// コンストラクタで、IExplorerPageViewModelの設定をします
         /// </summary>
         /// <param name="explorerVM">IExplorerPageViewModel</param>
-        public ExplorerListItemViewModel(ExplorerPageViewModel explorerVM)
+        public ExplorerListItemViewModel(PageExplorerViewModel explorerVM)
         {
             ExplorerVM = explorerVM;
             ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
@@ -32,7 +32,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         /// <param name="explorerVM">IExplorerPageViewModel</param>
         /// <param name="f">FileItemInformation</param>
-        public ExplorerListItemViewModel(ExplorerPageViewModel explorerVM, FileItemInformation f)
+        public ExplorerListItemViewModel(PageExplorerViewModel explorerVM, FileItemInformation f)
         {
             ExplorerVM = explorerVM;
             ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
@@ -56,7 +56,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <param name="e"></param>
         private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ExplorerPageViewModel.FontSize))
+            if (e.PropertyName == nameof(PageExplorerViewModel.FontSize))
             {
                 // ExplorerPageViewModel の FontSize が変更された場合、ExplorerItemViewModelBase のプロパティも更新
                 OnPropertyChanged(nameof(ExplorerVM.FontSize));

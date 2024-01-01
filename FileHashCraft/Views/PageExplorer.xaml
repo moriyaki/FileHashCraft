@@ -21,17 +21,12 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Menu x:Name="FolderMenu" DockPanel.Dock="Top">
-                <MenuItem Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuFile, Mode=OneWay}">
-                    <MenuItem Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuFile, Mode=OneWay}" />
-                </MenuItem>
-                <MenuItem Command="{Binding SettingsOpen}"
-                          Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
-                <MenuItem Command="{Binding DebugOpen}"
-                          Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
-            </Menu>
-        </Grid>
+        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0">
+            <MenuItem Command="{Binding SettingsOpen}"
+                        Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
+            <MenuItem Command="{Binding DebugOpen}"
+                        Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
+        </Menu>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

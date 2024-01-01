@@ -30,7 +30,7 @@
         <Border Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent"/>
 
         <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Background="Transparent"/>
-        <Button Grid.Row="6" Grid.Column="2" Margin="5" Command="{Binding ToExplorer}"
+        <Button Grid.Row="6" Grid.Column="2" Margin="5" Command="{Binding ReturnPage}"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}"/>
 

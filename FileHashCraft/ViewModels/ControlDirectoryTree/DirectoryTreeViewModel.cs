@@ -16,7 +16,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// TreeVIew コントロールのViewModelです。
         /// </summary>
-        private readonly DirectoryTreeViewControlViewModel ControlVM;
+        private readonly ControDirectoryTreeViewlViewModel ControlVM;
 
         /// <summary>
         /// 引数を持たないコンストラクタは許容しません。
@@ -31,7 +31,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// コンストラクタで、DirectoryTreeViewControlViewModelの設定をします
         /// </summary>
         /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
-        public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm)
+        public DirectoryTreeViewModel(ControDirectoryTreeViewlViewModel vm)
         {
             ControlVM = vm;
             ControlVM.PropertyChanged += ControlVM_PropertyChanged;
@@ -42,7 +42,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
         /// <param name="f">ファイル情報</param>
-        public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm, FileItemInformation f) : this(vm)
+        public DirectoryTreeViewModel(ControDirectoryTreeViewlViewModel vm, FileItemInformation f) : this(vm)
         {
             FullPath = f.FullPath;
             IsReady = f.IsReady;
@@ -57,7 +57,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
         /// <param name="f">ファイル情報</param>
         /// <param name="parent">親ディレクトリ</param>
-        public DirectoryTreeViewModel(DirectoryTreeViewControlViewModel vm, FileItemInformation f, DirectoryTreeViewModel parent) : this(vm, f)
+        public DirectoryTreeViewModel(ControDirectoryTreeViewlViewModel vm, FileItemInformation f, DirectoryTreeViewModel parent) : this(vm, f)
         {
             Parent = parent;
         }
@@ -81,7 +81,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="e">PropertyChangedEventArgs</param>
         private void ControlVM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(DirectoryTreeViewControlViewModel.FontSize))
+            if (e.PropertyName == nameof(ControDirectoryTreeViewlViewModel.FontSize))
             {
                 OnPropertyChanged(nameof(ControlVM.FontSize));
             }

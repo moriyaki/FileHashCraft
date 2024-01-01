@@ -71,7 +71,7 @@ namespace FileHashCraft
 
             base.OnStartup(e);
 
-            var v = new MainView();
+            var v = new MainWindow();
             v.Show();
         }
 
@@ -97,10 +97,10 @@ namespace FileHashCraft
             services.AddSingleton<IResourceService, ResourceService>();
 
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
-            services.AddSingleton<IDirectoryTreeViewControlViewModel, DirectoryTreeViewControlViewModel>();
-            services.AddSingleton<ISettingsPageViewModel, SettingsPageViewModel>();
+            services.AddSingleton<IDirectoryTreeViewControlViewModel, ControDirectoryTreeViewlViewModel>();
+            services.AddSingleton<ISettingsPageViewModel, PageSettingsViewModel>();
 
-            services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
+            services.AddSingleton<IExplorerPageViewModel, PageExplorerViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
             services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();

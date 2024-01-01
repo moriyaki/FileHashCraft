@@ -43,7 +43,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class ExplorerPageViewModel : ObservableObject, IExplorerPageViewModel
+    public partial class PageExplorerViewModel : ObservableObject, IExplorerPageViewModel
     {
         #region データバインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
@@ -192,7 +192,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
         private readonly IMainWindowViewModel _MainWindowViewModel;
-        public ExplorerPageViewModel(
+        public PageExplorerViewModel(
             ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             IExpandedDirectoryManager expandedDirectoryManager,
@@ -256,7 +256,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 debugWindow.Show();
             });
 
-            SettingsOpen = new DelegateCommand(() => WeakReferenceMessenger.Default.Send(new ToSettingsPage()));
+            SettingsOpen = new DelegateCommand(() =>
+                WeakReferenceMessenger.Default.Send(new ToSettingPage(ReturnPageEnum.PageExplorer)));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new DelegateCommand(() =>

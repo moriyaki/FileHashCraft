@@ -42,7 +42,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
     }
     #endregion インターフェース
-    public partial class DirectoryTreeViewControlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
+    public partial class ControDirectoryTreeViewlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
     {
         #region バインディング
         /// <summary>
@@ -117,13 +117,13 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// 引数なしで生成はさせない
         /// </summary>
         /// <exception cref="NotImplementedException">DIコンテナを利用するように</exception>
-        public DirectoryTreeViewControlViewModel()
+        public ControDirectoryTreeViewlViewModel()
         {
             throw new NotImplementedException();
         }
 
         // 通常コンストラクタ
-        public DirectoryTreeViewControlViewModel(
+        public ControDirectoryTreeViewlViewModel(
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             ICheckedDirectoryManager checkedDirectoryManager,
             IExpandedDirectoryManager expandDirectoryManager,

@@ -130,11 +130,11 @@
     <comment>Button</comment>
   </data>
   <data name="HashAlgorithm_MD5" xml:space="preserve">
-    <value>MD5 (低セキュリティ：衝突のリスクがあり非推奨、計算は速い)</value>
+    <value>MD5 (低セキュリティ：衝突のリスクがあり非推奨、HDDでは計算は速い傾向がある)</value>
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA256" xml:space="preserve">
-    <value>SHA-256 (高セキュリティ：信頼性は高いが計算がやや遅い、標準として推奨)</value>
+    <value>SHA-256 (高セキュリティ：信頼性は高く、十分な速度で動き、ストレージによってはMD5より高速。標準として推奨)</value>
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA384" xml:space="preserve">
@@ -183,14 +183,6 @@
   </data>
   <data name="MenuDebug" xml:space="preserve">
     <value>デバッグ(_D)</value>
-    <comment>MenuItem</comment>
-  </data>
-  <data name="MenuExit" xml:space="preserve">
-    <value>終了(_X)</value>
-    <comment>MenuItem</comment>
-  </data>
-  <data name="MenuFile" xml:space="preserve">
-    <value>ファイル(_F)</value>
     <comment>MenuItem</comment>
   </data>
   <data name="MenuSettings" xml:space="preserve">
