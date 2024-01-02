@@ -137,10 +137,6 @@
     <value>Exit</value>
     <comment>Button/Menu</comment>
   </data>
-  <data name="HashAlgorithm_MD5" xml:space="preserve">
-    <value>MD5 (Low Security: Prone to collision risks, deprecated. Tends to be fast on HDDs.)</value>
-    <comment>PageSettings/Security</comment>
-  </data>
   <data name="HashAlgorithm_SHA256" xml:space="preserve">
     <value>SHA-256 (High security: More reliable, generally faster than MD5. Recommended as standard)</value>
     <comment>PageSettings/Security</comment>
@@ -157,13 +153,35 @@
     <value>Command</value>
     <comment>Label/PageExplorer</comment>
   </data>
+  <data name="LabelCountAllFilesGetHash" xml:space="preserve">
+    <value>Number of all files to get hash :</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
+  <data name="LabelCountAlreadyGetHash" xml:space="preserve">
+    <value>Number of files for which a hash has already been obtained :</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
+  <data name="LabelCountFilteredGetHash" xml:space="preserve">
+    <value>Number of files to get hashes from filtered files :</value>
+  </data>
+  <data name="LabelCountRequireGetHash" xml:space="preserve">
+    <value>Number of files requiring hash acquisition :</value>
+  </data>
   <data name="LabelCurrentDirectory" xml:space="preserve">
     <value>Current Directory</value>
     <comment>Label/PageExplorer</comment>
   </data>
+  <data name="LabelEmptyDirDelete" xml:space="preserve">
+    <value>Whether to delete empty directories or not</value>
+    <comment>Label/PageSettings/PageTargetViewModel</comment>
+  </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>Algorithm for file hash calculation</value>
     <comment>Label/PageSettings</comment>
+  </data>
+  <data name="LabelFilterSetting" xml:space="preserve">
+    <value>Search filter settings 
+separated by Ente or ; symbol)</value>
   </data>
   <data name="LabelFontSizeString" xml:space="preserve">
     <value>Font Size</value>
@@ -172,6 +190,14 @@
   <data name="LabelFontString" xml:space="preserve">
     <value>Font</value>
     <comment>Label/PageSettings</comment>
+  </data>
+  <data name="LabelIgnoreFilterSetting" xml:space="preserve">
+    <value>Search exclusion filter settings
+(separated by Enter or ; symbol)</value>
+  </data>
+  <data name="LabelZeroSizeFileDelete" xml:space="preserve">
+    <value>Whether to delete files of size 0 or not</value>
+    <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>Data Modified</value>

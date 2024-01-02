@@ -13,7 +13,7 @@ namespace FileHashCraft.Views
         public PageTargetFileSetting()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IPageTargetFileSelectViewModel>();
+            DataContext = Ioc.Default.GetService<IPageSelectTargetFileViewModel>();
         }
 
         /// <summary>

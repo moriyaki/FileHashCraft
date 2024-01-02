@@ -124,6 +124,60 @@ namespace FileHashCraft.ViewModels
 
     #endregion ページ移動用
 
+    #region ハッシュスキャンUI用
+    /// <summary>
+    /// ハッシュスキャンの状態の変更メッセージ
+    /// </summary>
+    public class HashScanStatusChanged
+    {
+        public FileScanStatus Status { get; }
+        public HashScanStatusChanged() { throw new NotImplementedException(); }
+        public HashScanStatusChanged(FileScanStatus status)
+        {
+            Status = status;
+        }
+    }
+
+    /// <summary>
+    /// ハッシュスキャン対象のディレクトリ数追加メッセージ
+    /// </summary>
+    public class HashScanDirectoriesAdded
+    {
+        public int AddScannedDirectories { get; }
+        public HashScanDirectoriesAdded() { throw new NotImplementedException(); }
+        public HashScanDirectoriesAdded(int addDirectoriesCount)
+        {
+            AddScannedDirectories = addDirectoriesCount;
+        }
+    }
+
+    /// <summary>
+    /// ハッシュスキャン対象のファイル数追加メッセージ
+    /// </summary>
+    public class HashAllFilesAdded
+    {
+        public int HashFileCount { get; } = 0;
+        public HashAllFilesAdded() { throw new NotSupportedException(); }
+        public HashAllFilesAdded(int hashFileCOunt)
+        {
+            HashFileCount = hashFileCOunt;
+        }
+    }
+
+    /// <summary>
+    /// ハッシュスキャン対象のファイルスキャンしたディレクトリ数追加メッセージ
+    /// </summary>
+    public class HashADirectoryScannedAdded
+    {
+        public int ScannedDirectoryCount { get; } = 0;
+        public HashADirectoryScannedAdded() { throw new NotSupportedException(); }
+        public HashADirectoryScannedAdded(int scannedDirectoryCOunt)
+        {
+            ScannedDirectoryCount = scannedDirectoryCOunt;
+        }
+    }
+    #endregion ハッシュスキャンUI用
+
     #region DirectoryTreeViewControlViewModelから発信
     /// <summary>
     /// ディレクトリ監視から、ディレクトリが作成されたメッセージ

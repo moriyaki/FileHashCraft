@@ -206,11 +206,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// チェックボックスの表示状態の設定
         /// </summary>
-        private Visibility _IsCheckBoxVisible = Visibility.Visible;
         public Visibility IsCheckBoxVisible
         {
-            get => _IsCheckBoxVisible;
-            set => SetProperty(ref _IsCheckBoxVisible, value);
+            get => ControlVM.IsCheckBoxVisible;
         }
 
         /// <summary>
@@ -324,7 +322,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!_IsKicked || force)
             {
                 Children.Clear();
-                foreach (var child in FileSystemInformationManager.ScanFileItems(FullPath, false))
+                foreach (var child in FileInformationManager.EnumerateDirectories(FullPath))
                 {
                     var item = new DirectoryTreeViewModel(ControlVM, child, this);
                     Children.Add(item);

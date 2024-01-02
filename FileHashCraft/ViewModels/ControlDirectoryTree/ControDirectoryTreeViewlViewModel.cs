@@ -10,7 +10,7 @@ using FileHashCraft.ViewModels.FileSystemWatch;
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
     #region インターフェース
-    public interface IDirectoryTreeViewControlViewModel
+    public interface IControDirectoryTreeViewlViewModel
     {
         /// <summary>
         /// TreeViewのコレクションにアクセス
@@ -27,7 +27,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// ルートノードにアイテムを追加します。
         /// </summary>
         /// <param name="item">追加する FileItemInformation</param>
-        public void AddRoot(FileItemInformation item);
+        /// /// <returns>追加されたノード</returns>
+        public DirectoryTreeViewModel AddRoot(FileItemInformation item, bool findSpecial);
 
         /// <summary>
         /// ツリーノードのアイテムをクリアする
@@ -51,7 +52,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         public void CheckStatusChangeFromCheckManager();
     }
     #endregion インターフェース
-    public partial class ControDirectoryTreeViewlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
+    public partial class ControDirectoryTreeViewlViewModel : ObservableObject, IControDirectoryTreeViewlViewModel
     {
         #region バインディング
         /// <summary>
@@ -70,7 +71,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
-        /// フォントの設定
+        /// フォントの取得と設定
         /// </summary>
         public FontFamily UsingFont
         {
@@ -83,7 +84,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
-        /// フォントサイズの設定
+        /// フォントサイズの取得と設定
         /// </summary>
         public double FontSize
         {
@@ -154,7 +155,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             // フォントの変更メッセージ
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
 
-            foreach (var root in FileSystemInformationManager.ScanDrives())
+            foreach (var root in FileInformationManager.ScanDrives())
             {
                 _DrivesFileSystemWatcherService.SetRootDirectoryWatcher(root);
             }
@@ -170,41 +171,55 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="isVisible">表示するかどうか</param>
         public void SetIsCheckBoxVisible(bool isVisible)
-            => IsCheckBoxVisible = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        {
+            IsCheckBoxVisible = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            OnPropertyChanged(nameof(IsCheckBoxVisible));
+        }
 
         /// <summary>
         /// ルートノードにアイテムを追加します。
         /// </summary>
         /// <param name="item">追加する FileItemInformation</param>
-        public void AddRoot(FileItemInformation item)
+        /// <returns>追加されたノード</returns>
+        public DirectoryTreeViewModel AddRoot(FileItemInformation item, bool findSpecial)
         {
-            var node = new DirectoryTreeViewModel(this, item);
-            TreeRoot.Add(node);
-            _ExpandedDirectoryManager.AddDirectory(item.FullPath);
-            /* 
-             * ルートドライブが追加された時、特殊フォルダは追加されている
-             * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
-             * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
-             */
-            if (item.FullPath.Length != 3) { return; }
+            var currentNode = new DirectoryTreeViewModel(this, item);
+            TreeRoot.Add(currentNode);
+            // 内部キックをしない場合そのまま終了
+            if (!findSpecial) return currentNode;
 
-            var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(node.FullPath));
-            if (driveNode == null) { return; }
+            // 展開ディレクトリに追加
+            _ExpandedDirectoryManager.AddDirectory(item.FullPath);
+            /* ルートドライブが追加された時、特殊フォルダは追加されている
+              * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
+              * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
+              */
+            // ルートドライブではない場合終了
+            if (item.FullPath.Length != 3) { return currentNode; }
+
+            // 追加されたノードのフルパスで始まるノードを検索する
+            var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(currentNode.FullPath));
+            if (driveNode == null) { return currentNode; }
 
             foreach (var drive in driveNode)
             {
+                // 各追加されたノードで始まるパスを分解する
                 var dirs = GetDirectoryNames(drive.FullPath);
-                if (node == null) continue;
-                var child = node;
+                //if (node == null) continue;
+                var childNode = currentNode;
 
+                // ドライブルートを除外する
                 dirs.RemoveAt(0);
                 foreach (var dir in dirs)
                 {
-                    if (child == null) break;
-                    child.KickChild();
-                    child = child.Children.FirstOrDefault(c => c.FullPath == dir);
+                    if (childNode == null) break;
+
+                    // サブディレクトリを内部キックし、サブディレクトリからノードを取得する
+                    childNode.KickChild();
+                    childNode = childNode.Children.FirstOrDefault(c => c.FullPath == dir);
                 }
             }
+            return currentNode;
         }
 
         /// <summary>
@@ -339,6 +354,22 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             DirectoryTreeViewModel? node = TreeRoot.FirstOrDefault(r => r.FullPath == dirs[0]);
             if (node == null) return false;
             node.KickChild();
+
+            if (node.FullPath == fullPath)
+            {
+                if (node.FullPath == fullPath)
+                {
+                    if (isChecked == true || isChecked == false)
+                    {
+                        node.IsChecked = isChecked;
+                    }
+                    else
+                    {
+                        node.IsCheckedForSync = null;
+                    }
+                    return true;
+                }
+            }
 
             // リストからドライブノードを除去する
             dirs.RemoveAt(0);

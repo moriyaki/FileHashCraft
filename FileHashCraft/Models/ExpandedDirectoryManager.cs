@@ -35,7 +35,7 @@
     {
         public ExpandedDirectoryManager()
         {
-            foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
+            foreach (var rootInfo in FileInformationManager.ScanSpecialFolders())
             {
                 _specialDirectoriesRoot.Add(rootInfo.FullPath);
             }

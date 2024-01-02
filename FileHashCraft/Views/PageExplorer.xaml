@@ -86,7 +86,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <local:DirectoryTreeViewControl Grid.Column="0"/>
+            <local:ControlDirectoryTreeView Grid.Column="0"/>
 
             <GridSplitter
 			    Grid.Column="1"

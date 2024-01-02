@@ -190,18 +190,20 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         #endregion データバインディング
 
         #region コンストラクタと初期処理
+        private bool IsExecuting = false;
+
         private readonly ICurrentDirectoryFIleSystemWatcherService _CurrentDirectoryWatcherService;
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
+        private readonly IControDirectoryTreeViewlViewModel _DirectoryTreeViewControlViewModel;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         public PageExplorerViewModel(
             ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             IExpandedDirectoryManager expandedDirectoryManager,
             ICheckedDirectoryManager checkedDirectoryManager,
-            IDirectoryTreeViewControlViewModel directoryTreeViewControlViewModel,
+            IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             IMainWindowViewModel mainWindowViewModel
             )
         {
@@ -228,7 +230,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 ListItems.Clear();
                 await Task.Run(() =>
                 {
-                    foreach (var folderFile in FileSystemInformationManager.ScanFileItems(CurrentFullPath, true))
+                    foreach (var folderFile in FileInformationManager.ScanFileItems(CurrentFullPath))
                     {
                         // フォルダやファイルの情報を ViewModel に変換
                         var item = new ExplorerListItemViewModel(this, folderFile);
@@ -300,17 +302,25 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         public void Initialize()
         {
+            // 設定画面から戻ってきたなら初期化処理終了
+            if (IsExecuting)
+            {
+                IsExecuting = false;
+                return;
+            }
+
             // ツリービューを初期化する
             _DirectoryTreeViewControlViewModel.ClearRoot();
+            _DirectoryTreeViewControlViewModel.SetIsCheckBoxVisible(true);
 
             // TreeViewにルートアイテムを登録する
-            foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
+            foreach (var rootInfo in FileInformationManager.ScanSpecialFolders())
             {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
+                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo, true);
             }
-            foreach (var rootInfo in FileSystemInformationManager.ScanDrives())
+            foreach (var rootInfo in FileInformationManager.ScanDrives())
             {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
+                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo, true);
             }
             _DirectoryTreeViewControlViewModel.CheckStatusChangeFromCheckManager();
         }
@@ -345,7 +355,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         {
             if (CurrentFullPath != Path.GetDirectoryName(FullPath)) return;
 
-            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(FullPath);
+            var fileInformation = FileInformationManager.GetFileInformationFromDirectorPath(FullPath);
             var addListItem = new ExplorerListItemViewModel(this, fileInformation);
             int newListIndex = FindIndexToInsert(ListItems, addListItem);
             await App.Current.Dispatcher.InvokeAsync(() => ListItems.Insert(newListIndex, addListItem));
@@ -378,7 +388,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 }
                 catch (Exception ex)
                 {
-                    LogManager.DebugLog($"Exception in CurrentDirectoryItemRenamed: {ex.Message}", LogLevel.Exception);
+                    DebugManager.ExceptionWrite($"Exception in CurrentDirectoryItemRenamed: {ex.Message}");
                 }
             });
         }
@@ -401,7 +411,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 }
                 catch (Exception ex)
                 {
-                    LogManager.DebugLog($"Exception in CurrentDirectoryItemRenamed: {ex.Message}", LogLevel.Exception);
+                    DebugManager.ExceptionWrite($"Exception in CurrentDirectoryItemRenamed: {ex.Message}");
                 }
             });
         }
@@ -435,7 +445,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public void CurrentDirectoryItemCreated(object? sender, CurrentDirectoryFileChangedEventArgs e)
         {
             // 追加されたファイルの情報を取得する
-            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
+            var fileInformation = FileInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
 
             // リストビューに追加されたファイルを追加する
             var newListItem = new ExplorerListItemViewModel(this, fileInformation);
@@ -493,7 +503,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public void HwndAddHook(HwndSource? hwndSource)
         {
             if (hwndSource != null) { hwndSource.AddHook(WndProc); }
-            else { LogManager.DebugLog("HwndSourceを取得できませんでした。", LogLevel.Error); }
+            else { DebugManager.ErrorWrite("HwndSourceを取得できませんでした。"); }
         }
 
         /// <summary>
@@ -584,7 +594,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                             }
                         }
                     }
-                    catch (Exception ex) { LogManager.DebugLog($"WndProcで例外が発生しました: {ex.Message}", LogLevel.Exception); }
+                    catch (Exception ex) { DebugManager.ExceptionWrite($"WndProcで例外が発生しました: {ex.Message}"); }
                     _DrivesFileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
@@ -600,7 +610,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                             }
                         }
                     }
-                    catch (Exception ex) { LogManager.DebugLog($"WndProcで例外が発生しました: {ex.Message}", LogLevel.Exception); }
+                    catch (Exception ex) { DebugManager.ExceptionWrite($"WndProcで例外が発生しました: {ex.Message}"); }
                     _DrivesFileSystemWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }

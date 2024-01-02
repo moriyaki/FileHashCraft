@@ -6,14 +6,14 @@ using FileHashCraft.ViewModels;
 namespace FileHashCraft.Views
 {
     /// <summary>
-    /// SettingsPage.xaml の相互作用ロジック
+    /// PageSettings.xaml の相互作用ロジック
     /// </summary>
-    public partial class SettingsPage : Page
+    public partial class PageSettings : Page
     {
-        public SettingsPage()
+        public PageSettings()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<ISettingsPageViewModel>();
+            DataContext = Ioc.Default.GetService<IPageSettingsViewModel>();
         }
 
         /// <summary>

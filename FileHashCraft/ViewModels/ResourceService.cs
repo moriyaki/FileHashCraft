@@ -5,9 +5,7 @@ using FileHashCraft.Properties;
 namespace FileHashCraft.ViewModels
 {
     #region インターフェース
-    public interface IResourceService
-    {
-    }
+    public interface IResourceService;
     #endregion インターフェース
 
     public class ResourceService : ObservableObject, IResourceService

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
@@ -154,7 +153,7 @@ namespace FileHashCraft.Models
             if (shFileInfoResult == IntPtr.Zero || shinfo.hIcon == IntPtr.Zero)
             {
                 int lastError = Marshal.GetLastWin32Error();
-                LogManager.DebugLog($"SHGetFileInfo Failed with error code {lastError}", LogLevel.Error);
+                DebugManager.ErrorWrite($"SHGetFileInfo Failed with error code {lastError}");
                 return (null, string.Empty);
             }
 

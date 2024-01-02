@@ -4,9 +4,6 @@
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This project uses NLog, which is distributed under the BSD 3-Clause License.
-See [NLog License](https://github.com/NLog/NLog/blob/main/LICENSE.txt) for details.
-
 ## このソフトについて
 
 ChatGPT 3.5 さんの命名です、今の所検索に引っかかってないので頂きました。

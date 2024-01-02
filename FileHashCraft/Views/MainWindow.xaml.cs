@@ -23,8 +23,8 @@ namespace FileHashCraft
 
             MainFrame.Navigated += MainFrame_Navigated;
             MainFrame.Navigate(new PageExplorer());
-
-            //MainFrame.Navigate(new SettingsPage());
+            //MainFrame.Navigate(new PageSettings());
+            //MainFrame.Navigate(new PageTargetFileSetting());
 
             // PageExplorer へ移動のメッセージ受信したので移動
             WeakReferenceMessenger.Default.Register<ToPageExplorer>(this, (_, _) =>
@@ -39,7 +39,7 @@ namespace FileHashCraft
             WeakReferenceMessenger.Default.Register<ToPageSetting>(this, (_, message) =>
             {
                 FromPage = message.ReturnPage;
-                MainFrame.Navigate(new SettingsPage());
+                MainFrame.Navigate(new PageSettings());
             });
             // PageSetting の終了メッセージを受信したので、元のページへ移動
             WeakReferenceMessenger.Default.Register<ReturnPageFromSettings>(this, (_, _) =>
@@ -48,6 +48,7 @@ namespace FileHashCraft
                 {
                     case ReturnPageEnum.PageExplorer:
                         MainFrame.Navigate(new PageExplorer());
+
                         break;
                     case ReturnPageEnum.PageTargetFileSelect:
                         MainFrame.Navigate(new PageTargetFileSetting());
@@ -69,6 +70,11 @@ namespace FileHashCraft
             {
                 var pageExplorer = Ioc.Default.GetService<IPageExplorerViewModel>();
                 pageExplorer?.Initialize();
+            }
+            if (e.Content is PageTargetFileSetting)
+            {
+                var targetFileSetting = Ioc.Default.GetService<IPageSelectTargetFileViewModel>();
+                targetFileSetting?.Initialize();
             }
         }
 

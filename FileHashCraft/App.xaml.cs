@@ -7,6 +7,7 @@ using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.FileSystemWatch;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using FileHashCraft.ViewModels.PageSelectTargetFile;
 
 namespace FileHashCraft
 {
@@ -97,8 +98,8 @@ namespace FileHashCraft
             services.AddSingleton<IResourceService, ResourceService>();
 
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
-            services.AddSingleton<IDirectoryTreeViewControlViewModel, ControDirectoryTreeViewlViewModel>();
-            services.AddSingleton<ISettingsPageViewModel, PageSettingsViewModel>();
+            services.AddSingleton<IControDirectoryTreeViewlViewModel, ControDirectoryTreeViewlViewModel>();
+            services.AddSingleton<IPageSettingsViewModel, PageSettingsViewModel>();
 
             services.AddSingleton<IPageExplorerViewModel, PageExplorerViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
@@ -106,7 +107,9 @@ namespace FileHashCraft
             services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();
             services.AddSingleton<ICheckedDirectoryManager, CheckedDirectoryManager>();
 
-            services.AddSingleton<IPageTargetFileSelectViewModel, PageTargetFileSelectViewModel>();
+            services.AddSingleton<IPageSelectTargetFileViewModel, PageSelectTargetFileViewModel>();
+            services.AddSingleton<IScanHashFilesClass, ScanHashFilesClass>();
+
             services.AddSingleton<IPageHashCalcingViewModel, PageHashCalcingViewModel>();
 
             return services.BuildServiceProvider();

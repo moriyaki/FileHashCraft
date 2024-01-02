@@ -8,12 +8,10 @@ using FileHashCraft.Properties;
 namespace FileHashCraft.ViewModels
 {
     #region インターフェース
-    public interface ISettingsPageViewModel
-    {
-    }
+    public interface IPageSettingsViewModel;
     #endregion インターフェース
 
-    public class PageSettingsViewModel : ObservableObject, ISettingsPageViewModel
+    public class PageSettingsViewModel : ObservableObject, IPageSettingsViewModel
     {
         #region バインディング
         /// <summary>
@@ -41,51 +39,10 @@ namespace FileHashCraft.ViewModels
                         new("SHA-256", Resources.HashAlgorithm_SHA256),
                         new("SHA-384", Resources.HashAlgorithm_SHA384),
                         new("SHA-512", Resources.HashAlgorithm_SHA512),
-                        new("MD5", Resources.HashAlgorithm_MD5),
                     ];
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
-            }
-        }
-
-        /// <summary>
-        /// フォントファミリーの一覧
-        /// </summary>
-        public ObservableCollection<FontFamily> FontFamilies { get; }
-
-        /// <summary>
-        /// 選択されているフォント
-        /// </summary>
-        private FontFamily _SelectedFontFamily;
-        public FontFamily SelectedFontFamily
-        {
-            get => _SelectedFontFamily;
-            set
-            {
-                UsingFont = value;
-                SetProperty(ref _SelectedFontFamily, value);
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの一覧
-        /// </summary>
-        public ObservableCollection<FontSize> FontSizes { get; } = [];
-
-        /// <summary>
-        /// 選択されたフォントサイズ
-        /// </summary>
-        private double _SelectedFontSize;
-        public double SelectedFontSize
-        {
-            get => _SelectedFontSize;
-            set
-            {
-                if (SelectedFontSize != value)
-                {
-                    FontSize = value;
-                    SetProperty(ref _SelectedFontSize, value);
-                }
+                OnPropertyChanged(nameof(SelectedHashAlgorithm));
             }
         }
 
@@ -97,57 +54,94 @@ namespace FileHashCraft.ViewModels
                 new("SHA-256", Resources.HashAlgorithm_SHA256),
                 new("SHA-384", Resources.HashAlgorithm_SHA384),
                 new("SHA-512", Resources.HashAlgorithm_SHA512),
-                new("MD5", Resources.HashAlgorithm_MD5),
             ];
 
-        private string _SelectedHashAlgorithm;
+        /// <summary>
+        /// ハッシュ計算アルゴリズムの取得と設定
+        /// </summary>
         public string SelectedHashAlgorithm
         {
-            get => _SelectedHashAlgorithm;
+            get => _MainWindowViewModel.HashAlgorithm;
             set
             {
-                if (SelectedHashAlgorithm != value)
-                {
-                    HashAlgorithm = value;
-                    SetProperty(ref _SelectedHashAlgorithm, value);
-                }
+                if (_MainWindowViewModel.HashAlgorithm == value) return;
+                _MainWindowViewModel.HashAlgorithm = value;
+                OnPropertyChanged(nameof(SelectedHashAlgorithm));
             }
         }
 
         /// <summary>
-        /// フォントの設定
+        ///  0 サイズのファイルを削除するかどうか
+        /// </summary>
+        public bool IsZeroSizeFileDelete
+        {
+            get => _MainWindowViewModel.IsZeroSizeFileDelete;
+            set
+            {
+                if (_MainWindowViewModel.IsZeroSizeFileDelete == value) return;
+                _MainWindowViewModel.IsZeroSizeFileDelete = value;
+                OnPropertyChanged(nameof(IsZeroSizeFileDelete));
+            }
+        }
+
+        /// <summary>
+        /// 空のフォルダを削除するかどうか
+        /// </summary>
+        public bool IsEmptyDirectoryDelete
+        {
+            get => _MainWindowViewModel.IsEmptyDirectoryDelete;
+            set
+            {
+                if (_MainWindowViewModel.IsEmptyDirectoryDelete == value) return;
+                _MainWindowViewModel.IsEmptyDirectoryDelete = value;
+                OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
+            }
+        }
+        /// <summary>
+        ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
+        /// </summary>
+        public DelegateCommand IsZeroSizeFIleDeleteClicked { get; set; }
+        /// <summary>
+        /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
+        /// </summary>
+        public DelegateCommand IsEmptyDirectoryDeleteClicked { get; set; }
+        /// <summary>
+        /// フォントの取得と設定
         /// </summary>
         public FontFamily UsingFont
         {
             get => _MainWindowViewModel.UsingFont;
             set
             {
+                if (_MainWindowViewModel.UsingFont == value) return;
                 _MainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
 
         /// <summary>
-        /// フォントサイズの設定
+        /// フォントサイズの取得と設定
         /// </summary>
         public double FontSize
         {
             get => _MainWindowViewModel.FontSize;
             set
             {
+                if (_MainWindowViewModel.FontSize == value) return;
                 _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
-        public string HashAlgorithm
-        {
-            get => _MainWindowViewModel.HashAlgorithm;
-            set
-            {
-                _MainWindowViewModel.HashAlgorithm = value;
-                OnPropertyChanged(nameof(HashAlgorithm));
-            }
-        }
+
+        /// <summary>
+        /// フォントファミリーの一覧
+        /// </summary>
+        public ObservableCollection<FontFamily> FontFamilies { get; }
+
+        /// <summary>
+        /// フォントサイズの一覧
+        /// </summary>
+        public ObservableCollection<FontSize> FontSizes { get; } = [];
 
         /// <summary>
         /// エクスプローラー風画面にページに移動
@@ -169,45 +163,27 @@ namespace FileHashCraft.ViewModels
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
 
-            // MainViewModel からフォント設定を読み込むようにする
-            _SelectedFontFamily = _MainWindowViewModel.UsingFont;
-            OnPropertyChanged(nameof(SelectedFontFamily));
-
-            _SelectedFontSize = _MainWindowViewModel.FontSize;
-            OnPropertyChanged(nameof(SelectedFontSize));
-
             // フォントサイズの一覧取得とバインド
             foreach (var fontSize in _MainWindowViewModel.GetSelectableFontSize())
             {
                 FontSizes.Add(new FontSize(fontSize));
             }
 
-            // MainViewModel からハッシュアルゴリズム設定を読み込むようにする
-            _SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
+            //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
+            IsZeroSizeFIleDeleteClicked = new DelegateCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
 
+            // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
+            IsEmptyDirectoryDeleteClicked = new DelegateCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
+
+            // 「終了」で戻るページへのメッセージを送るコマンド
             ReturnPage = new DelegateCommand(
                 () => WeakReferenceMessenger.Default.Send(new ReturnPageFromSettings()));
 
             // メインウィンドウからのフォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) =>
-            {
-                UsingFont = message.UsingFont;
-                SelectedFontFamily = message.UsingFont;
-            });
+            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, _) => OnPropertyChanged(nameof(UsingFont)));
 
             // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
-            {
-                FontSize = message.FontSize;
-                SelectedFontSize = message.FontSize;
-            });
-
-            // メインウィンドウからのハッシュアルゴリズム変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<HashAlgorithmChanged>(this, (_, message) =>
-            {
-                HashAlgorithm = message.HashAlgorithm;
-                SelectedHashAlgorithm = message.HashAlgorithm;
-            });
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, _) => OnPropertyChanged(nameof(FontSize)));
         }
 
         /// <summary>

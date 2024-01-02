@@ -226,7 +226,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// フォントの設定
+        /// フォントの取得と設定
         /// </summary>
         public FontFamily UsingFont
         {
@@ -239,7 +239,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// フォントサイズの設定
+        /// フォントサイズの取得と設定
         /// </summary>
         public double FontSize
         {

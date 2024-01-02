@@ -106,15 +106,6 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   MD5 (Low Security: Prone to collision risks, deprecated. Tends to be fast on HDDs.) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string HashAlgorithm_MD5 {
-            get {
-                return ResourceManager.GetString("HashAlgorithm_MD5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   SHA-256 (High security: More reliable, generally faster than MD5. Recommended as standard) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_SHA256 {
@@ -151,6 +142,42 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Number of all files to get hash : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelCountAllFilesGetHash {
+            get {
+                return ResourceManager.GetString("LabelCountAllFilesGetHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of files for which a hash has already been obtained : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelCountAlreadyGetHash {
+            get {
+                return ResourceManager.GetString("LabelCountAlreadyGetHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of files to get hashes from filtered files : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelCountFilteredGetHash {
+            get {
+                return ResourceManager.GetString("LabelCountFilteredGetHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of files requiring hash acquisition : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelCountRequireGetHash {
+            get {
+                return ResourceManager.GetString("LabelCountRequireGetHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Current Directory に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelCurrentDirectory {
@@ -160,11 +187,30 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Whether to delete empty directories or not に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelEmptyDirDelete {
+            get {
+                return ResourceManager.GetString("LabelEmptyDirDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Algorithm for file hash calculation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelFileHashAlgorithmString {
             get {
                 return ResourceManager.GetString("LabelFileHashAlgorithmString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search filter settings 
+        ///separated by Ente or ; symbol) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelFilterSetting {
+            get {
+                return ResourceManager.GetString("LabelFilterSetting", resourceCulture);
             }
         }
         
@@ -183,6 +229,25 @@ namespace FileHashCraft.Properties {
         public static string LabelFontString {
             get {
                 return ResourceManager.GetString("LabelFontString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search exclusion filter settings
+        ///(separated by Enter or ; symbol) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelIgnoreFilterSetting {
+            get {
+                return ResourceManager.GetString("LabelIgnoreFilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Whether to delete files of size 0 or not に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelZeroSizeFileDelete {
+            get {
+                return ResourceManager.GetString("LabelZeroSizeFileDelete", resourceCulture);
             }
         }
         

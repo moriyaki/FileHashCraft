@@ -137,10 +137,6 @@
     <value>終了</value>
     <comment>Button</comment>
   </data>
-  <data name="HashAlgorithm_MD5" xml:space="preserve">
-    <value>MD5 (低セキュリティ：衝突のリスクがあり非推奨、HDDでは計算は速い傾向がある)</value>
-    <comment>PageSettings/Security</comment>
-  </data>
   <data name="HashAlgorithm_SHA256" xml:space="preserve">
     <value>SHA-256 (高セキュリティ：信頼性は高く、概ねMD5より高速。標準として推奨)</value>
     <comment>PageSettings/Security</comment>
@@ -157,13 +153,34 @@
     <value>コマンド</value>
     <comment>Label/PageExplorer</comment>
   </data>
+  <data name="LabelCountAllFilesGetHash" xml:space="preserve">
+    <value>ハッシュを取得する全ファイル数 :</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
+  <data name="LabelCountAlreadyGetHash" xml:space="preserve">
+    <value>ハッシュを既に取得しているファイル数 :</value>
+  </data>
+  <data name="LabelCountFilteredGetHash" xml:space="preserve">
+    <value>フィルタ済みのハッシュ取得が必要なファイル数 :</value>
+  </data>
+  <data name="LabelCountRequireGetHash" xml:space="preserve">
+    <value>ハッシュ取得が必要なファイル数 :</value>
+  </data>
   <data name="LabelCurrentDirectory" xml:space="preserve">
     <value>カレントディレクトリ</value>
     <comment>Label/PageExplorer</comment>
   </data>
+  <data name="LabelEmptyDirDelete" xml:space="preserve">
+    <value>空のディレクトリを削除するかどうか</value>
+    <comment>Label/PageSettings/PageTargetViewModel</comment>
+  </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>ファイルハッシュ計算のアルゴリズム</value>
     <comment>Label/PageSettings</comment>
+  </data>
+  <data name="LabelFilterSetting" xml:space="preserve">
+    <value>検索フィルタ設定
+(改行か ; 記号で区切ってください)</value>
   </data>
   <data name="LabelFontSizeString" xml:space="preserve">
     <value>フォントのサイズ</value>
@@ -172,6 +189,14 @@
   <data name="LabelFontString" xml:space="preserve">
     <value>フォント</value>
     <comment>Label/PageSettings</comment>
+  </data>
+  <data name="LabelIgnoreFilterSetting" xml:space="preserve">
+    <value>検索除外フィルタ設定
+(改行か ; 記号で区切ってください)</value>
+  </data>
+  <data name="LabelZeroSizeFileDelete" xml:space="preserve">
+    <value>0サイズのファイルを削除するかどうか</value>
+    <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>更新日時</value>

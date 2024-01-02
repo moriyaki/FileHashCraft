@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Models;
@@ -70,6 +71,31 @@ namespace FileHashCraft.ViewModels
                 OnPropertyChanged(nameof(PollingStatus));
             }
         }
+        /// <summary>
+        /// フォントの取得と設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => _MainWindowViewModel.UsingFont;
+            set
+            {
+                _MainWindowViewModel.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
+        /// フォントサイズの取得と設定
+        /// </summary>
+        public double FontSize
+        {
+            get => _MainWindowViewModel.FontSize;
+            set
+            {
+                _MainWindowViewModel.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
+            }
+        }
 
         /// <summary>
         /// ポーリング開始/終了のボタン文字列
@@ -102,6 +128,7 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
@@ -115,6 +142,7 @@ namespace FileHashCraft.ViewModels
         {
             _ExpandedDirectoryManager = expandedDirectoryManager;
             _CheckedDirectoryManager = checkedDirectoryManager;
+            _MainWindowViewModel = mainViewModel;
 
             Top = mainViewModel.Top;
             Left = mainViewModel.Left + mainViewModel.Width;

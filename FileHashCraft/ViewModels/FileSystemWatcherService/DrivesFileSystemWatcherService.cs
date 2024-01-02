@@ -188,7 +188,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <param name="e"></param>
         private void OnError(object sender, ErrorEventArgs e)
         {
-            LogManager.DebugLog($"FileSystemWatcher エラー: {e.GetException()}", LogLevel.Exception);
+            DebugManager.ExceptionWrite($"FileSystemWatcher エラー: {e.GetException()}");
         }
 
         /// <summary>

@@ -66,7 +66,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
             catch (Exception ex)
             {
-                LogManager.DebugLog($"Exception in DirectoryChanged: {ex.Message}", LogLevel.Exception);
+                DebugManager.ExceptionWrite($"Exception in DirectoryChanged: {ex.Message}");
             }
         }
 
@@ -94,7 +94,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
                 catch (Exception ex)
                 {
-                    LogManager.DebugLog($"Exception in DirectoryDeleted: {ex.Message}", LogLevel.Exception);
+                    DebugManager.ExceptionWrite($"Exception in DirectoryDeleted: {ex.Message}");
                 }
             });
             // TODO : 特殊フォルダ内にも存在したら反映
@@ -120,7 +120,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (modifiedTreeItem == null) { return; }
 
             // 作成されたディレクトリを追加
-            var fileInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
+            var fileInformation = FileInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
             var addTreeItem = new DirectoryTreeViewModel(this, fileInformation);
             int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addTreeItem);
 
@@ -135,7 +135,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
                 catch (Exception ex)
                 {
-                    LogManager.DebugLog($"Exception in DirectoryCreated: {ex.Message}", LogLevel.Exception);
+                    DebugManager.ExceptionWrite($"Exception in DirectoryCreated: {ex.Message}");
                 }
             });
             // TODO : 特殊フォルダ内にも存在したら反映
@@ -175,7 +175,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
                 catch (Exception ex)
                 {
-                    LogManager.DebugLog($"Exception in DirectoryRenamed Remove: {ex.Message}", LogLevel.Exception);
+                    DebugManager.ExceptionWrite($"Exception in DirectoryRenamed Remove: {ex.Message}");
                 }
             });
 
@@ -191,7 +191,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
                 catch (Exception ex)
                 {
-                    LogManager.DebugLog($"Exception in DirectoryRenamed Insert: {ex.Message}", LogLevel.Exception);
+                    DebugManager.ExceptionWrite($"Exception in DirectoryRenamed Insert: {ex.Message}");
                 }
             });
 
@@ -240,7 +240,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     }
                     break;
                 }
-                LogManager.DebugLog($"Insert retries : {120 - retries}", LogLevel.Info, false);
+                DebugManager.InfoWrite($"Insert retries : {120 - retries}");
                 if (isCDRom && drive != null)
                 {
                     // 光学ドライブへの挿入処理
@@ -254,7 +254,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 else
                 {
                     // 取り外し可能なメディアの追加処理
-                    var addNewInformation = FileSystemInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
+                    var addNewInformation = FileInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
                     var newTreeItem = new DirectoryTreeViewModel(this, addNewInformation);
                     int newTreeIndex = FindIndexToInsert(TreeRoot, newTreeItem);
                     App.Current?.Dispatcher?.Invoke(() => TreeRoot.Insert(newTreeIndex, newTreeItem));
@@ -262,7 +262,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
             catch (Exception ex)
             {
-                LogManager.DebugLog($"Exception in OpticalDriveMediaInserted: {ex.Message}", LogLevel.Exception);
+                DebugManager.ExceptionWrite($"Exception in OpticalDriveMediaInserted: {ex.Message}");
             }
         }
 
@@ -295,7 +295,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                         }
                         break;
                     }
-                    LogManager.DebugLog($"Eject retries : {120 - retries}", LogLevel.Info, false);
+                    DebugManager.InfoWrite($"Eject retries : {120 - retries}");
 
                     if (isCDRom)
                     {
@@ -315,7 +315,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
             catch (Exception ex)
             {
-                LogManager.DebugLog($"Exception in EjectOpticalDriveMedia: {ex.Message}", LogLevel.Exception);
+                DebugManager.ExceptionWrite($"Exception in EjectOpticalDriveMedia: {ex.Message}");
             }
         }
         #endregion リムーバブルドライブドライブ変更通知処理
@@ -359,7 +359,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             var specialTreeItems = new List<DirectoryTreeViewModel>();
 
-            foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
+            foreach (var rootInfo in FileInformationManager.ScanSpecialFolders())
             {
                 // 特殊ユーザーディレクトリのパスを持つアイテムを抽出
                 if (TreeRoot.FirstOrDefault(item => item.FullPath == rootInfo.FullPath) is

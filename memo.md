@@ -12,7 +12,7 @@ FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
 
 ```cs
     /// <summary>
-    /// フォントの設定
+    /// フォントの取得と設定
     /// </summary>
     public FontFamily UsingFont
     {
@@ -25,7 +25,7 @@ FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
     }
 
     /// <summary>
-    /// フォントサイズの設定
+    /// フォントサイズの取得と設定
     /// </summary>
     public double FontSize
     {

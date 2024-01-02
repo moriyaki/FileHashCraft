@@ -15,6 +15,8 @@ namespace FileHashCraft.ViewModels
         public double Width { get; set; }
         public double Height { get; set; }
         public double FontSize { get; set; }
+        public bool IsZeroSizeFileDelete { get; set; }
+        public bool IsEmptyDirectoryDelete { get; set; }
         public string SelectedLanguage { get; set; }
         public string HashAlgorithm { get; set; }
         public FontFamily UsingFont { get; set; }
@@ -69,6 +71,8 @@ namespace FileHashCraft.ViewModels
                     Width = Convert.ToDouble(root.Element("Width")?.Value);
                     Height = Convert.ToDouble(root.Element("Height")?.Value);
                     FontSize = Convert.ToDouble(root.Element("FontSize")?.Value);
+                    IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
+                    IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
                     SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
                     HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? "SHA-256";
 
@@ -93,6 +97,8 @@ namespace FileHashCraft.ViewModels
                         new XElement("Width", Width),
                         new XElement("Height", Height),
                         new XElement("FontSize", FontSize),
+                        new XElement("IsZeroSizeFileDelete", IsZeroSizeFileDelete),
+                        new XElement("IsEmptyDirectoryDelete", IsEmptyDirectoryDelete),
                         new XElement("SelectedLanguage", SelectedLanguage),
                         new XElement("HashAlgorithm", HashAlgorithm),
                         new XElement("UsingFont", UsingFont)
@@ -176,7 +182,7 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 選択されている言語
         /// </summary>
-        private string _SelectedLanguage = string.Empty;
+        private string _SelectedLanguage = "ja-JP";
         public string SelectedLanguage
         {
             get => _SelectedLanguage;
@@ -198,15 +204,45 @@ namespace FileHashCraft.ViewModels
             get => _HashAlgorithm;
             set
             {
-                if (value != _HashAlgorithm)
-                {
-                    SetProperty(ref _HashAlgorithm, value);
-                    WeakReferenceMessenger.Default.Send(new HashAlgorithmChanged(value));
-                    SaveSettings();
-                }
+                // 状況によっては来るので弾く
+                if (string.IsNullOrEmpty(value)) { return; }
+                if (value == _HashAlgorithm) return;
+
+                SetProperty(ref _HashAlgorithm, value);
+                WeakReferenceMessenger.Default.Send(new HashAlgorithmChanged(value));
+                SaveSettings();
             }
         }
 
+        /// <summary>
+        /// 0 サイズのファイルを削除するかどうか
+        /// </summary>
+        private bool _IsZeroSizeFileDelete = false;
+        public bool IsZeroSizeFileDelete
+        {
+            get => _IsZeroSizeFileDelete;
+            set
+            {
+                if (value == _IsZeroSizeFileDelete) return;
+                SetProperty(ref _IsZeroSizeFileDelete, value);
+                SaveSettings();
+            }
+        }
+
+        /// <summary>
+        /// 空のフォルダを削除するかどうか
+        /// </summary>
+        private bool _IsEmptyDirectoryDelete = false;
+        public bool IsEmptyDirectoryDelete
+        {
+            get => _IsEmptyDirectoryDelete;
+            set
+            {
+                if (value == _IsEmptyDirectoryDelete) return;
+                SetProperty(ref _IsEmptyDirectoryDelete, value);
+                SaveSettings();
+            }
+        }
         /// <summary>
         /// フォントの変更
         /// MainWindowを参照できる所には以下のコード
