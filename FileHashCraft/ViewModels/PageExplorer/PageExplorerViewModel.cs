@@ -13,7 +13,7 @@ using FileHashCraft.ViewModels.FileSystemWatch;
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
     #region インターフェース
-    public interface IExplorerPageViewModel
+    public interface IPageExplorerViewModel
     {
         /// <summary>
         /// リストビューへのアクセス
@@ -24,6 +24,11 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// ツリービューのチェックボックスの表示状態を取得
         /// </summary>
         public Visibility IsCheckBoxVisible { get; }
+
+        /// <summary>
+        /// 初期処理
+        /// </summary>
+        public void Initialize();
 
         /// <summary>
         /// カレントディレクトリのフルパスへのアクセス
@@ -42,7 +47,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class PageExplorerViewModel : ObservableObject, IExplorerPageViewModel
+    public partial class PageExplorerViewModel : ObservableObject, IPageExplorerViewModel
     {
         #region データバインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
@@ -184,7 +189,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
         #endregion データバインディング
 
-        #region コンストラクタ
+        #region コンストラクタと初期処理
         private readonly ICurrentDirectoryFIleSystemWatcherService _CurrentDirectoryWatcherService;
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
@@ -265,16 +270,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 debugWindow.Show();
             });
 
-            // TreeViewにルートアイテムを登録する
-            foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
-            {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
-            }
-            foreach (var rootInfo in FileSystemInformationManager.ScanDrives())
-            {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
-            }
-
             // カレントディレクトリ変更のメッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) => CurrentFullPath = message.CurrentFullPath);
 
@@ -296,8 +291,30 @@ namespace FileHashCraft.ViewModels.ExplorerPage
 
             // ディレクトリ削除のメッセージ受信
             WeakReferenceMessenger.Default.Register<DirectoryDeleted>(this, (_, message) => CurrentDirectoryItemDeleted(message.FullPath));
+
+            Initialize();
         }
-        #endregion コンストラクタ
+
+        /// <summary>
+        /// 初期処理
+        /// </summary>
+        public void Initialize()
+        {
+            // ツリービューを初期化する
+            _DirectoryTreeViewControlViewModel.ClearRoot();
+
+            // TreeViewにルートアイテムを登録する
+            foreach (var rootInfo in FileSystemInformationManager.ScanSpecialFolders())
+            {
+                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
+            }
+            foreach (var rootInfo in FileSystemInformationManager.ScanDrives())
+            {
+                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo);
+            }
+            _DirectoryTreeViewControlViewModel.CheckStatusChangeFromCheckManager();
+        }
+        #endregion コンストラクタと初期処理
 
         #region チェックボックスマネージャ登録
         private void CreateCheckBoxManager()

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 
 namespace FileHashCraft.ViewModels
 {
@@ -58,13 +59,15 @@ namespace FileHashCraft.ViewModels
         public DelegateCommand ToPageHashCalcing { get; set; }
         #endregion バインディング
 
+        private readonly IDirectoryTreeViewControlViewModel _DirectoryTreeViewControlViewModel;
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
         public PageTargetFileSelectViewModel() { throw new NotImplementedException(); }
-
         public PageTargetFileSelectViewModel(
+            IDirectoryTreeViewControlViewModel directoryTreeViewControlViewModel,
             IMainWindowViewModel mainWindowViewModel)
         {
+            _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
             _MainWindowViewModel = mainWindowViewModel;
 
             // 設定画面ページに移動するコマンド
@@ -91,6 +94,9 @@ namespace FileHashCraft.ViewModels
 
             // メインウィンドウからのフォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
+
+            // ツリービューのアイテムをクリアする
+            _DirectoryTreeViewControlViewModel.ClearRoot();
         }
     }
 }

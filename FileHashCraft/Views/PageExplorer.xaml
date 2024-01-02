@@ -21,6 +21,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0">
             <MenuItem Command="{Binding SettingsOpen}"
                       Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
@@ -28,6 +29,7 @@
                       Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
         </Menu>
 
+        <!-- CUrrent Directory -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -48,6 +50,7 @@
                    Text="{Binding CurrentFullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
+        <!-- Command and Buttons -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -75,6 +78,7 @@
                     Command="{Binding HashCalc}"/>
         </Grid>
 
+        <!-- TreeView and ListView -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300"/>

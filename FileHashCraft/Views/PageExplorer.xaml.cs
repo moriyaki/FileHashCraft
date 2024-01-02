@@ -18,7 +18,7 @@ namespace FileHashCraft.Views
         public PageExplorer()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IExplorerPageViewModel>();
+            DataContext = Ioc.Default.GetService<IPageExplorerViewModel>();
         }
 
         // とりあえずのデバッグウィンドウ開く処理
@@ -70,7 +70,7 @@ namespace FileHashCraft.Views
         /// <param name="e">RoutedEventArgs</param>
         private void ExplorerPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var explorerVM = Ioc.Default.GetService<IExplorerPageViewModel>();
+            var explorerVM = Ioc.Default.GetService<IPageExplorerViewModel>();
             if (explorerVM == null) { throw new NullReferenceException(nameof(explorerVM)); }
 
             FileWatcherService = Ioc.Default.GetService<IDrivesFileSystemWatcherService>();

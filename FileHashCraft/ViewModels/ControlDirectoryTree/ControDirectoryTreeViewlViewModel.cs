@@ -30,6 +30,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         public void AddRoot(FileItemInformation item);
 
         /// <summary>
+        /// ツリーノードのアイテムをクリアする
+        /// </summary>
+        public void ClearRoot();
+        /// <summary>
         /// TreeViewItem が展開された時に展開マネージャに通知します。
         /// </summary>
         /// <param name="node">展開されたノード</param>
@@ -40,6 +44,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="node">展開解除されたノード</param>
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
+
+        /// <summary>
+        /// チェックマネージャの情報に基づき、チェック状態を変更します。
+        /// </summary>
+        public void CheckStatusChangeFromCheckManager();
     }
     #endregion インターフェース
     public partial class ControDirectoryTreeViewlViewModel : ObservableObject, IDirectoryTreeViewControlViewModel
@@ -189,13 +198,21 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 var child = node;
 
                 dirs.RemoveAt(0);
-                foreach (var directory in dirs)
+                foreach (var dir in dirs)
                 {
                     if (child == null) break;
                     child.KickChild();
-                    child = child.Children.FirstOrDefault(c => c.FullPath == directory);
+                    child = child.Children.FirstOrDefault(c => c.FullPath == dir);
                 }
             }
+        }
+
+        /// <summary>
+        /// ツリーノードのアイテムをクリアする
+        /// </summary>
+        public void ClearRoot()
+        {
+            TreeRoot.Clear();
         }
         #endregion 初期処理
 
@@ -289,5 +306,63 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
         }
         #endregion 展開マネージャへの追加削除処理
+
+        #region チェックマネージャからチェック状態を反映
+        /// <summary>
+        /// チェックマネージャの情報に基づき、チェック状態を変更します。
+        /// </summary>
+        public void CheckStatusChangeFromCheckManager()
+        {
+            // サブディレクトリを含む管理をしているディレクトリを巡回する
+            foreach (var fullPath in _CheckedDirectoryManager.NestedDirectories)
+            {
+                CheckStatusChange(fullPath, true);
+            }
+            foreach (var fullPath in _CheckedDirectoryManager.NonNestedDirectories)
+            {
+                CheckStatusChange(fullPath, null);
+            }
+        }
+
+        /// <summary>
+        /// ディレクトリのフルパスから、チェック状態を変更する
+        /// </summary>
+        /// <param name="fullPath"></param>
+        /// <param name="isChecked"></param>
+        /// <returns>成功の可否</returns>
+        private bool CheckStatusChange(string fullPath, bool? isChecked)
+        {
+            // 親ディレクトリから順に、現在のディレクトリまでのコレクションを取得
+            var dirs = GetDirectoryNames(fullPath);
+
+            // ドライブノードを取得する
+            DirectoryTreeViewModel? node = TreeRoot.FirstOrDefault(r => r.FullPath == dirs[0]);
+            if (node == null) return false;
+            node.KickChild();
+
+            // リストからドライブノードを除去する
+            dirs.RemoveAt(0);
+            foreach (var dir in dirs)
+            {
+                node = node.Children.FirstOrDefault(c => c.FullPath == dir);
+                if (node == null) return false;
+
+                node.KickChild();
+                if (node.FullPath == fullPath)
+                {
+                    if (isChecked == true || isChecked == false)
+                    {
+                        node.IsChecked = isChecked;
+                    }
+                    else
+                    {
+                        node.IsCheckedForSync = null;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion チェックマネージャからチェック状態を反映
     }
 }

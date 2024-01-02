@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Navigation;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.Views;
@@ -19,7 +20,10 @@ namespace FileHashCraft
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<IMainWindowViewModel>();
+
+            MainFrame.Navigated += MainFrame_Navigated;
             MainFrame.Navigate(new PageExplorer());
+
             //MainFrame.Navigate(new SettingsPage());
 
             // PageExplorer へ移動のメッセージ受信したので移動
@@ -52,6 +56,20 @@ namespace FileHashCraft
                         break;
                 }
             });
+        }
+
+        /// <summary>
+        /// ページが遷移した時の処理
+        /// </summary>
+        /// <param name="sender">object?</param>
+        /// <param name="e">NavigationEventArgs</param>
+        private void MainFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            if (e.Content is PageExplorer)
+            {
+                var pageExplorer = Ioc.Default.GetService<IPageExplorerViewModel>();
+                pageExplorer?.Initialize();
+            }
         }
 
         /// <summary>

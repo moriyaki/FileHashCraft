@@ -100,7 +100,7 @@ namespace FileHashCraft
             services.AddSingleton<IDirectoryTreeViewControlViewModel, ControDirectoryTreeViewlViewModel>();
             services.AddSingleton<ISettingsPageViewModel, PageSettingsViewModel>();
 
-            services.AddSingleton<IExplorerPageViewModel, PageExplorerViewModel>();
+            services.AddSingleton<IPageExplorerViewModel, PageExplorerViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
             services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();
