@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{E10C4403-C5A7-401F-830A-200A29395634}"
 	ProjectSection(SolutionItems) = preProject
 		memo.md = memo.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

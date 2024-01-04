@@ -2,13 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Properties;
 
-namespace FileHashCraft.ViewModels
+namespace FileHashCraft.ViewModels.Modules
 {
-    #region インターフェース
-    public interface IResourceService;
-    #endregion インターフェース
-
-    public class ResourceService : ObservableObject, IResourceService
+    public class ResourceService : ObservableObject
     {
         public static ResourceService Current { get; } = new();
         public Resources Resources { get; } = new();

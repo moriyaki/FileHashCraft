@@ -1,41 +1,22 @@
-﻿namespace FileHashCraft.Models
+﻿namespace FileHashCraft.ViewModels.Modules
 {
     #region インターフェース
     public interface IExpandedDirectoryManager
     {
         public List<string> Directories { get; }
-        /// <summary>
-        /// 展開されたディレクトリかどうかを調べます。
-        /// </summary>
-        /// <param name="path">チェックするディレクトリのフルパス</param>
-        /// <returns>展開されたディレクトリかどうか</returns>
         public bool IsExpandedDirectory(string path);
-        /// <summary>
-        /// 特殊フォルダの配下かどうかを調べます。
-        /// </summary>
-        /// <param name="fullPath">チェックするディレクトリのフルパス</param>
-        /// <returns>TreeViewで展開されているかどうか</returns>
         public bool HasSpecialSubFolder(string fullPath);
-        /// <summary>
-        /// 指定したパスを管理対象に追加します。
-        /// </summary>
-        /// <param name="fullPath">追加するディレクトリのフルパス</param>
         public void AddDirectory(string fullPath);
-
-        /// <summary>
-        /// 指定したパスを管理対象から外します。
-        /// </summary>
-        /// <param name="fullPath">削除するディレクトリのフルパス</param>
-        public void RemoveDirectory(string fullPath);
+       public void RemoveDirectory(string fullPath);
     }
     #endregion インターフェース
 
     // TODO : 削除するパスの特殊フォルダは除外
-    public class ExpandedDirectoryManager : IExpandedDirectoryManager
+    public class DirectoryTreeExpandedDirectoryManager : IExpandedDirectoryManager
     {
-        public ExpandedDirectoryManager()
+        public DirectoryTreeExpandedDirectoryManager(ISpecialFolderAndRootDrives specialFolderAndRootDrives)
         {
-            foreach (var rootInfo in FileInformationManager.ScanSpecialFolders())
+            foreach (var rootInfo in specialFolderAndRootDrives.ScanSpecialFolders())
             {
                 _specialDirectoriesRoot.Add(rootInfo.FullPath);
             }

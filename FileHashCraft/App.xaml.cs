@@ -1,6 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
-using FileHashCraft.Models;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
@@ -8,6 +7,7 @@ using FileHashCraft.ViewModels.FileSystemWatch;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using FileHashCraft.ViewModels.PageSelectTargetFile;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft
 {
@@ -95,7 +95,9 @@ namespace FileHashCraft
             var services = new ServiceCollection();
 
             services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
-            services.AddSingleton<IResourceService, ResourceService>();
+
+            services.AddSingleton<IWindowsAPI, WindowsAPI>();
+            services.AddSingleton<ISpecialFolderAndRootDrives, SpecialFolderAndRootDrives>();
 
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IControDirectoryTreeViewlViewModel, ControDirectoryTreeViewlViewModel>();
@@ -104,8 +106,8 @@ namespace FileHashCraft
             services.AddSingleton<IPageExplorerViewModel, PageExplorerViewModel>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
-            services.AddSingleton<IExpandedDirectoryManager, ExpandedDirectoryManager>();
-            services.AddSingleton<ICheckedDirectoryManager, CheckedDirectoryManager>();
+            services.AddSingleton<IExpandedDirectoryManager, DirectoryTreeExpandedDirectoryManager>();
+            services.AddSingleton<ICheckedDirectoryManager, DirectoryTreeCheckedDirectoryManager>();
 
             services.AddSingleton<IPageSelectTargetFileViewModel, PageSelectTargetFileViewModel>();
             services.AddSingleton<IScanHashFilesClass, ScanHashFilesClass>();

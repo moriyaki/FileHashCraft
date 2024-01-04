@@ -6,49 +6,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.ViewModels.FileSystemWatch;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
     #region インターフェース
     public interface IControDirectoryTreeViewlViewModel
     {
-        /// <summary>
-        /// TreeViewのコレクションにアクセス
-        /// </summary>
         public ObservableCollection<DirectoryTreeViewModel> TreeRoot { get; }
-
-        /// <summary>
-        /// チェックボックスを表示するかどうかを設定します。
-        /// </summary>
-        /// <param name="isVisible">表示するかどうか</param>
         public void SetIsCheckBoxVisible(bool isVisible);
-
-        /// <summary>
-        /// ルートノードにアイテムを追加します。
-        /// </summary>
-        /// <param name="item">追加する FileItemInformation</param>
-        /// /// <returns>追加されたノード</returns>
         public DirectoryTreeViewModel AddRoot(FileItemInformation item, bool findSpecial);
-
-        /// <summary>
-        /// ツリーノードのアイテムをクリアする
-        /// </summary>
         public void ClearRoot();
-        /// <summary>
-        /// TreeViewItem が展開された時に展開マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開されたノード</param>
         public void AddDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
-
-        /// <summary>
-        /// TreeViewItem が展開された時に展開解除マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開解除されたノード</param>
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
-
-        /// <summary>
-        /// チェックマネージャの情報に基づき、チェック状態を変更します。
-        /// </summary>
         public void CheckStatusChangeFromCheckManager();
     }
     #endregion インターフェース
@@ -75,10 +45,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _mainWindowViewModel.UsingFont;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
+                _mainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -88,10 +58,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _mainWindowViewModel.FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
+                _mainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -118,10 +88,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         #endregion バインディング
 
         #region 初期処理
-        private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IDrivesFileSystemWatcherService _drivesFileSystemWatcherService;
+        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
+        private readonly IExpandedDirectoryManager _expandedDirectoryManager;
+        public readonly ISpecialFolderAndRootDrives _specialFolderAndRootDrives;
+        public readonly IWindowsAPI _windowsAPI;
+        private readonly IMainWindowViewModel _mainWindowViewModel;
 
         /// <summary>
         /// 引数なしで生成はさせない
@@ -137,12 +109,16 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             ICheckedDirectoryManager checkedDirectoryManager,
             IExpandedDirectoryManager expandDirectoryManager,
+            ISpecialFolderAndRootDrives specialFolderAndRootDrives,
+            IWindowsAPI windowsAPI,
             IMainWindowViewModel mainViewModel)
         {
-            _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
-            _CheckedDirectoryManager = checkedDirectoryManager;
-            _ExpandedDirectoryManager = expandDirectoryManager;
-            _MainWindowViewModel = mainViewModel;
+            _drivesFileSystemWatcherService = drivesFileSystemWatcherService;
+            _checkedDirectoryManager = checkedDirectoryManager;
+            _expandedDirectoryManager = expandDirectoryManager;
+            _specialFolderAndRootDrives = specialFolderAndRootDrives;
+            _windowsAPI = windowsAPI;
+            _mainWindowViewModel = mainViewModel;
 
             // カレントディレクトリの変更メッセージ
             WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) =>
@@ -155,15 +131,15 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             // フォントの変更メッセージ
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
 
-            foreach (var root in FileInformationManager.ScanDrives())
+            foreach (var root in _specialFolderAndRootDrives.ScanDrives())
             {
-                _DrivesFileSystemWatcherService.SetRootDirectoryWatcher(root);
+                _drivesFileSystemWatcherService.SetRootDirectoryWatcher(root);
             }
-            _DrivesFileSystemWatcherService.Changed += DirectoryChanged;
-            _DrivesFileSystemWatcherService.Created += DirectoryCreated;
-            _DrivesFileSystemWatcherService.Renamed += DirectoryRenamed;
-            _DrivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
-            _DrivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
+            _drivesFileSystemWatcherService.Changed += DirectoryChanged;
+            _drivesFileSystemWatcherService.Created += DirectoryCreated;
+            _drivesFileSystemWatcherService.Renamed += DirectoryRenamed;
+            _drivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
+            _drivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
         }
 
         /// <summary>
@@ -189,7 +165,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!findSpecial) return currentNode;
 
             // 展開ディレクトリに追加
-            _ExpandedDirectoryManager.AddDirectory(item.FullPath);
+            _expandedDirectoryManager.AddDirectory(item.FullPath);
             /* ルートドライブが追加された時、特殊フォルダは追加されている
               * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
               * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
@@ -297,7 +273,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="node">展開されたノード</param>
         public void AddDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
         {
-            _ExpandedDirectoryManager.AddDirectory(node.FullPath);
+            _expandedDirectoryManager.AddDirectory(node.FullPath);
             if (!node.IsExpanded) return;
 
             foreach (var child in node.Children)
@@ -312,7 +288,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="node">展開解除されたノード</param>
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
         {
-            _ExpandedDirectoryManager.RemoveDirectory(node.FullPath);
+            _expandedDirectoryManager.RemoveDirectory(node.FullPath);
             if (!node.HasChildren) { return; }
 
             foreach (var child in node.Children)
@@ -329,11 +305,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         public void CheckStatusChangeFromCheckManager()
         {
             // サブディレクトリを含む管理をしているディレクトリを巡回する
-            foreach (var fullPath in _CheckedDirectoryManager.NestedDirectories)
+            foreach (var fullPath in _checkedDirectoryManager.NestedDirectories)
             {
                 CheckStatusChange(fullPath, true);
             }
-            foreach (var fullPath in _CheckedDirectoryManager.NonNestedDirectories)
+            foreach (var fullPath in _checkedDirectoryManager.NonNestedDirectories)
             {
                 CheckStatusChange(fullPath, null);
             }

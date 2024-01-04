@@ -1,4 +1,4 @@
-﻿using FileHashCraft.Models;
+﻿using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Tests
 {
@@ -11,7 +11,7 @@ namespace FileHashCraft.Tests
         public void TestRootChecked()
         {
             const string root = @"C:\";
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, true);
 
             Assert.True(manager.IsChecked(root));
@@ -26,7 +26,7 @@ namespace FileHashCraft.Tests
         {
             const string root = @"C:\";
             var a = Path.Combine(root, "a");
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, true);
 
             Assert.True(manager.IsChecked(a));
@@ -41,7 +41,7 @@ namespace FileHashCraft.Tests
         {
             const string root = @"C:\";
             var a = Path.Combine(root, "a");
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(a, true);
             manager.CheckChanged(root, true);
 
@@ -57,7 +57,7 @@ namespace FileHashCraft.Tests
         {
             const string root = @"C:\";
             var a = Path.Combine(root, "a");
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, true);
             manager.CheckChanged(a, true);
 
@@ -73,7 +73,7 @@ namespace FileHashCraft.Tests
         {
             const string root = @"C:\";
             var a = Path.Combine(root, "a");
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, true);
 
             Assert.DoesNotContain(manager.NestedDirectories, n => n == a);
@@ -86,7 +86,7 @@ namespace FileHashCraft.Tests
         public void TestUnchecked()
         {
             const string root = @"C:\";
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, true);
             manager.CheckChanged(root, false);
 
@@ -102,7 +102,7 @@ namespace FileHashCraft.Tests
         {
             const string root = @"C:\";
             var a = Path.Combine(root, "a");
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, false);
 
             Assert.False(manager.IsChecked(a));
@@ -115,7 +115,7 @@ namespace FileHashCraft.Tests
         public void TestMixChecked()
         {
             const string root = @"C:\";
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, null);
 
             Assert.True(manager.IsChecked(root));
@@ -128,7 +128,7 @@ namespace FileHashCraft.Tests
         public void TestMixExistNotNested()
         {
             const string root = @"C:\";
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, null);
 
             Assert.Contains(root, manager.NonNestedDirectories);
@@ -142,7 +142,7 @@ namespace FileHashCraft.Tests
         public void TestMixExistRemove()
         {
             const string root = @"C:\";
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, null);
             manager.CheckChanged(root, false);
 
@@ -154,7 +154,7 @@ namespace FileHashCraft.Tests
         public void TestAddRepeat()
         {
             const string root = @"C:\";
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, true);
             manager.CheckChanged(root, true);
             var a = Path.Combine(root, "a");
@@ -169,7 +169,7 @@ namespace FileHashCraft.Tests
         public void TestAddRemoveAdd()
         {
             const string root = @"C:\";
-            var manager = new CheckedDirectoryManager();
+            var manager = new DirectoryTreeCheckedDirectoryManager();
             manager.CheckChanged(root, true);
             manager.CheckChanged(root, false);
             manager.CheckChanged(root, true);

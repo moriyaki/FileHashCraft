@@ -7,6 +7,7 @@ using FileHashCraft.Models;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.FileSystemWatch;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Views
 {
@@ -76,9 +77,10 @@ namespace FileHashCraft.Views
             FileWatcherService = Ioc.Default.GetService<IDrivesFileSystemWatcherService>();
             if (FileWatcherService == null) { throw new NullReferenceException(nameof(FileWatcherService)); }
 
-            if (explorerVM != null)
+            var windowsAPI = Ioc.Default.GetService<IWindowsAPI>();
+            if (windowsAPI != null)
             {
-                explorerVM.CurrentFullPath = WindowsAPI.GetPath(KnownFolder.User);
+                explorerVM.CurrentFullPath = windowsAPI.GetPath(KnownFolder.User);
             }
             // HwndSourceを取得
             HwndSource? hwndSource = PresentationSource.FromVisual(this) as HwndSource;

@@ -9,41 +9,18 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.FileSystemWatch;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
     #region インターフェース
     public interface IPageExplorerViewModel
     {
-        /// <summary>
-        /// リストビューへのアクセス
-        /// </summary>
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; }
-
-        /// <summary>
-        /// ツリービューのチェックボックスの表示状態を取得
-        /// </summary>
         public Visibility IsCheckBoxVisible { get; }
-
-        /// <summary>
-        /// 初期処理
-        /// </summary>
         public void Initialize();
-
-        /// <summary>
-        /// カレントディレクトリのフルパスへのアクセス
-        /// </summary>
         public string CurrentFullPath { get; set; }
-
-        /// <summary>
-        /// WndProc をフックして、リムーバブルドライブの着脱を監視します。
-        /// </summary>
-        /// <param name="hwndSource">hwndSource?</param>
         public void HwndAddHook(HwndSource? hwndSource);
-
-        /// <summary>
-        /// WNdProc のフック解除して、アプリケーション終了に備えます。
-        /// </summary>
         public void HwndRemoveHook();
     }
     #endregion インターフェース
@@ -167,10 +144,10 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _mainWindowViewModel.UsingFont;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
+                _mainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -180,10 +157,10 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _mainWindowViewModel.FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
+                _mainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -192,27 +169,33 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         #region コンストラクタと初期処理
         private bool IsExecuting = false;
 
-        private readonly ICurrentDirectoryFIleSystemWatcherService _CurrentDirectoryWatcherService;
-        private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly IControDirectoryTreeViewlViewModel _DirectoryTreeViewControlViewModel;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly ICurrentDirectoryFIleSystemWatcherService _currentDirectoryWatcherService;
+        private readonly IDrivesFileSystemWatcherService _drivesFileSystemWatcherService;
+        private readonly IExpandedDirectoryManager _expandedDirectoryManager;
+        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
+        private readonly IControDirectoryTreeViewlViewModel _directoryTreeViewControlViewModel;
+        private readonly ISpecialFolderAndRootDrives _specialFolderAndRootDrives;
+        public readonly IWindowsAPI _windowsAPI;
+        private readonly IMainWindowViewModel _mainWindowViewModel;
         public PageExplorerViewModel(
             ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
             IExpandedDirectoryManager expandedDirectoryManager,
             ICheckedDirectoryManager checkedDirectoryManager,
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
+            ISpecialFolderAndRootDrives specialFolderAndRootDrives,
+            IWindowsAPI windowsAPI,
             IMainWindowViewModel mainWindowViewModel
             )
         {
-            _CurrentDirectoryWatcherService = currentDirectoryFIleSystemWatcherService;
-            _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
-            _ExpandedDirectoryManager = expandedDirectoryManager;
-            _CheckedDirectoryManager = checkedDirectoryManager;
-            _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
-            _MainWindowViewModel = mainWindowViewModel;
+            _currentDirectoryWatcherService = currentDirectoryFIleSystemWatcherService;
+            _drivesFileSystemWatcherService = drivesFileSystemWatcherService;
+            _expandedDirectoryManager = expandedDirectoryManager;
+            _checkedDirectoryManager = checkedDirectoryManager;
+            _directoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
+            _specialFolderAndRootDrives = specialFolderAndRootDrives;
+            _windowsAPI = windowsAPI;
+            _mainWindowViewModel = mainWindowViewModel;
 
             // 「上へ」ボタンのコマンド
             ToUpDirectory = new DelegateCommand(
@@ -228,12 +211,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             ListViewUpdater = new DelegateCommand(async () =>
             {
                 ListItems.Clear();
+                var fileInfoManager = new ScanFileItems();
                 await Task.Run(() =>
                 {
-                    foreach (var folderFile in FileInformationManager.ScanFileItems(CurrentFullPath))
+                    foreach (var folderFile in fileInfoManager.ScanFiles(CurrentFullPath))
                     {
                         // フォルダやファイルの情報を ViewModel に変換
-                        var item = new ExplorerListItemViewModel(this, folderFile);
+                        var info = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(folderFile);
+                        var item = new ExplorerListItemViewModel(this, info);
 
                         // UI スレッドでリストビューを更新
                         App.Current?.Dispatcher?.Invoke((Action)(() => ListItems.Add(item)));
@@ -275,9 +260,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             // カレントディレクトリ変更のメッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) => CurrentFullPath = message.CurrentFullPath);
 
-            _CurrentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
-            _CurrentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
-            _CurrentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
+            _currentDirectoryWatcherService.Created += CurrentDirectoryItemCreated;
+            _currentDirectoryWatcherService.Deleted += CurrentDirectoryItemDeleted;
+            _currentDirectoryWatcherService.Renamed += CurrentDirectoryItemRenamed;
 
             // メインウィンドウからのフォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) => UsingFont = message.UsingFont);
@@ -310,26 +295,26 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             }
 
             // ツリービューを初期化する
-            _DirectoryTreeViewControlViewModel.ClearRoot();
-            _DirectoryTreeViewControlViewModel.SetIsCheckBoxVisible(true);
+            _directoryTreeViewControlViewModel.ClearRoot();
+            _directoryTreeViewControlViewModel.SetIsCheckBoxVisible(true);
 
             // TreeViewにルートアイテムを登録する
-            foreach (var rootInfo in FileInformationManager.ScanSpecialFolders())
+            foreach (var rootInfo in _specialFolderAndRootDrives.ScanSpecialFolders())
             {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo, true);
+                _directoryTreeViewControlViewModel.AddRoot(rootInfo, true);
             }
-            foreach (var rootInfo in FileInformationManager.ScanDrives())
+            foreach (var rootInfo in _specialFolderAndRootDrives.ScanDrives())
             {
-                _DirectoryTreeViewControlViewModel.AddRoot(rootInfo, true);
+                _directoryTreeViewControlViewModel.AddRoot(rootInfo, true);
             }
-            _DirectoryTreeViewControlViewModel.CheckStatusChangeFromCheckManager();
+            _directoryTreeViewControlViewModel.CheckStatusChangeFromCheckManager();
         }
         #endregion コンストラクタと初期処理
 
         #region チェックボックスマネージャ登録
         private void CreateCheckBoxManager()
         {
-            foreach (var root in _DirectoryTreeViewControlViewModel.TreeRoot)
+            foreach (var root in _directoryTreeViewControlViewModel.TreeRoot)
             {
                 RecursiveTreeNodeCheck(root);
             }
@@ -337,7 +322,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
 
         private void RecursiveTreeNodeCheck(DirectoryTreeViewModel node)
         {
-            _CheckedDirectoryManager.CheckChanged(node.FullPath, node.IsChecked);
+            _checkedDirectoryManager.CheckChanged(node.FullPath, node.IsChecked);
             foreach (var child in node.Children)
             {
                 if (child.FullPath != string.Empty)
@@ -355,7 +340,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         {
             if (CurrentFullPath != Path.GetDirectoryName(FullPath)) return;
 
-            var fileInformation = FileInformationManager.GetFileInformationFromDirectorPath(FullPath);
+            var fileInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(FullPath);
             var addListItem = new ExplorerListItemViewModel(this, fileInformation);
             int newListIndex = FindIndexToInsert(ListItems, addListItem);
             await App.Current.Dispatcher.InvokeAsync(() => ListItems.Insert(newListIndex, addListItem));
@@ -445,7 +430,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public void CurrentDirectoryItemCreated(object? sender, CurrentDirectoryFileChangedEventArgs e)
         {
             // 追加されたファイルの情報を取得する
-            var fileInformation = FileInformationManager.GetFileInformationFromDirectorPath(e.FullPath);
+            var fileInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
 
             // リストビューに追加されたファイルを追加する
             var newListItem = new ExplorerListItemViewModel(this, fileInformation);
@@ -595,7 +580,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { DebugManager.ExceptionWrite($"WndProcで例外が発生しました: {ex.Message}"); }
-                    _DrivesFileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    _drivesFileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
                     //ドライブが取り外されたされた時の処理を書く
@@ -611,7 +596,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { DebugManager.ExceptionWrite($"WndProcで例外が発生しました: {ex.Message}"); }
-                    _DrivesFileSystemWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    _drivesFileSystemWatcherService?.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }
             // デフォルトのウィンドウプロシージャに処理を渡す

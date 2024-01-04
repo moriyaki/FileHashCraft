@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FileHashCraft.Models;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
@@ -104,12 +104,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = WindowsAPI.GetDisplayName(FullPath);
+                Name = ExplorerVM._windowsAPI.GetDisplayName(FullPath);
 
                 App.Current?.Dispatcher.Invoke(new Action(() =>
                 {
-                    Icon = WindowsAPI.GetIcon(FullPath);
-                    FileType = WindowsAPI.GetType(FullPath);
+                    Icon = ExplorerVM._windowsAPI.GetIcon(FullPath);
+                    FileType = ExplorerVM._windowsAPI.GetType(FullPath);
                 }));
             }
         }

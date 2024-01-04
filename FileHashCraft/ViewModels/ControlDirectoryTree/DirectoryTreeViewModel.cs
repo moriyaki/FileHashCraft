@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.Models;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
@@ -12,7 +13,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>
     {
         #region コンストラクタ
-
         /// <summary>
         /// TreeVIew コントロールのViewModelです。
         /// </summary>
@@ -117,12 +117,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = WindowsAPI.GetDisplayName(FullPath);
+                Name = ControlVM._windowsAPI.GetDisplayName(FullPath);
 
                 App.Current?.Dispatcher.Invoke(new Action(() =>
                 {
-                    Icon = WindowsAPI.GetIcon(FullPath);
-                    FileType = WindowsAPI.GetType(FullPath);
+                    Icon = ControlVM._windowsAPI.GetIcon(FullPath);
+                    FileType = ControlVM._windowsAPI.GetType(FullPath);
                 }));
             }
         }
@@ -322,8 +322,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!_IsKicked || force)
             {
                 Children.Clear();
-                foreach (var child in FileInformationManager.EnumerateDirectories(FullPath))
+                var fileInfoManager = new ScanFileItems();
+                foreach (var childPath in fileInfoManager.EnumerateDirectories(FullPath))
                 {
+                    var child = ControlVM._specialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
                     var item = new DirectoryTreeViewModel(ControlVM, child, this);
                     Children.Add(item);
                 }

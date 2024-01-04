@@ -1,4 +1,4 @@
-using FileHashCraft.Models;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Tests
 {
@@ -8,7 +8,7 @@ namespace FileHashCraft.Tests
         public void AddRemoveSimpleTest()
         {
             const string path = @"C:\";
-            var dirManager = new ExpandedDirectoryManager();
+            var dirManager = new DirectoryTreeExpandedDirectoryManager();
 
             const string aaa = path + "aaa";
             const string bbb = path + "bbb";
@@ -35,7 +35,7 @@ namespace FileHashCraft.Tests
         {
             const string path = @"C:\Users\moriyaki\Documents";
 
-            var dirManager = new ExpandedDirectoryManager();
+            var dirManager = new DirectoryTreeExpandedDirectoryManager();
             Assert.Contains(dirManager.Directories, dir => dir == path);
 
             dirManager.RemoveDirectory(path);
@@ -46,7 +46,7 @@ namespace FileHashCraft.Tests
         public void SubDirectory()
         {
             const string path = @"C:\";
-            var dirManager = new ExpandedDirectoryManager();
+            var dirManager = new DirectoryTreeExpandedDirectoryManager();
 
             const string aaa = path + "aaa";
             var bbb = Path.Combine(aaa + "bbb");

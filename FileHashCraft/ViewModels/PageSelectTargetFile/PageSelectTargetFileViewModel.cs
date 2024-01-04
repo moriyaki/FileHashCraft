@@ -3,9 +3,9 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
 using FileHashCraft.Properties;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
+using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.PageSelectTargetFile;
 
 namespace FileHashCraft.ViewModels
@@ -13,9 +13,6 @@ namespace FileHashCraft.ViewModels
     #region インターフェース
     public interface IPageSelectTargetFileViewModel
     {
-        /// <summary>
-        /// 初期設定をします。
-        /// </summary>
         public void Initialize();
     }
     #endregion インターフェース
@@ -162,10 +159,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _mainWindowViewModel.UsingFont;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
+                _mainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -175,10 +172,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _mainWindowViewModel.FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
+                _mainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -197,11 +194,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public string SelectedHashAlgorithm
         {
-            get => _MainWindowViewModel.HashAlgorithm;
+            get => _mainWindowViewModel.HashAlgorithm;
             set
             {
-                if (_MainWindowViewModel.HashAlgorithm == value) return;
-                _MainWindowViewModel.HashAlgorithm = value;
+                if (_mainWindowViewModel.HashAlgorithm == value) return;
+                _mainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
             }
         }
@@ -211,11 +208,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public bool IsZeroSizeFileDelete
         {
-            get => _MainWindowViewModel.IsZeroSizeFileDelete;
+            get => _mainWindowViewModel.IsZeroSizeFileDelete;
             set
             {
-                if (_MainWindowViewModel.IsZeroSizeFileDelete == value) return;
-                _MainWindowViewModel.IsZeroSizeFileDelete = value;
+                if (_mainWindowViewModel.IsZeroSizeFileDelete == value) return;
+                _mainWindowViewModel.IsZeroSizeFileDelete = value;
                 OnPropertyChanged(nameof(IsZeroSizeFileDelete));
             }
         }
@@ -225,11 +222,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public bool IsEmptyDirectoryDelete
         {
-            get => _MainWindowViewModel.IsEmptyDirectoryDelete;
+            get => _mainWindowViewModel.IsEmptyDirectoryDelete;
             set
             {
-                if (_MainWindowViewModel.IsEmptyDirectoryDelete == value) return;
-                _MainWindowViewModel.IsEmptyDirectoryDelete = value;
+                if (_mainWindowViewModel.IsEmptyDirectoryDelete == value) return;
+                _mainWindowViewModel.IsEmptyDirectoryDelete = value;
                 OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
             }
         }
@@ -266,21 +263,18 @@ namespace FileHashCraft.ViewModels
         #endregion コマンド
 
         #region コンストラクタと初期処理
-        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IControDirectoryTreeViewlViewModel _controDirectoryTreeViewlViewModel;
+        private readonly IMainWindowViewModel _mainWindowViewModel;
         private bool IsExecuting = false;
 
         public PageSelectTargetFileViewModel() { throw new NotImplementedException(); }
 
         public PageSelectTargetFileViewModel(
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
-            ICheckedDirectoryManager checkedDirectoryManager,
             IMainWindowViewModel mainWindowViewModel)
         {
-            _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
-            _CheckedDirectoryManager = checkedDirectoryManager;
-            _MainWindowViewModel = mainWindowViewModel;
+            _controDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
+            _mainWindowViewModel = mainWindowViewModel;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new DelegateCommand(() =>
@@ -302,7 +296,7 @@ namespace FileHashCraft.ViewModels
             IsEmptyDirectoryDeleteClicked = new DelegateCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // カレントハッシュ計算アルゴリズムを保存
-            SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
+            SelectedHashAlgorithm = _mainWindowViewModel.HashAlgorithm;
 
             // エクスプローラー風画面に移動するコマンド
             ToPageExplorer = new DelegateCommand(() =>
@@ -357,7 +351,7 @@ namespace FileHashCraft.ViewModels
             OnPropertyChanged(nameof(HashAlgorithms));
 
             // ハッシュ計算アルゴリズムを再設定
-            SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
+            SelectedHashAlgorithm = _mainWindowViewModel.HashAlgorithm;
             OnPropertyChanged(nameof(SelectedHashAlgorithm));
 
             if (IsExecuting)
@@ -375,8 +369,8 @@ namespace FileHashCraft.ViewModels
             CountFilteredGetHash = 0;
 
             // ツリービューのアイテムをクリアする
-            _ControDirectoryTreeViewlViewModel.ClearRoot();
-            _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
+            _controDirectoryTreeViewlViewModel.ClearRoot();
+            _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
             // スキャンするディレクトリの追加
             var scanHashFilesClass = Ioc.Default.GetService<IScanHashFilesClass>();

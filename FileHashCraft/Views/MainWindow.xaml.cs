@@ -5,6 +5,7 @@ using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft
 {

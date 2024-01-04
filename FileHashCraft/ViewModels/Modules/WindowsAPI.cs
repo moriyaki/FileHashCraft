@@ -4,9 +4,51 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using FileHashCraft.Models;
 
-namespace FileHashCraft.Models
+namespace FileHashCraft.ViewModels.Modules
 {
+    public interface IWindowsAPI
+    {
+        /// <summary>
+        /// ファイルのアイコンを取得します。
+        /// </summary>
+        /// <param name="path">ファイルのフルパス</param>
+        /// <returns>アイコン</returns>
+        public BitmapSource? GetIcon(string path);
+
+        /// <summary>
+        /// ファイルの種類を取得します。
+        /// </summary>
+        /// <param name="path">ファイルのフルパス</param>
+        /// <returns>ファイルの種類</returns>
+        public string GetType(string path);
+
+        /// <summary>
+        /// ファイルパスからファイルの表示名を取得します。
+        /// </summary>
+        /// もし取得に失敗した場合は元のファイルパスを返します。
+        /// <returns>ファイルの表示名</returns>
+        public string GetDisplayName(string path);
+        /// <summary>
+        /// 指定された特殊フォルダのパスを取得します。
+        /// </summary>
+        /// <param name="knownFolder">取得したい特殊フォルダ</param>
+        /// <returns>特殊フォルダのパス</returns>
+        public string GetPath(KnownFolder knownFolder);
+        /// <summary>
+        /// 指定されたパスが特殊フォルダかどうかを調査します。
+        /// </summary>
+        /// <param name="path">調査するフルパス</param>
+        /// <returns>特殊フォルダである場合は true、それ以外の場合は false</returns>
+        public bool IsSpecialFolder(string path);
+        /// <summary>
+        /// ユーザーフォルダののパスを取得します。
+        /// </summary>
+        /// <returns>ユーザーフォルダのパス</returns>
+        public string GetUserFolder();
+    }
+
     /// <summary>
     /// 特殊フォルダの列挙子
     /// </summary>
@@ -21,6 +63,7 @@ namespace FileHashCraft.Models
         Music,
         User,
     }
+
     #region WindowsAPIで使うenumとstruct
     /// <summary>
     /// SHGetFIleInfoの第4引数で指定する、取得する情報のパラメータです。
@@ -78,7 +121,7 @@ namespace FileHashCraft.Models
     };
     # endregion WindowsAPIで使うenumとstruct
 
-    public static partial class WindowsAPI
+    public partial class WindowsAPI : IWindowsAPI
     {
         #region WindowsAPIへのLibraryImport
         // パスからpidlを取得します。
@@ -110,6 +153,7 @@ namespace FileHashCraft.Models
         #endregion WindowsAPIへのLibraryImport]
 
         #region WindowsAPIを使うメソッド
+
         /// <summary>
         /// KnownFolderをキーにGUIDを取得する辞書
         /// </summary>
@@ -131,7 +175,7 @@ namespace FileHashCraft.Models
         /// <param name="is_original">オリジナルのアイコンを取得するかどうか</param>
         /// <returns>取得したファイルのアイコンとファイル種類</returns>
         /// <exception cref="Exception">ファイル情報の取得に失敗したときに発生</exception>
-        private static (BitmapSource?, string) GetResourceContent(string path, bool is_original = false)
+        private (BitmapSource?, string) GetResourceContent(string path, bool is_original = false)
         {
             // SHFILEINFO 構造体のインスタンスを作成
             SHFILEINFO shinfo = new();
@@ -177,7 +221,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="key">利用するキー</param>
         /// <param name="path">ファイルのフルパス</param>
-        private static void AddDirectoryCache(string key, string path)
+        private void AddDirectoryCache(string key, string path)
         {
             // キャッシュに指定されたキーが登録されていない場合の処理
             if (!FileIconCache.ContainsKey(key) || !FileTypeCache.ContainsKey(key))
@@ -199,7 +243,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="path">ファイルのフルパス</param>
         /// <returns>キャッシュに利用するキー</returns>
-        private static string ReadIconAndTypeToCache(string path)
+        private string ReadIconAndTypeToCache(string path)
         {
             // 特殊なアイコンが必要な拡張子のリスト
             var specialIconExtensions = new List<string> { ".exe", ".lnk", ".ico" };
@@ -223,8 +267,8 @@ namespace FileHashCraft.Models
         }
 
         // ファイルのアイコンと種類のキャッシュ
-        private static readonly Dictionary<string, BitmapSource> FileIconCache = [];
-        private static readonly Dictionary<string, string> FileTypeCache = [];
+        private readonly Dictionary<string, BitmapSource> FileIconCache = [];
+        private readonly Dictionary<string, string> FileTypeCache = [];
         #endregion ファイルのアイコンと種類をキャッシュしながら管理する
 
         #region 外部からのアクセスメソッド
@@ -233,7 +277,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="path">ファイルのフルパス</param>
         /// <returns>アイコン</returns>
-        public static BitmapSource? GetIcon(string path)
+        public BitmapSource? GetIcon(string path)
         {
             if (Path.GetExtension(path) == ".tmp") return null;
             if (path.Length > 3)
@@ -253,7 +297,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="path">ファイルのフルパス</param>
         /// <returns>ファイルの種類</returns>
-        public static string GetType(string path)
+        public string GetType(string path)
         {
             if (Path.GetExtension(path) == ".tmp") return string.Empty;
             if (path.Length > 3)
@@ -273,7 +317,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// もし取得に失敗した場合は元のファイルパスを返します。
         /// <returns>ファイルの表示名</returns>
-        public static string GetDisplayName(string path)
+        public string GetDisplayName(string path)
         {
             try
             {
@@ -291,7 +335,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="knownFolder">取得したい特殊フォルダ</param>
         /// <returns>特殊フォルダのパス</returns>
-        public static string GetPath(KnownFolder knownFolder)
+        public string GetPath(KnownFolder knownFolder)
         {
             // 指定された特殊フォルダのパスを取得
             SHGetKnownFolderPath(_guids[knownFolder], 0, 0, out var path);
@@ -308,11 +352,21 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="path">調査するフルパス</param>
         /// <returns>特殊フォルダである場合は true、それ以外の場合は false</returns>
-        public static bool IsSpecialFolder(string path)
+        public bool IsSpecialFolder(string path)
         {
             // キャッシュされた特殊フォルダのパスと一致するか確認
             return _specialFolder.ContainsValue(path);
         }
+
+        /// <summary>
+        /// ユーザーフォルダののパスを取得します。
+        /// </summary>
+        /// <returns>ユーザーフォルダのパス</returns>
+        public string GetUserFolder()
+        {
+            return GetPath(KnownFolder.User);
+        }
+
         #endregion 外部からのアクセスメソッド
     }
 }

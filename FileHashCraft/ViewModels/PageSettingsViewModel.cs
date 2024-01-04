@@ -4,6 +4,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Properties;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels
 {
@@ -28,10 +29,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public string SelectedLanguage
         {
-            get => _MainWindowViewModel.SelectedLanguage;
+            get => _mainWindowViewModel.SelectedLanguage;
             set
             {
-                _MainWindowViewModel.SelectedLanguage = value;
+                _mainWindowViewModel.SelectedLanguage = value;
                 var currentHashAlgorithms = SelectedHashAlgorithm;
                 HashAlgorithms.Clear();
                 HashAlgorithms =
@@ -61,11 +62,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public string SelectedHashAlgorithm
         {
-            get => _MainWindowViewModel.HashAlgorithm;
+            get => _mainWindowViewModel.HashAlgorithm;
             set
             {
-                if (_MainWindowViewModel.HashAlgorithm == value) return;
-                _MainWindowViewModel.HashAlgorithm = value;
+                if (_mainWindowViewModel.HashAlgorithm == value) return;
+                _mainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
             }
         }
@@ -75,11 +76,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public bool IsZeroSizeFileDelete
         {
-            get => _MainWindowViewModel.IsZeroSizeFileDelete;
+            get => _mainWindowViewModel.IsZeroSizeFileDelete;
             set
             {
-                if (_MainWindowViewModel.IsZeroSizeFileDelete == value) return;
-                _MainWindowViewModel.IsZeroSizeFileDelete = value;
+                if (_mainWindowViewModel.IsZeroSizeFileDelete == value) return;
+                _mainWindowViewModel.IsZeroSizeFileDelete = value;
                 OnPropertyChanged(nameof(IsZeroSizeFileDelete));
             }
         }
@@ -89,11 +90,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public bool IsEmptyDirectoryDelete
         {
-            get => _MainWindowViewModel.IsEmptyDirectoryDelete;
+            get => _mainWindowViewModel.IsEmptyDirectoryDelete;
             set
             {
-                if (_MainWindowViewModel.IsEmptyDirectoryDelete == value) return;
-                _MainWindowViewModel.IsEmptyDirectoryDelete = value;
+                if (_mainWindowViewModel.IsEmptyDirectoryDelete == value) return;
+                _mainWindowViewModel.IsEmptyDirectoryDelete = value;
                 OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
             }
         }
@@ -110,11 +111,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _mainWindowViewModel.UsingFont;
             set
             {
-                if (_MainWindowViewModel.UsingFont == value) return;
-                _MainWindowViewModel.UsingFont = value;
+                if (_mainWindowViewModel.UsingFont == value) return;
+                _mainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -124,11 +125,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _mainWindowViewModel.FontSize;
             set
             {
-                if (_MainWindowViewModel.FontSize == value) return;
-                _MainWindowViewModel.FontSize = value;
+                if (_mainWindowViewModel.FontSize == value) return;
+                _mainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -150,21 +151,21 @@ namespace FileHashCraft.ViewModels
         #endregion バインディング
 
         #region コンストラクタと初期化
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IMainWindowViewModel _mainWindowViewModel;
 
         public PageSettingsViewModel(
             IMainWindowViewModel mainViewModel)
         {
-            _MainWindowViewModel = mainViewModel;
+            _mainWindowViewModel = mainViewModel;
 
             // 利用言語の読み込み
-            SelectedLanguage = _MainWindowViewModel.SelectedLanguage;
+            SelectedLanguage = _mainWindowViewModel.SelectedLanguage;
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
 
             // フォントサイズの一覧取得とバインド
-            foreach (var fontSize in _MainWindowViewModel.GetSelectableFontSize())
+            foreach (var fontSize in _mainWindowViewModel.GetSelectableFontSize())
             {
                 FontSizes.Add(new FontSize(fontSize));
             }

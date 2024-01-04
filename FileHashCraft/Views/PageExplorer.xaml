@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:vm="clr-namespace:FileHashCraft.ViewModels"
+      xmlns:rs="clr-namespace:FileHashCraft.ViewModels.Modules"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ExplorerPage">
@@ -24,9 +24,9 @@
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0">
             <MenuItem Command="{Binding SettingsOpen}"
-                      Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
             <MenuItem Command="{Binding DebugOpen}"
-                      Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
         </Menu>
 
         <!-- CUrrent Directory -->
@@ -41,7 +41,7 @@
                     Command="{Binding ToUpDirectory}"/>
             <Label Grid.Column="1"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCurrentDirectory, Mode=OneWay}"/>
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCurrentDirectory, Mode=OneWay}"/>
             <TextBox
                    Grid.Column="2"
                    Margin="3"
@@ -61,7 +61,7 @@
 
             <Label Grid.Column="0"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCommand, Mode=OneWay}" />
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCommand, Mode=OneWay}" />
             <TextBox Grid.Column="1"
                    Margin="3"
                    Name="UserCommand"
@@ -70,11 +70,11 @@
             <Button Grid.Column="2"
                     Margin="3"
                     FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ButtonExecuteCommand, Mode=OneWay}"/>
+                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonExecuteCommand, Mode=OneWay}"/>
             <Button Grid.Column="3"
                     Margin="3"
                     FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ButtonHashManagement, Mode=OneWay}"
+                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashManagement, Mode=OneWay}"
                     Command="{Binding HashCalc}"/>
         </Grid>
 
@@ -105,7 +105,7 @@
                         <GridViewColumn
                             x:Name="FileName"
 						    Width="180"
-						    Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewName, Mode=OneWay}">
+						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewName, Mode=OneWay}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -120,15 +120,15 @@
 						    x:Name="UpdateDate"
 						    Width="100"
 						    DisplayMemberBinding="{Binding LastFileUpdate, Mode=OneWay}"
-                            Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewDataModified, Mode=OneWay}" />
+                            Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewDataModified, Mode=OneWay}" />
                         <GridViewColumn
 						    x:Name="FileType"
 						    Width="100"
 						    DisplayMemberBinding="{Binding FileType, Mode=OneWay}"
-						    Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewType, Mode=OneWay}" />
+						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewType, Mode=OneWay}" />
                         <GridViewColumn
 						    x:Name="FileSize"
-						    Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ListViewSize, Mode=OneWay}"
+						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewSize, Mode=OneWay}"
                                Width="100">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>

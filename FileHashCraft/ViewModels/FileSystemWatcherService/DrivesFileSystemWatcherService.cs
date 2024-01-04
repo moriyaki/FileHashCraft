@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using FileHashCraft.Models;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.FileSystemWatch
 {

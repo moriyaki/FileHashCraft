@@ -2,6 +2,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 
 namespace FileHashCraft.ViewModels.PageSelectTargetFile
@@ -14,20 +15,23 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
     public class ScanHashFilesClass : IScanHashFilesClass
     {
         #region コンストラクタと初期化
-        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IControDirectoryTreeViewlViewModel _controDirectoryTreeViewlViewModel;
+        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
+        private readonly ISpecialFolderAndRootDrives _specialFolderAndRootDrives;
+        private readonly IMainWindowViewModel _mainWindowViewModel;
 
         public ScanHashFilesClass() { throw new NotImplementedException(); }
 
         public ScanHashFilesClass(
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             ICheckedDirectoryManager checkedDirectoryManager,
+            ISpecialFolderAndRootDrives specialFolderAndRootDrives,
             IMainWindowViewModel mainWindowViewModel)
         {
-            _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
-            _CheckedDirectoryManager = checkedDirectoryManager;
-            _MainWindowViewModel = mainWindowViewModel;
+            _controDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
+            _checkedDirectoryManager = checkedDirectoryManager;
+            _specialFolderAndRootDrives = specialFolderAndRootDrives;
+            _mainWindowViewModel = mainWindowViewModel;
         }
 
         /// <summary>
@@ -69,10 +73,11 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             var driveDirectory = new Dictionary<string, List<string>>();
 
             // ディレクトリのスキャン準備：ドライブ毎に振り分ける
-            foreach (var directory in _CheckedDirectoryManager.NestedDirectories)
+            foreach (var directory in _checkedDirectoryManager.NestedDirectories)
             {
-                var item = FileInformationManager.GetFileInformationFromDirectorPath(directory);
-                var node = _ControDirectoryTreeViewlViewModel.AddRoot(item, false);
+                var fileInfoManager = new ScanFileItems();
+                var item = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(directory);
+                var node = _controDirectoryTreeViewlViewModel.AddRoot(item, false);
                 node.Name = node.FullPath;
 
                 // ドライブルートを取得する
@@ -153,9 +158,10 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                 var directoryCount = 0;
                 tasks.Add(Task.Run(() =>
                 {
+                    var fileInforManager = new ScanFileItems();
                     foreach (var directory in value)
                     {
-                        foreach (var file in FileInformationManager.EnumerateFiles(directory))
+                        foreach (var file in fileInforManager.EnumerateFiles(directory))
                         {
                             fileCount++;
                         }
@@ -204,10 +210,11 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                 WeakReferenceMessenger.Default.Send(new HashScanDirectoriesAdded(UpCount));
                 ScannedCount = 0;
             }
-            var infoCollection = FileInformationManager.EnumerateDirectories(fullPath);
-            foreach (var info in infoCollection)
+            var fileInfoManager = new ScanFileItems();
+            var infoCollection = fileInfoManager.EnumerateDirectories(fullPath);
+            foreach (var directory in infoCollection)
             {
-                RecursivelyRetrieveDirectories(info.FullPath);
+                RecursivelyRetrieveDirectories(directory);
             }
         }
         #endregion 再帰的にディレクトリを検索する

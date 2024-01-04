@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace FileHashCraft.ViewModels
+namespace FileHashCraft.ViewModels.Modules
 {
     #region MainView用
     /// <summary>

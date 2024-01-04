@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FileHashCraft.Models;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels
 {
@@ -27,7 +27,6 @@ namespace FileHashCraft.ViewModels
         private readonly PollingTarget pollingTarget = PollingTarget.CheckedDirectoryManager;
 
         #region バインディング
-
         /// <summary>
         /// 画面の上端設定
         /// </summary>
@@ -76,10 +75,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _mainWindowViewModel.UsingFont;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
+                _mainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -89,10 +88,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _mainWindowViewModel.FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
+                _mainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -126,9 +125,9 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IExpandedDirectoryManager _expandedDirectoryManager;
+        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
+        private readonly IMainWindowViewModel _mainWindowViewModel;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
@@ -140,9 +139,9 @@ namespace FileHashCraft.ViewModels
             IMainWindowViewModel mainViewModel
             )
         {
-            _ExpandedDirectoryManager = expandedDirectoryManager;
-            _CheckedDirectoryManager = checkedDirectoryManager;
-            _MainWindowViewModel = mainViewModel;
+            _expandedDirectoryManager = expandedDirectoryManager;
+            _checkedDirectoryManager = checkedDirectoryManager;
+            _mainWindowViewModel = mainViewModel;
 
             Top = mainViewModel.Top;
             Left = mainViewModel.Left + mainViewModel.Width;
@@ -183,20 +182,20 @@ namespace FileHashCraft.ViewModels
             switch (pollingTarget)
             {
                 case PollingTarget.ExpandDirectoryManager:
-                    foreach (var item in _ExpandedDirectoryManager.Directories)
+                    foreach (var item in _expandedDirectoryManager.Directories)
                     {
                         sb.AppendLine(item);
                     }
                     break;
                 case PollingTarget.CheckedDirectoryManager:
                     sb.AppendLine("サブディレクトリを含まない管理");
-                    foreach (var item in _CheckedDirectoryManager.NonNestedDirectories)
+                    foreach (var item in _checkedDirectoryManager.NonNestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }
                     sb.AppendLine("-------------------------------");
                     sb.AppendLine("サブディレクトリを含む管理");
-                    foreach (var item in _CheckedDirectoryManager.NestedDirectories)
+                    foreach (var item in _checkedDirectoryManager.NestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }

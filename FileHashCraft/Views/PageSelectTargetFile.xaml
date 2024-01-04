@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:vm="clr-namespace:FileHashCraft.ViewModels"
+      xmlns:rs="clr-namespace:FileHashCraft.ViewModels.Modules"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PageTargetFileSetting">
@@ -29,19 +29,19 @@
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="4">
             <MenuItem Command="{Binding SettingsOpen}"
-                      Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
             <MenuItem Command="{Binding DebugOpen}"
-                      Header="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
         </Menu>
 
         <!-- Buttons -->
         <Button Grid.Row="3" Grid.Column="2" Margin="3"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ButtonReturn, Mode=OneWay}"
+                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonReturn, Mode=OneWay}"
                 Command="{Binding ToPageExplorer}"/>
         <Button Grid.Row="3" Grid.Column="3" Margin="3"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
+                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
                 Command="{Binding ToPageHashCalcing}"/>
 
         <!-- TreeView -->
@@ -86,7 +86,7 @@
             <!-- Hash Algorithm Select -->
             <Label Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right"
                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
+               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
 
             <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" Margin="5"
                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
@@ -100,7 +100,7 @@
                 <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}"/>
                 <TextBlock VerticalAlignment="Center"
                            FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                           Text="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelZeroSizeFileDelete, Mode=OneWay}">
+                           Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelZeroSizeFileDelete, Mode=OneWay}">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
                     </TextBlock.InputBindings>           
@@ -112,7 +112,7 @@
                 <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}"/>
                 <TextBlock VerticalAlignment="Center"
                            FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                           Text="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelEmptyDirDelete, Mode=OneWay}">
+                           Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelEmptyDirDelete, Mode=OneWay}">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
                     </TextBlock.InputBindings>
@@ -123,7 +123,7 @@
             <!-- ハッシュを取得する全ファイル数 -->
             <Label Grid.Row="4" Grid.Column="2" HorizontalAlignment="Right"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}"/>
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}"/>
             
             <Label Grid.Row="4" Grid.Column="3" HorizontalAlignment="Left"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
@@ -132,7 +132,7 @@
             <!-- ハッシュを既に取得しているファイル数 -->
             <Label Grid.Row="5" Grid.Column="2" HorizontalAlignment="Right"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCountAlreadyGetHash, Mode=OneWay}"/>
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAlreadyGetHash, Mode=OneWay}"/>
 
             <Label Grid.Row="5" Grid.Column="3" HorizontalAlignment="Left"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
@@ -141,7 +141,7 @@
             <!-- ハッシュ取得が必要なファイル数 -->
             <Label Grid.Row="6" Grid.Column="2" HorizontalAlignment="Right"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCountRequireGetHash, Mode=OneWay}"/>
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountRequireGetHash, Mode=OneWay}"/>
             
             <Label Grid.Row="6" Grid.Column="3" HorizontalAlignment="Left"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
@@ -150,7 +150,7 @@
             <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
             <Label Grid.Row="7" Grid.Column="2" HorizontalAlignment="Right"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}"/>
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}"/>
 
             <Label Grid.Row="7" Grid.Column="3" HorizontalAlignment="Left"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
@@ -169,7 +169,7 @@
                 <!-- 検索フィルタ -->
                 <Label  Margin="3" Grid.Column="0" Grid.Row="0"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelFilterSetting, Mode=OneWay}"/>
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFilterSetting, Mode=OneWay}"/>
 
                 <TextBox Grid.Row="1" Grid.Column="0" Margin="5" 
                          TextWrapping="Wrap" AcceptsReturn="True"
@@ -178,7 +178,7 @@
                 <!-- 除外フィルタ -->
                 <Label Grid.Row="0" Grid.Column="1" Margin="3"
                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                       Content="{Binding Source={x:Static vm:ResourceService.Current},Path=Resources.LabelIgnoreFilterSetting, Mode=OneWay}"/>
+                       Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelIgnoreFilterSetting, Mode=OneWay}"/>
 
                 <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" 
                          TextWrapping="Wrap" AcceptsReturn="True"
