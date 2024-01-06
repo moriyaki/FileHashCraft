@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels
@@ -118,7 +119,7 @@ namespace FileHashCraft.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"設定の保存中にエラーが発生しました: {ex.Message}");
+                DebugManager.ExceptionWrite($"設定の保存中にエラーが発生しました: {ex.Message}");
             }
         }
         #endregion 設定ファイルの読み書き
@@ -205,12 +206,7 @@ namespace FileHashCraft.ViewModels
             get => _HashAlgorithm;
             set
             {
-                // 状況によっては来るので弾く
-                if (string.IsNullOrEmpty(value)) { return; }
-                if (value == _HashAlgorithm) return;
-
                 SetProperty(ref _HashAlgorithm, value);
-                WeakReferenceMessenger.Default.Send(new HashAlgorithmChanged(value));
                 SaveSettings();
             }
         }

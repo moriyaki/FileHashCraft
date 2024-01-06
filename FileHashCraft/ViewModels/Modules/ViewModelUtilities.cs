@@ -119,6 +119,7 @@ namespace FileHashCraft.ViewModels.Modules
     /// </summary>
     public class ReturnPageFromSettings
     {
+        public string HashAlgorithm = string.Empty;
         public ReturnPageFromSettings() { }
     }
 

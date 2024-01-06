@@ -14,14 +14,18 @@ namespace FileHashCraft.Models
         {
             List<string> ignoreDirectory =
                 [
-                    // C:\Windows
-                    Environment.GetEnvironmentVariable("SystemRoot") ?? throw new InvalidOperationException("%SystemRoot% not found!"),
-                    // C:\Progra Data
-                    Environment.GetEnvironmentVariable("ProgramData") ?? throw new InvalidOperationException("%ProgramData% not found!"),
                     // C:\Program Files
                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                     // C:\Program Files (x86)
                     Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+                    // ユーザーのAppData
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    // C:\Windows
+                    Environment.GetEnvironmentVariable("SystemRoot") ?? throw new InvalidOperationException("%SystemRoot% not found!"),
+                    // C:\Progra Data
+                    Environment.GetEnvironmentVariable("ProgramData") ?? throw new InvalidOperationException("%ProgramData% not found!"),
+                    // テンポラリフォルダ
+                    Path.GetTempPath(),
                 ];
 
             FileAttributes attributes = File.GetAttributes(fullPath);

@@ -59,13 +59,13 @@ namespace FileHashCraft.ViewModels
 
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
-        /// </summary>
+        /// </summary
         public string SelectedHashAlgorithm
         {
             get => _mainWindowViewModel.HashAlgorithm;
             set
             {
-                if (_mainWindowViewModel.HashAlgorithm == value) return;
+                if (value == _mainWindowViewModel.HashAlgorithm) return;
                 _mainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
             }

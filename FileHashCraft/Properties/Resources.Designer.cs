@@ -61,6 +61,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Cancel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonCancel {
+            get {
+                return ResourceManager.GetString("ButtonCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Execute Command に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ButtonExecuteCommand {
@@ -84,15 +93,6 @@ namespace FileHashCraft.Properties {
         public static string ButtonHashManagement {
             get {
                 return ResourceManager.GetString("ButtonHashManagement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Return に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ButtonReturn {
-            get {
-                return ResourceManager.GetString("ButtonReturn", resourceCulture);
             }
         }
         

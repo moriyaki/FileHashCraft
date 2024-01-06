@@ -3,6 +3,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models;
 using FileHashCraft.Properties;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.Modules;
@@ -21,7 +22,7 @@ namespace FileHashCraft.ViewModels
     public enum FileScanStatus
     {
         DirectoryScanning,
-        FileScanning,
+        XMLWriting,
         Finished,
     }
     #endregion ハッシュ計算するファイルの取得状況
@@ -41,10 +42,11 @@ namespace FileHashCraft.ViewModels
                 switch (value)
                 {
                     case FileScanStatus.DirectoryScanning:
-                        StatusColor = Brushes.Red;
+                        StatusColor = Brushes.Pink;
                         break;
-                    case FileScanStatus.FileScanning:
+                    case FileScanStatus.XMLWriting:
                         StatusColor = Brushes.Yellow;
+                        StatusMessage = "内部データ更新中";
                         break;
                     case FileScanStatus.Finished:
                         StatusColor = Brushes.LightGreen;
@@ -88,7 +90,7 @@ namespace FileHashCraft.ViewModels
             set
             {
                 SetProperty(ref _ScannedDirectoriesCount, value);
-                StatusColor = Brushes.Red;
+                Status = FileScanStatus.DirectoryScanning;
                 StatusMessage = $"ディレクトリスキャン中 : {value} 個のディレクトリ発見";
                 OnPropertyChanged(nameof(StatusMessage));
             }
@@ -105,8 +107,6 @@ namespace FileHashCraft.ViewModels
             {
                 SetProperty(ref _CountDirectoryScanned, value);
                 OnPropertyChanged(nameof(CountAllFilesGetHash));
-                StatusColor = Brushes.Yellow;
-                StatusMessage = $"ファイルスキャン中 ({value} / {ScannedDirectoriesCount})";
             }
         }
 
@@ -197,7 +197,6 @@ namespace FileHashCraft.ViewModels
             get => _mainWindowViewModel.HashAlgorithm;
             set
             {
-                if (_mainWindowViewModel.HashAlgorithm == value) return;
                 _mainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
             }
@@ -314,10 +313,6 @@ namespace FileHashCraft.ViewModels
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
                 FontSize = message.FontSize);
 
-            // メインウィンドウからのハッシュ計算アルゴリズム変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<HashAlgorithm>(this, (_, message) =>
-                SelectedHashAlgorithm = message.Algorithm);
-
             // ステータスの変更メッセージ受信
             WeakReferenceMessenger.Default.Register<HashScanStatusChanged>(this, (_, message) =>
                 App.Current?.Dispatcher?.Invoke(() => Status = message.Status));
@@ -341,6 +336,8 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public void Initialize()
         {
+            var currentAlgorithm = _mainWindowViewModel.HashAlgorithm;
+
             HashAlgorithms.Clear();
             HashAlgorithms =
                 [
@@ -351,8 +348,8 @@ namespace FileHashCraft.ViewModels
             OnPropertyChanged(nameof(HashAlgorithms));
 
             // ハッシュ計算アルゴリズムを再設定
-            SelectedHashAlgorithm = _mainWindowViewModel.HashAlgorithm;
-            OnPropertyChanged(nameof(SelectedHashAlgorithm));
+            SelectedHashAlgorithm = currentAlgorithm;
+            //OnPropertyChanged(nameof(SelectedHashAlgorithm));
 
             if (IsExecuting)
             {

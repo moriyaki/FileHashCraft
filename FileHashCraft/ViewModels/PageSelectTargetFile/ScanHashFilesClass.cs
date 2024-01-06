@@ -4,6 +4,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Shapes;
 
 namespace FileHashCraft.ViewModels.PageSelectTargetFile
 {
@@ -15,207 +18,113 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
     public class ScanHashFilesClass : IScanHashFilesClass
     {
         #region コンストラクタと初期化
-        private readonly IControDirectoryTreeViewlViewModel _controDirectoryTreeViewlViewModel;
         private readonly ICheckedDirectoryManager _checkedDirectoryManager;
-        private readonly ISpecialFolderAndRootDrives _specialFolderAndRootDrives;
-        private readonly IMainWindowViewModel _mainWindowViewModel;
-
         public ScanHashFilesClass() { throw new NotImplementedException(); }
-
         public ScanHashFilesClass(
-            IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
-            ICheckedDirectoryManager checkedDirectoryManager,
-            ISpecialFolderAndRootDrives specialFolderAndRootDrives,
-            IMainWindowViewModel mainWindowViewModel)
+            ICheckedDirectoryManager checkedDirectoryManager)
         {
-            _controDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
             _checkedDirectoryManager = checkedDirectoryManager;
-            _specialFolderAndRootDrives = specialFolderAndRootDrives;
-            _mainWindowViewModel = mainWindowViewModel;
         }
+        #endregion コンストラクタと初期化
 
         /// <summary>
         /// スキャンするディレクトリを追加します。
         /// </summary>
         public async void ScanHashFiles()
         {
+            DebugManager.InfoWrite("PageSelectTargetFileViewModel ScanHashFiles");
+
+            var sw = new Stopwatch();
+            sw.Start();
+            // XML からファイルを読み込む
+            FileHashInfoManager.Instance.LoadHashXML();
+
             // ディレクトリスキャンの表示に切り替える
             WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.DirectoryScanning));
 
-            // ドライブ毎にパスを振り分ける
-            var driveDirectory = MakeDirectoryDictionary();
-
             // ディレクトリのスキャン
-            await DirectoriesScan(driveDirectory);
-
-            // 各ドライブにファイルパスを振り分ける
-            var driveFiles = MakeDirectoryFiles();
+            await Task.Run(() => DirectoriesScan()).ConfigureAwait(true);
 
             // ファイルスキャンの表示に切り替える
-            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.FileScanning));
+            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.XMLWriting));
 
-            // ファイルのスキャン
-            await FilesScan(driveFiles);
+            // XML にファイルを書き込む
+            await Task.Run(() => FileHashInfoManager.Instance.SaveHashXML()).ConfigureAwait(true);
 
             // スキャン終了の表示に切り替える
             WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.Finished));
-        }
-        #endregion コンストラクタと初期化
-
-        #region ハッシュ計算するファイルを取得
-        /// <summary>
-        /// ドライブ毎にパスを振り分ける
-        /// </summary>
-        /// <returns>ドライブレターをキーとしたディレクトリリストの値</returns>
-        private Dictionary<string, List<string>> MakeDirectoryDictionary()
-        {
-            // 
-            var driveDirectory = new Dictionary<string, List<string>>();
-
-            // ディレクトリのスキャン準備：ドライブ毎に振り分ける
-            foreach (var directory in _checkedDirectoryManager.NestedDirectories)
-            {
-                var fileInfoManager = new ScanFileItems();
-                var item = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(directory);
-                var node = _controDirectoryTreeViewlViewModel.AddRoot(item, false);
-                node.Name = node.FullPath;
-
-                // ドライブルートを取得する
-                var drive = Path.GetPathRoot(directory);
-                if (drive == null) continue;
-
-                // ドライブルートが Dictionary に登録されてなければ、リストを登録する
-                if (!driveDirectory.TryGetValue(drive, out List<string>? value))
-                {
-                    value = ([]);
-                    driveDirectory[drive] = ([]);
-                }
-                // リストにパスを登録する
-                driveDirectory[drive].Add(directory);
-            }
-            return driveDirectory;
-        }
-
-        /// <summary>
-        /// ドライブ毎にファイルパスを振り分ける
-        /// </summary>
-        /// <returns></returns>
-        private Dictionary<string, List<string>> MakeDirectoryFiles()
-        {
-            var driveFiles = new Dictionary<string, List<string>>();
-            foreach (var directory in ListDirectories)
-            {
-                var drive = Path.GetPathRoot(directory);
-                if (drive == null) continue;
-
-                if (!driveFiles.TryGetValue(drive, out List<string>? value))
-                {
-                    value = ([]);
-                    driveFiles[drive] = ([]);
-                }
-                // リストにファイルパスを登録する
-                driveFiles[drive].Add(directory);
-            }
-            return driveFiles;
+            sw.Stop();
+#if DEBUG
+            DebugManager.InfoWrite($"Debug ScanHashFiles : {sw.Elapsed.TotalSeconds} ms.");
+#else
+            DebugManager.InfoWrite($"Release ScanHashFiles : {sw.Elapsed.TotalSeconds} ms.");
+#endif
         }
 
         /// <summary>
         /// ハッシュを取得するディレクトリをスキャンする
         /// </summary>
-        /// <param name="driveDirectory">ドライブ毎にリスト化されたディレクトリ辞書</param>
-        private async Task DirectoriesScan(Dictionary<string, List<string>> driveDirectory)
+        private void DirectoriesScan()
         {
-            var tasks = new List<Task>();
-            foreach (var key in driveDirectory.Keys)
+            // 各ドライブに対してタスクを回す
+            var sw = new Stopwatch();
+            sw.Start();
+            RecursivelyDirectorySearch(_checkedDirectoryManager.NestedDirectories);
+            foreach (var directory in _checkedDirectoryManager.NonNestedDirectories)
             {
-                var value = driveDirectory[key];
-                if (value == null) continue;
-                // 各ドライブに対してタスクを回す
-                tasks.Add(Task.Run(() =>
-                {
-                    foreach (var directory in value)
-                    {
-                        RecursivelyDirectorySearch(directory);
-                    }
-                }));
+                ScanDirectory(directory);
             }
-            await Task.WhenAll(tasks);
+            sw.Stop();
+            DebugManager.InfoWrite($"Scan Time : {sw.ElapsedMilliseconds} ms");
         }
-
-        /// <summary>
-        /// ハッシュを取得するファイルをスキャンする
-        /// </summary>
-        /// <param name="driveFiles">ドライブ毎にリスト化されたファイル名辞書</param>
-        private static async Task FilesScan(Dictionary<string, List<string>> driveFiles)
-        {
-           var tasks = new List<Task>();
-            foreach (var key in driveFiles.Keys)
-            {
-                var value = driveFiles[key];
-                if (value == null) continue;
-                // 各ドライブに対してタスクを回す
-                var fileCount = 0;
-                var directoryCount = 0;
-                tasks.Add(Task.Run(() =>
-                {
-                    var fileInforManager = new ScanFileItems();
-                    foreach (var directory in value)
-                    {
-                        foreach (var file in fileInforManager.EnumerateFiles(directory))
-                        {
-                            fileCount++;
-                        }
-                        directoryCount++;
-
-                        if (directoryCount >= UpCount)
-                        {
-                            WeakReferenceMessenger.Default.Send(new HashAllFilesAdded(fileCount));
-                            WeakReferenceMessenger.Default.Send(new HashADirectoryScannedAdded(directoryCount));
-
-                            fileCount = 0;
-                            directoryCount = 0;
-                        }
-                    }
-                    WeakReferenceMessenger.Default.Send(new HashAllFilesAdded(fileCount));
-                    WeakReferenceMessenger.Default.Send(new HashADirectoryScannedAdded(directoryCount));
-                }
-                ));
-            }
-            await Task.WhenAll(tasks);
-        }
-
-        #endregion ハッシュ計算するファイルを取得
 
         #region 再帰的にディレクトリを検索する
-        /// <summary>
-        /// UI に反映させる為の閾値数
-        /// </summary>
-        private const int UpCount = 100;
-        private readonly List<string> ListDirectories = [];
-        private int ScannedCount = 0;
+        private readonly List<Task> scanTasks = [];
+        private readonly SemaphoreSlim _semaphone = new(50);
 
-        private void RecursivelyDirectorySearch(string fullPath)
+        /// <summary>
+        /// 並列処理でディレクトリを検索して、スキャン処理に渡します。
+        /// </summary>
+        private void RecursivelyDirectorySearch(List<string> rootDrives)
         {
-            RecursivelyRetrieveDirectories(fullPath);
-            WeakReferenceMessenger.Default.Send(new HashScanDirectoriesAdded(ScannedCount));
-            App.Current?.Dispatcher?.Invoke(() => ScannedCount = 0);
+            Parallel.ForEach(rootDrives, RecursivelyRetrieveDirectories);
+            Task.WhenAll(scanTasks);
         }
 
+        /// <summary>
+        /// ディレクトリをスキャンしてXMLに反映させて、子のディレクトリに再帰処理をします。
+        /// </summary>
+        /// <param name="fullPath">スキャンするディレクトリ</param>
         private void RecursivelyRetrieveDirectories(string fullPath)
         {
-            ListDirectories.Add(fullPath);
-            ScannedCount++;
-            if (ScannedCount == UpCount)
-            {
-                WeakReferenceMessenger.Default.Send(new HashScanDirectoriesAdded(UpCount));
-                ScannedCount = 0;
-            }
+            ScanDirectory(fullPath);
+
             var fileInfoManager = new ScanFileItems();
-            var infoCollection = fileInfoManager.EnumerateDirectories(fullPath);
-            foreach (var directory in infoCollection)
+            foreach (var directory in fileInfoManager.EnumerateDirectories(fullPath))
             {
                 RecursivelyRetrieveDirectories(directory);
             }
+        }
+
+        /// <summary>
+        /// ディレクトリ情報をXMLファイルに反映させます。
+        /// </summary>
+        /// <param name="fullPath">反映させるディレクトリのフルパス</param>
+        private void ScanDirectory(string fullPath)
+        {
+            scanTasks.Add(new Task(() =>
+            {
+                try
+                {
+                    _semaphone.Wait();
+                    FileHashInfoManager.Instance.ScanDirectory(fullPath);
+                }
+                finally { _semaphone.Release(); }
+            }
+            ));
+
+            //FileHashInfoManager.Instance.ScanDirectory(fullPath);
+            WeakReferenceMessenger.Default.Send(new HashScanDirectoriesAdded(1));
         }
         #endregion 再帰的にディレクトリを検索する
 

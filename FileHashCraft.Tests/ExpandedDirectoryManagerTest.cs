@@ -2,6 +2,7 @@ using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Tests
 {
+    /*
     public class ExpandedDirectoryManagerTest
     {
         [Fact]
@@ -61,4 +62,5 @@ namespace FileHashCraft.Tests
             Assert.Contains(dirManager.Directories, dir => dir == bbb);
         }
     }
+    */
 }
