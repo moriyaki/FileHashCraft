@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models;
 using FileHashCraft.Properties;
 using FileHashCraft.ViewModels.Modules;
 
@@ -37,9 +38,9 @@ namespace FileHashCraft.ViewModels
                 HashAlgorithms.Clear();
                 HashAlgorithms =
                     [
-                        new("SHA-256", Resources.HashAlgorithm_SHA256),
-                        new("SHA-384", Resources.HashAlgorithm_SHA384),
-                        new("SHA-512", Resources.HashAlgorithm_SHA512),
+                        new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
+                        new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
+                        new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
                     ];
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
@@ -52,9 +53,9 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
             [
-                new("SHA-256", Resources.HashAlgorithm_SHA256),
-                new("SHA-384", Resources.HashAlgorithm_SHA384),
-                new("SHA-512", Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
         /// <summary>

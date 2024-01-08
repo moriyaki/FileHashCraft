@@ -76,7 +76,7 @@ namespace FileHashCraft.ViewModels
                     IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
                     IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
                     SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
-                    HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? "SHA-256";
+                    HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256);
 
                     var fontFamilyName = root.Element("UsingFont")?.Value ?? string.Empty;
                     UsingFont = new FontFamilyConverter().ConvertFromString(fontFamilyName) as FontFamily ?? SystemFonts.MessageFontFamily;
@@ -200,7 +200,7 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
-        private string _HashAlgorithm = "SHA-256";
+        private string _HashAlgorithm = HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256);
         public string HashAlgorithm
         {
             get => _HashAlgorithm;

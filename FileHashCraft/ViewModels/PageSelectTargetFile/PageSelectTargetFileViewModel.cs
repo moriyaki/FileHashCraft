@@ -21,7 +21,8 @@ namespace FileHashCraft.ViewModels
     #region ハッシュ計算するファイルの取得状況
     public enum FileScanStatus
     {
-        DirectoryScanning,
+        DirectoriesScanning,
+        FilesScanning,
         XMLWriting,
         Finished,
     }
@@ -41,19 +42,21 @@ namespace FileHashCraft.ViewModels
             {
                 switch (value)
                 {
-                    case FileScanStatus.DirectoryScanning:
+                    case FileScanStatus.DirectoriesScanning:
                         StatusColor = Brushes.Pink;
                         break;
-                    case FileScanStatus.XMLWriting:
+                    case FileScanStatus.FilesScanning:
                         StatusColor = Brushes.Yellow;
-                        StatusMessage = "内部データ更新中";
+                        break;
+                    case FileScanStatus.XMLWriting:
+                        StatusColor = Brushes.Cyan;
                         break;
                     case FileScanStatus.Finished:
                         StatusColor = Brushes.LightGreen;
-                        StatusMessage = "完了";
+                        StatusMessage = Resources.LabelFinished;
                         break;
                     default: // 異常
-                        StatusColor = Brushes.Gray;
+                        StatusColor = Brushes.Red;
                         break;
                 }
                 SetProperty(ref _Status, value);
@@ -84,42 +87,43 @@ namespace FileHashCraft.ViewModels
         /// 全ディレクトリ数
         /// </summary>
         private int _ScannedDirectoriesCount = 0;
-        public int ScannedDirectoriesCount
+        public int CountScannedDirectories
         {
             get => _ScannedDirectoriesCount;
             set
             {
                 SetProperty(ref _ScannedDirectoriesCount, value);
-                Status = FileScanStatus.DirectoryScanning;
-                StatusMessage = $"ディレクトリスキャン中 : {value} 個のディレクトリ発見";
-                OnPropertyChanged(nameof(StatusMessage));
+                // ディレクトリスキャン中のメッセージ
+                StatusMessage = $"{Resources.LabelDirectoryScanning} {value}";
             }
         }
 
         /// <summary>
-        /// ハッシュを取得するファイルの、スキャンしたディレクトリ数
+        /// ハッシュスキャン対象のファイルスキャン完了ディレクトリ数
         /// </summary>
-        private int _CountDirectoryScanned = 0;
-        public int CountDirectoryScanned
+        private int _CountHashFilesDirectories = 0;
+        public int CountHashFilesDirectories
         {
-            get => _CountDirectoryScanned;
+            get => _CountHashFilesDirectories;
             set
             {
-                SetProperty(ref _CountDirectoryScanned, value);
-                OnPropertyChanged(nameof(CountAllFilesGetHash));
+                SetProperty(ref _CountHashFilesDirectories, value);
+                StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
+                OnPropertyChanged(nameof(Status));
+                OnPropertyChanged(nameof(StatusMessage));
             }
         }
 
         /// <summary>
         /// ハッシュを取得する全ファイル数
         /// </summary>
-        private int _CountAllFilesGetHash = 0;
-        public int CountAllFilesGetHash
+        private int _CountAllTargetFilesGetHash = 0;
+        public int CountAllTargetFilesGetHash
         {
-            get => _CountAllFilesGetHash;
+            get => _CountAllTargetFilesGetHash;
             set
             {
-                SetProperty(ref _CountAllFilesGetHash, value);
+                SetProperty(ref _CountAllTargetFilesGetHash, value);
                 OnPropertyChanged(nameof(StatusMessage));
             }
         }
@@ -184,9 +188,9 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
             [
-                new("SHA-256", Resources.HashAlgorithm_SHA256),
-                new("SHA-384", Resources.HashAlgorithm_SHA384),
-                new("SHA-512", Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
         /// <summary>
@@ -263,6 +267,8 @@ namespace FileHashCraft.ViewModels
 
         #region コンストラクタと初期処理
         private readonly IControDirectoryTreeViewlViewModel _controDirectoryTreeViewlViewModel;
+        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
+        private readonly ISpecialFolderAndRootDrives _specialFolderAndRootDrives;
         private readonly IMainWindowViewModel _mainWindowViewModel;
         private bool IsExecuting = false;
 
@@ -270,9 +276,13 @@ namespace FileHashCraft.ViewModels
 
         public PageSelectTargetFileViewModel(
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
+            ICheckedDirectoryManager checkedDirectoryManager,
+            ISpecialFolderAndRootDrives specialFolderAndRootDrives,
             IMainWindowViewModel mainWindowViewModel)
         {
             _controDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
+            _checkedDirectoryManager = checkedDirectoryManager;
+            _specialFolderAndRootDrives = specialFolderAndRootDrives;
             _mainWindowViewModel = mainWindowViewModel;
 
             // 設定画面ページに移動するコマンド
@@ -317,18 +327,30 @@ namespace FileHashCraft.ViewModels
             WeakReferenceMessenger.Default.Register<HashScanStatusChanged>(this, (_, message) =>
                 App.Current?.Dispatcher?.Invoke(() => Status = message.Status));
 
-            // ハッシュ計算対象ファイルが増えた時のメッセージ
-            WeakReferenceMessenger.Default.Register<HashAllFilesAdded>(this, (_, message) =>
+            // 全ディレクトリ数の変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<AddHashScanDirectories>(this, (_, message) =>
                 App.Current?.Dispatcher?.Invoke(() =>
-                    CountAllFilesGetHash += message.HashFileCount));
+                    CountScannedDirectories += message.AddScannedDirectories));
 
-            // ハッシュを取得するファイルの、スキャンしたディレクトリ数が増えた時のメッセージ
-            WeakReferenceMessenger.Default.Register<HashADirectoryScannedAdded>(this, (_, message) =>
+            // ハッシュスキャン対象のファイルスキャン完了ディレクトリ数増加メッセージ
+            WeakReferenceMessenger.Default.Register<AddFilesHashScanDirectories>(this, (_, message) =>
                 App.Current?.Dispatcher?.Invoke(() =>
-                    CountDirectoryScanned += message.ScannedDirectoryCount));
+                    CountHashFilesDirectories += message.HashDirectoriesCount));
 
-            WeakReferenceMessenger.Default.Register<HashScanDirectoriesAdded>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() => ScannedDirectoriesCount += message.AddScannedDirectories));
+            // ハッシュスキャン対象のファイル数追加メッセージ
+            WeakReferenceMessenger.Default.Register<AddAllTargetFilesGetHash>(this, (_, message) =>
+                App.Current?.Dispatcher?.Invoke(() =>
+                    CountAllTargetFilesGetHash += message.HashFileCount));
+
+            // ハッシュを既に取得しているファイル数増加メッセージ
+            WeakReferenceMessenger.Default.Register<AddAlreadyGetHash>(this, (_, message) =>
+                App.Current?.Dispatcher?.Invoke(() =>
+                    CountAlreadyGetHash += message.AlreadyGetHashCount));
+
+            // ハッシュ取得が必要なファイル数増加メッセージ
+            WeakReferenceMessenger.Default.Register<AddRequireGetHash>(this, (_, message) =>
+                App.Current?.Dispatcher?.Invoke(() =>
+                    CountRequireGetHash += message.RequireHashCount));
         }
 
         /// <summary>
@@ -341,9 +363,9 @@ namespace FileHashCraft.ViewModels
             HashAlgorithms.Clear();
             HashAlgorithms =
                 [
-                    new("SHA-256", Resources.HashAlgorithm_SHA256),
-                    new("SHA-384", Resources.HashAlgorithm_SHA384),
-                    new("SHA-512", Resources.HashAlgorithm_SHA512),
+                    new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
+                    new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
+                    new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
                 ];
             OnPropertyChanged(nameof(HashAlgorithms));
 
@@ -358,20 +380,33 @@ namespace FileHashCraft.ViewModels
             }
 
             // 値の初期化
-            ScannedDirectoriesCount = 0;
-            CountDirectoryScanned = 0;
-            CountAllFilesGetHash = 0;
+            CountScannedDirectories = 0;
+            CountHashFilesDirectories = 0;
+            CountAllTargetFilesGetHash = 0;
             CountAlreadyGetHash = 0;
             CountRequireGetHash = 0;
             CountFilteredGetHash = 0;
 
-            // ツリービューのアイテムをクリアする
+            // ツリービューのアイテムを初期化する
             _controDirectoryTreeViewlViewModel.ClearRoot();
             _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
+            foreach (var root in _checkedDirectoryManager.NestedDirectories)
+            {
+                var fi = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
+            }
+            foreach (var root in _checkedDirectoryManager.NonNestedDirectories)
+            {
+                var fi = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                var node = _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
+                node.HasChildren = false;
+                node.Children.Clear();
+            }
+
             // スキャンするディレクトリの追加
             var scanHashFilesClass = Ioc.Default.GetService<IScanHashFilesClass>();
-            scanHashFilesClass?.ScanHashFiles();
+            scanHashFilesClass?.ScanHashFiles(HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm));
         }
         #endregion コンストラクタと初期処理
     }

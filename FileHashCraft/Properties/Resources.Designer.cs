@@ -151,7 +151,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Number of files for which a hash has already been obtained : に類似しているローカライズされた文字列を検索します。
+        ///   Number of files for which a hash has already been obtained に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelCountAlreadyGetHash {
             get {
@@ -160,7 +160,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Number of files to get hashes from filtered files : に類似しているローカライズされた文字列を検索します。
+        ///   Number of files to get hashes from filtered files に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelCountFilteredGetHash {
             get {
@@ -183,6 +183,24 @@ namespace FileHashCraft.Properties {
         public static string LabelCurrentDirectory {
             get {
                 return ResourceManager.GetString("LabelCurrentDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   File Scanning :  に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelDirectoryCount {
+            get {
+                return ResourceManager.GetString("LabelDirectoryCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Directory Scanning...: Found に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelDirectoryScanning {
+            get {
+                return ResourceManager.GetString("LabelDirectoryScanning", resourceCulture);
             }
         }
         
@@ -215,6 +233,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Finished. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelFinished {
+            get {
+                return ResourceManager.GetString("LabelFinished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Font Size に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelFontSizeString {
@@ -239,6 +266,15 @@ namespace FileHashCraft.Properties {
         public static string LabelIgnoreFilterSetting {
             get {
                 return ResourceManager.GetString("LabelIgnoreFilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Internal data is being updated. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelInternalDataUpdate {
+            get {
+                return ResourceManager.GetString("LabelInternalDataUpdate", resourceCulture);
             }
         }
         

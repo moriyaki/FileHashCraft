@@ -1,18 +1,13 @@
-﻿using System.Diagnostics;
-using System.IO;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
-using FileHashCraft.ViewModels.DirectoryTreeViewControl;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Shapes;
+using static FileHashCraft.Models.FileHashInfoManager;
 
 namespace FileHashCraft.ViewModels.PageSelectTargetFile
 {
     public interface IScanHashFilesClass
     {
-        public void ScanHashFiles();
+        public Task ScanHashFiles(HashAlgorithmType HashAlgorithmType);
     }
 
     public class ScanHashFilesClass : IScanHashFilesClass
@@ -30,65 +25,88 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <summary>
         /// スキャンするディレクトリを追加します。
         /// </summary>
-        public async void ScanHashFiles()
+        public async Task ScanHashFiles(HashAlgorithmType HashAlgorithmType)
         {
-            DebugManager.InfoWrite("PageSelectTargetFileViewModel ScanHashFiles");
-
-            var sw = new Stopwatch();
-            sw.Start();
             // XML からファイルを読み込む
-            FileHashInfoManager.Instance.LoadHashXML();
-
-            // ディレクトリスキャンの表示に切り替える
-            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.DirectoryScanning));
+            Instance.LoadHashXML();
 
             // ディレクトリのスキャン
-            await Task.Run(() => DirectoriesScan()).ConfigureAwait(true);
+            await Task.Run(DirectoriesScan).ConfigureAwait(false);
 
-            // ファイルスキャンの表示に切り替える
+            // ファイルのスキャン
+            await Task.Run(() => FilesScan(HashAlgorithmType)).ConfigureAwait(false);
+
+            // XML 書き込みの表示に切り替える
             WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.XMLWriting));
 
             // XML にファイルを書き込む
-            await Task.Run(() => FileHashInfoManager.Instance.SaveHashXML()).ConfigureAwait(true);
+            Instance.SaveHashXML();
 
             // スキャン終了の表示に切り替える
             WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.Finished));
-            sw.Stop();
-#if DEBUG
-            DebugManager.InfoWrite($"Debug ScanHashFiles : {sw.Elapsed.TotalSeconds} ms.");
-#else
-            DebugManager.InfoWrite($"Release ScanHashFiles : {sw.Elapsed.TotalSeconds} ms.");
-#endif
         }
+
+        /// <summary>
+        /// ディレクトリリスト
+        /// </summary>
+        private readonly List<string> _directoriesList = new(500);
 
         /// <summary>
         /// ハッシュを取得するディレクトリをスキャンする
         /// </summary>
         private void DirectoriesScan()
         {
+            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.DirectoriesScanning));
+
             // 各ドライブに対してタスクを回す
-            var sw = new Stopwatch();
-            sw.Start();
             RecursivelyDirectorySearch(_checkedDirectoryManager.NestedDirectories);
             foreach (var directory in _checkedDirectoryManager.NonNestedDirectories)
             {
                 ScanDirectory(directory);
             }
-            sw.Stop();
-            DebugManager.InfoWrite($"Scan Time : {sw.ElapsedMilliseconds} ms");
+            WeakReferenceMessenger.Default.Send(new AddHashScanDirectories(_checkedDirectoryManager.NonNestedDirectories.Count));
         }
 
+        /// <summary>
+        /// ハッシュを取得する、またはしているディレクトリのファイルをスキャンする
+        /// </summary>
+        /// <param name="hashAlgorithms">利用するハッシュアルゴリズム</param>
+        private void FilesScan(HashAlgorithmType hashAlgorithms)
+        {
+            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.FilesScanning));
+            foreach (var fullPath in _directoriesList)
+            {
+                var result = Instance.ScanFiles(fullPath);
+                WeakReferenceMessenger.Default.Send(new AddFilesHashScanDirectories());
+                WeakReferenceMessenger.Default.Send(new AddAllTargetFilesGetHash(result.AllCount));
+                switch (hashAlgorithms)
+                {
+                    case HashAlgorithmType.SHA256:
+                        WeakReferenceMessenger.Default.Send(new AddAlreadyGetHash(result.CountSHA256));
+                        WeakReferenceMessenger.Default.Send(new AddRequireGetHash(result.AllCount - result.CountSHA256));
+                        break;
+                    case HashAlgorithmType.SHA384:
+                        WeakReferenceMessenger.Default.Send(new AddAlreadyGetHash(result.CountSHA384));
+                        WeakReferenceMessenger.Default.Send(new AddRequireGetHash(result.AllCount - result.CountSHA384));
+                        break;
+                    case HashAlgorithmType.SHA512:
+                        WeakReferenceMessenger.Default.Send(new AddAlreadyGetHash(result.CountSHA512));
+                        WeakReferenceMessenger.Default.Send(new AddRequireGetHash(result.AllCount - result.CountSHA512));
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid hash algorithm.");
+                }
+            }
+        }
         #region 再帰的にディレクトリを検索する
-        private readonly List<Task> scanTasks = [];
-        private readonly SemaphoreSlim _semaphone = new(50);
+        private readonly object lockObject = new();
 
         /// <summary>
         /// 並列処理でディレクトリを検索して、スキャン処理に渡します。
         /// </summary>
-        private void RecursivelyDirectorySearch(List<string> rootDrives)
+        private void RecursivelyDirectorySearch(List<string> rootDirectory)
         {
-            Parallel.ForEach(rootDrives, RecursivelyRetrieveDirectories);
-            Task.WhenAll(scanTasks);
+            Parallel.ForEach(rootDirectory, RecursivelyRetrieveDirectories);
         }
 
         /// <summary>
@@ -112,21 +130,17 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <param name="fullPath">反映させるディレクトリのフルパス</param>
         private void ScanDirectory(string fullPath)
         {
-            scanTasks.Add(new Task(() =>
+            FileHashInfoManager.Instance.ScanDirectory(fullPath);
+            lock(lockObject)
             {
-                try
+                _directoriesList.Add(fullPath);
+                if (_directoriesList.Count % 500 == 0)
                 {
-                    _semaphone.Wait();
-                    FileHashInfoManager.Instance.ScanDirectory(fullPath);
+                    _directoriesList.Capacity += 500;
                 }
-                finally { _semaphone.Release(); }
             }
-            ));
-
-            //FileHashInfoManager.Instance.ScanDirectory(fullPath);
-            WeakReferenceMessenger.Default.Send(new HashScanDirectoriesAdded(1));
+            WeakReferenceMessenger.Default.Send(new AddHashScanDirectories());
         }
         #endregion 再帰的にディレクトリを検索する
-
     }
 }

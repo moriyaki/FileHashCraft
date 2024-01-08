@@ -170,6 +170,14 @@
     <value>カレントディレクトリ</value>
     <comment>Label/PageExplorer</comment>
   </data>
+  <data name="LabelDirectoryCount" xml:space="preserve">
+    <value>ファイルスキャン状況：</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
+  <data name="LabelDirectoryScanning" xml:space="preserve">
+    <value>ディレクトリスキャン中...：発見数</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
   <data name="LabelEmptyDirDelete" xml:space="preserve">
     <value>空のディレクトリを削除するかどうか</value>
     <comment>Label/PageSettings/PageTargetViewModel</comment>
@@ -182,6 +190,10 @@
     <value>検索フィルタ設定
 (改行か ; 記号で区切ってください)</value>
   </data>
+  <data name="LabelFinished" xml:space="preserve">
+    <value>完了</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
   <data name="LabelFontSizeString" xml:space="preserve">
     <value>フォントのサイズ</value>
     <comment>Label/PageSettings</comment>
@@ -193,6 +205,10 @@
   <data name="LabelIgnoreFilterSetting" xml:space="preserve">
     <value>検索除外フィルタ設定
 (改行か ; 記号で区切ってください)</value>
+  </data>
+  <data name="LabelInternalDataUpdate" xml:space="preserve">
+    <value>内部データ更新中</value>
+    <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">
     <value>0サイズのファイルを削除するかどうか</value>

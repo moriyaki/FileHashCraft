@@ -158,11 +158,11 @@
     <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelCountAlreadyGetHash" xml:space="preserve">
-    <value>Number of files for which a hash has already been obtained :</value>
+    <value>Number of files for which a hash has already been obtained</value>
     <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelCountFilteredGetHash" xml:space="preserve">
-    <value>Number of files to get hashes from filtered files :</value>
+    <value>Number of files to get hashes from filtered files</value>
   </data>
   <data name="LabelCountRequireGetHash" xml:space="preserve">
     <value>Number of files requiring hash acquisition :</value>
@@ -170,6 +170,14 @@
   <data name="LabelCurrentDirectory" xml:space="preserve">
     <value>Current Directory</value>
     <comment>Label/PageExplorer</comment>
+  </data>
+  <data name="LabelDirectoryCount" xml:space="preserve">
+    <value>File Scanning : </value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
+  <data name="LabelDirectoryScanning" xml:space="preserve">
+    <value>Directory Scanning...: Found</value>
+    <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelEmptyDirDelete" xml:space="preserve">
     <value>Whether to delete empty directories or not</value>
@@ -183,6 +191,10 @@
     <value>Search filter settings 
 separated by Ente or ; symbol)</value>
   </data>
+  <data name="LabelFinished" xml:space="preserve">
+    <value>Finished.</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
   <data name="LabelFontSizeString" xml:space="preserve">
     <value>Font Size</value>
     <comment>Label/PageSettings</comment>
@@ -194,6 +206,10 @@ separated by Ente or ; symbol)</value>
   <data name="LabelIgnoreFilterSetting" xml:space="preserve">
     <value>Search exclusion filter settings
 (separated by Enter or ; symbol)</value>
+  </data>
+  <data name="LabelInternalDataUpdate" xml:space="preserve">
+    <value>Internal data is being updated.</value>
+    <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">
     <value>Whether to delete files of size 0 or not</value>

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using FileHashCraft.Models;
 
 namespace FileHashCraft.ViewModels.Modules
 {
@@ -52,7 +53,7 @@ namespace FileHashCraft.ViewModels.Modules
     /// </summary>
     public class HashAlgorithmChanged
     {
-        public string HashAlgorithm { get; } = "SHA-256";
+        public string HashAlgorithm { get; } = HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256);
 
         public HashAlgorithmChanged() { throw new NotImplementedException(); }
 
@@ -140,43 +141,82 @@ namespace FileHashCraft.ViewModels.Modules
     }
 
     /// <summary>
-    /// ハッシュスキャン対象のディレクトリ数追加メッセージ
+    /// 全ディレクトリ数の変更メッセージ
     /// </summary>
-    public class HashScanDirectoriesAdded
+    public class AddHashScanDirectories
     {
         public int AddScannedDirectories { get; }
-        public HashScanDirectoriesAdded() { throw new NotImplementedException(); }
-        public HashScanDirectoriesAdded(int addDirectoriesCount)
+        public AddHashScanDirectories()
+        {
+            AddScannedDirectories = 1;
+        }
+        public AddHashScanDirectories(int addDirectoriesCount)
         {
             AddScannedDirectories = addDirectoriesCount;
+        }
+    }
+
+    public class AddFilesHashScanDirectories
+    {
+        public int HashDirectoriesCount { get; } = 0;
+        public AddFilesHashScanDirectories()
+        {
+            HashDirectoriesCount = 1;
+        }
+        public AddFilesHashScanDirectories(int  hashDirectoriesCount)
+        {
+            HashDirectoriesCount = hashDirectoriesCount;
         }
     }
 
     /// <summary>
     /// ハッシュスキャン対象のファイル数追加メッセージ
     /// </summary>
-    public class HashAllFilesAdded
+    public class AddAllTargetFilesGetHash
     {
         public int HashFileCount { get; } = 0;
-        public HashAllFilesAdded() { throw new NotSupportedException(); }
-        public HashAllFilesAdded(int hashFileCOunt)
+        public AddAllTargetFilesGetHash()
         {
-            HashFileCount = hashFileCOunt;
+            HashFileCount = 1;
+        }
+        public AddAllTargetFilesGetHash(int hashFileCount)
+        {
+            HashFileCount = hashFileCount;
         }
     }
 
     /// <summary>
-    /// ハッシュスキャン対象のファイルスキャンしたディレクトリ数追加メッセージ
+    /// ハッシュを既に取得しているファイル数増加メッセージ
     /// </summary>
-    public class HashADirectoryScannedAdded
+    public class AddAlreadyGetHash
     {
-        public int ScannedDirectoryCount { get; } = 0;
-        public HashADirectoryScannedAdded() { throw new NotSupportedException(); }
-        public HashADirectoryScannedAdded(int scannedDirectoryCOunt)
+        public int AlreadyGetHashCount { get; } = 0;
+        public AddAlreadyGetHash()
         {
-            ScannedDirectoryCount = scannedDirectoryCOunt;
+            AlreadyGetHashCount = 1;
+        }
+        public AddAlreadyGetHash(int alreadyGetHashCount)
+        {
+            AlreadyGetHashCount = alreadyGetHashCount;
         }
     }
+
+    /// <summary>
+    /// ハッシュ取得が必要なファイル数増加メッセージ
+    /// </summary>
+    public class AddRequireGetHash
+    {
+        public int RequireHashCount { get; } = -0;
+        public AddRequireGetHash()
+        {
+            RequireHashCount = 1;
+        }
+        public AddRequireGetHash(int requireHashCount)
+        {
+            RequireHashCount = requireHashCount;
+        }
+    }
+
     #endregion ハッシュスキャンUI用
 
     #region DirectoryTreeViewControlViewModelから発信
