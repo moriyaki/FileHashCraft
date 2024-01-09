@@ -28,7 +28,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         public async Task ScanHashFiles(HashAlgorithmType HashAlgorithmType)
         {
             // XML からファイルを読み込む
-            Instance.LoadHashXML();
+            FileHashInstance.LoadHashXML();
 
             // ディレクトリのスキャン
             await Task.Run(DirectoriesScan).ConfigureAwait(false);
@@ -40,7 +40,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.XMLWriting));
 
             // XML にファイルを書き込む
-            Instance.SaveHashXML();
+            FileHashInstance.SaveHashXML();
 
             // スキャン終了の表示に切り替える
             WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.Finished));
@@ -76,7 +76,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.FilesScanning));
             foreach (var fullPath in _directoriesList)
             {
-                var result = Instance.ScanFiles(fullPath);
+                var result = FileHashInstance.ScanFiles(fullPath);
                 WeakReferenceMessenger.Default.Send(new AddFilesHashScanDirectories());
                 WeakReferenceMessenger.Default.Send(new AddAllTargetFilesGetHash(result.AllCount));
                 switch (hashAlgorithms)
@@ -130,7 +130,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <param name="fullPath">反映させるディレクトリのフルパス</param>
         private void ScanDirectory(string fullPath)
         {
-            FileHashInfoManager.Instance.ScanDirectory(fullPath);
+            FileHashInfoManager.FileHashInstance.ScanDirectory(fullPath);
             lock(lockObject)
             {
                 _directoriesList.Add(fullPath);

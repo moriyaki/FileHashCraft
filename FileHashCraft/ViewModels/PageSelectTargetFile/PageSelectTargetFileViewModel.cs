@@ -204,6 +204,8 @@ namespace FileHashCraft.ViewModels
             {
                 _mainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
+                CountAlreadyGetHash = FileHashInfoManager.FileHashInstance.GetHashAlgorithmsAllCount(HashAlgorithmHelper.GetHashAlgorithmType(value));
+                CountRequireGetHash = CountAllTargetFilesGetHash - CountAlreadyGetHash;
             }
         }
 

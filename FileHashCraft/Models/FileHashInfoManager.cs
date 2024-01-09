@@ -53,10 +53,25 @@ namespace FileHashCraft.Models
     #endregion XMLシリアライズ／デシリアライズするクラス
     public sealed class FileHashInfoManager
     {
-        public static FileHashInfoManager Instance { get; } = new();
+        public static FileHashInfoManager FileHashInstance { get; } = new();
         private FileHashInfoManager() { }
 
+        /// <summary>
+        /// 全ファイルハッシュリストのデータ
+        /// </summary>
         private List<HashDir> _fileHashDirList = new(10000);
+        /// <summary>
+        /// SHA256ハッシュを保持するファイルのフルパス
+        /// </summary>
+        private readonly List<string> _sha256DirList = new(10000);
+        /// <summary>
+        /// SHA384ハッシュを保持するファイルのフルパス
+        /// </summary>
+        private readonly List<string> _sha384DirList = new(10000);
+        /// <summary>
+        /// SHA512ハッシュを保持するファイルのフルパス
+        /// </summary>
+        private readonly List<string> _sha512DirList = new(10000);
 
         #region ハッシュ情報XMLへの読み書き
         const string appName = "FileHashCraft";
@@ -257,10 +272,22 @@ namespace FileHashCraft.Models
                     }
                     else
                     {
-                        // ハッシュが存在したら
-                        if (!string.IsNullOrEmpty(existedFile.SHA256)) result.CountSHA256++;
-                        if (!string.IsNullOrEmpty(existedFile.SHA384)) result.CountSHA384++;
-                        if (!string.IsNullOrEmpty(existedFile.SHA512)) result.CountSHA512++;
+                        // ハッシュが存在したら各ハッシュ存在リストに追加
+                        if (!string.IsNullOrEmpty(existedFile.SHA256))
+                        {
+                            result.CountSHA256++;
+                            _sha256DirList.Add(file);
+                        }
+                        if (!string.IsNullOrEmpty(existedFile.SHA384))
+                        {
+                            result.CountSHA384++;
+                            _sha384DirList.Add(file);
+                        }
+                        if (!string.IsNullOrEmpty(existedFile.SHA512))
+                        {
+                            result.CountSHA512++;
+                            _sha512DirList.Add(file);
+                        }
                     }
                     continue;
                 }
@@ -276,6 +303,23 @@ namespace FileHashCraft.Models
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// ハッシュアルゴリズム毎のハッシュを獲得しているファイル数
+        /// </summary>
+        /// <param name="algorithmType">ハッシュアルゴリズムの種類</param>
+        /// <returns>ハッシュを獲得しているファイル数</returns>
+        /// <exception cref="ArgumentException">適切ではないハッシュアルゴリズムを指定</exception>
+        public int GetHashAlgorithmsAllCount(HashAlgorithmType algorithmType)
+        {
+            return algorithmType switch
+            {
+                HashAlgorithmType.SHA256 => _sha256DirList.Count,
+                HashAlgorithmType.SHA384 => _sha384DirList.Count,
+                HashAlgorithmType.SHA512 => _sha512DirList.Count,
+                _ => throw new ArgumentException("Invalid hash algorithm."),
+            };
         }
     }
 }
