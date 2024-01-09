@@ -171,7 +171,7 @@
     <comment>Label/PageExplorer</comment>
   </data>
   <data name="LabelDirectoryCount" xml:space="preserve">
-    <value>ファイルスキャン状況：</value>
+    <value>ファイルスキャン状況：ディレクトリ </value>
     <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelDirectoryScanning" xml:space="preserve">
@@ -209,6 +209,10 @@
   <data name="LabelInternalDataUpdate" xml:space="preserve">
     <value>内部データ更新中</value>
     <comment>Label/PageTargetViewModel</comment>
+  </data>
+  <data name="LabelXMLWriting" xml:space="preserve">
+    <value>見つかったファイルのXML書き込み</value>
+    <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">
     <value>0サイズのファイルを削除するかどうか</value>

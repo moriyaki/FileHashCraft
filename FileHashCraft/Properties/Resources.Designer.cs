@@ -187,7 +187,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   File Scanning :  に類似しているローカライズされた文字列を検索します。
+        ///   File Scanning : Dicrecotires に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelDirectoryCount {
             get {
@@ -275,6 +275,15 @@ namespace FileHashCraft.Properties {
         public static string LabelInternalDataUpdate {
             get {
                 return ResourceManager.GetString("LabelInternalDataUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Found File Scanned XML Writing に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelXMLWriting {
+            get {
+                return ResourceManager.GetString("LabelXMLWriting", resourceCulture);
             }
         }
         

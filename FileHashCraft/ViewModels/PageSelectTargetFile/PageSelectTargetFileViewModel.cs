@@ -44,11 +44,14 @@ namespace FileHashCraft.ViewModels
                 {
                     case FileScanStatus.DirectoriesScanning:
                         StatusColor = Brushes.Pink;
+                        StatusMessage = $"{Resources.LabelDirectoryScanning} {CountScannedDirectories}";
                         break;
                     case FileScanStatus.FilesScanning:
                         StatusColor = Brushes.Yellow;
+                        StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
                         break;
                     case FileScanStatus.XMLWriting:
+                        StatusMessage = Resources.LabelXMLWriting;
                         StatusColor = Brushes.Cyan;
                         break;
                     case FileScanStatus.Finished:
@@ -59,7 +62,7 @@ namespace FileHashCraft.ViewModels
                         StatusColor = Brushes.Red;
                         break;
                 }
-                SetProperty(ref _Status, value);
+                _Status = value;
             }
         }
 
@@ -93,8 +96,7 @@ namespace FileHashCraft.ViewModels
             set
             {
                 SetProperty(ref _ScannedDirectoriesCount, value);
-                // ディレクトリスキャン中のメッセージ
-                StatusMessage = $"{Resources.LabelDirectoryScanning} {value}";
+                Status = FileScanStatus.DirectoriesScanning;
             }
         }
 
@@ -108,8 +110,7 @@ namespace FileHashCraft.ViewModels
             set
             {
                 SetProperty(ref _CountHashFilesDirectories, value);
-                StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
-                OnPropertyChanged(nameof(Status));
+                Status = FileScanStatus.FilesScanning;
                 OnPropertyChanged(nameof(StatusMessage));
             }
         }
@@ -371,7 +372,7 @@ namespace FileHashCraft.ViewModels
 
             // ハッシュ計算アルゴリズムを再設定
             SelectedHashAlgorithm = currentAlgorithm;
-            //OnPropertyChanged(nameof(SelectedHashAlgorithm));
+            Status = _Status;
 
             if (IsExecuting)
             {
