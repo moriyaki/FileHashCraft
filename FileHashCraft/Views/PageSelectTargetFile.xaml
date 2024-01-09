@@ -166,23 +166,29 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 
-                <!-- 検索フィルタ -->
+                <!-- 拡張子検索フィルタ -->
                 <Label  Margin="3" Grid.Column="0" Grid.Row="0"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFilterSetting, Mode=OneWay}"/>
+                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtentionFilterSetting, Mode=OneWay}"/>
 
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="5" 
-                         TextWrapping="Wrap" AcceptsReturn="True"
-                         x:Name="FilterTextBox" VerticalScrollBarVisibility="Auto"/>
+                <ListBox x:Name="checkBoxListBox" ItemsSource="{Binding ExtentionCollection}"
+                         Grid.Row="1" Grid.Column="0" Margin="5">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding ExtentionView}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
 
                 <!-- 除外フィルタ -->
                 <Label Grid.Row="0" Grid.Column="1" Margin="3"
                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                       Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelIgnoreFilterSetting, Mode=OneWay}"/>
+                       Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFilterSetting, Mode=OneWay}"/>
 
-                <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5" 
+                <TextBox Grid.Row="1" Grid.Column="1" Margin="5" 
                          TextWrapping="Wrap" AcceptsReturn="True"
-                         x:Name="IgnoreFilterTextBox" VerticalScrollBarVisibility="Auto"/>
+                         Text="{Binding FilterTextBox}"
+                         x:Name="FilterTextBox" VerticalScrollBarVisibility="Auto"/>
 
             </Grid>
         </Grid>

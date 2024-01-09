@@ -60,18 +60,6 @@ namespace FileHashCraft.Models
         /// 全ファイルハッシュリストのデータ
         /// </summary>
         private List<HashDir> _fileHashDirList = new(10000);
-        /// <summary>
-        /// SHA256ハッシュを保持するファイルのフルパス
-        /// </summary>
-        private readonly List<string> _sha256DirList = new(10000);
-        /// <summary>
-        /// SHA384ハッシュを保持するファイルのフルパス
-        /// </summary>
-        private readonly List<string> _sha384DirList = new(10000);
-        /// <summary>
-        /// SHA512ハッシュを保持するファイルのフルパス
-        /// </summary>
-        private readonly List<string> _sha512DirList = new(10000);
 
         #region ハッシュ情報XMLへの読み書き
         const string appName = "FileHashCraft";
@@ -225,18 +213,30 @@ namespace FileHashCraft.Models
         }
 
         /// <summary>
+        /// SHA256ハッシュを保持するファイルのフルパス
+        /// </summary>
+        private readonly List<string> _sha256DirList = new(10000);
+        /// <summary>
+        /// SHA384ハッシュを保持するファイルのフルパス
+        /// </summary>
+        private readonly List<string> _sha384DirList = new(10000);
+        /// <summary>
+        /// SHA512ハッシュを保持するファイルのフルパス
+        /// </summary>
+        private readonly List<string> _sha512DirList = new(10000);
+
+        /// <summary>
         /// ファイルを追加変更削除し、ハッシュ取得状況を取得します。
         /// </summary>
-        /// <param name="fullPath">走査するディレクトリのフルパス</param>
-        /// <returns></returns>
-        public FileHashStatus ScanFiles(string fullPath)
+        /// <param name="directoryFullPath">走査するディレクトリのフルパス</param>
+        /// <returns>走査するディレクトリの情報</returns>
+        public FileHashStatus ScanFiles(string directoryFullPath)
         {
             // フルパスが同じ物を探し、既に存在しないファイル情報を削除
             var scanFileItems = new ScanFileItems();
-            var storageFiles = scanFileItems.EnumerateFiles(fullPath);
-
-            var xmlItem = _fileHashDirList.Find(f => f.FullPath == fullPath);
-            var xmlFiles = xmlItem?.Files.Select(x => Path.Combine(fullPath, x.Name));
+            var storageFiles = scanFileItems.EnumerateFiles(directoryFullPath);
+            var xmlItem = _fileHashDirList.Find(f => f.FullPath == directoryFullPath);
+            var xmlFiles = xmlItem?.Files.Select(x => Path.Combine(directoryFullPath, x.Name));
 
             var deletedFiles = xmlFiles?.Except(storageFiles).ToList();
 
@@ -252,14 +252,15 @@ namespace FileHashCraft.Models
                 CountSHA384 = 0,
                 CountSHA512 = 0
             };
-            foreach (var file in storageFiles)
+            foreach (var fullPath in storageFiles)
             {
-                var fileInfo = new FileInfo(file);
-                if (xmlFiles?.Contains(file) == true)
+                var fileInfo = new FileInfo(fullPath);
+                if (xmlFiles?.Contains(fullPath) == true)
                 {
                     // 既にXML内に存在していたら更新チェック
-                    var existedFile = xmlItem?.Files.Find(x => x.Name == Path.GetFileName(file));
+                    var existedFile = xmlItem?.Files.Find(x => x.Name == Path.GetFileName(fullPath));
                     if (existedFile == null) continue;
+
                     if (existedFile.Length != fileInfo.Length || existedFile.LastModified != fileInfo.LastWriteTimeUtc)
                     {
                         // ファイルが更新されていたら情報更新
@@ -276,20 +277,20 @@ namespace FileHashCraft.Models
                         if (!string.IsNullOrEmpty(existedFile.SHA256))
                         {
                             result.CountSHA256++;
-                            _sha256DirList.Add(file);
+                            _sha256DirList.Add(fullPath);
                         }
                         if (!string.IsNullOrEmpty(existedFile.SHA384))
                         {
                             result.CountSHA384++;
-                            _sha384DirList.Add(file);
+                            _sha384DirList.Add(fullPath);
                         }
                         if (!string.IsNullOrEmpty(existedFile.SHA512))
                         {
                             result.CountSHA512++;
-                            _sha512DirList.Add(file);
+                            _sha512DirList.Add(fullPath);
                         }
+                        continue;
                     }
-                    continue;
                 }
                 else
                 {
@@ -306,19 +307,110 @@ namespace FileHashCraft.Models
         }
 
         /// <summary>
-        /// ハッシュアルゴリズム毎のハッシュを獲得しているファイル数
+        /// 拡張子をキーにSHA256未取得ハッシュのファイルフルパスを取得するリスト
+        /// </summary>
+        private readonly Dictionary<string, List<string>> _extentionNotHaveHashSHA256 = [];
+        /// <summary>
+        /// 拡張子をキーにSHA256未取得ハッシュのファイルフルパスを取得するリスト
+        /// </summary>
+        private readonly Dictionary<string, List<string>> _extentionNotHaveHashSHA384 = [];
+        /// <summary>
+        /// 拡張子をキーにSHA256未取得ハッシュのファイルフルパスを取得するリスト
+        /// </summary>
+        private readonly Dictionary<string, List<string>> _extentionNotHaveHashSHA512 = [];
+        /// <summary>
+        /// 拡張子をキーに、未取得ハッシュのファイルフルパスを登録する
+        /// </summary>
+        /// <param name="directoryFullPath">ディレクトリのフルパス</param>
+        public void ScanFileExtentions(string directoryFullPath)
+        {
+            // 拡張子をキーに辞書登録する
+            var value = new List<string>();
+
+            // ディレクトリのファイルを取得する
+            var xmlItem = _fileHashDirList.Find(f => f.FullPath == directoryFullPath);
+            if (xmlItem == null) { return; }
+
+            foreach (var file in xmlItem.Files)
+            {
+                // フルパスを生成し、そこから拡張子を取得する
+                var fileFullPath = Path.Combine(directoryFullPath, file.Name);
+                var extention = Path.GetExtension(fileFullPath).ToLowerInvariant();
+
+                // リストが存在しないなら作成する
+                if (!_extentionNotHaveHashSHA256.TryGetValue(extention, out value))
+                {
+                    _extentionNotHaveHashSHA256[extention] = [];
+                }
+                if (!_extentionNotHaveHashSHA384.TryGetValue(extention, out value))
+                {
+                    _extentionNotHaveHashSHA384[extention] = [];
+                }
+                if (!_extentionNotHaveHashSHA512.TryGetValue(extention, out value))
+                {
+                    _extentionNotHaveHashSHA512[extention] = [];
+                }
+
+                // フルパスファイル名がリストに追加されてなければ追加する
+                if (!_extentionNotHaveHashSHA256[extention].Contains(fileFullPath))
+                {
+                    _extentionNotHaveHashSHA256[extention].Add(fileFullPath);
+                }
+                if (!_extentionNotHaveHashSHA384[extention].Contains(fileFullPath))
+                {
+                    _extentionNotHaveHashSHA384[extention].Add(fileFullPath);
+                }
+                if (!_extentionNotHaveHashSHA512[extention].Contains(fileFullPath))
+                {
+                    _extentionNotHaveHashSHA512[extention].Add(fileFullPath);
+                }
+            }
+        }
+
+        /// <summary>
+        /// ハッシュアルゴリズム毎のハッシュを獲得しているファイル数を取得します。
         /// </summary>
         /// <param name="algorithmType">ハッシュアルゴリズムの種類</param>
         /// <returns>ハッシュを獲得しているファイル数</returns>
         /// <exception cref="ArgumentException">適切ではないハッシュアルゴリズムを指定</exception>
-        public int GetHashAlgorithmsAllCount(HashAlgorithmType algorithmType)
+        public int GetHashAlgorithmsAllCount(FileHashAlgorithm algorithmType)
         {
             return algorithmType switch
             {
-                HashAlgorithmType.SHA256 => _sha256DirList.Count,
-                HashAlgorithmType.SHA384 => _sha384DirList.Count,
-                HashAlgorithmType.SHA512 => _sha512DirList.Count,
+                FileHashAlgorithm.SHA256 => _sha256DirList.Count,
+                FileHashAlgorithm.SHA384 => _sha384DirList.Count,
+                FileHashAlgorithm.SHA512 => _sha512DirList.Count,
                 _ => throw new ArgumentException("Invalid hash algorithm."),
+            };
+        }
+
+        /// <summary>
+        /// 検索したファイルの拡張子を取得します。
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetExtensions(FileHashAlgorithm hashAlgorithms)
+        {
+            return hashAlgorithms switch
+            {
+                FileHashAlgorithm.SHA256 => _extentionNotHaveHashSHA256.Keys.OrderBy(key => key),
+                FileHashAlgorithm.SHA384 => _extentionNotHaveHashSHA384.Keys.OrderBy(key => key),
+                FileHashAlgorithm.SHA512 => _extentionNotHaveHashSHA384.Keys.OrderBy(key => key),
+                _ => throw new ArgumentException("Invalid hash algorithm."),
+            };
+        }
+
+        /// <summary>
+        /// 検索したファイルの拡張子がある、未取得ファイル数を取得します。
+        /// </summary>
+        /// <returns></returns>
+        public int GetExtentionsCount(string extention, FileHashAlgorithm hashAlgorithm)
+        {
+            return hashAlgorithm switch
+            {
+                FileHashAlgorithm.SHA256 => _extentionNotHaveHashSHA256[extention].Count,
+                FileHashAlgorithm.SHA384 => _extentionNotHaveHashSHA384[extention].Count,
+                FileHashAlgorithm.SHA512 => _extentionNotHaveHashSHA512[extention].Count,
+                _ => throw new ArgumentException("Hash Not Implemented."),
             };
         }
     }

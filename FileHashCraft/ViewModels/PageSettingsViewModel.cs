@@ -38,9 +38,9 @@ namespace FileHashCraft.ViewModels
                 HashAlgorithms.Clear();
                 HashAlgorithms =
                     [
-                        new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
-                        new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
-                        new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
+                        new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                        new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                        new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
                     ];
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
@@ -53,9 +53,9 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
             [
-                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
         /// <summary>

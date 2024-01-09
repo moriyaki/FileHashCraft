@@ -214,6 +214,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Specifying file types by extension に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFilterSetting {
+            get {
+                return ResourceManager.GetString("LabelExtentionFilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Algorithm for file hash calculation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelFileHashAlgorithmString {
@@ -223,8 +232,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Search filter settings 
-        ///separated by Ente or ; symbol) に類似しているローカライズされた文字列を検索します。
+        ///   Set search criteria (separated by Enter) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelFilterSetting {
             get {
@@ -260,16 +268,6 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Search exclusion filter settings
-        ///(separated by Enter or ; symbol) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelIgnoreFilterSetting {
-            get {
-                return ResourceManager.GetString("LabelIgnoreFilterSetting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Internal data is being updated. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelInternalDataUpdate {
@@ -279,11 +277,11 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Found File Scanned XML Writing に類似しているローカライズされた文字列を検索します。
+        ///   Found File Scanned XML Writing and etc. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelXMLWriting {
+        public static string LabelSettings {
             get {
-                return ResourceManager.GetString("LabelXMLWriting", resourceCulture);
+                return ResourceManager.GetString("LabelSettings", resourceCulture);
             }
         }
         
@@ -347,6 +345,15 @@ namespace FileHashCraft.Properties {
         public static string MenuSettings {
             get {
                 return ResourceManager.GetString("MenuSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No Have Extentions に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string NoHaveExtentions {
+            get {
+                return ResourceManager.GetString("NoHaveExtentions", resourceCulture);
             }
         }
     }

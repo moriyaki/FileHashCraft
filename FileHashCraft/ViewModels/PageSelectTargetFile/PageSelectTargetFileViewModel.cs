@@ -40,6 +40,7 @@ namespace FileHashCraft.ViewModels
             get => _Status;
             set
             {
+                _Status = value;
                 switch (value)
                 {
                     case FileScanStatus.DirectoriesScanning:
@@ -51,7 +52,7 @@ namespace FileHashCraft.ViewModels
                         StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
                         break;
                     case FileScanStatus.XMLWriting:
-                        StatusMessage = Resources.LabelXMLWriting;
+                        StatusMessage = Resources.LabelSettings;
                         StatusColor = Brushes.Cyan;
                         break;
                     case FileScanStatus.Finished:
@@ -62,7 +63,33 @@ namespace FileHashCraft.ViewModels
                         StatusColor = Brushes.Red;
                         break;
                 }
-                _Status = value;
+            }
+        }
+        /// <summary>
+        ///  0 サイズのファイルを削除するかどうか
+        /// </summary>
+        public bool IsZeroSizeFileDelete
+        {
+            get => _mainWindowViewModel.IsZeroSizeFileDelete;
+            set
+            {
+                if (_mainWindowViewModel.IsZeroSizeFileDelete == value) return;
+                _mainWindowViewModel.IsZeroSizeFileDelete = value;
+                OnPropertyChanged(nameof(IsZeroSizeFileDelete));
+            }
+        }
+
+        /// <summary>
+        /// 空のフォルダを削除するかどうか
+        /// </summary>
+        public bool IsEmptyDirectoryDelete
+        {
+            get => _mainWindowViewModel.IsEmptyDirectoryDelete;
+            set
+            {
+                if (_mainWindowViewModel.IsEmptyDirectoryDelete == value) return;
+                _mainWindowViewModel.IsEmptyDirectoryDelete = value;
+                OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
             }
         }
 
@@ -160,6 +187,11 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
+        /// 拡張子検索フィルタ用コンボボックス
+        /// </summary>
+        public ObservableCollection<ExtentionCheckBoxViewModel> ExtentionCollection { get; set; } = [];
+
+        /// <summary>
         /// フォントの設定
         /// </summary>
         public FontFamily UsingFont
@@ -189,9 +221,9 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
             [
-                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
         /// <summary>
@@ -210,32 +242,18 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        ///  0 サイズのファイルを削除するかどうか
+        /// フィルタするファイル
         /// </summary>
-        public bool IsZeroSizeFileDelete
+        private string _FilterTextBox = "aaa";
+        public string FilterTextBox
         {
-            get => _mainWindowViewModel.IsZeroSizeFileDelete;
+            get => _FilterTextBox;
             set
             {
-                if (_mainWindowViewModel.IsZeroSizeFileDelete == value) return;
-                _mainWindowViewModel.IsZeroSizeFileDelete = value;
-                OnPropertyChanged(nameof(IsZeroSizeFileDelete));
+                SetProperty(ref _FilterTextBox, value);
             }
         }
 
-        /// <summary>
-        /// 空のフォルダを削除するかどうか
-        /// </summary>
-        public bool IsEmptyDirectoryDelete
-        {
-            get => _mainWindowViewModel.IsEmptyDirectoryDelete;
-            set
-            {
-                if (_mainWindowViewModel.IsEmptyDirectoryDelete == value) return;
-                _mainWindowViewModel.IsEmptyDirectoryDelete = value;
-                OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
-            }
-        }
         #endregion バインディング
 
         #region コマンド
@@ -354,6 +372,27 @@ namespace FileHashCraft.ViewModels
             WeakReferenceMessenger.Default.Register<AddRequireGetHash>(this, (_, message) =>
                 App.Current?.Dispatcher?.Invoke(() =>
                     CountRequireGetHash += message.RequireHashCount));
+
+            // ハッシュフィルタに利用する拡張子追加メッセージ
+            WeakReferenceMessenger.Default.Register<AddExtentions>(this, (_, message) =>
+                App.Current?.Dispatcher?.Invoke(() =>
+                    ExtentionCollection.Add(new ExtentionCheckBoxViewModel(
+                        message.Extention, message.HashAlgorithm))));
+
+            // ハッシュフィルタに利用する拡張子全削除メッセージ
+            WeakReferenceMessenger.Default.Register<ClearExtentions>(this, (_, _) =>
+                App.Current?.Dispatcher?.Invoke(() =>
+                    ExtentionCollection.Clear()));
+
+            // 拡張子フィルタによるファイル数増加メッセージ
+            WeakReferenceMessenger.Default.Register<AddExtentionCount>(this, (_, message) =>
+                App.Current?.Dispatcher?.Invoke(() =>
+                    CountFilteredGetHash += message.ExtentionCount));
+
+            // 拡張子フィルタによるファイル数減少メッセージ
+            WeakReferenceMessenger.Default.Register<RemoveExtentionCount>(this, (_, message) =>
+                App.Current?.Dispatcher?.Invoke(() =>
+                    CountFilteredGetHash -= message.ExtentionCount));
         }
 
         /// <summary>
@@ -366,14 +405,14 @@ namespace FileHashCraft.ViewModels
             HashAlgorithms.Clear();
             HashAlgorithms =
                 [
-                    new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256), Resources.HashAlgorithm_SHA256),
-                    new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA384), Resources.HashAlgorithm_SHA384),
-                    new(HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA512), Resources.HashAlgorithm_SHA512),
+                    new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                    new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                    new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
                 ];
-            OnPropertyChanged(nameof(HashAlgorithms));
 
             // ハッシュ計算アルゴリズムを再設定
             SelectedHashAlgorithm = currentAlgorithm;
+            OnPropertyChanged(nameof(HashAlgorithms));
             Status = _Status;
 
             if (IsExecuting)

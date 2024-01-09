@@ -182,13 +182,15 @@
     <value>空のディレクトリを削除するかどうか</value>
     <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
+  <data name="LabelExtentionFilterSetting" xml:space="preserve">
+    <value>拡張子によるファイル種別の指定</value>
+  </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>ファイルハッシュ計算のアルゴリズム</value>
     <comment>Label/PageSettings</comment>
   </data>
   <data name="LabelFilterSetting" xml:space="preserve">
-    <value>検索フィルタ設定
-(改行か ; 記号で区切ってください)</value>
+    <value>検索条件の設定(改行で区切ってください)</value>
   </data>
   <data name="LabelFinished" xml:space="preserve">
     <value>完了</value>
@@ -202,16 +204,12 @@
     <value>フォント</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelIgnoreFilterSetting" xml:space="preserve">
-    <value>検索除外フィルタ設定
-(改行か ; 記号で区切ってください)</value>
-  </data>
   <data name="LabelInternalDataUpdate" xml:space="preserve">
     <value>内部データ更新中</value>
     <comment>Label/PageTargetViewModel</comment>
   </data>
-  <data name="LabelXMLWriting" xml:space="preserve">
-    <value>見つかったファイルのXML書き込み</value>
+  <data name="LabelSettings" xml:space="preserve">
+    <value>見つかったファイルのXML書き込み等の処理中</value>
     <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">
@@ -241,5 +239,9 @@
   <data name="MenuSettings" xml:space="preserve">
     <value>設定(_S)</value>
     <comment>MenuItem</comment>
+  </data>
+  <data name="NoHaveExtentions" xml:space="preserve">
+    <value>拡張子なし</value>
+    <comment>Label/PageTargetViewModel</comment>
   </data>
 </root>

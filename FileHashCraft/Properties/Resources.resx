@@ -183,13 +183,16 @@
     <value>Whether to delete empty directories or not</value>
     <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
+  <data name="LabelExtentionFilterSetting" xml:space="preserve">
+    <value>Specifying file types by extension</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>Algorithm for file hash calculation</value>
     <comment>Label/PageSettings</comment>
   </data>
   <data name="LabelFilterSetting" xml:space="preserve">
-    <value>Search filter settings 
-separated by Ente or ; symbol)</value>
+    <value>Set search criteria (separated by Enter)</value>
   </data>
   <data name="LabelFinished" xml:space="preserve">
     <value>Finished.</value>
@@ -203,16 +206,12 @@ separated by Ente or ; symbol)</value>
     <value>Font</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelIgnoreFilterSetting" xml:space="preserve">
-    <value>Search exclusion filter settings
-(separated by Enter or ; symbol)</value>
-  </data>
   <data name="LabelInternalDataUpdate" xml:space="preserve">
     <value>Internal data is being updated.</value>
     <comment>Label/PageTargetViewModel</comment>
   </data>
-  <data name="LabelXMLWriting" xml:space="preserve">
-    <value>Found File Scanned XML Writing</value>
+  <data name="LabelSettings" xml:space="preserve">
+    <value>Found File Scanned XML Writing and etc.</value>
     <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">
@@ -242,5 +241,9 @@ separated by Ente or ; symbol)</value>
   <data name="MenuSettings" xml:space="preserve">
     <value>Settings(_X)</value>
     <comment>MenuItem</comment>
+  </data>
+  <data name="NoHaveExtentions" xml:space="preserve">
+    <value>No Have Extentions</value>
+    <comment>Label/PageTargetViewModel</comment>
   </data>
 </root>

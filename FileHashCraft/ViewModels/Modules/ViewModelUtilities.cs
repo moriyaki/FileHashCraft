@@ -53,7 +53,7 @@ namespace FileHashCraft.ViewModels.Modules
     /// </summary>
     public class HashAlgorithmChanged
     {
-        public string HashAlgorithm { get; } = HashAlgorithmHelper.GetHashAlgorithmName(HashAlgorithmType.SHA256);
+        public string HashAlgorithm { get; } = HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256);
 
         public HashAlgorithmChanged() { throw new NotImplementedException(); }
 
@@ -214,6 +214,53 @@ namespace FileHashCraft.ViewModels.Modules
         public AddRequireGetHash(int requireHashCount)
         {
             RequireHashCount = requireHashCount;
+        }
+    }
+    /// <summary>
+    /// ハッシュフィルタに利用する拡張子追加メッセージ
+    /// </summary>
+    public class AddExtentions
+    {
+        public string Extention = string.Empty;
+        public FileHashAlgorithm HashAlgorithm { get; set; } = FileHashAlgorithm.SHA256;
+        public AddExtentions() { throw new NotImplementedException(); }
+        public AddExtentions(string extention, FileHashAlgorithm fileHashAlgorithm)
+        {
+            Extention = extention;
+            HashAlgorithm = fileHashAlgorithm;
+        }
+    }
+    /// <summary>
+    /// ハッシュフィルタに利用する拡張子全削除メッセージ
+    /// </summary>
+    public class ClearExtentions
+    {
+        public ClearExtentions() { }
+    }
+
+    /// <summary>
+    /// 拡張子フィルタによるファイル数増加メッセージ
+    /// </summary>
+    public class AddExtentionCount
+    {
+        public int ExtentionCount = 0;
+        public AddExtentionCount() { throw new NotImplementedException(); }
+        public AddExtentionCount(int extentionCount)
+        {
+            ExtentionCount = extentionCount;
+        }
+    }
+
+    /// <summary>
+    /// 拡張子フィルタによるファイル数減少メッセージ
+    /// </summary>
+    public class RemoveExtentionCount
+    {
+        public int ExtentionCount { get; } = 0;
+        public RemoveExtentionCount() { throw new NotImplementedException(); }
+        public RemoveExtentionCount(int extentionCount)
+        {
+            ExtentionCount = extentionCount;
         }
     }
 
