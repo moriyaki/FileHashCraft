@@ -13,12 +13,41 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     #region インターフェース
     public interface IControDirectoryTreeViewlViewModel
     {
+        /// <summary>
+        /// ツリービューのルートコレクション
+        /// </summary>
         public ObservableCollection<DirectoryTreeViewModel> TreeRoot { get; }
+        /// <summary>
+        /// チェックボックスを表示するか否か
+        /// </summary>
         public void SetIsCheckBoxVisible(bool isVisible);
+        /// <summary>
+        /// チェックボックスが表示されるか否か
+        /// </summary>
+        public Visibility IsCheckBoxVisible { get; }
+        /// <summary>
+        /// カレントディレクトリ
+        /// </summary>
+        public string CurrentFullPath { get; set; }
+        /// <summary>
+        /// ルートにアイテムを追加します。
+        /// </summary>
         public DirectoryTreeViewModel AddRoot(FileItemInformation item, bool findSpecial);
+        /// <summary>
+        /// ルートアイテムをクリアします。
+        /// </summary>
         public void ClearRoot();
+        /// <summary>
+        /// ディレクトリノードを展開マネージャに追加します。
+        /// </summary>
         public void AddDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
+        /// <summary>
+        /// ディレクトリノードを展開マネージャから削除します。
+        /// </summary>
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
+        /// <summary>
+        /// チェックマネージャからツリービューのチェックボックス状態を確認します。
+        /// </summary>
         public void CheckStatusChangeFromCheckManager();
     }
     #endregion インターフェース
@@ -159,7 +188,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <returns>追加されたノード</returns>
         public DirectoryTreeViewModel AddRoot(FileItemInformation item, bool findSpecial)
         {
-            var currentNode = new DirectoryTreeViewModel(this, item);
+            var currentNode = new DirectoryTreeViewModel(item);
             TreeRoot.Add(currentNode);
             // 内部キックをしない場合そのまま終了
             if (!findSpecial) return currentNode;

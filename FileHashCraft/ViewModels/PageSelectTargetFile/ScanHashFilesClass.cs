@@ -9,16 +9,20 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
     public interface IScanHashFilesClass
     {
         public Task ScanHashFiles(FileHashAlgorithm HashAlgorithmType);
+        public void ScanExtention(FileHashAlgorithm hashAlgorithm);
     }
 
     public class ScanHashFilesClass : IScanHashFilesClass
     {
         #region コンストラクタと初期化
+        private readonly IPageSelectTargetFileViewModel _pageSelectTargetFileViewModel;
         private readonly ICheckedDirectoryManager _checkedDirectoryManager;
         public ScanHashFilesClass() { throw new NotImplementedException(); }
         public ScanHashFilesClass(
+            IPageSelectTargetFileViewModel pageSelectTargetFileViewModel,
             ICheckedDirectoryManager checkedDirectoryManager)
         {
+            _pageSelectTargetFileViewModel = pageSelectTargetFileViewModel;
             _checkedDirectoryManager = checkedDirectoryManager;
         }
         #endregion コンストラクタと初期化
@@ -32,23 +36,23 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             FileHashInstance.LoadHashXML();
 
             // ディレクトリのスキャン
-            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.DirectoriesScanning));
+            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
             await Task.Run(DirectoriesScan).ConfigureAwait(false);
 
             // ファイルのスキャン
-            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.FilesScanning));
+            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.FilesScanning);
             await Task.Run(() => DirectoryFilesScan(HashAlgorithmType)).ConfigureAwait(false);
 
             // XML 書き込みの表示に切り替える
-            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.XMLWriting));
+            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.XMLWriting);
 
             // XML にファイルを書き込む
             FileHashInstance.SaveHashXML();
-            WeakReferenceMessenger.Default.Send(new ClearExtentions());
+            _pageSelectTargetFileViewModel.ClearExtentions();
             ScanExtention(HashAlgorithmType);
 
             // スキャン終了の表示に切り替える
-            WeakReferenceMessenger.Default.Send(new HashScanStatusChanged(FileScanStatus.Finished));
+            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.Finished);
         }
 
         /// <summary>
@@ -62,7 +66,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             {
                 ScanDirectory(directory);
             }
-            WeakReferenceMessenger.Default.Send(new AddHashScanDirectories(_checkedDirectoryManager.NonNestedDirectories.Count));
+            _pageSelectTargetFileViewModel.AddScannedDirectoriesCount(_checkedDirectoryManager.NonNestedDirectories.Count);
         }
 
         /// <summary>
@@ -76,21 +80,21 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                 var result = FileHashInstance.ScanFiles(directoryFullPath);
                 FileHashInstance.ScanFileExtentions(directoryFullPath);
 
-                WeakReferenceMessenger.Default.Send(new AddFilesHashScanDirectories());
-                WeakReferenceMessenger.Default.Send(new AddAllTargetFilesGetHash(result.AllCount));
+                _pageSelectTargetFileViewModel.AddFilesScannedDirectoriesCount();
+                _pageSelectTargetFileViewModel.AddAllTargetFiles(result.AllCount);
                 switch (hashAlgorithms)
                 {
                     case FileHashAlgorithm.SHA256:
-                        WeakReferenceMessenger.Default.Send(new AddAlreadyGetHash(result.CountSHA256));
-                        WeakReferenceMessenger.Default.Send(new AddRequireGetHash(result.AllCount - result.CountSHA256));
+                        _pageSelectTargetFileViewModel.AddAlreadyGetHashCount(result.CountSHA256);
+                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.AllCount - result.CountSHA256);
                         break;
                     case FileHashAlgorithm.SHA384:
-                        WeakReferenceMessenger.Default.Send(new AddAlreadyGetHash(result.CountSHA384));
-                        WeakReferenceMessenger.Default.Send(new AddRequireGetHash(result.AllCount - result.CountSHA384));
+                        _pageSelectTargetFileViewModel.AddAlreadyGetHashCount(result.CountSHA384);
+                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.AllCount - result.CountSHA256);
                         break;
                     case FileHashAlgorithm.SHA512:
-                        WeakReferenceMessenger.Default.Send(new AddAlreadyGetHash(result.CountSHA512));
-                        WeakReferenceMessenger.Default.Send(new AddRequireGetHash(result.AllCount - result.CountSHA512));
+                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.CountSHA512);
+                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.AllCount - result.CountSHA512);
                         break;
                     default:
                         throw new ArgumentException("Invalid hash algorithm.");
@@ -101,12 +105,12 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <summary>
         /// 拡張子によるファイルフィルタの設定
         /// </summary>
-        /// <param name="hashAlgorithm"></param>
-        private void ScanExtention(FileHashAlgorithm hashAlgorithm)
+        /// <param name="hashAlgorithm">対象となるハッシュアルゴリズム</param>
+        public void ScanExtention(FileHashAlgorithm hashAlgorithm)
         {
             foreach (var extention in FileHashInstance.GetExtensions(hashAlgorithm))
             {
-                WeakReferenceMessenger.Default.Send(new AddExtentions(extention, hashAlgorithm));
+                _pageSelectTargetFileViewModel.AddExtentions(extention, hashAlgorithm);
             }
         }
 
@@ -161,7 +165,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                     _directoriesList.Capacity += 500;
                 }
             }
-            WeakReferenceMessenger.Default.Send(new AddHashScanDirectories());
+            _pageSelectTargetFileViewModel.AddScannedDirectoriesCount();
         }
         #endregion 再帰的にディレクトリを検索する
     }

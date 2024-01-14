@@ -122,7 +122,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 
             // 作成されたディレクトリを追加
             var fileInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
-            var addTreeItem = new DirectoryTreeViewModel(this, fileInformation);
+            var addTreeItem = new DirectoryTreeViewModel(fileInformation);
             int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addTreeItem);
 
             // ディレクトリ作成メッセージを送信
@@ -256,7 +256,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     // 取り外し可能なメディアの追加処理
                     var addNewInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
-                    var newTreeItem = new DirectoryTreeViewModel(this, addNewInformation);
+                    var newTreeItem = new DirectoryTreeViewModel(addNewInformation);
                     int newTreeIndex = FindIndexToInsert(TreeRoot, newTreeItem);
                     App.Current?.Dispatcher?.Invoke(() => TreeRoot.Insert(newTreeIndex, newTreeItem));
                 }

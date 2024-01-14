@@ -3,6 +3,8 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
@@ -13,30 +15,28 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
-        protected readonly PageExplorerViewModel ExplorerVM;
+        private readonly IPageExplorerViewModel _PageExplorerViewModel;
+        private readonly IWindowsAPI _WindowsAPI;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
 
-        public ExplorerListItemViewModel() { throw new NotImplementedException(); }
-
-        /// <summary>
-        /// コンストラクタで、IExplorerPageViewModelの設定をします
-        /// </summary>
-        /// <param name="explorerVM">IExplorerPageViewModel</param>
-        public ExplorerListItemViewModel(PageExplorerViewModel explorerVM)
+        public ExplorerListItemViewModel()
         {
-            ExplorerVM = explorerVM;
-            ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
+            _PageExplorerViewModel = Ioc.Default.GetService<IPageExplorerViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageExplorerViewModel)} dependency not resolved.");
+            _WindowsAPI = Ioc.Default.GetService<IWindowsAPI>() ?? throw new InvalidOperationException($"{nameof(IWindowsAPI)} dependency not resolved.");
+            _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
+
+            // メインウィンドウからのフォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) => UsingFont = message.UsingFont);
+            // メインウィンドウからのフォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
         }
 
         /// <summary>
-        /// コンストラクタで、IExplorerPageViewModelとファイル情報の設定をします
+        /// コンストラクタで、ファイル情報の設定をします
         /// </summary>
-        /// <param name="explorerVM">IExplorerPageViewModel</param>
         /// <param name="f">FileItemInformation</param>
-        public ExplorerListItemViewModel(PageExplorerViewModel explorerVM, FileItemInformation f)
+        public ExplorerListItemViewModel(FileItemInformation f) : this()
         {
-            ExplorerVM = explorerVM;
-            ExplorerVM.PropertyChanged += ExplorerPageViewModel_PropertyChanged;
-
             FullPath = f.FullPath;
             IsReady = f.IsReady;
             IsRemovable = f.IsRemovable;
@@ -49,20 +49,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         #endregion コンストラクタ
 
         #region メソッド
-        /// <summary>
-        /// PageのViewModelからフォントサイズの変更を受け取ります。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ExplorerPageViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(PageExplorerViewModel.FontSize))
-            {
-                // ExplorerPageViewModel の FontSize が変更された場合、ExplorerItemViewModelBase のプロパティも更新
-                OnPropertyChanged(nameof(ExplorerVM.FontSize));
-            }
-        }
-
         /// <summary>
         /// ソートのための比較関数です。
         /// </summary>
@@ -104,12 +90,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = ExplorerVM._windowsAPI.GetDisplayName(FullPath);
+                Name = _WindowsAPI.GetDisplayName(FullPath);
 
                 App.Current?.Dispatcher.Invoke(new Action(() =>
                 {
-                    Icon = ExplorerVM._windowsAPI.GetIcon(FullPath);
-                    FileType = ExplorerVM._windowsAPI.GetType(FullPath);
+                    Icon = _WindowsAPI.GetIcon(FullPath);
+                    FileType = _WindowsAPI.GetType(FullPath);
                 }));
             }
         }
@@ -230,10 +216,10 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         public FontFamily UsingFont
         {
-            get => ExplorerVM.UsingFont;
+            get => _MainWindowViewModel.UsingFont;
             set
             {
-                ExplorerVM.UsingFont = value;
+                _MainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -243,10 +229,10 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         public double FontSize
         {
-            get => ExplorerVM.FontSize;
+            get => _MainWindowViewModel.FontSize;
             set
             {
-                ExplorerVM.FontSize = value;
+                _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }

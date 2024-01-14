@@ -218,7 +218,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     {
                         // フォルダやファイルの情報を ViewModel に変換
                         var info = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(folderFile);
-                        var item = new ExplorerListItemViewModel(this, info);
+                        var item = new ExplorerListItemViewModel(info);
 
                         // UI スレッドでリストビューを更新
                         App.Current?.Dispatcher?.Invoke((Action)(() => ListItems.Add(item)));
@@ -341,7 +341,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             if (CurrentFullPath != Path.GetDirectoryName(FullPath)) return;
 
             var fileInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(FullPath);
-            var addListItem = new ExplorerListItemViewModel(this, fileInformation);
+            var addListItem = new ExplorerListItemViewModel(fileInformation);
             int newListIndex = FindIndexToInsert(ListItems, addListItem);
             await App.Current.Dispatcher.InvokeAsync(() => ListItems.Insert(newListIndex, addListItem));
         }
@@ -433,7 +433,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             var fileInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
 
             // リストビューに追加されたファイルを追加する
-            var newListItem = new ExplorerListItemViewModel(this, fileInformation);
+            var newListItem = new ExplorerListItemViewModel(fileInformation);
             int newListIndex = FindIndexToInsert(ListItems, newListItem);
             App.Current.Dispatcher.InvokeAsync(() => ListItems.Insert(newListIndex, newListItem));
         }

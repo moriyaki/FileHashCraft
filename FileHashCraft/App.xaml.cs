@@ -111,6 +111,7 @@ namespace FileHashCraft
 
             services.AddSingleton<IPageSelectTargetFileViewModel, PageSelectTargetFileViewModel>();
             services.AddSingleton<IScanHashFilesClass, ScanHashFilesClass>();
+            services.AddTransient<ExtentionCheckBoxViewModel>();
 
             services.AddSingleton<IPageHashCalcingViewModel, PageHashCalcingViewModel>();
 

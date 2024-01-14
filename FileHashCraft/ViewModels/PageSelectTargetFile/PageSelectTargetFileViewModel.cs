@@ -14,7 +14,50 @@ namespace FileHashCraft.ViewModels
     #region インターフェース
     public interface IPageSelectTargetFileViewModel
     {
+        /// <summary>
+        /// 他ページから移動してきた時の初期化処理をします。
+        /// </summary>
         public void Initialize();
+        /// <summary>
+        /// ハッシュアルゴリズム
+        /// </summary>
+        public string SelectedHashAlgorithm { get; set; }
+        /// <summary>
+        /// 検索ステータスを変更します。
+        /// </summary>
+        public void ChangeHashScanStatus(FileScanStatus status);
+        /// <summary>
+        /// 全ディレクトリ数に加算します。
+        /// </summary>
+        public void AddScannedDirectoriesCount(int count = 1);
+        /// <summary>
+        /// ファイルスキャンが完了したディレクトリ数に加算します。
+        /// </summary>
+        public void AddFilesScannedDirectoriesCount(int count = 1);
+        /// <summary>
+        /// 総対象ファイル数に加算します。
+        /// </summary>
+        public void AddAllTargetFiles(int filesCount = 1);
+        /// <summary>
+        /// 既にハッシュ獲得しているファイル数に加算します。
+        /// </summary>
+        public void AddAlreadyGetHashCount(int fileCount = 1);
+        /// <summary>
+        /// まだハッシュ獲得していないファイル数に加算します。
+        /// </summary>
+        public void AddReaquireGetHashCount(int fileCount = 1);
+        /// <summary>
+        /// 拡張子を追加します。
+        /// </summary>
+        public void AddExtentions(string extention, FileHashAlgorithm fileHashAlgorithm);
+        /// <summary>
+        /// 拡張子のリストをクリアします。
+        /// </summary>
+        public void ClearExtentions();
+        /// <summary>
+        /// 拡張子毎のファイル数が変更された時の処理をします。
+        /// </summary>
+        public void ChangeExtentionCount(int extentionCount);
     }
     #endregion インターフェース
 
@@ -128,7 +171,7 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        /// ハッシュスキャン対象のファイルスキャン完了ディレクトリ数
+        /// ファイルスキャンが完了したディレクトリ数
         /// </summary>
         private int _CountHashFilesDirectories = 0;
         public int CountHashFilesDirectories
@@ -167,7 +210,7 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        /// ハッシュ取得が必要なファイル数
+        /// まだハッシュを獲得していないファイル数
         /// </summary>
         private int _CountRequireGetHash = 0;
         public int CountRequireGetHash
@@ -177,7 +220,7 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        /// フィルタ済みのハッシュ取得が必要なファイル数
+        /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
         private int _CountFilteredGetHash = 0;
         public int CountFilteredGetHash
@@ -221,9 +264,9 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
             [
-                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
         /// <summary>
@@ -266,22 +309,22 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public DelegateCommand IsEmptyDirectoryDeleteClicked { get; set; }
         /// <summary>
-        /// 設定画面を開く
+        /// 設定画面を開きます。
         /// </summary>
         public DelegateCommand SettingsOpen { get; set; }
 
         /// <summary>
-        /// デバッグウィンドウを開く
+        /// デバッグウィンドウを開きます。
         /// </summary>
         public DelegateCommand DebugOpen { get; set; }
 
         /// <summary>
-        /// エクスプローラー画面に戻る
+        /// エクスプローラー画面に戻ります。
         /// </summary>
         public DelegateCommand ToPageExplorer { get; set; }
 
         /// <summary>
-        /// ハッシュ計算画面に移動する
+        /// ハッシュ計算画面に移動します。
         /// </summary>
         public DelegateCommand ToPageHashCalcing { get; set; }
         #endregion コマンド
@@ -343,56 +386,6 @@ namespace FileHashCraft.ViewModels
             // メインウィンドウからのフォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
                 FontSize = message.FontSize);
-
-            // ステータスの変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<HashScanStatusChanged>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() => Status = message.Status));
-
-            // 全ディレクトリ数の変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<AddHashScanDirectories>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    CountScannedDirectories += message.AddScannedDirectories));
-
-            // ハッシュスキャン対象のファイルスキャン完了ディレクトリ数増加メッセージ
-            WeakReferenceMessenger.Default.Register<AddFilesHashScanDirectories>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    CountHashFilesDirectories += message.HashDirectoriesCount));
-
-            // ハッシュスキャン対象のファイル数追加メッセージ
-            WeakReferenceMessenger.Default.Register<AddAllTargetFilesGetHash>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    CountAllTargetFilesGetHash += message.HashFileCount));
-
-            // ハッシュを既に取得しているファイル数増加メッセージ
-            WeakReferenceMessenger.Default.Register<AddAlreadyGetHash>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    CountAlreadyGetHash += message.AlreadyGetHashCount));
-
-            // ハッシュ取得が必要なファイル数増加メッセージ
-            WeakReferenceMessenger.Default.Register<AddRequireGetHash>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    CountRequireGetHash += message.RequireHashCount));
-
-            // ハッシュフィルタに利用する拡張子追加メッセージ
-            WeakReferenceMessenger.Default.Register<AddExtentions>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    ExtentionCollection.Add(new ExtentionCheckBoxViewModel(
-                        message.Extention, message.HashAlgorithm))));
-
-            // ハッシュフィルタに利用する拡張子全削除メッセージ
-            WeakReferenceMessenger.Default.Register<ClearExtentions>(this, (_, _) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    ExtentionCollection.Clear()));
-
-            // 拡張子フィルタによるファイル数増加メッセージ
-            WeakReferenceMessenger.Default.Register<AddExtentionCount>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    CountFilteredGetHash += message.ExtentionCount));
-
-            // 拡張子フィルタによるファイル数減少メッセージ
-            WeakReferenceMessenger.Default.Register<RemoveExtentionCount>(this, (_, message) =>
-                App.Current?.Dispatcher?.Invoke(() =>
-                    CountFilteredGetHash -= message.ExtentionCount));
         }
 
         /// <summary>
@@ -451,5 +444,84 @@ namespace FileHashCraft.ViewModels
             scanHashFilesClass?.ScanHashFiles(HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm));
         }
         #endregion コンストラクタと初期処理
+
+        #region ファイル数の管理処理
+        /// <summary>
+        /// 検索のステータスを変更します。
+        /// </summary>
+        /// <param name="status">変更するステータス</param>
+        public void ChangeHashScanStatus(FileScanStatus status)
+        {
+            App.Current?.Dispatcher?.Invoke(() => Status = status);
+        }
+        /// <summary>
+        /// スキャンした全ディレクトリ数に加算します。
+        /// </summary>
+        /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
+        public void AddScannedDirectoriesCount(int directoriesCount = 1)
+        {
+            App.Current?.Dispatcher?.Invoke(() => CountScannedDirectories += directoriesCount);
+        }
+        /// <summary>
+        /// ファイルスキャンが完了したディレクトリ数に加算します。
+        /// </summary>
+        /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
+        public void AddFilesScannedDirectoriesCount(int directoriesCount = 1)
+        {
+            App.Current?.Dispatcher?.Invoke(() => CountHashFilesDirectories += directoriesCount);
+        }
+        /// <summary>
+        /// ハッシュ取得対象となる全てのファイル数に加算します。
+        /// </summary>
+        /// <param name="filesCount">加算する値、デフォルト値は1</param>
+        public void AddAllTargetFiles(int filesCount = 1)
+        {
+            App.Current?.Dispatcher?.Invoke(() => CountAllTargetFilesGetHash += filesCount);
+        }
+        /// <summary>
+        /// 既にハッシュを獲得しているファイル数に加算します。
+        /// </summary>
+        /// <param name="fileCount">加算するファイル数</param>
+        public void AddAlreadyGetHashCount(int fileCount = 1)
+        {
+            App.Current?.Dispatcher?.Invoke(() => CountAlreadyGetHash += fileCount);
+        }
+        /// <summary>
+        /// ハッシュの獲得が必要なファイル数に加算します。
+        /// </summary>
+        /// <param name="fileCount">加算するファイル数</param>
+        public void AddReaquireGetHashCount(int fileCount = 1)
+        {
+            App.Current?.Dispatcher?.Invoke(() => CountRequireGetHash += fileCount);
+        }
+        #endregion ファイル数の管理処理
+
+        #region ファイル絞り込みの処理
+        public void AddExtentions(string extention, FileHashAlgorithm fileHashAlgorithm)
+        {
+            App.Current?.Dispatcher.Invoke(() =>
+            {
+                var item = new ExtentionCheckBoxViewModel(extention, fileHashAlgorithm);
+
+                ExtentionCollection.Add(item);
+            });
+        }
+        /// <summary>
+        /// 拡張子のコレクションをクリアします。
+        /// </summary>
+        public void ClearExtentions()
+        {
+            App.Current?.Dispatcher?.Invoke(() => ExtentionCollection.Clear());
+        }
+
+        /// <summary>
+        /// 拡張子チェックボックスにより、スキャンするファイル数が増減した時の処理をします。
+        /// </summary>
+        /// <param name="extentionCount"></param>
+        public void ChangeExtentionCount(int extentionCount)
+        {
+            App.Current?.Dispatcher?.Invoke(() => CountFilteredGetHash += extentionCount);
+        }
+        #endregion ファイル絞り込みの処理
     }
 }

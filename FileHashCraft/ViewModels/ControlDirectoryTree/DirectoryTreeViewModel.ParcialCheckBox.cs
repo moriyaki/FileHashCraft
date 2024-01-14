@@ -144,7 +144,7 @@
         /// <param name="value">変更された値</param>
         private void SyncSpecialDirectory(DirectoryTreeViewModel changedNode, bool? value)
         {
-            foreach (var root in ControlVM.TreeRoot)
+            foreach (var root in _ControDirectoryTreeViewlViewModel.TreeRoot)
             {
                 ChangeExpandedSpecialFolder(root, changedNode.FullPath, value);
             }

@@ -7,6 +7,9 @@ using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.Models;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
@@ -16,33 +19,32 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// TreeVIew コントロールのViewModelです。
         /// </summary>
-        private readonly ControDirectoryTreeViewlViewModel ControlVM;
-
+        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
+        private readonly IWindowsAPI _WindowsAPI;
+        private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
         /// <summary>
-        /// 引数を持たないコンストラクタは許容しません。
+        /// コンストラクタで、TreeViewModelを取得して、変更通知を受け取ります。
         /// </summary>
-        /// <exception cref="NotImplementedException">許容されないコンストラクタ呼び出し</exception>
+        /// <exception cref="NullReferenceException"></exception>
         public DirectoryTreeViewModel()
         {
-            throw new NotImplementedException();
+            _WindowsAPI = Ioc.Default.GetService<IWindowsAPI>() ?? throw new InvalidOperationException($"{nameof(IWindowsAPI)} dependency not resolved.");
+            _ControDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
+            _SpecialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new InvalidOperationException($"{nameof(ISpecialFolderAndRootDrives)} dependency not resolved.");
+            _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
+
+            // メインウィンドウからのフォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) => UsingFont = message.UsingFont);
+            // メインウィンドウからのフォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
         }
 
         /// <summary>
-        /// コンストラクタで、DirectoryTreeViewControlViewModelの設定をします
+        /// コンストラクタで、ファイル情報の設定をします。
         /// </summary>
-        /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
-        public DirectoryTreeViewModel(ControDirectoryTreeViewlViewModel vm)
-        {
-            ControlVM = vm;
-            ControlVM.PropertyChanged += ControlVM_PropertyChanged;
-        }
-
-        /// <summary>
-        /// コンストラクタで、DirectoryTreeViewControlViewModelとファイル情報の設定をします
-        /// </summary>
-        /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
         /// <param name="f">ファイル情報</param>
-        public DirectoryTreeViewModel(ControDirectoryTreeViewlViewModel vm, FileItemInformation f) : this(vm)
+        public DirectoryTreeViewModel(FileItemInformation f) : this()
         {
             FullPath = f.FullPath;
             IsReady = f.IsReady;
@@ -50,14 +52,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             IsDirectory = f.IsDirectory;
             HasChildren = f.HasChildren;
         }
-
         /// <summary>
-        /// コンストラクタで、DirectoryTreeViewControlViewModelとファイル情報、親ディレクトリの設定をします
+        /// コンストラクタで、ファイル情報、親ディレクトリの設定をします。
         /// </summary>
-        /// <param name="vm">DirectoryTreeViewControlViewModelの設定をします</param>
         /// <param name="f">ファイル情報</param>
         /// <param name="parent">親ディレクトリ</param>
-        public DirectoryTreeViewModel(ControDirectoryTreeViewlViewModel vm, FileItemInformation f, DirectoryTreeViewModel parent) : this(vm, f)
+        public DirectoryTreeViewModel(FileItemInformation f, DirectoryTreeViewModel parent) : this(f)
         {
             Parent = parent;
         }
@@ -74,18 +74,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             return FullPath.CompareTo(other?.FullPath);
         }
 
-        /// <summary>
-        /// コントロールのフォントサイズ変更を受け取ります
-        /// </summary>
-        /// <param name="sender">object?</param>
-        /// <param name="e">PropertyChangedEventArgs</param>
-        private void ControlVM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ControDirectoryTreeViewlViewModel.FontSize))
-            {
-                OnPropertyChanged(nameof(ControlVM.FontSize));
-            }
-        }
         #endregion メソッド
 
         #region データバインディング
@@ -117,12 +105,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = ControlVM._windowsAPI.GetDisplayName(FullPath);
+                Name = _WindowsAPI.GetDisplayName(FullPath);
 
                 App.Current?.Dispatcher.Invoke(new Action(() =>
                 {
-                    Icon = ControlVM._windowsAPI.GetIcon(FullPath);
-                    FileType = ControlVM._windowsAPI.GetType(FullPath);
+                    Icon = _WindowsAPI.GetIcon(FullPath);
+                    FileType = _WindowsAPI.GetType(FullPath);
                 }));
             }
         }
@@ -158,7 +146,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
                 {
-                    Children.Add(new DirectoryTreeViewModel(ControlVM) { Name = "【dummy】" });
+                    Children.Add(new DirectoryTreeViewModel() { Name = "【dummy】" });
                 }
             }
         }
@@ -208,7 +196,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         public Visibility IsCheckBoxVisible
         {
-            get => ControlVM.IsCheckBoxVisible;
+            get => _ControDirectoryTreeViewlViewModel.IsCheckBoxVisible;
         }
 
         /// <summary>
@@ -270,7 +258,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        ControlVM.CurrentFullPath = this.FullPath;
+                        _ControDirectoryTreeViewlViewModel.CurrentFullPath = this.FullPath;
                         KickChild();
                     }
                 }
@@ -294,7 +282,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     foreach (var child in Children)
                     {
-                        ControlVM.AddDirectoryToExpandedDirectoryManager(child);
+                        _ControDirectoryTreeViewlViewModel.AddDirectoryToExpandedDirectoryManager(child);
                         if (IsChecked == true) { child.IsChecked = true; }
                     }
                 }
@@ -302,7 +290,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     foreach (var child in Children)
                     {
-                        ControlVM.RemoveDirectoryToExpandedDirectoryManager(child);
+                        _ControDirectoryTreeViewlViewModel.RemoveDirectoryToExpandedDirectoryManager(child);
                     }
                 }
             }
@@ -325,8 +313,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 var fileInfoManager = new ScanFileItems();
                 foreach (var childPath in fileInfoManager.EnumerateDirectories(FullPath))
                 {
-                    var child = ControlVM._specialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
-                    var item = new DirectoryTreeViewModel(ControlVM, child, this);
+                    var child = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
+                    var item = new DirectoryTreeViewModel(child, this);
                     Children.Add(item);
                 }
             }
@@ -334,27 +322,27 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
-        /// フォントの設定
+        /// フォントの取得と設定
         /// </summary>
         public FontFamily UsingFont
         {
-            get => ControlVM.UsingFont;
+            get => _MainWindowViewModel.UsingFont;
             set
             {
-                ControlVM.UsingFont = value;
+                _MainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
 
         /// <summary>
-        /// フォントサイズの設定
+        /// フォントサイズの取得と設定
         /// </summary>
         public double FontSize
         {
-            get => ControlVM.FontSize;
+            get => _MainWindowViewModel.FontSize;
             set
             {
-                ControlVM.FontSize = value;
+                _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
