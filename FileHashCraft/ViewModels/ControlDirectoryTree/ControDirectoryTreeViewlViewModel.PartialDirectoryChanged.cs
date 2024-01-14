@@ -121,7 +121,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (modifiedTreeItem == null) { return; }
 
             // 作成されたディレクトリを追加
-            var fileInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
+            var fileInformation = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
             var addTreeItem = new DirectoryTreeViewModel(fileInformation);
             int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addTreeItem);
 
@@ -215,25 +215,16 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 var isCDRom = driveInfo.DriveType == DriveType.CDRom;
                 var drive = TreeRoot.FirstOrDefault(c => c.FullPath == e.FullPath);
 
-                BitmapSource? icon;
-                string name;
+                if (drive == null) return;
 
-                if (drive != null)
-                {
-                    icon = drive.Icon;
-                    name = drive.Name;
-                }
-                else
-                {
-                    icon = _windowsAPI.GetIcon(e.FullPath);
-                    name = _windowsAPI.GetDisplayName(e.FullPath);
-                }
+                drive.Icon = drive.Icon;
+                drive.Name = drive.Name;
 
                 // 変更されるまで 100ms 待機しながら 120回繰り返す
                 var retries = 120;
                 while (retries > 0)
                 {
-                    if (icon == _windowsAPI.GetIcon(e.FullPath) || name == _windowsAPI.GetDisplayName(e.FullPath))
+                    if (drive.Icon == _WindowsAPI.GetIcon(e.FullPath) || drive.Name == _WindowsAPI.GetDisplayName(e.FullPath))
                     {
                         retries--;
                         await Task.Delay(100);
@@ -247,15 +238,15 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     // 光学ドライブへの挿入処理
                     App.Current?.Dispatcher?.Invoke(() =>
                     {
-                        drive.Icon = _windowsAPI.GetIcon(e.FullPath);
-                        drive.Name = _windowsAPI.GetDisplayName(e.FullPath);
+                        drive.Icon = _WindowsAPI.GetIcon(e.FullPath);
+                        drive.Name = _WindowsAPI.GetDisplayName(e.FullPath);
                         drive.HasChildren = Directory.EnumerateDirectories(e.FullPath).Any();
                     });
                 }
                 else
                 {
                     // 取り外し可能なメディアの追加処理
-                    var addNewInformation = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
+                    var addNewInformation = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
                     var newTreeItem = new DirectoryTreeViewModel(addNewInformation);
                     int newTreeIndex = FindIndexToInsert(TreeRoot, newTreeItem);
                     App.Current?.Dispatcher?.Invoke(() => TreeRoot.Insert(newTreeIndex, newTreeItem));
@@ -287,8 +278,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     var retries = 120;
                     while (retries > 0)
                     {
-                        if (drive.Icon == _windowsAPI.GetIcon(e.FullPath) ||
-                            drive.Name == _windowsAPI.GetDisplayName(e.FullPath))
+                        if (drive.Icon == _WindowsAPI.GetIcon(e.FullPath) ||
+                            drive.Name == _WindowsAPI.GetDisplayName(e.FullPath))
                         {
                             retries--;
                             await Task.Delay(100);
@@ -303,8 +294,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                         // 光学ドライブへからのイジェクト処理
                         App.Current?.Dispatcher?.Invoke(() =>
                         {
-                            drive.Icon = _windowsAPI.GetIcon(e.FullPath);
-                            drive.Name = _windowsAPI.GetDisplayName(e.FullPath);
+                            drive.Icon = _WindowsAPI.GetIcon(e.FullPath);
+                            drive.Name = _WindowsAPI.GetDisplayName(e.FullPath);
                             drive.HasChildren = false;
                         });
                     }
@@ -360,7 +351,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             var specialTreeItems = new List<DirectoryTreeViewModel>();
 
-            foreach (var rootInfo in _specialFolderAndRootDrives.ScanSpecialFolders())
+            foreach (var rootInfo in _SpecialFolderAndRootDrives.ScanSpecialFolders())
             {
                 // 特殊ユーザーディレクトリのパスを持つアイテムを抽出
                 if (TreeRoot.FirstOrDefault(item => item.FullPath == rootInfo.FullPath) is

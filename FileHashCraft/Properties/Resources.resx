@@ -187,6 +187,10 @@
     <value>Specifying file types by extension</value>
     <comment>Label/PageTargetViewModel</comment>
   </data>
+  <data name="LabelExtentionGroupFilterSetting" xml:space="preserve">
+    <value>Specify files by file type</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>Algorithm for file hash calculation</value>
     <comment>Label/PageSettings</comment>
@@ -211,7 +215,7 @@
     <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelSettings" xml:space="preserve">
-    <value>Found File Scanned XML Writing and etc.</value>
+    <value>During internal file writing or other processing of found files.</value>
     <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">

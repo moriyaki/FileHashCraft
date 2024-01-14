@@ -1,32 +1,67 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FileHashCraft.ViewModels.Modules;
-using FileHashCraft.Models;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
-    public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>
+    public interface IDirectoryTreeViewModel
+    {
+        /// <summary>
+        /// ファイル表示名を設定もしくは取得します。
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// ファイルのアイコンを設定もしくは取得します。
+        /// </summary>
+        public BitmapSource? Icon { get; set; }
+        /// <summary>
+        /// ファイルのフルパスを取得します。
+        /// </summary>
+        public string FullPath { get; }
+        /// <summary>
+        /// 子ディレクトリを持っているかどうかを取得します。
+        /// </summary>
+        public bool HasChildren { get; }
+        /// <summary>
+        /// 子ディレクトリのコレクションを取得します。
+        /// </summary>
+        public ObservableCollection<DirectoryTreeViewModel> Children { get; }
+        /// <summary>
+        /// 子ディレクトリを取得します。
+        /// </summary>
+        public void KickChild(bool force = false);
+        /// <summary>        /// <summary>
+        /// ノードがチェックされているかどうかを設定もしくは取得します。
+        /// </summary>
+        public bool? IsChecked { get; set; }
+        /// <summary>
+        /// ノードが選択されているかどうかを取得します。
+        /// </summary>
+        public bool IsSelected { get; }
+        /// <summary>
+        /// ノードが展開されているかどうかを取得します。
+        /// </summary>
+        public bool IsExpanded { get; }
+    }
+    public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>, IDirectoryTreeViewModel
     {
         #region コンストラクタ
-        /// <summary>
-        /// TreeVIew コントロールのViewModelです。
-        /// </summary>
+
         private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
         private readonly IWindowsAPI _WindowsAPI;
         private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         /// <summary>
-        /// コンストラクタで、TreeViewModelを取得して、変更通知を受け取ります。
+        /// 必ず通すサービスロケータによる依存性注入です。
         /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public DirectoryTreeViewModel()
         {
             _WindowsAPI = Ioc.Default.GetService<IWindowsAPI>() ?? throw new InvalidOperationException($"{nameof(IWindowsAPI)} dependency not resolved.");
@@ -88,6 +123,16 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
+        /// ファイルのアイコン
+        /// </summary>
+        private BitmapSource? _Icon;
+        public BitmapSource? Icon
+        {
+            get => _Icon;
+            set => SetProperty(ref _Icon, value);
+        }
+
+        /// <summary>
         /// ファイル実体名
         /// </summary>
         public string FileName
@@ -105,24 +150,22 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = _WindowsAPI.GetDisplayName(FullPath);
-
-                App.Current?.Dispatcher.Invoke(new Action(() =>
-                {
-                    Icon = _WindowsAPI.GetIcon(FullPath);
-                    FileType = _WindowsAPI.GetType(FullPath);
-                }));
+                UpdatePropertiesFromFullPath();
             }
         }
 
         /// <summary>
-        /// ファイルのアイコン
+        /// フルパスが変更されてアイコンやファイル種類を変更する
         /// </summary>
-        private BitmapSource? _Icon = null;
-        public BitmapSource? Icon
+        private void UpdatePropertiesFromFullPath()
         {
-            get => _Icon;
-            set => SetProperty(ref _Icon, value);
+            Name = _WindowsAPI.GetDisplayName(FullPath);
+
+            App.Current?.Dispatcher.Invoke(() =>
+            {
+                Icon = _WindowsAPI.GetIcon(FullPath);
+                FileType = _WindowsAPI.GetType(FullPath);
+            });
         }
 
         /// <summary>
@@ -133,22 +176,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             get => _FileType;
             set => SetProperty(ref _FileType, value);
-        }
-
-        /// <summary>
-        /// ディレクトリがディレクトリを持つかどうか
-        /// </summary>
-        private bool _HasChildren = false;
-        public bool HasChildren
-        {
-            get => _HasChildren;
-            set
-            {
-                if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
-                {
-                    Children.Add(new DirectoryTreeViewModel() { Name = "【dummy】" });
-                }
-            }
         }
 
         /// <summary>
@@ -174,11 +201,27 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリかどうか
         /// </summary>
-        private bool _IsDirectory = false;
+        private bool _IsDirectory;
         public bool IsDirectory
         {
             get => _IsDirectory;
             set => SetProperty(ref _IsDirectory, value);
+        }
+
+        /// <summary>
+        /// ディレクトリがディレクトリを持つかどうか
+        /// </summary>
+        private bool _HasChildren = false;
+        public bool HasChildren
+        {
+            get => _HasChildren;
+            set
+            {
+                if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
+                {
+                    Children.Add(new DirectoryTreeViewModel() { Name = "【dummy】" });
+                }
+            }
         }
 
         /// <summary>
@@ -225,6 +268,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
         }
 
+        /// <summary>
+        /// 他に影響を与えない形でディレクトリのチェックボックス状態を変更します。
+        /// </summary>
         public bool? IsCheckedForSync
         {
             get => _IsChecked;
@@ -237,7 +283,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリの親ディレクトリ
         /// </summary>
-        private DirectoryTreeViewModel? _Parent = null;
+        private DirectoryTreeViewModel? _Parent;
         public DirectoryTreeViewModel? Parent
         {
             get => _Parent;
@@ -247,7 +293,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリが選択されているかどうか
         /// </summary>
-        private bool _IsSelected = false;
+        private bool _IsSelected;
         public bool IsSelected
         {
             get => _IsSelected;
@@ -268,7 +314,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリが展開されているかどうか
         /// </summary>
-        private bool _IsExpanded = false;
+        private bool _IsExpanded;
         public bool IsExpanded
         {
             get => _IsExpanded;
@@ -299,7 +345,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// 子ディレクトリを取得しているかどうか
         /// </summary>
-        private bool _IsKicked = false;
+        private bool _IsKicked;
         public bool IsKicked { get => _IsKicked; }
 
         /// <summary>

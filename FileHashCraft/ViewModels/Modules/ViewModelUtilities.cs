@@ -1,7 +1,10 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Models;
+using FileHashCraft.Properties;
 
 namespace FileHashCraft.ViewModels.Modules
 {
@@ -271,4 +274,22 @@ namespace FileHashCraft.ViewModels.Modules
         }
     }
     #endregion DelegateCommand
+
+    #region リソースサービス
+    public class ResourceService : ObservableObject
+    {
+        public static ResourceService Current { get; } = new();
+        public Resources Resources { get; } = new();
+
+        /// <summary>
+        /// 言語カルチャを変更する
+        /// </summary>
+        /// <param name="name">変更するカルチャ(例："ja-JP")</param>
+        public void ChangeCulture(string name)
+        {
+            Resources.Culture = CultureInfo.GetCultureInfo(name);
+            OnPropertyChanged(nameof(Resources));
+        }
+    }
+    #endregion リソースサービス
 }

@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
+﻿using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
 using static FileHashCraft.Models.FileHashInfoManager;
 
@@ -44,7 +42,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             await Task.Run(() => DirectoryFilesScan(HashAlgorithmType)).ConfigureAwait(false);
 
             // XML 書き込みの表示に切り替える
-            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.XMLWriting);
+            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DataWriting);
 
             // XML にファイルを書き込む
             FileHashInstance.SaveHashXML();
@@ -77,24 +75,24 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         {
             foreach (var directoryFullPath in _directoriesList)
             {
-                var result = FileHashInstance.ScanFiles(directoryFullPath);
+                FileHashInstance.ScanFiles(directoryFullPath);
                 FileHashInstance.ScanFileExtentions(directoryFullPath);
 
                 _pageSelectTargetFileViewModel.AddFilesScannedDirectoriesCount();
-                _pageSelectTargetFileViewModel.AddAllTargetFiles(result.AllCount);
+                _pageSelectTargetFileViewModel.AllTargetFiles();
                 switch (hashAlgorithms)
                 {
                     case FileHashAlgorithm.SHA256:
-                        _pageSelectTargetFileViewModel.AddAlreadyGetHashCount(result.CountSHA256);
-                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.AllCount - result.CountSHA256);
+                        _pageSelectTargetFileViewModel.AlreadyGetHashCount();
+                        _pageSelectTargetFileViewModel.RequireGetHashCount();
                         break;
                     case FileHashAlgorithm.SHA384:
-                        _pageSelectTargetFileViewModel.AddAlreadyGetHashCount(result.CountSHA384);
-                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.AllCount - result.CountSHA256);
+                        _pageSelectTargetFileViewModel.AlreadyGetHashCount();
+                        _pageSelectTargetFileViewModel.RequireGetHashCount();
                         break;
                     case FileHashAlgorithm.SHA512:
-                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.CountSHA512);
-                        _pageSelectTargetFileViewModel.AddReaquireGetHashCount(result.AllCount - result.CountSHA512);
+                        _pageSelectTargetFileViewModel.AlreadyGetHashCount();
+                        _pageSelectTargetFileViewModel.RequireGetHashCount();
                         break;
                     default:
                         throw new ArgumentException("Invalid hash algorithm.");
@@ -112,6 +110,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             {
                 _pageSelectTargetFileViewModel.AddExtentions(extention, hashAlgorithm);
             }
+            _pageSelectTargetFileViewModel.AddFileTypes(hashAlgorithm);
         }
 
         #region 再帰的にディレクトリを検索する

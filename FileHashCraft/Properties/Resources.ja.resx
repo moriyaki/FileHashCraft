@@ -184,6 +184,11 @@
   </data>
   <data name="LabelExtentionFilterSetting" xml:space="preserve">
     <value>拡張子によるファイル種別の指定</value>
+    <comment>Label/PageTargetViewModel</comment>
+  </data>
+  <data name="LabelExtentionGroupFilterSetting" xml:space="preserve">
+    <value>ファイル種類によるファイルの指定</value>
+    <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>ファイルハッシュ計算のアルゴリズム</value>
@@ -209,7 +214,7 @@
     <comment>Label/PageTargetViewModel</comment>
   </data>
   <data name="LabelSettings" xml:space="preserve">
-    <value>見つかったファイルのXML書き込み等の処理中</value>
+    <value>見つかったファイルの内部ファイル書き込み等の処理中</value>
     <comment>Label/PageSettings/PageTargetViewModel</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">

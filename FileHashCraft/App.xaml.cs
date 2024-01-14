@@ -98,12 +98,15 @@ namespace FileHashCraft
 
             services.AddSingleton<IWindowsAPI, WindowsAPI>();
             services.AddSingleton<ISpecialFolderAndRootDrives, SpecialFolderAndRootDrives>();
-
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
+
             services.AddSingleton<IControDirectoryTreeViewlViewModel, ControDirectoryTreeViewlViewModel>();
+            services.AddTransient<IDirectoryTreeViewModel, DirectoryTreeViewModel>();
             services.AddSingleton<IPageSettingsViewModel, PageSettingsViewModel>();
 
             services.AddSingleton<IPageExplorerViewModel, PageExplorerViewModel>();
+            services.AddTransient<IExplorerListItemViewModel, ExplorerListItemViewModel>();
+
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
             services.AddSingleton<IExpandedDirectoryManager, DirectoryTreeExpandedDirectoryManager>();
@@ -111,9 +114,6 @@ namespace FileHashCraft
 
             services.AddSingleton<IPageSelectTargetFileViewModel, PageSelectTargetFileViewModel>();
             services.AddSingleton<IScanHashFilesClass, ScanHashFilesClass>();
-            services.AddTransient<ExtentionCheckBoxViewModel>();
-
-            services.AddSingleton<IPageHashCalcingViewModel, PageHashCalcingViewModel>();
 
             return services.BuildServiceProvider();
         }

@@ -223,6 +223,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Specify files by file type に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionGroupFilterSetting {
+            get {
+                return ResourceManager.GetString("LabelExtentionGroupFilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Algorithm for file hash calculation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelFileHashAlgorithmString {
@@ -277,7 +286,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Found File Scanned XML Writing and etc. に類似しているローカライズされた文字列を検索します。
+        ///   During internal file writing or other processing of found files. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelSettings {
             get {

@@ -9,7 +9,15 @@ using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
-    public class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>
+    public interface IExplorerListItemViewModel
+    {
+        /// <summary>
+        /// ファイルのフルパスを取得します。
+        /// </summary>
+        public string FullPath { get; }
+    }
+
+    public class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>, IExplorerListItemViewModel
     {
         #region コンストラクタ
         /// <summary>
@@ -19,6 +27,10 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly IWindowsAPI _WindowsAPI;
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
+        /// <summary>
+        /// 必ず通すサービスロケータによる依存性注入です。
+        /// </summary>
+        /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public ExplorerListItemViewModel()
         {
             _PageExplorerViewModel = Ioc.Default.GetService<IPageExplorerViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageExplorerViewModel)} dependency not resolved.");
@@ -32,7 +44,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// コンストラクタで、ファイル情報の設定をします
+        /// コンストラクタで、ファイル情報の設定をします。
         /// </summary>
         /// <param name="f">FileItemInformation</param>
         public ExplorerListItemViewModel(FileItemInformation f) : this()
