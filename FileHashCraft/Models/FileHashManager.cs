@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -51,11 +52,11 @@ namespace FileHashCraft.Models
         public string SHA512 { get; set; } = string.Empty;
     }
     #endregion XMLシリアライズ／デシリアライズするクラス
-    public sealed class FileHashInfoManager
+    public sealed class FileHashManager
     {
         #region シングルトンと必須パブリック変数宣言
-        public static FileHashInfoManager FileHashInstance { get; } = new();
-        private FileHashInfoManager() { }
+        public static FileHashManager Instance { get; } = new();
+        private FileHashManager() { }
 
         /// <summary>
         /// ロックオブジェクト
@@ -212,8 +213,11 @@ namespace FileHashCraft.Models
             /// <summary>
             /// このクラスのアルゴリズムのハッシュを持つフルパスファイル名リストコレクション
             /// </summary>
-            private readonly List<string> _hashHaveFullPathList = new(10000);
-
+            private readonly List<string> _hashHaveFullPathList = new(500);
+            public void Clear()
+            {
+                _hashHaveFullPathList.Clear();
+            }
             /// <summary>
             /// ハッシュを持つファイル数を取得します。
             /// </summary>
@@ -229,9 +233,9 @@ namespace FileHashCraft.Models
             public void AddHashFilePath(string fileFullPth)
             {
                 _hashHaveFullPathList.Add(fileFullPth);
-                if (_hashHaveFullPathList.Count % 10000 == 0)
+                if (_hashHaveFullPathList.Count % 500 == 0)
                 {
-                    _hashHaveFullPathList.Capacity += 10000;
+                    _hashHaveFullPathList.Capacity += 500;
                 }
             }
         }
@@ -268,6 +272,11 @@ namespace FileHashCraft.Models
             /// </summary>
             private readonly Dictionary<string, List<string>> _notHaveHashFile = [];
 
+            public void Clear()
+            {
+                _notHaveHashFile.Clear();
+            }
+
             /// <summary>
             /// 拡張子毎のハッシュを持たないファイルの数を取得します。
             /// </summary>
@@ -275,15 +284,15 @@ namespace FileHashCraft.Models
             /// <returns></returns>
             public int Count(string extention)
             {
-                var value = new List<string>();
-                if (!_notHaveHashFile.TryGetValue(extention, out value))
+                if (!_notHaveHashFile.TryGetValue(extention, out _))
                 {
-                    _notHaveHashFile[extention] = [];
+                    _notHaveHashFile[extention] = new List<string>(500);
                     return 0;
                 }
                 return _notHaveHashFile[extention].Count;
             }
 
+            private readonly object _AddLock = new();
             /// <summary>
             /// ファイルハッシュを持たないファイルを登録します。
             /// </summary>
@@ -291,12 +300,18 @@ namespace FileHashCraft.Models
             /// <param name="fileFullPath">ハッシュを持たないファイルのフルパス</param>
             public void Add(string extention, string fileFullPath)
             {
-                var value = new List<string>();
-                if (!_notHaveHashFile.TryGetValue(extention, out value))
+                lock (_AddLock)
                 {
-                    _notHaveHashFile[extention] = [];
+                    if (!_notHaveHashFile.TryGetValue(extention, out _))
+                    {
+                        _notHaveHashFile[extention] = new List<string>(500);
+                    }
+                    _notHaveHashFile[extention].Add(fileFullPath);
                 }
-                _notHaveHashFile[extention].Add(fileFullPath);
+                if (_notHaveHashFile[extention].Count % 500 == 0)
+                {
+                    _notHaveHashFile[extention].Capacity += 500;
+                }
             }
 
             /// <summary>
@@ -316,12 +331,10 @@ namespace FileHashCraft.Models
         /// <param name="fullPath">追加するディレクトリのフルパス</param>
         public void ScanDirectory(string fullPath)
         {
-            var scanFileItems = new ScanFileItems();
-
             lock (_lock)
             {
                 // ディレクトリ内の、既に存在しないディレクトリの情報を検索して削除
-                var storageDirectory = scanFileItems.EnumerateDirectories(fullPath);
+                var storageDirectory = FileManager.Instance.EnumerateDirectories(fullPath);
                 var xmlDirectory = _fileHashDirList
                     .Where(x => fullPath == Path.GetDirectoryName(x.FullPath))
                     .Select(d => d.FullPath).ToList();
@@ -340,7 +353,7 @@ namespace FileHashCraft.Models
                     {
                         FullPath = fullPath,
                     };
-                    xmlItem.Files.Capacity = scanFileItems.EnumerateFiles(fullPath).Count();
+                    xmlItem.Files.Capacity = FileManager.Instance.EnumerateFiles(fullPath).Count();
                     _fileHashDirList.Add(xmlItem);
                     if (_fileHashDirList.Count % 10000 == 0)
                     {
@@ -357,104 +370,86 @@ namespace FileHashCraft.Models
         /// <returns>走査するディレクトリの情報</returns>
         public void ScanFiles(string directoryFullPath)
         {
-            // フルパスが同じ物を探し、既に存在しないファイル情報を削除
-            var scanFileItems = new ScanFileItems();
-            var storageFiles = scanFileItems.EnumerateFiles(directoryFullPath);
-            var xmlItem = _fileHashDirList.Find(f => f.FullPath == directoryFullPath);
-            var xmlFiles = xmlItem?.Files.Select(x => Path.Combine(directoryFullPath, x.Name));
-
-            var deletedFiles = xmlFiles?.Except(storageFiles).ToList();
-
-            if (deletedFiles?.Count > 0)
+            try
             {
-                xmlItem?.Files.RemoveAll(file => deletedFiles.Contains(file.Name.ToLowerInvariant()));
-            }
+                // フルパスが同じ物を探し、既に存在しないファイル情報を削除
+                var storageFiles = FileManager.Instance.EnumerateFiles(directoryFullPath);
+                var xmlItem = _fileHashDirList.Find(f => f.FullPath == directoryFullPath);
+                var xmlFiles = xmlItem?.Files.Select(x => Path.Combine(directoryFullPath, x.Name));
 
-            // ストレージに存在するファイル毎に処理
-            foreach (var fullPath in storageFiles)
-            {
-                var fileInfo = new FileInfo(fullPath);
-                if (xmlFiles?.Contains(fullPath) == true)
+                var deletedFiles = xmlFiles?.Except(storageFiles).ToList();
+
+                if (deletedFiles?.Count > 0)
                 {
-                    AllCount++;
+                    xmlItem?.Files.RemoveAll(file => deletedFiles.Contains(file.Name.ToLowerInvariant()));
+                }
 
-                    // 既にXML内に存在していたら更新チェック
-                    var existedFile = xmlItem?.Files.Find(x => x.Name == Path.GetFileName(fullPath));
-                    if (existedFile == null) continue;
-
-                    if (existedFile.Length != fileInfo.Length || existedFile.LastModified != fileInfo.LastWriteTimeUtc)
+                // ストレージに存在するファイル毎に処理
+                foreach (var fileFullPath in storageFiles)
+                {
+                    var fileInfo = new FileInfo(fileFullPath);
+                    if (xmlFiles?.Contains(fileFullPath) == true)
                     {
-                        // ファイルが更新されていたら情報更新
-                        existedFile.Length = fileInfo.Length;
-                        existedFile.LastModified = fileInfo.LastWriteTimeUtc;
-                        // ハッシュは消す
-                        existedFile.SHA256 = string.Empty;
-                        existedFile.SHA384 = string.Empty;
-                        existedFile.SHA512 = string.Empty;
+                        AllCount++;
+
+                        // 既にXML内に存在していたら更新チェック
+                        var existedFile = xmlItem?.Files.Find(x => x.Name == Path.GetFileName(fileFullPath));
+                        if (existedFile == null) continue;
+
+                        if (existedFile.Length != fileInfo.Length || existedFile.LastModified != fileInfo.LastWriteTimeUtc)
+                        {
+                            // ファイルが更新されていたら情報更新
+                            existedFile.Length = fileInfo.Length;
+                            existedFile.LastModified = fileInfo.LastWriteTimeUtc;
+                            // ハッシュは消す
+                            existedFile.SHA256 = string.Empty;
+                            existedFile.SHA384 = string.Empty;
+                            existedFile.SHA512 = string.Empty;
+                        }
+                        else
+                        {
+                            // SHA256ハッシュの存在によってそれぞれのリストに追加
+                            if (string.IsNullOrEmpty(existedFile.SHA256))
+                            {
+                                NotHaveHashSHA256.Add(Path.GetExtension(fileFullPath), fileFullPath);
+                            }
+                            else
+                            {
+                                StatusSHA256.AddHashFilePath(fileFullPath);
+                            }
+                            // SHA384ハッシュの存在によってそれぞれのリストに追加
+                            if (string.IsNullOrEmpty(existedFile.SHA384))
+                            {
+                                NotHaveHashSHA384.Add(Path.GetExtension(fileFullPath), fileFullPath);
+                            }
+                            else
+                            {
+                                StatusSHA384.AddHashFilePath(fileFullPath);
+                            }
+                            // SHA5121ハッシュの存在によってそれぞれのリストに追加
+                            if (string.IsNullOrEmpty(existedFile.SHA512))
+                            {
+                                NotHaveHashSHA512.Add(Path.GetExtension(fileFullPath), fileFullPath);
+                            }
+                            else
+                            {
+                                StatusSHA512.AddHashFilePath(fileFullPath);
+                            }
+                        }
                     }
                     else
                     {
-                        // ハッシュが存在したら各ハッシュ存在リストに追加
-                        if (!string.IsNullOrEmpty(existedFile.SHA256))
+                        // 存在していなかったら追加
+                        xmlItem?.Files.Add(new()
                         {
-                            StatusSHA256.AddHashFilePath(fullPath);
-                        }
-                        if (!string.IsNullOrEmpty(existedFile.SHA384))
-                        {
-                            StatusSHA384.AddHashFilePath(fullPath);
-                        }
-                        if (!string.IsNullOrEmpty(existedFile.SHA512))
-                        {
-                            StatusSHA512.AddHashFilePath(fullPath);
-                        }
+                            Name = fileInfo.Name,
+                            Length = fileInfo.Length,
+                            LastModified = fileInfo.LastWriteTime,
+                        });
                     }
                 }
-                else
-                {
-                    // 存在していなかったら追加
-                    xmlItem?.Files.Add(new()
-                    {
-                        Name = fileInfo.Name,
-                        Length = fileInfo.Length,
-                        LastModified = fileInfo.LastWriteTime,
-                    });
-                }
             }
-        }
-
-        /// <summary>
-        /// 拡張子をキーに、未取得ハッシュのファイルフルパスを登録します。
-        /// </summary>
-        /// <param name="directoryFullPath">ディレクトリのフルパス</param>
-        public void ScanFileExtentions(string directoryFullPath)
-        {
-            // ディレクトリのファイルを取得する
-            var xmlItem = _fileHashDirList.Find(f => f.FullPath == directoryFullPath);
-            if (xmlItem == null) { return; }
-
-            foreach (var file in xmlItem.Files)
-            {
-                // フルパスを生成し、そこから拡張子を取得する
-                var fileFullPath = Path.Combine(directoryFullPath, file.Name);
-                var extention = Path.GetExtension(fileFullPath).ToLowerInvariant();
-
-                // 既にXML内に存在していたら更新チェック
-                var existedFile = xmlItem?.Files.Find(x => x.Name == Path.GetFileName(fileFullPath));
-
-                // フルパスファイル名がハッシュを持たず、リストに追加されてなければ追加する
-                if (string.IsNullOrEmpty(existedFile?.SHA256))
-                {
-                    NotHaveHashSHA256.Add(extention, fileFullPath);
-                }
-                if (string.IsNullOrEmpty(existedFile?.SHA384))
-                {
-                    NotHaveHashSHA384.Add(extention, fileFullPath);
-                }
-                if (string.IsNullOrEmpty(existedFile?.SHA512))
-                {
-                    NotHaveHashSHA512.Add(extention, fileFullPath);
-                }
-            }
+            catch (OperationCanceledException) { return; }
         }
 
         /// <summary>
@@ -502,6 +497,17 @@ namespace FileHashCraft.Models
                 FileHashAlgorithm.SHA512 => NotHaveHashSHA512.Count(extention),
                 _ => throw new ArgumentException("Hash Not Implemented."),
             };
+        }
+
+        public void Clear()
+        {
+            _fileHashDirList.Clear();
+            NotHaveHashSHA256.Clear();
+            NotHaveHashSHA384.Clear();
+            NotHaveHashSHA512.Clear();
+            StatusSHA256.Clear();
+            StatusSHA384.Clear();
+            StatusSHA512.Clear();
         }
     }
 }

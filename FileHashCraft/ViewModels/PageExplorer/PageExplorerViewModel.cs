@@ -211,10 +211,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             ListViewUpdater = new DelegateCommand(async () =>
             {
                 ListItems.Clear();
-                var fileInfoManager = new ScanFileItems();
                 await Task.Run(() =>
                 {
-                    foreach (var folderFile in fileInfoManager.ScanFiles(CurrentFullPath))
+                    foreach (var folderFile in FileManager.Instance.ScanFiles(CurrentFullPath))
                     {
                         // フォルダやファイルの情報を ViewModel に変換
                         var info = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(folderFile);

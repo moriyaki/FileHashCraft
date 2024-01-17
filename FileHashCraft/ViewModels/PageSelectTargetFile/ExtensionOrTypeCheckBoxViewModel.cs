@@ -112,7 +112,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         private void SetExtention(string extention)
         {
             ExtentionOrGroup = extention;
-            _ExtentionCount = FileHashInfoManager.FileHashInstance.GetExtentionsCount(extention, CurrentHashAlgorithm);
+            _ExtentionCount = FileHashManager.Instance.GetExtentionsCount(extention, CurrentHashAlgorithm);
         }
 
         public override bool? IsChecked
@@ -149,7 +149,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             ExtentionOrGroup = FileTypeHelper.GetFileGroupName(FileGroupType.Others);
             _currentFileType = FileGroupType.Others;
 
-            _extensionList = FileHashInfoManager.FileHashInstance.GetExtensions(fileHashAlgorithm).ToList();
+            _extensionList = FileHashManager.Instance.GetExtensions(fileHashAlgorithm).ToList();
 
             var fileTypeHelper = new FileTypeHelper();
             // ファイルの種類ごとに除外する拡張子を取得
@@ -172,7 +172,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             _ExtentionCount = 0;
             foreach (var extension in _extensionList)
             {
-                _ExtentionCount += FileHashInfoManager.FileHashInstance.GetExtentionsCount(extension, fileHashAlgorithm);
+                _ExtentionCount += FileHashManager.Instance.GetExtentionsCount(extension, fileHashAlgorithm);
             }
         }
         /// <summary>
@@ -203,7 +203,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             _currentFileType = fileType;
             foreach (var extention in _extensionList)
             {
-                _ExtentionCount += FileHashInfoManager.FileHashInstance.GetExtentionsCount(extention, CurrentHashAlgorithm);
+                _ExtentionCount += FileHashManager.Instance.GetExtentionsCount(extention, CurrentHashAlgorithm);
             }
         }
 

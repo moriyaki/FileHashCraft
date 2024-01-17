@@ -356,8 +356,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!_IsKicked || force)
             {
                 Children.Clear();
-                var fileInfoManager = new ScanFileItems();
-                foreach (var childPath in fileInfoManager.EnumerateDirectories(FullPath))
+                foreach (var childPath in FileManager.Instance.EnumerateDirectories(FullPath))
                 {
                     var child = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
                     var item = new DirectoryTreeViewModel(child, this);

@@ -2,8 +2,11 @@
 
 namespace FileHashCraft.Models
 {
-    public class ScanFileItems
+    public sealed class FileManager
     {
+        public static FileManager Instance { get; } = new();
+        private FileManager() { }
+
         #region ディレクトリとファイルのスキャン関連
         /// <summary>
         /// 除外するファイルエントリかどうかを判断する。

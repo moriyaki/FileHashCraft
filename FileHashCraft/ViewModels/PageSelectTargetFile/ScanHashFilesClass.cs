@@ -1,102 +1,106 @@
-﻿using FileHashCraft.Models;
+﻿using System.Diagnostics;
+using System.Threading;
+using System.Windows;
+using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
-using static FileHashCraft.Models.FileHashInfoManager;
+using static FileHashCraft.Models.FileHashManager;
 
 namespace FileHashCraft.ViewModels.PageSelectTargetFile
 {
     public interface IScanHashFilesClass
     {
-        public Task ScanHashFiles(FileHashAlgorithm HashAlgorithmType);
+        public Task ScanHashFiles(FileHashAlgorithm HashAlgorithmType, CancellationToken cancellationToken);
         public void ScanExtention(FileHashAlgorithm hashAlgorithm);
     }
 
     public class ScanHashFilesClass : IScanHashFilesClass
     {
         #region コンストラクタと初期化
-        private readonly IPageSelectTargetFileViewModel _pageSelectTargetFileViewModel;
-        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
+        private readonly IPageSelectTargetFileViewModel _PageSelectTargetFileViewModel;
+        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         public ScanHashFilesClass() { throw new NotImplementedException(); }
         public ScanHashFilesClass(
             IPageSelectTargetFileViewModel pageSelectTargetFileViewModel,
             ICheckedDirectoryManager checkedDirectoryManager)
         {
-            _pageSelectTargetFileViewModel = pageSelectTargetFileViewModel;
-            _checkedDirectoryManager = checkedDirectoryManager;
+            _PageSelectTargetFileViewModel = pageSelectTargetFileViewModel;
+            _CheckedDirectoryManager = checkedDirectoryManager;
         }
         #endregion コンストラクタと初期化
 
         /// <summary>
         /// スキャンするディレクトリを追加します。
         /// </summary>
-        public async Task ScanHashFiles(FileHashAlgorithm HashAlgorithmType)
+        public async Task ScanHashFiles(FileHashAlgorithm HashAlgorithmType, CancellationToken cancellationToken)
         {
             // XML からファイルを読み込む
-            FileHashInstance.LoadHashXML();
+            Instance.LoadHashXML();
+            List<string> directoriesList = [];
 
-            // ディレクトリのスキャン
-            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
-            await Task.Run(DirectoriesScan).ConfigureAwait(false);
+            try
+            {
+                // ディレクトリのスキャン
+                _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
+                directoriesList = await DirectoriesScan(cancellationToken);
 
-            // ファイルのスキャン
-            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.FilesScanning);
-            await Task.Run(() => DirectoryFilesScan(HashAlgorithmType)).ConfigureAwait(false);
+                // ファイルのスキャン
+                _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.FilesScanning);
+                await Task.Run(() => DirectoryFilesScan(cancellationToken), cancellationToken);
+
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
 
             // XML 書き込みの表示に切り替える
-            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DataWriting);
+            _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DataWriting);
 
             // XML にファイルを書き込む
-            FileHashInstance.SaveHashXML();
-            _pageSelectTargetFileViewModel.ClearExtentions();
+            Instance.SaveHashXML();
+            _PageSelectTargetFileViewModel.ClearExtentions();
             ScanExtention(HashAlgorithmType);
 
             // スキャン終了の表示に切り替える
-            _pageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.Finished);
+            _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.Finished);
         }
 
         /// <summary>
         /// ハッシュを取得するディレクトリをスキャンする
         /// </summary>
-        private void DirectoriesScan()
+        private async Task<List<string>> DirectoriesScan(CancellationToken cancellationToken)
         {
+            var directoriesList = new List<string>();
             // 各ドライブに対してタスクを回す
-            RecursivelyDirectorySearch(_checkedDirectoryManager.NestedDirectories);
-            foreach (var directory in _checkedDirectoryManager.NonNestedDirectories)
-            {
-                ScanDirectory(directory);
-            }
-            _pageSelectTargetFileViewModel.AddScannedDirectoriesCount(_checkedDirectoryManager.NonNestedDirectories.Count);
+            await DirectorySearch(_CheckedDirectoryManager.NestedDirectories, cancellationToken);
+            await DirectorySearch(_CheckedDirectoryManager.NonNestedDirectories, cancellationToken);
+            _PageSelectTargetFileViewModel.AddScannedDirectoriesCount(_CheckedDirectoryManager.NonNestedDirectories.Count);
+            return directoriesList;
         }
 
         /// <summary>
         /// ハッシュを取得する、またはしているディレクトリのファイルをスキャンする
         /// </summary>
-        /// <param name="hashAlgorithms">利用するハッシュアルゴリズム</param>
-        private void DirectoryFilesScan(FileHashAlgorithm hashAlgorithms)
+        /// <param name="cancellationToken">キャンセリングトークン</param>
+        private void DirectoryFilesScan(CancellationToken cancellationToken)
         {
-            foreach (var directoryFullPath in _directoriesList)
+            try
             {
-                FileHashInstance.ScanFiles(directoryFullPath);
-                FileHashInstance.ScanFileExtentions(directoryFullPath);
-
-                _pageSelectTargetFileViewModel.AddFilesScannedDirectoriesCount();
-                _pageSelectTargetFileViewModel.AllTargetFiles();
-                switch (hashAlgorithms)
+                foreach (var directoryFullPath in _directoriesList)
                 {
-                    case FileHashAlgorithm.SHA256:
-                        _pageSelectTargetFileViewModel.AlreadyGetHashCount();
-                        _pageSelectTargetFileViewModel.RequireGetHashCount();
-                        break;
-                    case FileHashAlgorithm.SHA384:
-                        _pageSelectTargetFileViewModel.AlreadyGetHashCount();
-                        _pageSelectTargetFileViewModel.RequireGetHashCount();
-                        break;
-                    case FileHashAlgorithm.SHA512:
-                        _pageSelectTargetFileViewModel.AlreadyGetHashCount();
-                        _pageSelectTargetFileViewModel.RequireGetHashCount();
-                        break;
-                    default:
-                        throw new ArgumentException("Invalid hash algorithm.");
+                    Instance.ScanFiles(directoryFullPath);
+
+                    _PageSelectTargetFileViewModel.AddFilesScannedDirectoriesCount();
+                    _PageSelectTargetFileViewModel.AllTargetFiles();
+
+                    _PageSelectTargetFileViewModel.AlreadyGetHashCount();
+                    _PageSelectTargetFileViewModel.RequireGetHashCount();
+
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
+            }
+            catch (OperationCanceledException) {
+                return;
             }
         }
 
@@ -106,66 +110,57 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <param name="hashAlgorithm">対象となるハッシュアルゴリズム</param>
         public void ScanExtention(FileHashAlgorithm hashAlgorithm)
         {
-            foreach (var extention in FileHashInstance.GetExtensions(hashAlgorithm))
+            foreach (var extention in Instance.GetExtensions(hashAlgorithm))
             {
-                _pageSelectTargetFileViewModel.AddExtentions(extention, hashAlgorithm);
+                _PageSelectTargetFileViewModel.AddExtentions(extention, hashAlgorithm);
             }
-            _pageSelectTargetFileViewModel.AddFileTypes(hashAlgorithm);
+            _PageSelectTargetFileViewModel.AddFileTypes(hashAlgorithm);
         }
 
-        #region 再帰的にディレクトリを検索する
-        /// <summary>
-        /// ロックオブジェクト
-        /// </summary>
-        private readonly object lockObject = new();
-        /// <summary>
-        /// ディレクトリリスト
-        /// </summary>
-        private readonly List<string> _directoriesList = new(500);
+        #region ディレクトリを検索する
+        private readonly List<string> _directoriesList = [];
 
-        /// <summary>
-        /// 並列処理でディレクトリを検索して、スキャン処理に渡します。
-        /// </summary>
-        private void RecursivelyDirectorySearch(List<string> rootDirectory)
+        private async Task DirectorySearch(List<string> rootDirectories, CancellationToken cancellationToken)
         {
-            Parallel.ForEach(rootDirectory, RecursivelyRetrieveDirectories);
-        }
+            var directoriesList = new List<string>();
 
-        /// <summary>
-        /// ディレクトリをスキャンしてXMLに反映させて、子のディレクトリに再帰処理をします。
-        /// </summary>
-        /// <param name="fullPath">スキャンするディレクトリ</param>
-        private void RecursivelyRetrieveDirectories(string fullPath)
-        {
-            if (!_directoriesList.Contains(fullPath))
+            try
             {
-                ScanDirectory(fullPath);
-            }
-
-            var fileInfoManager = new ScanFileItems();
-            foreach (var directory in fileInfoManager.EnumerateDirectories(fullPath))
-            {
-                RecursivelyRetrieveDirectories(directory);
-            }
-        }
-
-        /// <summary>
-        /// ディレクトリ情報をXMLファイルに反映させます。
-        /// </summary>
-        /// <param name="fullPath">反映させるディレクトリのフルパス</param>
-        private void ScanDirectory(string fullPath)
-        {
-            FileHashInfoManager.FileHashInstance.ScanDirectory(fullPath);
-            lock(lockObject)
-            {
-                _directoriesList.Add(fullPath);
-                if (_directoriesList.Count % 500 == 0)
+                await Task.Run(() =>
                 {
-                    _directoriesList.Capacity += 500;
-                }
+                    foreach (var rootDirectory in rootDirectories)
+                    {
+                        _directoriesList.AddRange(GetDirectories(rootDirectory, cancellationToken));
+                    }
+                }, cancellationToken);
             }
-            _pageSelectTargetFileViewModel.AddScannedDirectoriesCount();
+            catch (OperationCanceledException) { return; }
         }
-        #endregion 再帰的にディレクトリを検索する
+
+        private List<string> GetDirectories(string rootDirectory, CancellationToken cancellationToken)
+        {
+            List<string> result = [];
+            Stack<string> paths = [];
+            try
+            {
+                paths.Push(rootDirectory);
+                while (paths.Count > 0)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    string currentDirectory = paths.Pop();
+                    result.Add(currentDirectory);
+                    _PageSelectTargetFileViewModel.AddScannedDirectoriesCount();
+
+                    foreach (var subDir in FileManager.Instance.EnumerateDirectories(currentDirectory))
+                    {
+                        paths.Push(subDir);
+                    }
+                }
+                return result;
+            }
+            catch (OperationCanceledException) { return result; }
+        }
+
+        #endregion ディレクトリを検索する
     }
 }

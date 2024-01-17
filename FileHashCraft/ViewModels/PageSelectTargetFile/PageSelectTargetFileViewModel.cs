@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -14,6 +15,10 @@ namespace FileHashCraft.ViewModels
     #region インターフェース
     public interface IPageSelectTargetFileViewModel
     {
+        /// <summary>
+        /// CancellationTokenSource
+        /// </summary>
+        public CancellationTokenSource CTS { get; set; }
         /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
@@ -121,11 +126,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public bool IsZeroSizeFileDelete
         {
-            get => _mainWindowViewModel.IsZeroSizeFileDelete;
+            get => _MainWindowViewModel.IsZeroSizeFileDelete;
             set
             {
-                if (_mainWindowViewModel.IsZeroSizeFileDelete == value) return;
-                _mainWindowViewModel.IsZeroSizeFileDelete = value;
+                if (_MainWindowViewModel.IsZeroSizeFileDelete == value) return;
+                _MainWindowViewModel.IsZeroSizeFileDelete = value;
                 OnPropertyChanged(nameof(IsZeroSizeFileDelete));
             }
         }
@@ -135,11 +140,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public bool IsEmptyDirectoryDelete
         {
-            get => _mainWindowViewModel.IsEmptyDirectoryDelete;
+            get => _MainWindowViewModel.IsEmptyDirectoryDelete;
             set
             {
-                if (_mainWindowViewModel.IsEmptyDirectoryDelete == value) return;
-                _mainWindowViewModel.IsEmptyDirectoryDelete = value;
+                if (_MainWindowViewModel.IsEmptyDirectoryDelete == value) return;
+                _MainWindowViewModel.IsEmptyDirectoryDelete = value;
                 OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
             }
         }
@@ -167,13 +172,13 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 全ディレクトリ数
         /// </summary>
-        private int _ScannedDirectoriesCount = 0;
+        private int _CountScannedDirectories = 0;
         public int CountScannedDirectories
         {
-            get => _ScannedDirectoriesCount;
+            get => _CountScannedDirectories;
             set
             {
-                SetProperty(ref _ScannedDirectoriesCount, value);
+                SetProperty(ref _CountScannedDirectories, value);
                 Status = FileScanStatus.DirectoriesScanning;
             }
         }
@@ -240,19 +245,21 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ファイルの種類による絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        private readonly ObservableCollection<ExtentionGroupCheckBoxViewModel> _ExtentionsGroupCollection = [];
-        public ReadOnlyObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection
+        private ObservableCollection<ExtentionGroupCheckBoxViewModel> _ExtentionsGroupCollection = [];
+        public ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection
         {
             get => new(_ExtentionsGroupCollection);
+            set => _ExtentionsGroupCollection = value;
         }
 
         /// <summary>
         /// 拡張子による絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        private readonly ObservableCollection<ExtensionOrTypeCheckBoxBase> _ExtentionCollection = [];
-        public ReadOnlyObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection
+        private ObservableCollection<ExtensionOrTypeCheckBoxBase> _ExtentionCollection = [];
+        public ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection
         {
             get => new(_ExtentionCollection);
+            set => _ExtentionCollection = value;
         }
 
         /// <summary>
@@ -260,10 +267,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _mainWindowViewModel.UsingFont;
+            get => _MainWindowViewModel.UsingFont;
             set
             {
-                _mainWindowViewModel.UsingFont = value;
+                _MainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -273,10 +280,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _mainWindowViewModel.FontSize;
+            get => _MainWindowViewModel.FontSize;
             set
             {
-                _mainWindowViewModel.FontSize = value;
+                _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -294,12 +301,12 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public string SelectedHashAlgorithm
         {
-            get => _mainWindowViewModel.HashAlgorithm;
+            get => _MainWindowViewModel.HashAlgorithm;
             set
             {
-                _mainWindowViewModel.HashAlgorithm = value;
+                _MainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
-                CountAlreadyGetHash = FileHashInfoManager.FileHashInstance.GetHashAlgorithmsAllCount(HashAlgorithmHelper.GetHashAlgorithmType(value));
+                CountAlreadyGetHash = FileHashManager.Instance.GetHashAlgorithmsAllCount(HashAlgorithmHelper.GetHashAlgorithmType(value));
                 CountRequireGetHash = CountAllTargetFilesGetHash - CountAlreadyGetHash;
             }
         }
@@ -348,10 +355,11 @@ namespace FileHashCraft.ViewModels
         #endregion コマンド
 
         #region コンストラクタと初期処理
-        private readonly IControDirectoryTreeViewlViewModel _controDirectoryTreeViewlViewModel;
-        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
-        private readonly ISpecialFolderAndRootDrives _specialFolderAndRootDrives;
-        private readonly IMainWindowViewModel _mainWindowViewModel;
+        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
+        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
+        private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
+        private IScanHashFilesClass? _ScanHashFilesClass;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
         private bool IsExecuting = false;
 
         public PageSelectTargetFileViewModel(
@@ -360,10 +368,10 @@ namespace FileHashCraft.ViewModels
             ISpecialFolderAndRootDrives specialFolderAndRootDrives,
             IMainWindowViewModel mainWindowViewModel)
         {
-            _controDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
-            _checkedDirectoryManager = checkedDirectoryManager;
-            _specialFolderAndRootDrives = specialFolderAndRootDrives;
-            _mainWindowViewModel = mainWindowViewModel;
+            _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
+            _CheckedDirectoryManager = checkedDirectoryManager;
+            _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
+            _MainWindowViewModel = mainWindowViewModel;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new DelegateCommand(() =>
@@ -385,12 +393,14 @@ namespace FileHashCraft.ViewModels
             IsEmptyDirectoryDeleteClicked = new DelegateCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // カレントハッシュ計算アルゴリズムを保存
-            SelectedHashAlgorithm = _mainWindowViewModel.HashAlgorithm;
+            SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
 
             // エクスプローラー風画面に移動するコマンド
             ToPageExplorer = new DelegateCommand(() =>
-                WeakReferenceMessenger.Default.Send(new ToPageExplorer()));
-
+            {
+                CTS.Cancel();
+                WeakReferenceMessenger.Default.Send(new ToPageExplorer());
+            });
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new DelegateCommand(
                 () => WeakReferenceMessenger.Default.Send(new ToPageHashCalcing()),
@@ -406,19 +416,22 @@ namespace FileHashCraft.ViewModels
                 FontSize = message.FontSize);
         }
 
+        public CancellationTokenSource CTS { get; set; } = new();
+        public CancellationToken cancellationToken;
+
         /// <summary>
         /// 初期設定をします。
         /// </summary>
         public void Initialize()
         {
-            var currentAlgorithm = _mainWindowViewModel.HashAlgorithm;
+            var currentAlgorithm = _MainWindowViewModel.HashAlgorithm;
 
             HashAlgorithms.Clear();
             HashAlgorithms =
             [
-                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
             // ハッシュ計算アルゴリズムを再設定
@@ -439,27 +452,31 @@ namespace FileHashCraft.ViewModels
             CountAlreadyGetHash = 0;
             CountRequireGetHash = 0;
             CountFilteredGetHash = 0;
+            ExtentionsGroupCollection.Clear();
+            ExtentionCollection.Clear();
 
             // ツリービューのアイテムを初期化する
-            _controDirectoryTreeViewlViewModel.ClearRoot();
-            _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
+            _ControDirectoryTreeViewlViewModel.ClearRoot();
+            _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
-            foreach (var root in _checkedDirectoryManager.NestedDirectories)
+            foreach (var root in _CheckedDirectoryManager.NestedDirectories)
             {
-                var fi = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
-                _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
+                var fi = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
-            foreach (var root in _checkedDirectoryManager.NonNestedDirectories)
+            foreach (var root in _CheckedDirectoryManager.NonNestedDirectories)
             {
-                var fi = _specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
-                var node = _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
+                var fi = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                var node = _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
                 node.HasChildren = false;
                 node.Children.Clear();
             }
 
             // スキャンするディレクトリの追加
-            var scanHashFilesClass = Ioc.Default.GetService<IScanHashFilesClass>();
-            scanHashFilesClass?.ScanHashFiles(HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm));
+            _ScanHashFilesClass = Ioc.Default.GetService<IScanHashFilesClass>();
+            CTS = new CancellationTokenSource();
+            cancellationToken = CTS.Token;
+            _ScanHashFilesClass?.ScanHashFiles(HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm), cancellationToken);
         }
         #endregion コンストラクタと初期処理
 
@@ -470,7 +487,7 @@ namespace FileHashCraft.ViewModels
         /// <param name="status">変更するステータス</param>
         public void ChangeHashScanStatus(FileScanStatus status)
         {
-            App.Current?.Dispatcher?.Invoke(() => Status = status);
+            App.Current?.Dispatcher?.InvokeAsync(() => Status = status);
         }
         /// <summary>
         /// スキャンした全ディレクトリ数に加算します。
@@ -478,7 +495,7 @@ namespace FileHashCraft.ViewModels
         /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
         public void AddScannedDirectoriesCount(int directoriesCount = 1)
         {
-            App.Current?.Dispatcher?.Invoke(() => CountScannedDirectories += directoriesCount);
+            App.Current?.Dispatcher?.InvokeAsync(() => CountScannedDirectories += directoriesCount);
         }
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数に加算します。
@@ -486,27 +503,27 @@ namespace FileHashCraft.ViewModels
         /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
         public void AddFilesScannedDirectoriesCount(int directoriesCount = 1)
         {
-            App.Current?.Dispatcher?.Invoke(() => CountHashFilesDirectories += directoriesCount);
+            App.Current?.Dispatcher?.InvokeAsync(() => CountHashFilesDirectories += directoriesCount);
         }
         /// <summary>
         /// ハッシュ取得対象となる全てのファイル数を設定します。
         /// </summary>
         public void AllTargetFiles()
         {
-            App.Current?.Dispatcher?.Invoke(() => CountAllTargetFilesGetHash = FileHashInfoManager.FileHashInstance.AllCount);
+            App.Current?.Dispatcher?.InvokeAsync(() => CountAllTargetFilesGetHash = FileHashManager.Instance.AllCount);
         }
         /// <summary>
         /// 既にハッシュを獲得しているファイル数に加算します。
         /// </summary>
         public void AlreadyGetHashCount()
         {
-            App.Current?.Dispatcher?.Invoke(() =>
+            App.Current?.Dispatcher?.InvokeAsync(() =>
             {
                 CountAlreadyGetHash = HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm) switch
                 {
-                    FileHashAlgorithm.SHA256 => FileHashInfoManager.FileHashInstance.StatusSHA256.Count,
-                    FileHashAlgorithm.SHA384 => FileHashInfoManager.FileHashInstance.StatusSHA384.Count,
-                    FileHashAlgorithm.SHA512 => FileHashInfoManager.FileHashInstance.StatusSHA512.Count,
+                    FileHashAlgorithm.SHA256 => FileHashManager.Instance.StatusSHA256.Count,
+                    FileHashAlgorithm.SHA384 => FileHashManager.Instance.StatusSHA384.Count,
+                    FileHashAlgorithm.SHA512 => FileHashManager.Instance.StatusSHA512.Count,
                     _ => throw new NotImplementedException(),
                 };
             });
@@ -516,13 +533,13 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public void RequireGetHashCount()
         {
-            App.Current?.Dispatcher?.Invoke(() =>
+            App.Current?.Dispatcher?.InvokeAsync(() =>
             {
                 CountRequireGetHash = HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm) switch
                 {
-                    FileHashAlgorithm.SHA256 => FileHashInfoManager.FileHashInstance.AllCount - FileHashInfoManager.FileHashInstance.StatusSHA256.Count,
-                    FileHashAlgorithm.SHA384 => FileHashInfoManager.FileHashInstance.AllCount - FileHashInfoManager.FileHashInstance.StatusSHA384.Count,
-                    FileHashAlgorithm.SHA512 => FileHashInfoManager.FileHashInstance.AllCount - FileHashInfoManager.FileHashInstance.StatusSHA512.Count,
+                    FileHashAlgorithm.SHA256 => FileHashManager.Instance.AllCount - FileHashManager.Instance.StatusSHA256.Count,
+                    FileHashAlgorithm.SHA384 => FileHashManager.Instance.AllCount - FileHashManager.Instance.StatusSHA384.Count,
+                    FileHashAlgorithm.SHA512 => FileHashManager.Instance.AllCount - FileHashManager.Instance.StatusSHA512.Count,
                     _ => throw new NotImplementedException(),
                 };
             });
@@ -552,6 +569,8 @@ namespace FileHashCraft.ViewModels
                 _ExtentionsGroupCollection.Add(archives);
                 var sources = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.SourceCodes);
                 _ExtentionsGroupCollection.Add(sources);
+                var regs = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.SourceCodes);
+                _ExtentionsGroupCollection.Add(regs);
                 var others = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm);
                 _ExtentionsGroupCollection.Add(others);
             });
@@ -566,7 +585,7 @@ namespace FileHashCraft.ViewModels
         {
             App.Current?.Dispatcher.Invoke(() =>
             {
-                if (FileHashInfoManager.FileHashInstance.GetExtentionsCount(extention, fileHashAlgorithm) > 0)
+                if (FileHashManager.Instance.GetExtentionsCount(extention, fileHashAlgorithm) > 0)
                 {
                     var item = new ExtensionCheckBox(extention, fileHashAlgorithm);
                     _ExtentionCollection.Add(item);
