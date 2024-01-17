@@ -16,10 +16,6 @@ namespace FileHashCraft.ViewModels
     public interface IPageSelectTargetFileViewModel
     {
         /// <summary>
-        /// CancellationTokenSource
-        /// </summary>
-        public CancellationTokenSource CTS { get; set; }
-        /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
         public void Initialize();
@@ -170,7 +166,7 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        /// 全ディレクトリ数
+        /// 全ディレクトリ数(StatusBar用)
         /// </summary>
         private int _CountScannedDirectories = 0;
         public int CountScannedDirectories
@@ -184,7 +180,7 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        /// ファイルスキャンが完了したディレクトリ数
+        /// ファイルスキャンが完了したディレクトリ数(StatusBar用)
         /// </summary>
         private int _CountHashFilesDirectories = 0;
         public int CountHashFilesDirectories
@@ -398,7 +394,7 @@ namespace FileHashCraft.ViewModels
             // エクスプローラー風画面に移動するコマンド
             ToPageExplorer = new DelegateCommand(() =>
             {
-                CTS.Cancel();
+                CTS?.Cancel();
                 WeakReferenceMessenger.Default.Send(new ToPageExplorer());
             });
             // ハッシュ計算画面に移動するコマンド
@@ -416,7 +412,7 @@ namespace FileHashCraft.ViewModels
                 FontSize = message.FontSize);
         }
 
-        public CancellationTokenSource CTS { get; set; } = new();
+        public CancellationTokenSource? CTS;
         public CancellationToken cancellationToken;
 
         /// <summary>
@@ -446,15 +442,18 @@ namespace FileHashCraft.ViewModels
             }
 
             // 値の初期化
-            CountScannedDirectories = 0;
-            CountHashFilesDirectories = 0;
-            CountAllTargetFilesGetHash = 0;
-            CountAlreadyGetHash = 0;
-            CountRequireGetHash = 0;
-            CountFilteredGetHash = 0;
-            ExtentionsGroupCollection.Clear();
-            ExtentionCollection.Clear();
-
+            App.Current?.Dispatcher?.InvokeAsync(() =>
+            {
+                CountScannedDirectories = 0;
+                CountHashFilesDirectories = 0;
+                CountAllTargetFilesGetHash = 0;
+                CountAlreadyGetHash = 0;
+                CountRequireGetHash = 0;
+                CountFilteredGetHash = 0;
+                ExtentionsGroupCollection.Clear();
+                ExtentionCollection.Clear();
+                FileHashManager.Instance.Clear();
+            });
             // ツリービューのアイテムを初期化する
             _ControDirectoryTreeViewlViewModel.ClearRoot();
             _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);

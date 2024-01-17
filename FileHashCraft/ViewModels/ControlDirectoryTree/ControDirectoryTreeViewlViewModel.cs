@@ -338,6 +338,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 CheckStatusChange(fullPath, true);
             }
+            // サブディレクトリを含まない管理をしているディレクトリを巡回する
             foreach (var fullPath in _CheckedDirectoryManager.NonNestedDirectories)
             {
                 CheckStatusChange(fullPath, null);
@@ -359,6 +360,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             DirectoryTreeViewModel? node = TreeRoot.FirstOrDefault(r => r.FullPath == dirs[0]);
             if (node == null) return false;
             node.KickChild();
+            node.IsExpanded = true;
 
             if (node.FullPath == fullPath)
             {

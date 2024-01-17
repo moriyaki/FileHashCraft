@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using System.Windows;
-using FileHashCraft.Models;
+﻿using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
 using static FileHashCraft.Models.FileHashManager;
 
@@ -35,18 +32,17 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         {
             // XML からファイルを読み込む
             Instance.LoadHashXML();
-            List<string> directoriesList = [];
-
+            // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
+            _directoriesList.Clear();
             try
             {
                 // ディレクトリのスキャン
                 _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
-                directoriesList = await DirectoriesScan(cancellationToken);
+                await DirectoriesScan(cancellationToken);
 
                 // ファイルのスキャン
                 _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.FilesScanning);
                 await Task.Run(() => DirectoryFilesScan(cancellationToken), cancellationToken);
-
             }
             catch (OperationCanceledException)
             {
@@ -68,14 +64,11 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <summary>
         /// ハッシュを取得するディレクトリをスキャンする
         /// </summary>
-        private async Task<List<string>> DirectoriesScan(CancellationToken cancellationToken)
+        private async Task DirectoriesScan(CancellationToken cancellationToken)
         {
-            var directoriesList = new List<string>();
             // 各ドライブに対してタスクを回す
             await DirectorySearch(_CheckedDirectoryManager.NestedDirectories, cancellationToken);
-            await DirectorySearch(_CheckedDirectoryManager.NonNestedDirectories, cancellationToken);
             _PageSelectTargetFileViewModel.AddScannedDirectoriesCount(_CheckedDirectoryManager.NonNestedDirectories.Count);
-            return directoriesList;
         }
 
         /// <summary>
@@ -149,7 +142,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                     cancellationToken.ThrowIfCancellationRequested();
                     string currentDirectory = paths.Pop();
                     result.Add(currentDirectory);
-                    _PageSelectTargetFileViewModel.AddScannedDirectoriesCount();
+                    Instance.ScanDirectory(currentDirectory);
 
                     foreach (var subDir in FileManager.Instance.EnumerateDirectories(currentDirectory))
                     {
@@ -158,7 +151,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                 }
                 return result;
             }
-            catch (OperationCanceledException) { return result; }
+            catch (OperationCanceledException) { return []; }
         }
 
         #endregion ディレクトリを検索する

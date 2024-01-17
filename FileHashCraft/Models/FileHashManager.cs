@@ -326,7 +326,7 @@ namespace FileHashCraft.Models
         #endregion 拡張子毎のハッシュを持たないファイルの管理クラス
 
         /// <summary>
-        /// ディレクトリとファイルを追加変更削除します。
+        /// ディレクトリを追加変更削除します。
         /// </summary>
         /// <param name="fullPath">追加するディレクトリのフルパス</param>
         public void ScanDirectory(string fullPath)
@@ -501,13 +501,13 @@ namespace FileHashCraft.Models
 
         public void Clear()
         {
-            _fileHashDirList.Clear();
             NotHaveHashSHA256.Clear();
             NotHaveHashSHA384.Clear();
             NotHaveHashSHA512.Clear();
             StatusSHA256.Clear();
             StatusSHA384.Clear();
             StatusSHA512.Clear();
+            AllCount = 0;
         }
     }
 }
