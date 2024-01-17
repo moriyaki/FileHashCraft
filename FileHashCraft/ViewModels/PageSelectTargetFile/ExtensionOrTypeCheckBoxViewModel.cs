@@ -66,23 +66,6 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         }
 
         /// <summary>
-        /// 現在のハッシュアルゴリズム
-        /// </summary>
-        private FileHashAlgorithm _CurrentHashAlgorithm = FileHashAlgorithm.SHA256;
-        public FileHashAlgorithm CurrentHashAlgorithm
-        {
-            get => _CurrentHashAlgorithm;
-            set
-            {
-                if (_CurrentHashAlgorithm != value)
-                {
-                    _CurrentHashAlgorithm = value;
-                    // TODO : ハッシュ切り替えられた時の処理を入れる
-                }
-            }
-        }
-
-        /// <summary>
         /// チェックボックスのチェックの状態
         /// </summary>
         protected bool? _IsChecked = false;
@@ -98,11 +81,9 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// 拡張子と利用しているハッシュアルゴリズムを設定します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        /// <param name="fileHashAlgorithm">ファイルのハッシュアルゴリズム</param>
-        public ExtensionCheckBox(string extention, FileHashAlgorithm fileHashAlgorithm) : base()
+        public ExtensionCheckBox(string extention) : base()
         {
             SetExtention(extention);
-            CurrentHashAlgorithm = fileHashAlgorithm;
         }
 
         /// <summary>
@@ -112,7 +93,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         private void SetExtention(string extention)
         {
             ExtentionOrGroup = extention;
-            _ExtentionCount = FileHashManager.Instance.GetExtentionsCount(extention, CurrentHashAlgorithm);
+            _ExtentionCount = FileExtentionManager.Instance.GetExtentionsCount(extention);
         }
 
         public override bool? IsChecked
@@ -142,14 +123,11 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <summary>
         /// その他のドキュメント専用のコンストラクタ
         /// </summary>
-        /// <param name="fileHashAlgorithm">ファイルのハッシュアルゴリズム</param>
-        public ExtentionGroupCheckBoxViewModel(FileHashAlgorithm fileHashAlgorithm) : base()
+        public ExtentionGroupCheckBoxViewModel() : base()
         {
-            CurrentHashAlgorithm = fileHashAlgorithm;
             ExtentionOrGroup = FileTypeHelper.GetFileGroupName(FileGroupType.Others);
-            _currentFileType = FileGroupType.Others;
 
-            _extensionList = FileHashManager.Instance.GetExtensions(fileHashAlgorithm).ToList();
+            _extensionList = FileExtentionManager.Instance.GetExtensions().ToList();
 
             var fileTypeHelper = new FileTypeHelper();
             // ファイルの種類ごとに除外する拡張子を取得
@@ -161,7 +139,8 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                 { FileGroupType.Documents, fileTypeHelper.GetFileGroupExtention(FileGroupType.Documents) },
                 { FileGroupType.Applications, fileTypeHelper.GetFileGroupExtention(FileGroupType.Applications) },
                 { FileGroupType.Archives, fileTypeHelper.GetFileGroupExtention(FileGroupType.Archives) },
-                { FileGroupType.SourceCodes, fileTypeHelper.GetFileGroupExtention(FileGroupType.SourceCodes) }
+                { FileGroupType.SourceCodes, fileTypeHelper.GetFileGroupExtention(FileGroupType.SourceCodes) },
+                { FileGroupType.Registrations, fileTypeHelper.GetFileGroupExtention(FileGroupType.Registrations) },
             };
 
             // 各種類の拡張子を一括で除外
@@ -172,43 +151,27 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             _ExtentionCount = 0;
             foreach (var extension in _extensionList)
             {
-                _ExtentionCount += FileHashManager.Instance.GetExtentionsCount(extension, fileHashAlgorithm);
+                _ExtentionCount += FileExtentionManager.Instance.GetExtentionsCount(extension);
             }
         }
         /// <summary>
         /// ファイルの種類用のコンストラクタ
         /// </summary>
-        /// <param name="fileHashAlgorithm">ファイルのハッシュアルゴリズム</param>
         /// <param name="fileType">ファイルの種類</param>
-        public ExtentionGroupCheckBoxViewModel(FileHashAlgorithm fileHashAlgorithm, FileGroupType fileType) : base()
-        {
-            CurrentHashAlgorithm = fileHashAlgorithm;
-
-            var fileTypeHelper = new FileTypeHelper();
-            _extensionList = fileTypeHelper.GetFileGroupExtention(fileType);
-            _ExtentionCount = _extensionList.Count;
-            ExtentionOrGroup = FileTypeHelper.GetFileGroupName(fileType);
-            SetFileTypeCount(fileType);
-        }
-
-        /// <summary>
-        /// ファイルの種類に対応するファイルの数を取得します。
-        /// </summary>
-        /// <param name="fileType">ファイルの種類</param>
-        private void SetFileTypeCount(FileGroupType fileType)
+        public ExtentionGroupCheckBoxViewModel(FileGroupType fileType) : base()
         {
             var fileTypeHelper = new FileTypeHelper();
             _extensionList = fileTypeHelper.GetFileGroupExtention(fileType);
             _ExtentionCount = 0;
-            _currentFileType = fileType;
+            ExtentionOrGroup = FileTypeHelper.GetFileGroupName(fileType);
             foreach (var extention in _extensionList)
             {
-                _ExtentionCount += FileHashManager.Instance.GetExtentionsCount(extention, CurrentHashAlgorithm);
+                _ExtentionCount += FileExtentionManager.Instance.GetExtentionsCount(extention);
+                DebugManager.InfoWrite(extention);
             }
         }
 
-        private FileGroupType _currentFileType = FileGroupType.Others;
-        private List<string> _extensionList = [];
+        private readonly List<string> _extensionList = [];
         //private readonly List<string> IgnoreExtensionList = [];
         /// <summary>
         /// チェックボックスの状態

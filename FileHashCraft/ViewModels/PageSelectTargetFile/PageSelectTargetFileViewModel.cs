@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -38,23 +37,15 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 総対象ファイル数に加算します。
         /// </summary>
-        public void AllTargetFiles();
-        /// <summary>
-        /// 既にハッシュ獲得しているファイル数に加算します。
-        /// </summary>
-        public void AlreadyGetHashCount();
-        /// <summary>
-        /// まだハッシュ獲得していないファイル数に加算します。
-        /// </summary>
-        public void RequireGetHashCount();
+        public void AddAllTargetFiles(int allTargetFiles);
         /// <summary>
         /// ファイルの種類をリストボックスに追加します
         /// </summary>
-        public void AddFileTypes(FileHashAlgorithm fileHashAlgorithm);
+        public void AddFileTypes();
         /// <summary>
         /// 拡張子をリストボックスに追加します。
         /// </summary>
-        public void AddExtentions(string extention, FileHashAlgorithm fileHashAlgorithm);
+        public void AddExtentions(string extention);
         /// <summary>
         /// 拡張子のリストをクリアします。
         /// </summary>
@@ -115,33 +106,6 @@ namespace FileHashCraft.ViewModels
                         StatusColor = Brushes.Red;
                         break;
                 }
-            }
-        }
-        /// <summary>
-        ///  0 サイズのファイルを削除するかどうか
-        /// </summary>
-        public bool IsZeroSizeFileDelete
-        {
-            get => _MainWindowViewModel.IsZeroSizeFileDelete;
-            set
-            {
-                if (_MainWindowViewModel.IsZeroSizeFileDelete == value) return;
-                _MainWindowViewModel.IsZeroSizeFileDelete = value;
-                OnPropertyChanged(nameof(IsZeroSizeFileDelete));
-            }
-        }
-
-        /// <summary>
-        /// 空のフォルダを削除するかどうか
-        /// </summary>
-        public bool IsEmptyDirectoryDelete
-        {
-            get => _MainWindowViewModel.IsEmptyDirectoryDelete;
-            set
-            {
-                if (_MainWindowViewModel.IsEmptyDirectoryDelete == value) return;
-                _MainWindowViewModel.IsEmptyDirectoryDelete = value;
-                OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
             }
         }
 
@@ -209,26 +173,6 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        /// ハッシュを既に取得しているファイル数
-        /// </summary>
-        private int _CountAlreadyGetHash = 0;
-        public int CountAlreadyGetHash
-        {
-            get => _CountAlreadyGetHash;
-            set => SetProperty(ref _CountAlreadyGetHash, value);
-        }
-
-        /// <summary>
-        /// まだハッシュを獲得していないファイル数
-        /// </summary>
-        private int _CountRequireGetHash = 0;
-        public int CountRequireGetHash
-        {
-            get => _CountRequireGetHash;
-            set => SetProperty(ref _CountRequireGetHash, value);
-        }
-
-        /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
         private int _CountFilteredGetHash = 0;
@@ -241,22 +185,12 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ファイルの種類による絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        private ObservableCollection<ExtentionGroupCheckBoxViewModel> _ExtentionsGroupCollection = [];
-        public ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection
-        {
-            get => new(_ExtentionsGroupCollection);
-            set => _ExtentionsGroupCollection = value;
-        }
+        public ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection { get; set; } = [];
 
         /// <summary>
         /// 拡張子による絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        private ObservableCollection<ExtensionOrTypeCheckBoxBase> _ExtentionCollection = [];
-        public ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection
-        {
-            get => new(_ExtentionCollection);
-            set => _ExtentionCollection = value;
-        }
+        public ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection { get; set; } = [];
 
         /// <summary>
         /// フォントの設定
@@ -302,8 +236,6 @@ namespace FileHashCraft.ViewModels
             {
                 _MainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
-                CountAlreadyGetHash = FileHashManager.Instance.GetHashAlgorithmsAllCount(HashAlgorithmHelper.GetHashAlgorithmType(value));
-                CountRequireGetHash = CountAllTargetFilesGetHash - CountAlreadyGetHash;
             }
         }
         /// <summary>
@@ -321,14 +253,6 @@ namespace FileHashCraft.ViewModels
         #endregion バインディング
 
         #region コマンド
-        /// <summary>
-        ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
-        /// </summary>
-        public DelegateCommand IsZeroSizeFIleDeleteClicked { get; set; }
-        /// <summary>
-        /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
-        /// </summary>
-        public DelegateCommand IsEmptyDirectoryDeleteClicked { get; set; }
         /// <summary>
         /// 設定画面を開きます。
         /// </summary>
@@ -382,12 +306,6 @@ namespace FileHashCraft.ViewModels
                 debugWindow.Show();
             });
 
-            //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsZeroSizeFIleDeleteClicked = new DelegateCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
-
-            // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsEmptyDirectoryDeleteClicked = new DelegateCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
-
             // カレントハッシュ計算アルゴリズムを保存
             SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
 
@@ -400,7 +318,7 @@ namespace FileHashCraft.ViewModels
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new DelegateCommand(
                 () => WeakReferenceMessenger.Default.Send(new ToPageHashCalcing()),
-                () => CountRequireGetHash > 0
+                () => false // チェックボックスにチェックが付いていたらtrueにする所
             );
 
             // メインウィンドウからのフォント変更メッセージ受信
@@ -447,12 +365,9 @@ namespace FileHashCraft.ViewModels
                 CountScannedDirectories = 0;
                 CountHashFilesDirectories = 0;
                 CountAllTargetFilesGetHash = 0;
-                CountAlreadyGetHash = 0;
-                CountRequireGetHash = 0;
                 CountFilteredGetHash = 0;
                 ExtentionsGroupCollection.Clear();
                 ExtentionCollection.Clear();
-                FileHashManager.Instance.Clear();
             });
             // ツリービューのアイテムを初期化する
             _ControDirectoryTreeViewlViewModel.ClearRoot();
@@ -507,41 +422,9 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ハッシュ取得対象となる全てのファイル数を設定します。
         /// </summary>
-        public void AllTargetFiles()
+        public void AddAllTargetFiles(int targetFilesCount)
         {
-            App.Current?.Dispatcher?.InvokeAsync(() => CountAllTargetFilesGetHash = FileHashManager.Instance.AllCount);
-        }
-        /// <summary>
-        /// 既にハッシュを獲得しているファイル数に加算します。
-        /// </summary>
-        public void AlreadyGetHashCount()
-        {
-            App.Current?.Dispatcher?.InvokeAsync(() =>
-            {
-                CountAlreadyGetHash = HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm) switch
-                {
-                    FileHashAlgorithm.SHA256 => FileHashManager.Instance.StatusSHA256.Count,
-                    FileHashAlgorithm.SHA384 => FileHashManager.Instance.StatusSHA384.Count,
-                    FileHashAlgorithm.SHA512 => FileHashManager.Instance.StatusSHA512.Count,
-                    _ => throw new NotImplementedException(),
-                };
-            });
-        }
-        /// <summary>
-        /// ハッシュの獲得が必要なファイル数に加算します。
-        /// </summary>
-        public void RequireGetHashCount()
-        {
-            App.Current?.Dispatcher?.InvokeAsync(() =>
-            {
-                CountRequireGetHash = HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm) switch
-                {
-                    FileHashAlgorithm.SHA256 => FileHashManager.Instance.AllCount - FileHashManager.Instance.StatusSHA256.Count,
-                    FileHashAlgorithm.SHA384 => FileHashManager.Instance.AllCount - FileHashManager.Instance.StatusSHA384.Count,
-                    FileHashAlgorithm.SHA512 => FileHashManager.Instance.AllCount - FileHashManager.Instance.StatusSHA512.Count,
-                    _ => throw new NotImplementedException(),
-                };
-            });
+            App.Current?.Dispatcher?.InvokeAsync(() => CountAllTargetFilesGetHash += targetFilesCount);
         }
         #endregion ファイル数の管理処理
 
@@ -549,45 +432,44 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ファイルの種類をリストボックスに追加します。
         /// </summary>
-        /// <param name="fileHashAlgorithm">利用するハッシュアルゴリズム</param>
-        public void AddFileTypes(FileHashAlgorithm fileHashAlgorithm)
+        public void AddFileTypes()
         {
+            var movies = new ExtentionGroupCheckBoxViewModel(FileGroupType.Movies);
+            var pictures = new ExtentionGroupCheckBoxViewModel(FileGroupType.Pictures);
+            var musics = new ExtentionGroupCheckBoxViewModel(FileGroupType.Sounds);
+            var documents = new ExtentionGroupCheckBoxViewModel(FileGroupType.Documents);
+            var applications = new ExtentionGroupCheckBoxViewModel(FileGroupType.Applications);
+            var archives = new ExtentionGroupCheckBoxViewModel(FileGroupType.Archives);
+            var sources = new ExtentionGroupCheckBoxViewModel(FileGroupType.SourceCodes);
+            var registrations = new ExtentionGroupCheckBoxViewModel(FileGroupType.Registrations);
+            var others = new ExtentionGroupCheckBoxViewModel();
+
             App.Current?.Dispatcher.Invoke(() =>
             {
-                var movies = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.Movies);
-                _ExtentionsGroupCollection.Add(movies);
-                var pictures = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.Pictures);
-                _ExtentionsGroupCollection.Add(pictures);
-                var musics = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.Sounds);
-                _ExtentionsGroupCollection.Add(musics);
-                var documents = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.Documents);
-                _ExtentionsGroupCollection.Add(documents);
-                var applications = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.Applications);
-                _ExtentionsGroupCollection.Add(applications);
-                var archives = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.Archives);
-                _ExtentionsGroupCollection.Add(archives);
-                var sources = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.SourceCodes);
-                _ExtentionsGroupCollection.Add(sources);
-                var regs = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm, FileGroupType.SourceCodes);
-                _ExtentionsGroupCollection.Add(regs);
-                var others = new ExtentionGroupCheckBoxViewModel(fileHashAlgorithm);
-                _ExtentionsGroupCollection.Add(others);
+                ExtentionsGroupCollection.Add(movies);
+                ExtentionsGroupCollection.Add(pictures);
+                ExtentionsGroupCollection.Add(musics);
+                ExtentionsGroupCollection.Add(documents);
+                ExtentionsGroupCollection.Add(applications);
+                ExtentionsGroupCollection.Add(archives);
+                ExtentionsGroupCollection.Add(sources);
+                ExtentionsGroupCollection.Add(registrations);
+                ExtentionsGroupCollection.Add(others);
             });
         }
 
         /// <summary>
-        /// 拡張子をリストボックス追加します。
+        /// 拡張子をリストボックスに追加します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        /// <param name="fileHashAlgorithm">利用するハッシュアルゴリズム</param>
-        public void AddExtentions(string extention, FileHashAlgorithm fileHashAlgorithm)
+         public void AddExtentions(string extention)
         {
             App.Current?.Dispatcher.Invoke(() =>
             {
-                if (FileHashManager.Instance.GetExtentionsCount(extention, fileHashAlgorithm) > 0)
+                if (FileExtentionManager.Instance.GetExtentionsCount(extention) > 0)
                 {
-                    var item = new ExtensionCheckBox(extention, fileHashAlgorithm);
-                    _ExtentionCollection.Add(item);
+                    var item = new ExtensionCheckBox(extention);
+                    ExtentionCollection.Add(item);
                 }
             });
         }
@@ -596,7 +478,7 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public void ClearExtentions()
         {
-            App.Current?.Dispatcher?.Invoke(() => _ExtentionCollection.Clear());
+            App.Current?.Dispatcher?.Invoke(() => ExtentionCollection.Clear());
         }
         /// <summary>
         /// 拡張子チェックボックスにより、スキャンするファイル数が増減した時の処理をします。

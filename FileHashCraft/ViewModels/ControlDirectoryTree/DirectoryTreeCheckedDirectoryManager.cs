@@ -11,7 +11,7 @@
     #region インターフェース
     public interface ICheckedDirectoryManager
     {
-         public bool IsChecked(string fullPath);
+        public bool IsChecked(string fullPath);
         public void CheckChanged(string fullPath, bool? checkedStatus);
         public List<string> NestedDirectories { get; }
         public List<string> NonNestedDirectories { get; }

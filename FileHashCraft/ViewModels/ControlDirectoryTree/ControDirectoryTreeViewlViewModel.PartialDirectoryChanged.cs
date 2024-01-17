@@ -1,10 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
-using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.FileSystemWatch;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {

@@ -1,13 +1,13 @@
-﻿using FileHashCraft.Models;
+﻿using System.Diagnostics;
+using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
-using static FileHashCraft.Models.FileHashManager;
 
 namespace FileHashCraft.ViewModels.PageSelectTargetFile
 {
     public interface IScanHashFilesClass
     {
         public Task ScanHashFiles(FileHashAlgorithm HashAlgorithmType, CancellationToken cancellationToken);
-        public void ScanExtention(FileHashAlgorithm hashAlgorithm);
+        public void ScanExtention();
     }
 
     public class ScanHashFilesClass : IScanHashFilesClass
@@ -30,32 +30,34 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// </summary>
         public async Task ScanHashFiles(FileHashAlgorithm HashAlgorithmType, CancellationToken cancellationToken)
         {
-            // XML からファイルを読み込む
-            Instance.LoadHashXML();
             // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
             _directoriesList.Clear();
             try
             {
+                var sw = new Stopwatch();
+
                 // ディレクトリのスキャン
                 _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
+                sw.Start();
                 await DirectoriesScan(cancellationToken);
+                sw.Stop();
+                DebugManager.InfoWrite($"Directory Scan : {sw.ElapsedMilliseconds}ms.", true);
 
                 // ファイルのスキャン
                 _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.FilesScanning);
+
+                sw.Restart();
                 await Task.Run(() => DirectoryFilesScan(cancellationToken), cancellationToken);
+                sw.Stop();
+                DebugManager.InfoWrite($"File Scan : {sw.ElapsedMilliseconds}ms.", true);
             }
             catch (OperationCanceledException)
             {
                 return;
             }
 
-            // XML 書き込みの表示に切り替える
-            _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.DataWriting);
-
-            // XML にファイルを書き込む
-            Instance.SaveHashXML();
             _PageSelectTargetFileViewModel.ClearExtentions();
-            ScanExtention(HashAlgorithmType);
+            ScanExtention();
 
             // スキャン終了の表示に切り替える
             _PageSelectTargetFileViewModel.ChangeHashScanStatus(FileScanStatus.Finished);
@@ -72,27 +74,33 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         }
 
         /// <summary>
-        /// ハッシュを取得する、またはしているディレクトリのファイルをスキャンする
+        /// ハッシュを取得するディレクトリのファイルをスキャンする
         /// </summary>
         /// <param name="cancellationToken">キャンセリングトークン</param>
         private void DirectoryFilesScan(CancellationToken cancellationToken)
         {
             try
             {
+                int fileCount = 0;
                 foreach (var directoryFullPath in _directoriesList)
                 {
-                    Instance.ScanFiles(directoryFullPath);
+                    // ファイルを保持する
+                    fileCount = 0;
+                    foreach (var fileFullPath in FileManager.Instance.EnumerateFiles(directoryFullPath))
+                    {
+                        FileExtentionManager.Instance.AddFile(fileFullPath);
+                        fileCount++;
+                    }
 
                     _PageSelectTargetFileViewModel.AddFilesScannedDirectoriesCount();
-                    _PageSelectTargetFileViewModel.AllTargetFiles();
-
-                    _PageSelectTargetFileViewModel.AlreadyGetHashCount();
-                    _PageSelectTargetFileViewModel.RequireGetHashCount();
+                    // ここ、ファイル数
+                    _PageSelectTargetFileViewModel.AddAllTargetFiles(fileCount);
 
                     cancellationToken.ThrowIfCancellationRequested();
                 }
             }
-            catch (OperationCanceledException) {
+            catch (OperationCanceledException)
+            {
                 return;
             }
         }
@@ -100,14 +108,14 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <summary>
         /// 拡張子によるファイルフィルタの設定
         /// </summary>
-        /// <param name="hashAlgorithm">対象となるハッシュアルゴリズム</param>
-        public void ScanExtention(FileHashAlgorithm hashAlgorithm)
+        public void ScanExtention()
         {
-            foreach (var extention in Instance.GetExtensions(hashAlgorithm))
+            foreach (var extention in FileExtentionManager.Instance.GetExtensions())
             {
-                _PageSelectTargetFileViewModel.AddExtentions(extention, hashAlgorithm);
+                _PageSelectTargetFileViewModel.AddExtentions(extention);
             }
-            _PageSelectTargetFileViewModel.AddFileTypes(hashAlgorithm);
+            // 拡張子を集める処理
+            _PageSelectTargetFileViewModel.AddFileTypes();
         }
 
         #region ディレクトリを検索する
@@ -142,7 +150,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
                     cancellationToken.ThrowIfCancellationRequested();
                     string currentDirectory = paths.Pop();
                     result.Add(currentDirectory);
-                    Instance.ScanDirectory(currentDirectory);
+                    _PageSelectTargetFileViewModel.AddScannedDirectoriesCount();
 
                     foreach (var subDir in FileManager.Instance.EnumerateDirectories(currentDirectory))
                     {

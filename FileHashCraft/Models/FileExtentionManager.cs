@@ -1,5 +1,75 @@
-﻿namespace FileHashCraft.Models
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FileHashCraft.Models
 {
+    /// <summary>
+    /// ファイル拡張子を扱うクラス
+    /// </summary>
+    public sealed class FileExtentionManager
+    {
+        #region シングルトン
+        public static FileExtentionManager Instance { get; } = new();
+        private FileExtentionManager() { }
+        #endregion シングルトン
+
+        /// <summary>
+        /// 拡張子をキーとしたファイルのリストを持つ辞書
+        /// </summary>
+        private readonly Dictionary<string, List<string>> _extentionDic = [];
+
+        /// <summary>
+        /// フルパスから拡張子リストに登録します。
+        /// </summary>
+        /// <param name="fileFullPath">ファイルのフルパス</param>
+        public void AddFile(string fileFullPath)
+        {
+            var extention = Path.GetExtension(fileFullPath).ToLower();
+            if (extention != null)
+            {
+                if (!_extentionDic.TryGetValue(extention, out List<string>? value))
+                {
+                    value = [];
+                    _extentionDic[extention] = value;
+                }
+
+                value.Add(fileFullPath);
+            }
+        }
+
+        /// <summary>
+        /// 拡張子を持つファイル数を取得します。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        /// <returnsファイル数></returns>
+        public int GetExtentionsCount(string extention)
+        {
+            if (!_extentionDic.TryGetValue(extention.ToLower(), out List<string>? value))
+            {
+                value = [];
+                return 0;
+            }
+            return _extentionDic[extention.ToLower()].Count;
+        }
+
+        /// <summary>
+        /// 拡張子のコレクションを取得します。
+        /// </summary>
+        /// <returns>拡張子コレクション</returns>
+        public IEnumerable<string> GetExtensions()
+        {
+            return _extentionDic.Keys.OrderBy(key => key);
+        }
+    }
+
+    /// <summary>
+    /// ファイルの種類の列挙
+    /// </summary>
     public enum FileGroupType
     {
         Movies,
@@ -13,6 +83,9 @@
         Others,
     }
 
+    /// <summary>
+    /// ファイルタイプから表示名や拡張子を取得するクラス
+    /// </summary>
     public class FileTypeHelper
     {
         /// <summary>
@@ -30,8 +103,8 @@
                 FileGroupType.Documents => "ドキュメントファイル",
                 FileGroupType.Applications => "アプリケーションファイル",
                 FileGroupType.Archives => "圧縮ファイル",
-                FileGroupType.Registrations => "登録ファイル",
                 FileGroupType.SourceCodes => "ソースコードファイル",
+                FileGroupType.Registrations => "登録ファイル",
                 _ => "その他のファイル",
             };
         }
@@ -51,8 +124,8 @@
                 FileGroupType.Documents => DocumentFiles,
                 FileGroupType.Applications => ApplicationFiles,
                 FileGroupType.Archives => ArchiveFiles,
-                FileGroupType.Registrations => RegistrationFiles,
                 FileGroupType.SourceCodes => SourceCodeFiles,
+                FileGroupType.Registrations => RegistrationFiles,
                 _ => [],
             };
         }
@@ -74,7 +147,6 @@
             ".evo",
             ".m2p",
             ".sfd",
-            ".ts",
             ".tp",
             ".trp",
             ".m2t",
@@ -134,8 +206,6 @@
             ".mxf",
             ".ivf",
             ".nut",
-            ".hevc",
-            ".obu",
             ".swf",
         ];
         /// <summary>
@@ -169,7 +239,6 @@
             ".ppm",
             ".psd",
             ".psb",
-            ".raw",
             ".rle",
             ".wmf",
             ".xbm",
@@ -307,7 +376,6 @@
             ".taz",
             ".lzh",
             ".lha",
-            ".rpm",
             ".arj",
         ];
         /// <summary>
@@ -349,4 +417,5 @@
             ".pol",
         ];
     }
+
 }

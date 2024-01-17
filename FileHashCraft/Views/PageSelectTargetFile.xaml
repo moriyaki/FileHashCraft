@@ -68,10 +68,6 @@
                 <RowDefinition Height="auto" MinHeight="30"/>
                 <RowDefinition Height="auto" MinHeight="30"/>
                 <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="auto" MinHeight="30"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             
@@ -94,69 +90,26 @@
                   SelectedValue="{Binding SelectedHashAlgorithm}"
                   SelectedValuePath="Algorithm"
                   DisplayMemberPath="Name"/>
-            
-            <!-- 0サイズファイル削除するか -->
-            <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal">
-                <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}"/>
-                <TextBlock VerticalAlignment="Center"
-                           FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                           Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelZeroSizeFileDelete, Mode=OneWay}">
-                    <TextBlock.InputBindings>
-                        <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
-                    </TextBlock.InputBindings>           
-                </TextBlock>
-            </StackPanel>
-
-            <!-- 空フォルダ削除するか -->
-            <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
-                <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}"/>
-                <TextBlock VerticalAlignment="Center"
-                           FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                           Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelEmptyDirDelete, Mode=OneWay}">
-                    <TextBlock.InputBindings>
-                        <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
-                    </TextBlock.InputBindings>
-                </TextBlock>
-            </StackPanel>
-
-            
+     
             <!-- 総ファイル数 -->
-            <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right"
+            <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}"/>
             
-            <Label Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left"
+            <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                    Content="{Binding CountAllTargetFilesGetHash}"/>
 
-            <!-- ハッシュを既に取得しているファイル数 -->
-            <Label Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAlreadyGetHash, Mode=OneWay}"/>
-
-            <Label Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding CountAlreadyGetHash}" />
-
-            <!-- ハッシュを獲得していないファイル数 -->
-            <Label Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountRequireGetHash, Mode=OneWay}"/>
-            
-            <Label Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding CountRequireGetHash}" />
-
             <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
-            <Label Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right"
+            <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}"/>
 
-            <Label Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left"
+            <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                    Content="{Binding CountFilteredGetHash}" />
 
-            <Grid Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3">
+            <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.5*"/>
                     <ColumnDefinition Width="0.5*"/>

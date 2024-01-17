@@ -7,7 +7,7 @@
         public bool IsExpandedDirectory(string path);
         public bool HasSpecialSubFolder(string fullPath);
         public void AddDirectory(string fullPath);
-       public void RemoveDirectory(string fullPath);
+        public void RemoveDirectory(string fullPath);
     }
     #endregion インターフェース
 

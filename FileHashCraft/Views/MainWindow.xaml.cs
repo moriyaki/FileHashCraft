@@ -1,11 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Navigation;
-using FileHashCraft.ViewModels;
-using FileHashCraft.ViewModels.ExplorerPage;
-using FileHashCraft.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.ViewModels;
+using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.Views;
 
 namespace FileHashCraft
 {

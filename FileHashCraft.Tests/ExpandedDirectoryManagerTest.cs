@@ -1,5 +1,3 @@
-using FileHashCraft.ViewModels.Modules;
-
 namespace FileHashCraft.Tests
 {
     /*

@@ -1,13 +1,13 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.FileSystemWatch;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using FileHashCraft.ViewModels.PageSelectTargetFile;
 using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.ViewModels.PageSelectTargetFile;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FileHashCraft
 {
