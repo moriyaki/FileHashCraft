@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.ViewModels;
+using FileHashCraft.ViewModels.PageSelectTarget;
 
 namespace FileHashCraft.Views
 {
@@ -13,7 +14,7 @@ namespace FileHashCraft.Views
         public PageTargetFileSetting()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IPageSelectTargetFileViewModel>();
+            DataContext = Ioc.Default.GetService<IPageSelectTargetViewModel>();
         }
 
         /// <summary>

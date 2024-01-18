@@ -56,7 +56,7 @@ namespace FileHashCraft.ViewModels.Modules
     /// </summary>
     public class HashAlgorithmChanged
     {
-        public string HashAlgorithm { get; } = HashAlgorithmHelper.GetHashAlgorithmName(Models.FileHashAlgorithm.SHA256);
+        public string HashAlgorithm { get; } = HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA256);
 
         public HashAlgorithmChanged() { throw new NotImplementedException(); }
 
@@ -220,7 +220,8 @@ namespace FileHashCraft.ViewModels.Modules
 
         public bool CanExecute(object? parameter)
         {
-            return _canExecute == null || _canExecute();
+            var result =  _canExecute == null || _canExecute();
+            return result;
         }
 
         public void Execute(object? parameter)

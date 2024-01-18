@@ -3,8 +3,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
 using FileHashCraft.Properties;
 
-namespace FileHashCraft.ViewModels.PageSelectTargetFile
+namespace FileHashCraft.ViewModels.PageSelectTarget
 {
+    #region インターフェース
     public interface IExtensionOrTypeCheckBoxBase
     {
         /// <summary>
@@ -16,14 +17,17 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// </summary>
         public string ExtentionOrGroup { get; }
     }
+    #endregion インターフェース
 
     /// <summary>
     /// 拡張子チェックボックスと、ファイル種類チェックボックスの基底クラス
     /// </summary>
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
-        protected readonly IPageSelectTargetFileViewModel _pageSelectTargetFileViewModel;
-        protected readonly IScanHashFilesClass _scanHashFilesClass;
+        #region コンストラクタ
+        protected readonly IExtentionHelper _ExtentionManager;
+        protected readonly ISearchManager _SearchManager;
+        protected readonly IPageSelectTargetViewModel _PageSelectTargetFileViewModel;
 
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
@@ -31,9 +35,13 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase()
         {
-            _pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetFileViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetFileViewModel)} dependency not resolved.");
-            _scanHashFilesClass = Ioc.Default.GetService<IScanHashFilesClass>() ?? throw new InvalidOperationException($"{nameof(IScanHashFilesClass)} dependency not resolved.");
+            _ExtentionManager = Ioc.Default.GetService<IExtentionHelper>() ?? throw new InvalidOperationException($"{nameof(IExtentionHelper)} dependency not resolved.");
+            _SearchManager = Ioc.Default.GetService<ISearchManager>() ?? throw new InvalidOperationException($"{nameof(ISearchManager)} dependency not resolved.");
+            _PageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
         }
+        #endregion コンストラクタ
+
+        #region バインディング
         /// <summary>
         /// チェックボックスから表示する文字列
         /// </summary>
@@ -43,17 +51,12 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             {
                 if (string.IsNullOrEmpty(ExtentionOrGroup))
                 {
-                    return $"{Resources.NoHaveExtentions} ({_ExtentionCount})";
+                    return $"{Resources.NoHaveExtentions} ({ExtentionCount})";
                 }
-                return $"{ExtentionOrGroup} ({_ExtentionCount})";
+                return $"{ExtentionOrGroup} ({ExtentionCount})";
             }
         }
-
-        /// <summary>
-        /// 拡張子の数を取得する
-        /// </summary>
-        protected int _ExtentionCount = 0;
-        public int ExtentionCount { get => _ExtentionCount; }
+        public int ExtentionCount { get; set; } = 0;
 
         /// <summary>
         /// 拡張子かファイル種類の文字列
@@ -70,6 +73,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         /// </summary>
         protected bool? _IsChecked = false;
         public virtual bool? IsChecked { get; set; }
+        #endregion バインディング
     }
     //----------------------------------------------------------------------------------------
     /// <summary>
@@ -77,23 +81,15 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
     /// </summary>
     public class ExtensionCheckBox : ExtensionOrTypeCheckBoxBase
     {
-        /// <summary>
-        /// 拡張子と利用しているハッシュアルゴリズムを設定します。
-        /// </summary>
-        /// <param name="extention">拡張子</param>
-        public ExtensionCheckBox(string extention) : base()
-        {
-            SetExtention(extention);
-        }
-
+        #region バインディング
         /// <summary>
         /// 拡張子を設定し、該当するファイル数を取得します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        private void SetExtention(string extention)
+         public ExtensionCheckBox(string extention) : base()
         {
             ExtentionOrGroup = extention;
-            _ExtentionCount = FileExtentionManager.Instance.GetExtentionsCount(extention);
+            ExtentionCount = _ExtentionManager.GetExtentionsCount(extention);
         }
 
         public override bool? IsChecked
@@ -103,15 +99,18 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             {
                 if (value == true)
                 {
-                    _pageSelectTargetFileViewModel.ChangeExtentionCount(_ExtentionCount);
+                    _SearchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
+                    _PageSelectTargetFileViewModel.ExtentionCountChanged();
                 }
                 else
                 {
-                    _pageSelectTargetFileViewModel.ChangeExtentionCount(-_ExtentionCount);
+                    _SearchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+                    _PageSelectTargetFileViewModel.ExtentionCountChanged();
                 }
                 SetProperty(ref _IsChecked, value);
             }
         }
+        #endregion バインディング
     }
 
     //----------------------------------------------------------------------------------------
@@ -120,6 +119,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
     /// </summary>
     public class ExtentionGroupCheckBoxViewModel : ExtensionOrTypeCheckBoxBase
     {
+        #region コンストラクタ
         /// <summary>
         /// その他のドキュメント専用のコンストラクタ
         /// </summary>
@@ -127,7 +127,7 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         {
             ExtentionOrGroup = FileTypeHelper.GetFileGroupName(FileGroupType.Others);
 
-            _extensionList = FileExtentionManager.Instance.GetExtensions().ToList();
+            _extensionList = _ExtentionManager.GetExtensions().ToList();
 
             var fileTypeHelper = new FileTypeHelper();
             // ファイルの種類ごとに除外する拡張子を取得
@@ -148,10 +148,10 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             {
                 _extensionList.RemoveAll(extension => kvp.Value.Contains(extension));
             }
-            _ExtentionCount = 0;
+            ExtentionCount = 0;
             foreach (var extension in _extensionList)
             {
-                _ExtentionCount += FileExtentionManager.Instance.GetExtentionsCount(extension);
+                ExtentionCount += _ExtentionManager.GetExtentionsCount(extension);
             }
         }
         /// <summary>
@@ -162,17 +162,18 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
         {
             var fileTypeHelper = new FileTypeHelper();
             _extensionList = fileTypeHelper.GetFileGroupExtention(fileType);
-            _ExtentionCount = 0;
+            ExtentionCount = 0;
             ExtentionOrGroup = FileTypeHelper.GetFileGroupName(fileType);
             foreach (var extention in _extensionList)
             {
-                _ExtentionCount += FileExtentionManager.Instance.GetExtentionsCount(extention);
+                ExtentionCount += _ExtentionManager.GetExtentionsCount(extention);
                 DebugManager.InfoWrite(extention);
             }
         }
+        #endregion コンストラクタ
 
+        #region バインディング
         private readonly List<string> _extensionList = [];
-        //private readonly List<string> IgnoreExtensionList = [];
         /// <summary>
         /// チェックボックスの状態
         /// </summary>
@@ -183,14 +184,15 @@ namespace FileHashCraft.ViewModels.PageSelectTargetFile
             {
                 if (value == true)
                 {
-                    _pageSelectTargetFileViewModel.ChangeCheckBoxGroupChanged(true, _extensionList);
+                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(true, _extensionList);
                 }
                 else
                 {
-                    _pageSelectTargetFileViewModel.ChangeCheckBoxGroupChanged(false, _extensionList);
+                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(false, _extensionList);
                 }
                 SetProperty(ref _IsChecked, value);
             }
         }
+        #endregion バインディング
     }
 }

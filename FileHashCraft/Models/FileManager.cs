@@ -2,10 +2,31 @@
 
 namespace FileHashCraft.Models
 {
-    public sealed class FileManager
+    #region インターフェース
+    public interface IFileManager
     {
-        public static FileManager Instance { get; } = new();
-        private FileManager() { }
+        /// <summary>
+        /// 除外するファイルかどうかを判定します。(true = 除外)
+        /// </summary>
+        public bool IsIgnoreFileEntries(string fullPath);
+        /// <summary>
+        /// 指定したディレクトリ内のディレクトリをスキャンします。
+        /// </summary>
+        public IEnumerable<string> EnumerateDirectories(string fullPath);
+        /// <summary>
+        /// 指定したディレクトリ内のファイルをスキャンします。
+        /// </summary>
+        public IEnumerable<string> EnumerateFiles(string fullPath);
+        /// <summary>
+        /// 指定したディレクトリの内ファイルアイテムをスキャンします。
+        /// </summary>
+        public IEnumerable<string> EnumerateFileSystemEntries(string fullPath);
+    }
+    #endregion インターフェース
+
+    public class FileManager : IFileManager
+    {
+        // TODO : Hidden と ReadOnly もスキャンできるようにする
 
         #region ディレクトリとファイルのスキャン関連
         /// <summary>
@@ -113,7 +134,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="fullPath">スキャンするディレクトリのパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public IEnumerable<string> ScanFiles(string fullPath)
+        public IEnumerable<string> EnumerateFileSystemEntries(string fullPath)
         {
             // ディレクトリをスキャンします
             foreach (var dir in EnumerateDirectories(fullPath))

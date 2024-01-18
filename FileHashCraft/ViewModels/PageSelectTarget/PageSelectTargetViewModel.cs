@@ -7,12 +7,11 @@ using FileHashCraft.Models;
 using FileHashCraft.Properties;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.Modules;
-using FileHashCraft.ViewModels.PageSelectTargetFile;
 
-namespace FileHashCraft.ViewModels
+namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     #region インターフェース
-    public interface IPageSelectTargetFileViewModel
+    public interface IPageSelectTargetViewModel
     {
         /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
@@ -53,11 +52,11 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 拡張子毎のファイル数が変更された時の処理をします。
         /// </summary>
-        public void ChangeExtentionCount(int extentionCount);
+        public void ExtentionCountChanged();
         /// <summary>
         /// 拡張子グループのチェックボックス状態が変更されたら、拡張子にも反映します。
         /// </summary>
-        public void ChangeCheckBoxGroupChanged(bool changedCheck, List<string> extentionList);
+        public void ChangeCheckBoxGroup(bool changedCheck, List<string> extentionList);
     }
     #endregion インターフェース
 
@@ -71,7 +70,7 @@ namespace FileHashCraft.ViewModels
     }
     #endregion ハッシュ計算するファイルの取得状況
 
-    public class PageSelectTargetFileViewModel : ObservableObject, IPageSelectTargetFileViewModel
+    public class PageSelectTargetViewModel : ObservableObject, IPageSelectTargetViewModel
     {
         #region バインディング
         /// <summary>
@@ -93,10 +92,6 @@ namespace FileHashCraft.ViewModels
                     case FileScanStatus.FilesScanning:
                         StatusColor = Brushes.Yellow;
                         StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
-                        break;
-                    case FileScanStatus.DataWriting:
-                        StatusMessage = Resources.LabelSettings;
-                        StatusColor = Brushes.Cyan;
                         break;
                     case FileScanStatus.Finished:
                         StatusColor = Brushes.LightGreen;
@@ -179,7 +174,11 @@ namespace FileHashCraft.ViewModels
         public int CountFilteredGetHash
         {
             get => _CountFilteredGetHash;
-            set => SetProperty(ref _CountFilteredGetHash, value);
+            set
+            {
+                SetProperty(ref _CountFilteredGetHash, value);
+                ToPageHashCalcing.RaiseCanExecuteChanged();
+            }
         }
 
         /// <summary>
@@ -222,9 +221,9 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
         [
-            new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-            new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-            new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
         ];
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
@@ -275,19 +274,24 @@ namespace FileHashCraft.ViewModels
         #endregion コマンド
 
         #region コンストラクタと初期処理
+        private readonly IExtentionHelper _ExtentionManager;
+        private readonly ISearchManager _SearchManager;
         private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
-        private IScanHashFilesClass? _ScanHashFilesClass;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         private bool IsExecuting = false;
 
-        public PageSelectTargetFileViewModel(
+        public PageSelectTargetViewModel(
+            IExtentionHelper extentionManager,
+            ISearchManager searchManager,
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             ICheckedDirectoryManager checkedDirectoryManager,
             ISpecialFolderAndRootDrives specialFolderAndRootDrives,
             IMainWindowViewModel mainWindowViewModel)
         {
+            _ExtentionManager = extentionManager;
+            _SearchManager = searchManager;
             _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
             _CheckedDirectoryManager = checkedDirectoryManager;
             _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
@@ -318,7 +322,7 @@ namespace FileHashCraft.ViewModels
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new DelegateCommand(
                 () => WeakReferenceMessenger.Default.Send(new ToPageHashCalcing()),
-                () => false // チェックボックスにチェックが付いていたらtrueにする所
+                () => CountFilteredGetHash > 0
             );
 
             // メインウィンドウからのフォント変更メッセージ受信
@@ -343,9 +347,9 @@ namespace FileHashCraft.ViewModels
             HashAlgorithms.Clear();
             HashAlgorithms =
             [
-                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetHashAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
             // ハッシュ計算アルゴリズムを再設定
@@ -387,10 +391,9 @@ namespace FileHashCraft.ViewModels
             }
 
             // スキャンするディレクトリの追加
-            _ScanHashFilesClass = Ioc.Default.GetService<IScanHashFilesClass>();
-            CTS = new CancellationTokenSource();
+            var _ScanHashFilesClass = Ioc.Default.GetService<IScanHashFiles>() ?? throw new InvalidOperationException($"{nameof(IScanHashFiles)} dependency not resolved."); CTS = new CancellationTokenSource();
             cancellationToken = CTS.Token;
-            _ScanHashFilesClass?.ScanHashFiles(HashAlgorithmHelper.GetHashAlgorithmType(SelectedHashAlgorithm), cancellationToken);
+            _ScanHashFilesClass?.ScanFiles(cancellationToken);
         }
         #endregion コンストラクタと初期処理
 
@@ -466,7 +469,7 @@ namespace FileHashCraft.ViewModels
         {
             App.Current?.Dispatcher.Invoke(() =>
             {
-                if (FileExtentionManager.Instance.GetExtentionsCount(extention) > 0)
+                if (_ExtentionManager.GetExtentionsCount(extention) > 0)
                 {
                     var item = new ExtensionCheckBox(extention);
                     ExtentionCollection.Add(item);
@@ -480,27 +483,29 @@ namespace FileHashCraft.ViewModels
         {
             App.Current?.Dispatcher?.Invoke(() => ExtentionCollection.Clear());
         }
+        // TODO : Modelから取得するようにする
         /// <summary>
         /// 拡張子チェックボックスにより、スキャンするファイル数が増減した時の処理をします。
         /// </summary>
-        /// <param name="extentionCount"></param>
-        public void ChangeExtentionCount(int extentionCount)
+        public void ExtentionCountChanged()
         {
-            App.Current?.Dispatcher?.Invoke(() => CountFilteredGetHash += extentionCount);
+            //【ここ】
+            App.Current?.Dispatcher?.Invoke(() =>
+                CountFilteredGetHash = _SearchManager.ConditionFiles.Count);
         }
         /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックする
         /// </summary>
         /// <param name="changedCheck">チェックされたか外されたか</param>
         /// <param name="extentionList">拡張子のリストコレクション</param>
-        public void ChangeCheckBoxGroupChanged(bool changedCheck, List<string> extentionList)
+        public void ChangeCheckBoxGroup(bool changedCheck, List<string> extentionList)
         {
             foreach (var extension in ExtentionCollection)
             {
                 var foundItem = extentionList.Find(e => e == extension.ExtentionOrGroup);
                 if (foundItem != null)
                 {
-                    extension.IsChecked = changedCheck;
+                    App.Current?.Dispatcher?.Invoke(() => extension.IsChecked = changedCheck);
                 }
             }
         }

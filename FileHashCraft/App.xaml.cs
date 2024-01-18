@@ -1,12 +1,13 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using FileHashCraft.Models;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
-using FileHashCraft.ViewModels.PageSelectTargetFile;
+using FileHashCraft.ViewModels.PageSelectTarget;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FileHashCraft
@@ -94,6 +95,7 @@ namespace FileHashCraft
         {
             var services = new ServiceCollection();
 
+            // ViewModel
             services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
 
             services.AddSingleton<IWindowsAPI, WindowsAPI>();
@@ -112,9 +114,13 @@ namespace FileHashCraft
             services.AddSingleton<IExpandedDirectoryManager, DirectoryTreeExpandedDirectoryManager>();
             services.AddSingleton<ICheckedDirectoryManager, DirectoryTreeCheckedDirectoryManager>();
 
-            services.AddSingleton<IPageSelectTargetFileViewModel, PageSelectTargetFileViewModel>();
-            services.AddSingleton<IScanHashFilesClass, ScanHashFilesClass>();
+            services.AddSingleton<IPageSelectTargetViewModel, PageSelectTargetViewModel>();
+            services.AddSingleton<IScanHashFiles, ScanHashFiles>();
 
+            // Model
+            services.AddSingleton<IExtentionHelper, ExtentionHelper>();
+            services.AddSingleton<IFileManager, FileManager>();
+            services.AddSingleton<ISearchManager, SearchManager>();
             return services.BuildServiceProvider();
         }
     }

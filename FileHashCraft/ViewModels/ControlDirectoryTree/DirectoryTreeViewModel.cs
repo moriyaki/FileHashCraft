@@ -11,6 +11,7 @@ using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
+    #region インターフェース
     public interface IDirectoryTreeViewModel
     {
         /// <summary>
@@ -50,10 +51,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         public bool IsExpanded { get; }
     }
+    #endregion インターフェース
     public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>, IDirectoryTreeViewModel
     {
         #region コンストラクタ
 
+        private readonly IFileManager _FileManager;
         private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
         private readonly IWindowsAPI _WindowsAPI;
         private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
@@ -64,8 +67,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public DirectoryTreeViewModel()
         {
-            _WindowsAPI = Ioc.Default.GetService<IWindowsAPI>() ?? throw new InvalidOperationException($"{nameof(IWindowsAPI)} dependency not resolved.");
+            _FileManager = Ioc.Default.GetService<IFileManager>() ?? throw new InvalidOperationException($"{nameof(IFileManager)} dependency not resolved.");
             _ControDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
+            _WindowsAPI = Ioc.Default.GetService<IWindowsAPI>() ?? throw new InvalidOperationException($"{nameof(IWindowsAPI)} dependency not resolved.");
             _SpecialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new InvalidOperationException($"{nameof(ISpecialFolderAndRootDrives)} dependency not resolved.");
             _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
 
@@ -356,7 +360,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!_IsKicked || force)
             {
                 Children.Clear();
-                foreach (var childPath in FileManager.Instance.EnumerateDirectories(FullPath))
+                foreach (var childPath in _FileManager.EnumerateDirectories(FullPath))
                 {
                     var child = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
                     var item = new DirectoryTreeViewModel(child, this);

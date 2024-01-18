@@ -1,27 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace FileHashCraft.Models
 {
     /// <summary>
     /// ファイル拡張子を扱うクラス
     /// </summary>
-    public sealed class FileExtentionManager
+    #region インターフェース
+    public interface IExtentionHelper
     {
-        #region シングルトン
-        public static FileExtentionManager Instance { get; } = new();
-        private FileExtentionManager() { }
-        #endregion シングルトン
-
+        /// <summary>
+        /// ファイルを拡張子の辞書に登録します。
+        /// </summary>
+        /// <param name="fileFullPath"></param>
+        public void AddFile(string fileFullPath);
+        /// <summary>
+        /// 拡張子を持つファイル数を取得します。
+        /// </summary>
+        public int GetExtentionsCount(string extention);
+        /// <summary>
+        /// 拡張子のコレクションを取得します。
+        /// </summary>
+        public IEnumerable<string> GetExtensions();
+    }
+    #endregion インターフェース
+    public class ExtentionHelper : IExtentionHelper
+    {
+        #region 拡張子の管理
         /// <summary>
         /// 拡張子をキーとしたファイルのリストを持つ辞書
         /// </summary>
-        private readonly Dictionary<string, List<string>> _extentionDic = [];
+        private readonly Dictionary<string, int> _extentionDic = [];
 
         /// <summary>
         /// フルパスから拡張子リストに登録します。
@@ -30,15 +38,15 @@ namespace FileHashCraft.Models
         public void AddFile(string fileFullPath)
         {
             var extention = Path.GetExtension(fileFullPath).ToLower();
-            if (extention != null)
-            {
-                if (!_extentionDic.TryGetValue(extention, out List<string>? value))
-                {
-                    value = [];
-                    _extentionDic[extention] = value;
-                }
+            if (extention == null) { return; }
 
-                value.Add(fileFullPath);
+            if (_extentionDic.TryGetValue(extention, out int value))
+            {
+                _extentionDic[extention] = ++value;
+            }
+            else
+            {
+                _extentionDic[extention] = 1;
             }
         }
 
@@ -49,12 +57,8 @@ namespace FileHashCraft.Models
         /// <returnsファイル数></returns>
         public int GetExtentionsCount(string extention)
         {
-            if (!_extentionDic.TryGetValue(extention.ToLower(), out List<string>? value))
-            {
-                value = [];
-                return 0;
-            }
-            return _extentionDic[extention.ToLower()].Count;
+            extention = extention.ToLower();
+            return _extentionDic.TryGetValue(extention, out int value) ? value : 0;
         }
 
         /// <summary>
@@ -65,8 +69,10 @@ namespace FileHashCraft.Models
         {
             return _extentionDic.Keys.OrderBy(key => key);
         }
+        #endregion 拡張子の管理
     }
 
+    #region ファイル種類
     /// <summary>
     /// ファイルの種類の列挙
     /// </summary>
@@ -82,12 +88,14 @@ namespace FileHashCraft.Models
         Registrations,
         Others,
     }
+    #endregion ファイル種類
 
     /// <summary>
     /// ファイルタイプから表示名や拡張子を取得するクラス
     /// </summary>
     public class FileTypeHelper
     {
+        #region ファイル種類の管理
         /// <summary>
         /// ファイルタイプから表示名を取得します。
         /// </summary>
@@ -129,10 +137,12 @@ namespace FileHashCraft.Models
                 _ => [],
             };
         }
+        #endregion ファイル種類の管理
 
         /// <summary>
         /// 主な動画ファイル
         /// </summary>
+        #region 主な動画ファイル
         private readonly List<string> MovieFiles =
         [
             ".avi",
@@ -208,9 +218,11 @@ namespace FileHashCraft.Models
             ".nut",
             ".swf",
         ];
+        #endregion 主な動画ファイル
         /// <summary>
         /// 主な画像ファイル
         /// </summary>
+        #region 主な画像ファイル
         private readonly List<string> PictureFiles =
         [
             ".jpeg",
@@ -244,9 +256,11 @@ namespace FileHashCraft.Models
             ".xbm",
             ".xpm",
         ];
+        #endregion 主な画像ファイル
         /// <summary>
         /// 主なサウンドファイル
         /// </summary>
+        #region 主なサウンドファイル
         private readonly List<string> MusicFiles =
         [
             ".ac3",
@@ -305,9 +319,11 @@ namespace FileHashCraft.Models
             ".cue",
             ".fpl",
         ];
+        #endregion 主なサウンドファイル
         /// <summary>
         /// 主なドキュメントファイル
         /// </summary>
+        #region 主なドキュメントファイル
         private readonly List<string> DocumentFiles =
         [
             ".doc",
@@ -330,10 +346,11 @@ namespace FileHashCraft.Models
             ".markdown",
             ".yaml",
         ];
-
+        #endregion 主なドキュメントファイル
         /// <summary>
         /// 主なアプリケーションファイル
         /// </summary>
+        #region 主なアプリケーションファイル
         private readonly List<string> ApplicationFiles =
         [
             ".exe",
@@ -349,9 +366,11 @@ namespace FileHashCraft.Models
             ".sh",
             ".ps1",
         ];
+        #endregion 主なアプリケーションファイル
         /// <summary>
         /// 主な圧縮ファイル
         /// </summary>
+        #region 主な圧縮ファイル
         private readonly List<string> ArchiveFiles =
         [
             ".7z",
@@ -378,9 +397,11 @@ namespace FileHashCraft.Models
             ".lha",
             ".arj",
         ];
+        #endregion 主な圧縮ファイル
         /// <summary>
         /// 主なソースコードファイル
         /// </summary>
+        #region 主なソースコードファイル
         private readonly List<string> SourceCodeFiles =
         [
             ".c",
@@ -406,9 +427,11 @@ namespace FileHashCraft.Models
             ".rs",
             ".vbs",
         ];
+        #endregion 主なソースコードファイル
         /// <summary>
         /// 主な登録ファイル
         /// </summary>
+        #region 主な登録ファイル
         private readonly List<string> RegistrationFiles =
         [
             ".reg",
@@ -416,6 +439,6 @@ namespace FileHashCraft.Models
             ".regtrans-ms",
             ".pol",
         ];
+        #endregion 主な登録ファイル
     }
-
 }

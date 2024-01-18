@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.ViewModels.PageSelectTarget;
 using FileHashCraft.Views;
 
 namespace FileHashCraft
@@ -74,7 +75,7 @@ namespace FileHashCraft
             }
             if (e.Content is PageTargetFileSetting)
             {
-                var targetFileSetting = Ioc.Default.GetService<IPageSelectTargetFileViewModel>();
+                var targetFileSetting = Ioc.Default.GetService<IPageSelectTargetViewModel>();
                 targetFileSetting?.Initialize();
             }
         }

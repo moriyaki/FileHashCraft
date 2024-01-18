@@ -20,7 +20,7 @@
         /// </summary>
         /// <param name="algorithm">ハッシュアルゴリズム名</param>
         /// <returns>ハッシュアルゴリズムタイプ</returns>
-        public static FileHashAlgorithm GetHashAlgorithmType(string algorithm)
+        public static FileHashAlgorithm GetAlgorithm(string algorithm)
         {
             return algorithm switch
             {
@@ -36,7 +36,7 @@
         /// </summary>
         /// <param name="algorithmType">ハッシュアルゴリズム</param>
         /// <returns>ハッシュアルゴリズム名</returns>
-        public static string GetHashAlgorithmName(FileHashAlgorithm algorithmType)
+        public static string GetAlgorithmName(FileHashAlgorithm algorithmType)
         {
             return algorithmType switch
             {
