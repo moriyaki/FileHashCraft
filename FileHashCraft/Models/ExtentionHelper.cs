@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using FileHashCraft.Properties;
 
 namespace FileHashCraft.Models
 {
@@ -105,15 +106,15 @@ namespace FileHashCraft.Models
         {
             return type switch
             {
-                FileGroupType.Movies => "動画ファイル",
-                FileGroupType.Pictures => "画像ファイル",
-                FileGroupType.Sounds => "サウンドファイル",
-                FileGroupType.Documents => "ドキュメントファイル",
-                FileGroupType.Applications => "アプリケーションファイル",
-                FileGroupType.Archives => "圧縮ファイル",
-                FileGroupType.SourceCodes => "ソースコードファイル",
-                FileGroupType.Registrations => "登録ファイル",
-                _ => "その他のファイル",
+                FileGroupType.Movies => Resources.LabelMovies,
+                FileGroupType.Pictures => Resources.LabelPictures,
+                FileGroupType.Sounds => Resources.LabelSounds,
+                FileGroupType.Documents => Resources.LabelDocuments,
+                FileGroupType.Applications => Resources.LabelApplications,
+                FileGroupType.Archives => Resources.LabelArchives,
+                FileGroupType.SourceCodes => Resources.LabelSourceCodes,
+                FileGroupType.Registrations => Resources.LabelRegistrations,
+                _ => Properties.Resources.LabelOtherFiles,
             };
         }
 

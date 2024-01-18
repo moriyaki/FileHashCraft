@@ -48,6 +48,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// チェックマネージャからツリービューのチェックボックス状態を確認します。
         /// </summary>
         public void CheckStatusChangeFromCheckManager();
+        /// <summary>
+        /// ツリービューの横幅設定
+        /// </summary>
+        public double TreeWidth { get; set; }
     }
     #endregion インターフェース
     public partial class ControDirectoryTreeViewlViewModel : ObservableObject, IControDirectoryTreeViewlViewModel
@@ -66,6 +70,19 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             get => _IsCheckBoxVisible;
             private set => _IsCheckBoxVisible = value;
+        }
+
+        /// <summary>
+        /// ツリー横幅の設定
+        /// </summary>
+        public double TreeWidth
+        {
+            get => _MainWindowViewModel.TreeWidth;
+            set
+            {
+                _MainWindowViewModel.TreeWidth = value;
+                OnPropertyChanged(nameof(TreeWidth));
+            }
         }
 
         /// <summary>
@@ -155,6 +172,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 CurrentFullPath = message.CurrentFullPath;
                 FolderSelectedChanged(CurrentFullPath);
             });
+
+            // メインウィンドウからのツリービュー幅変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, message) => TreeWidth = message.TreeWidth);
 
             // フォントの変更メッセージ
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);

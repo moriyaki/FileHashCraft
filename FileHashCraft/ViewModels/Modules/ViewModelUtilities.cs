@@ -65,6 +65,22 @@ namespace FileHashCraft.ViewModels.Modules
             HashAlgorithm = hashAlgorithm;
         }
     }
+
+    /// <summary>
+    /// ツリーびゅ幅の変更メッセージ
+    /// </summary>
+    public class TreeWidthChanged
+    {
+        public double TreeWidth { get; } = 300;
+
+        public TreeWidthChanged() { throw new NotImplementedException(); }
+
+        public TreeWidthChanged(double treeWidth)
+        {
+            TreeWidth = treeWidth;
+        }
+    }
+
     #endregion MainView用
 
     #region ページ移動用

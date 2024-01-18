@@ -1,7 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Properties;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -28,6 +31,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         protected readonly IExtentionHelper _ExtentionManager;
         protected readonly ISearchManager _SearchManager;
         protected readonly IPageSelectTargetViewModel _PageSelectTargetFileViewModel;
+        protected readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
@@ -38,6 +42,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _ExtentionManager = Ioc.Default.GetService<IExtentionHelper>() ?? throw new InvalidOperationException($"{nameof(IExtentionHelper)} dependency not resolved.");
             _SearchManager = Ioc.Default.GetService<ISearchManager>() ?? throw new InvalidOperationException($"{nameof(ISearchManager)} dependency not resolved.");
             _PageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
+            _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
+
+            // メインウィンドウからのフォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) =>
+                UsingFont = message.UsingFont);
+
+            // メインウィンドウからのフォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
+                FontSize = message.FontSize);
         }
         #endregion コンストラクタ
 
@@ -66,6 +79,32 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             get => _ExtentionOrFileType;
             set => SetProperty(ref _ExtentionOrFileType, value);
+        }
+
+        /// <summary>
+        /// フォントの設定
+        /// </summary>
+        public FontFamily UsingFont
+        {
+            get => _MainWindowViewModel.UsingFont;
+            set
+            {
+                _MainWindowViewModel.UsingFont = value;
+                OnPropertyChanged(nameof(UsingFont));
+            }
+        }
+
+        /// <summary>
+        /// フォントサイズの設定
+        /// </summary>
+        public double FontSize
+        {
+            get => _MainWindowViewModel.FontSize;
+            set
+            {
+                _MainWindowViewModel.FontSize = value;
+                OnPropertyChanged(nameof(FontSize));
+            }
         }
 
         /// <summary>
@@ -162,12 +201,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             var fileTypeHelper = new FileTypeHelper();
             _extensionList = fileTypeHelper.GetFileGroupExtention(fileType);
-            ExtentionCount = 0;
+            //ExtentionCount = 0;
             ExtentionOrGroup = FileTypeHelper.GetFileGroupName(fileType);
             foreach (var extention in _extensionList)
             {
                 ExtentionCount += _ExtentionManager.GetExtentionsCount(extention);
-                DebugManager.InfoWrite(extention);
             }
         }
         #endregion コンストラクタ

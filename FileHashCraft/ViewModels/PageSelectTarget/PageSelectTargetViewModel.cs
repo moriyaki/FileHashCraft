@@ -65,7 +65,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     {
         DirectoriesScanning,
         FilesScanning,
-        DataWriting,
         Finished,
     }
     #endregion ハッシュ計算するファイルの取得状況
@@ -273,7 +272,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public DelegateCommand ToPageHashCalcing { get; set; }
         #endregion コマンド
 
-        #region コンストラクタと初期処理
+        #region コンストラクタ
         private readonly IExtentionHelper _ExtentionManager;
         private readonly ISearchManager _SearchManager;
         private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
@@ -333,7 +332,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
                 FontSize = message.FontSize);
         }
+        #endregion コンストラクタ
 
+        #region 初期処理
         public CancellationTokenSource? CTS;
         public CancellationToken cancellationToken;
 
@@ -357,6 +358,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             OnPropertyChanged(nameof(HashAlgorithms));
             Status = _Status;
 
+            App.Current?.Dispatcher?.InvokeAsync(() => {
+                ExtentionsGroupCollection.Clear();
+                AddFileTypes();
+            });
+
             if (IsExecuting)
             {
                 IsExecuting = false;
@@ -370,9 +376,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 CountHashFilesDirectories = 0;
                 CountAllTargetFilesGetHash = 0;
                 CountFilteredGetHash = 0;
-                ExtentionsGroupCollection.Clear();
                 ExtentionCollection.Clear();
             });
+
             // ツリービューのアイテムを初期化する
             _ControDirectoryTreeViewlViewModel.ClearRoot();
             _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
@@ -395,7 +401,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             cancellationToken = CTS.Token;
             _ScanHashFilesClass?.ScanFiles(cancellationToken);
         }
-        #endregion コンストラクタと初期処理
+        #endregion 初期処理
 
         #region ファイル数の管理処理
         /// <summary>
@@ -449,15 +455,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             App.Current?.Dispatcher.Invoke(() =>
             {
-                ExtentionsGroupCollection.Add(movies);
-                ExtentionsGroupCollection.Add(pictures);
-                ExtentionsGroupCollection.Add(musics);
-                ExtentionsGroupCollection.Add(documents);
-                ExtentionsGroupCollection.Add(applications);
-                ExtentionsGroupCollection.Add(archives);
-                ExtentionsGroupCollection.Add(sources);
-                ExtentionsGroupCollection.Add(registrations);
-                ExtentionsGroupCollection.Add(others);
+                if (movies.ExtentionCount > 0) { ExtentionsGroupCollection.Add(movies); }
+                if (pictures.ExtentionCount > 0) { ExtentionsGroupCollection.Add(pictures); }
+                if (musics.ExtentionCount > 0) { ExtentionsGroupCollection.Add(musics); }
+                if (documents.ExtentionCount > 0) { ExtentionsGroupCollection.Add(documents); }
+                if (applications.ExtentionCount > 0) { ExtentionsGroupCollection.Add(applications); }
+                if (archives.ExtentionCount > 0) { ExtentionsGroupCollection.Add(archives); }
+                if (sources.ExtentionCount > 0) { ExtentionsGroupCollection.Add(sources); }
+                if (registrations.ExtentionCount > 0) { ExtentionsGroupCollection.Add(registrations); }
+                if (others.ExtentionCount > 0) { ExtentionsGroupCollection.Add(others); }
             });
         }
 
@@ -467,14 +473,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="extention">拡張子</param>
          public void AddExtentions(string extention)
         {
-            App.Current?.Dispatcher.Invoke(() =>
+            if (_ExtentionManager.GetExtentionsCount(extention) > 0)
             {
-                if (_ExtentionManager.GetExtentionsCount(extention) > 0)
-                {
-                    var item = new ExtensionCheckBox(extention);
-                    ExtentionCollection.Add(item);
-                }
-            });
+                var item = new ExtensionCheckBox(extention);
+                App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
+            }
         }
         /// <summary>
         /// 拡張子のコレクションをクリアします。
@@ -489,12 +492,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void ExtentionCountChanged()
         {
-            //【ここ】
             App.Current?.Dispatcher?.Invoke(() =>
                 CountFilteredGetHash = _SearchManager.ConditionFiles.Count);
         }
         /// <summary>
-        /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックする
+        /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。
         /// </summary>
         /// <param name="changedCheck">チェックされたか外されたか</param>
         /// <param name="extentionList">拡張子のリストコレクション</param>

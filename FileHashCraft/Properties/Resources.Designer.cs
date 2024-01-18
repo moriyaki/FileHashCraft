@@ -133,6 +133,24 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Application Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelApplications {
+            get {
+                return ResourceManager.GetString("LabelApplications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Archive Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelArchives {
+            get {
+                return ResourceManager.GetString("LabelArchives", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Command に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelCommand {
@@ -201,6 +219,15 @@ namespace FileHashCraft.Properties {
         public static string LabelDirectoryScanning {
             get {
                 return ResourceManager.GetString("LabelDirectoryScanning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Document Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelDocuments {
+            get {
+                return ResourceManager.GetString("LabelDocuments", resourceCulture);
             }
         }
         
@@ -277,11 +304,38 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Internal data is being updated. に類似しているローカライズされた文字列を検索します。
+        ///   Movie Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelInternalDataUpdate {
+        public static string LabelMovies {
             get {
-                return ResourceManager.GetString("LabelInternalDataUpdate", resourceCulture);
+                return ResourceManager.GetString("LabelMovies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ohter Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelOtherFiles {
+            get {
+                return ResourceManager.GetString("LabelOtherFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Picture Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelPictures {
+            get {
+                return ResourceManager.GetString("LabelPictures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Registration Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegistrations {
+            get {
+                return ResourceManager.GetString("LabelRegistrations", resourceCulture);
             }
         }
         
@@ -291,6 +345,24 @@ namespace FileHashCraft.Properties {
         public static string LabelSettings {
             get {
                 return ResourceManager.GetString("LabelSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sound Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelSounds {
+            get {
+                return ResourceManager.GetString("LabelSounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Source Code Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelSourceCodes {
+            get {
+                return ResourceManager.GetString("LabelSourceCodes", resourceCulture);
             }
         }
         

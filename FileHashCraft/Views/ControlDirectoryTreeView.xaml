@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TreeView Name="DirectoryTreeRoot" Grid.Column="0"
+        <TreeView Name="DirectoryTreeRoot" Grid.Column="0" Width="{Binding TreeWidth,Mode=TwoWay}"
                   SelectedItemChanged="DirectoryTreeRoot_SelectedItemChanged"
                   ItemsSource="{Binding TreeRoot, Mode=OneWay}">
             <TreeView.ItemTemplate>

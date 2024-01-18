@@ -81,17 +81,18 @@
         <!-- TreeView and ListView -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <local:ControlDirectoryTreeView Grid.Column="0"/>
+            <local:ControlDirectoryTreeView x:Name="ExplorerTreeView" Grid.Column="0"/>
 
             <GridSplitter
 			    Grid.Column="1"
 			    Width="3"
-			    HorizontalAlignment="Stretch" />
+			    HorizontalAlignment="Stretch"
+                DragDelta="GridSplitter_DragDelta"/>
 
             <ListView Name="FileItemsList" Grid.Column="2"
                       ItemsSource="{Binding ListItems, Mode=OneWay}"

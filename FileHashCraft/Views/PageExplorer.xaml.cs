@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.ViewModels;
+using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
@@ -84,6 +85,19 @@ namespace FileHashCraft.Views
             // HwndSourceを取得
             HwndSource? hwndSource = PresentationSource.FromVisual(this) as HwndSource;
             explorerVM?.HwndAddHook(hwndSource);
+        }
+
+        /// <summary>
+        /// スプリッタが移動された時、TreeViewの横幅を設定する
+        /// </summary>
+        /// <param name="sender">object</param>
+        /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
+        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            var controlTree = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>();
+            if (controlTree == null) { throw new NullReferenceException(nameof(controlTree)); }
+
+            controlTree.TreeWidth = ExplorerTreeView.ActualWidth;
         }
     }
 }

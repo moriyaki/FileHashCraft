@@ -17,6 +17,7 @@ namespace FileHashCraft.ViewModels
         public double Width { get; set; }
         public double Height { get; set; }
         public double FontSize { get; set; }
+        public double TreeWidth { get; set; }
         public bool IsZeroSizeFileDelete { get; set; }
         public bool IsEmptyDirectoryDelete { get; set; }
         public string SelectedLanguage { get; set; }
@@ -72,7 +73,7 @@ namespace FileHashCraft.ViewModels
                     Left = Convert.ToDouble(root.Element("Left")?.Value);
                     Width = Convert.ToDouble(root.Element("Width")?.Value);
                     Height = Convert.ToDouble(root.Element("Height")?.Value);
-                    FontSize = Convert.ToDouble(root.Element("FontSize")?.Value);
+                    TreeWidth = Convert.ToDouble(root.Element("TreeWidth")?.Value);
                     IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
                     IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
                     SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
@@ -80,6 +81,7 @@ namespace FileHashCraft.ViewModels
 
                     var fontFamilyName = root.Element("UsingFont")?.Value ?? string.Empty;
                     UsingFont = new FontFamilyConverter().ConvertFromString(fontFamilyName) as FontFamily ?? SystemFonts.MessageFontFamily;
+                    FontSize = Convert.ToDouble(root.Element("FontSize")?.Value);
                 }
             }
         }
@@ -98,12 +100,13 @@ namespace FileHashCraft.ViewModels
                         new XElement("Left", Left),
                         new XElement("Width", Width),
                         new XElement("Height", Height),
-                        new XElement("FontSize", FontSize),
+                        new XElement("TreeWidth", TreeWidth),
                         new XElement("IsZeroSizeFileDelete", IsZeroSizeFileDelete),
                         new XElement("IsEmptyDirectoryDelete", IsEmptyDirectoryDelete),
                         new XElement("SelectedLanguage", SelectedLanguage),
                         new XElement("HashAlgorithm", HashAlgorithm),
-                        new XElement("UsingFont", UsingFont)
+                        new XElement("UsingFont", UsingFont),
+                        new XElement("FontSize", FontSize)
                     )
                 );
 
@@ -240,6 +243,22 @@ namespace FileHashCraft.ViewModels
                 SaveSettings();
             }
         }
+
+        private double _TreeWidth = 200;
+        public double TreeWidth
+        {
+            get => _TreeWidth;
+            set
+            {
+                if (value != _TreeWidth)
+                {
+                    SetProperty(ref _TreeWidth, value, nameof(TreeWidth));
+                    WeakReferenceMessenger.Default.Send(new TreeWidthChanged(value));
+                    SaveSettings();
+                }
+            }
+        }
+
         /// <summary>
         /// フォントの変更
         /// MainWindowを参照できる所には以下のコード

@@ -119,7 +119,7 @@
   </resheader>
   <data name="ButtonCancel" xml:space="preserve">
     <value>キャンセル</value>
-    <comment>Button/PageTargetFileSetting</comment>
+    <comment>Button/PageSelectTarget</comment>
   </data>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>コマンド実行</value>
@@ -127,7 +127,7 @@
   </data>
   <data name="ButtonHashCalc" xml:space="preserve">
     <value>ハッシュ計算</value>
-    <comment>Button/PageTargetFileSetting</comment>
+    <comment>Button/PageSelectTarget</comment>
   </data>
   <data name="ButtonHashManagement" xml:space="preserve">
     <value>ハッシュ管理</value>
@@ -149,13 +149,21 @@
     <value>SHA-512 (最大セキュリティ：セキュリティ強度は非常に高いが、計算が遅い)</value>
     <comment>PageSettings/Security</comment>
   </data>
+  <data name="LabelApplications" xml:space="preserve">
+    <value>アプリケーションファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelArchives" xml:space="preserve">
+    <value>圧縮ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
   <data name="LabelCommand" xml:space="preserve">
     <value>コマンド</value>
     <comment>Label/PageExplorer</comment>
   </data>
   <data name="LabelCountAllFilesGetHash" xml:space="preserve">
     <value>ハッシュを取得する全ファイル数 :</value>
-    <comment>Label/PageTargetViewModel</comment>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelCountAlreadyGetHash" xml:space="preserve">
     <value>ハッシュを既に取得しているファイル数 :</value>
@@ -172,23 +180,27 @@
   </data>
   <data name="LabelDirectoryCount" xml:space="preserve">
     <value>ファイルスキャン状況：ディレクトリ </value>
-    <comment>Label/PageTargetViewModel</comment>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelDirectoryScanning" xml:space="preserve">
     <value>ディレクトリスキャン中...：発見数</value>
-    <comment>Label/PageTargetViewModel</comment>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelDocuments" xml:space="preserve">
+    <value>ドキュメントファイル</value>
+    <comment>Label/ExtentionHelper</comment>
   </data>
   <data name="LabelEmptyDirDelete" xml:space="preserve">
     <value>空のディレクトリを削除するかどうか</value>
-    <comment>Label/PageSettings/PageTargetViewModel</comment>
+    <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
   <data name="LabelExtentionFilterSetting" xml:space="preserve">
     <value>拡張子によるファイル種別の指定</value>
-    <comment>Label/PageTargetViewModel</comment>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelExtentionGroupFilterSetting" xml:space="preserve">
     <value>ファイル種類によるファイルの指定</value>
-    <comment>Label/PageTargetViewModel</comment>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>ファイルハッシュ計算のアルゴリズム</value>
@@ -199,7 +211,7 @@
   </data>
   <data name="LabelFinished" xml:space="preserve">
     <value>完了</value>
-    <comment>Label/PageTargetViewModel</comment>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelFontSizeString" xml:space="preserve">
     <value>フォントのサイズ</value>
@@ -209,17 +221,37 @@
     <value>フォント</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelInternalDataUpdate" xml:space="preserve">
-    <value>内部データ更新中</value>
-    <comment>Label/PageTargetViewModel</comment>
+  <data name="LabelMovies" xml:space="preserve">
+    <value>動画ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelOtherFiles" xml:space="preserve">
+    <value>その他のファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelPictures" xml:space="preserve">
+    <value>画像ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelRegistrations" xml:space="preserve">
+    <value>登録ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
   </data>
   <data name="LabelSettings" xml:space="preserve">
     <value>見つかったファイルの内部ファイル書き込み等の処理中</value>
-    <comment>Label/PageSettings/PageTargetViewModel</comment>
+    <comment>Label/PageSettings/PageSelectTarget</comment>
+  </data>
+  <data name="LabelSounds" xml:space="preserve">
+    <value>サウンドファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelSourceCodes" xml:space="preserve">
+    <value>ソースコードファイル</value>
+    <comment>Label/ExtentionHelper</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">
     <value>0サイズのファイルを削除するかどうか</value>
-    <comment>Label/PageSettings/PageTargetViewModel</comment>
+    <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>更新日時</value>
@@ -247,6 +279,6 @@
   </data>
   <data name="NoHaveExtentions" xml:space="preserve">
     <value>拡張子なし</value>
-    <comment>Label/PageTargetViewModel</comment>
+    <comment>Label/PageSelectTarget</comment>
   </data>
 </root>

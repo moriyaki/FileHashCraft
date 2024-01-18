@@ -16,11 +16,30 @@ namespace FileHashCraft.ViewModels.ExplorerPage
     #region インターフェース
     public interface IPageExplorerViewModel
     {
+        /// <summary>
+        /// リストビューのアイテムコレクション
+        /// </summary>
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; }
+        /// <summary>
+        /// ツリービューのチェックボックスの表示状態
+        /// </summary>
         public Visibility IsCheckBoxVisible { get; }
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
         public void Initialize();
+        /// <summary>
+        /// カレントディレクトリを取得または設定する
+        /// </summary>
         public string CurrentFullPath { get; set; }
+        /// <summary>
+        /// リムーバブルストレージ用のフック処理
+        /// </summary>
+        /// <param name="hwndSource"></param>
         public void HwndAddHook(HwndSource? hwndSource);
+        /// <summary>
+        /// リムーバブルストレージ用のフック解除処理
+        /// </summary>
         public void HwndRemoveHook();
     }
     #endregion インターフェース

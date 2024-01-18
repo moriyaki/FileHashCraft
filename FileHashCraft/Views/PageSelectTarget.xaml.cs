@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.ViewModels;
+using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.PageSelectTarget;
 
 namespace FileHashCraft.Views
@@ -9,9 +10,9 @@ namespace FileHashCraft.Views
     /// <summary>
     /// PageTargetFileSetting.xaml の相互作用ロジック
     /// </summary>
-    public partial class PageTargetFileSetting : Page
+    public partial class PageSelectTarget : Page
     {
-        public PageTargetFileSetting()
+        public PageSelectTarget()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<IPageSelectTargetViewModel>();
@@ -38,6 +39,18 @@ namespace FileHashCraft.Views
             {
                 base.OnMouseWheel(e);
             }
+        }
+        /// <summary>
+        /// スプリッタが移動された時、TreeViewの横幅を設定する
+        /// </summary>
+        /// <param name="sender">object</param>
+        /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
+        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            var explorerTree = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>();
+            if (explorerTree == null) { throw new NullReferenceException(nameof(explorerTree)); }
+
+            explorerTree.TreeWidth = HashTargetTreeView.ActualWidth;
         }
     }
 }
