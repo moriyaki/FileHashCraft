@@ -138,13 +138,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (value == true)
                 {
-                    _SearchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
-                    _PageSelectTargetFileViewModel.ExtentionCountChanged();
+                    Task.Run(async () =>
+                    {
+                        await _SearchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
+                        _PageSelectTargetFileViewModel.ExtentionCountChanged();
+                    });
                 }
                 else
                 {
-                    _SearchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
-                    _PageSelectTargetFileViewModel.ExtentionCountChanged();
+                    Task.Run(async () =>
+                    {
+                         await _SearchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+                        _PageSelectTargetFileViewModel.ExtentionCountChanged();
+                    });
                 }
                 SetProperty(ref _IsChecked, value);
             }
@@ -164,34 +170,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public ExtentionGroupCheckBoxViewModel() : base()
         {
+            FileType = FileGroupType.Others;
+            ExtentionCount = _ExtentionManager.GetGroupExtentionCount(FileType);
             ExtentionOrGroup = FileTypeHelper.GetFileGroupName(FileGroupType.Others);
-
-            _extensionList = _ExtentionManager.GetExtensions().ToList();
-
-            var fileTypeHelper = new FileTypeHelper();
-            // ファイルの種類ごとに除外する拡張子を取得
-            var exclusionsByFileType = new Dictionary<FileGroupType, IEnumerable<string>>
-            {
-                { FileGroupType.Movies, fileTypeHelper.GetFileGroupExtention(FileGroupType.Movies) },
-                { FileGroupType.Pictures, fileTypeHelper.GetFileGroupExtention(FileGroupType.Pictures) },
-                { FileGroupType.Sounds, fileTypeHelper.GetFileGroupExtention(FileGroupType.Sounds) },
-                { FileGroupType.Documents, fileTypeHelper.GetFileGroupExtention(FileGroupType.Documents) },
-                { FileGroupType.Applications, fileTypeHelper.GetFileGroupExtention(FileGroupType.Applications) },
-                { FileGroupType.Archives, fileTypeHelper.GetFileGroupExtention(FileGroupType.Archives) },
-                { FileGroupType.SourceCodes, fileTypeHelper.GetFileGroupExtention(FileGroupType.SourceCodes) },
-                { FileGroupType.Registrations, fileTypeHelper.GetFileGroupExtention(FileGroupType.Registrations) },
-            };
-
-            // 各種類の拡張子を一括で除外
-            foreach (var kvp in exclusionsByFileType)
-            {
-                _extensionList.RemoveAll(extension => kvp.Value.Contains(extension));
-            }
-            ExtentionCount = 0;
-            foreach (var extension in _extensionList)
-            {
-                ExtentionCount += _ExtentionManager.GetExtentionsCount(extension);
-            }
         }
         /// <summary>
         /// ファイルの種類用のコンストラクタ
@@ -199,19 +180,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="fileType">ファイルの種類</param>
         public ExtentionGroupCheckBoxViewModel(FileGroupType fileType) : base()
         {
-            var fileTypeHelper = new FileTypeHelper();
-            _extensionList = fileTypeHelper.GetFileGroupExtention(fileType);
-            //ExtentionCount = 0;
-            ExtentionOrGroup = FileTypeHelper.GetFileGroupName(fileType);
-            foreach (var extention in _extensionList)
-            {
-                ExtentionCount += _ExtentionManager.GetExtentionsCount(extention);
-            }
+            FileType = fileType;
+            ExtentionCount = _ExtentionManager.GetGroupExtentionCount(FileType);
+            ExtentionOrGroup = FileTypeHelper.GetFileGroupName(FileType);
         }
         #endregion コンストラクタ
 
         #region バインディング
-        private readonly List<string> _extensionList = [];
+        //private readonly List<string> _extensionList = [];
+        private FileGroupType FileType { get; }
         /// <summary>
         /// チェックボックスの状態
         /// </summary>
@@ -222,11 +199,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (value == true)
                 {
-                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(true, _extensionList);
+                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(true, _ExtentionManager.GetGroupExtentions(FileType));
                 }
                 else
                 {
-                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(false, _extensionList);
+                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(false, _ExtentionManager.GetGroupExtentions(FileType));
                 }
                 SetProperty(ref _IsChecked, value);
             }

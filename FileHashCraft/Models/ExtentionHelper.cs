@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using FileHashCraft.Properties;
 
 namespace FileHashCraft.Models
@@ -15,13 +16,25 @@ namespace FileHashCraft.Models
         /// <param name="fileFullPath"></param>
         public void AddFile(string fileFullPath);
         /// <summary>
+        /// 拡張子のコレクションを取得します。
+        /// </summary>
+        public IEnumerable<string> GetExtentions();
+        /// <summary>
+        /// 拡張子の種類を対象に、拡張子を取得します。
+        /// </summary>
+        public IEnumerable<string> GetGroupExtentions(FileGroupType fileGroupType);
+        /// <summary>
         /// 拡張子を持つファイル数を取得します。
         /// </summary>
         public int GetExtentionsCount(string extention);
         /// <summary>
-        /// 拡張子のコレクションを取得します。
+        /// 拡張子グループのファイル数を取得します。
         /// </summary>
-        public IEnumerable<string> GetExtensions();
+        public int GetGroupExtentionCount(FileGroupType fileGroupType);
+        /// <summary>
+        /// 拡張子のコレクションを全削除します。
+        /// </summary>
+        public void Clear();
     }
     #endregion インターフェース
     public class ExtentionHelper : IExtentionHelper
@@ -52,10 +65,55 @@ namespace FileHashCraft.Models
         }
 
         /// <summary>
+        /// 拡張子のコレクションを取得します。
+        /// </summary>
+        /// <returns>拡張子コレクション</returns>
+        public IEnumerable<string> GetExtentions()
+        {
+            return _extentionDic.Keys.OrderBy(key => key);
+        }
+
+        /// <summary>
+        /// 拡張子の種類を対象に、拡張子を取得します。
+        /// </summary>
+        /// <param name="fileGroupType">拡張子の種類</param>
+        /// <returns>拡張子コレクション</returns>
+        public IEnumerable<string> GetGroupExtentions(FileGroupType fileGroupType)
+        {
+            if (fileGroupType == FileGroupType.Others)
+            {
+                var excludedGroups = new[]
+                {
+                    FileGroupType.Movies,
+                    FileGroupType.Pictures,
+                    FileGroupType.Sounds,
+                    FileGroupType.Documents,
+                    FileGroupType.Applications,
+                    FileGroupType.Archives,
+                    FileGroupType.SourceCodes,
+                    FileGroupType.Registrations
+                };
+
+                foreach (var extension in _extentionDic.Keys.OrderBy(key => key))
+                {
+                    if (excludedGroups.Any(group => FileTypeHelper.GetFileGroupExtention(group).Contains(extension))) { continue; }
+                    yield return extension;
+                }
+            }
+            else
+            {
+                foreach (var extention in FileTypeHelper.GetFileGroupExtention(fileGroupType))
+                {
+                    yield return extention;
+                }
+            }
+        }
+
+        /// <summary>
         /// 拡張子を持つファイル数を取得します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        /// <returnsファイル数></returns>
+        /// <returns>ファイル数</returns>
         public int GetExtentionsCount(string extention)
         {
             extention = extention.ToLower();
@@ -63,12 +121,26 @@ namespace FileHashCraft.Models
         }
 
         /// <summary>
-        /// 拡張子のコレクションを取得します。
+        /// 拡張子グループのファイル数を取得します。
         /// </summary>
-        /// <returns>拡張子コレクション</returns>
-        public IEnumerable<string> GetExtensions()
+        /// <param name="fileGroupType">拡張子グループ</param>
+        /// <returns>ファイル数</returns>
+        public int GetGroupExtentionCount(FileGroupType fileGroupType)
         {
-            return _extentionDic.Keys.OrderBy(key => key);
+            var groupCount = 0;
+            foreach (var extention in GetGroupExtentions(fileGroupType))
+            {
+                groupCount += GetExtentionsCount(extention);
+            }
+            return groupCount;
+        }
+
+        /// <summary>
+        /// 拡張子コレクションを全削除します
+        /// </summary>
+        public void Clear()
+        {
+            _extentionDic.Clear();
         }
         #endregion 拡張子の管理
     }
@@ -94,7 +166,7 @@ namespace FileHashCraft.Models
     /// <summary>
     /// ファイルタイプから表示名や拡張子を取得するクラス
     /// </summary>
-    public class FileTypeHelper
+    public static class FileTypeHelper
     {
         #region ファイル種類の管理
         /// <summary>
@@ -114,7 +186,7 @@ namespace FileHashCraft.Models
                 FileGroupType.Archives => Resources.LabelArchives,
                 FileGroupType.SourceCodes => Resources.LabelSourceCodes,
                 FileGroupType.Registrations => Resources.LabelRegistrations,
-                _ => Properties.Resources.LabelOtherFiles,
+                _ => Resources.LabelOtherFiles,
             };
         }
 
@@ -123,7 +195,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="type"></param>
         /// <returns>基本的にファイルタイプに該当する拡張子、ただしOthersだけは除外する拡張子</returns>
-        public List<string> GetFileGroupExtention(FileGroupType type)
+        public static List<string> GetFileGroupExtention(FileGroupType type)
         {
             return type switch
             {
@@ -144,7 +216,7 @@ namespace FileHashCraft.Models
         /// 主な動画ファイル
         /// </summary>
         #region 主な動画ファイル
-        private readonly List<string> MovieFiles =
+        private static readonly List<string> MovieFiles =
         [
             ".avi",
             ".divx",
@@ -224,7 +296,7 @@ namespace FileHashCraft.Models
         /// 主な画像ファイル
         /// </summary>
         #region 主な画像ファイル
-        private readonly List<string> PictureFiles =
+        private static readonly List<string> PictureFiles =
         [
             ".jpeg",
             ".jpg",
@@ -262,7 +334,7 @@ namespace FileHashCraft.Models
         /// 主なサウンドファイル
         /// </summary>
         #region 主なサウンドファイル
-        private readonly List<string> MusicFiles =
+        private static readonly List<string> MusicFiles =
         [
             ".ac3",
             ".eac3",
@@ -325,7 +397,7 @@ namespace FileHashCraft.Models
         /// 主なドキュメントファイル
         /// </summary>
         #region 主なドキュメントファイル
-        private readonly List<string> DocumentFiles =
+        private static readonly List<string> DocumentFiles =
         [
             ".doc",
             ".docx",
@@ -352,7 +424,7 @@ namespace FileHashCraft.Models
         /// 主なアプリケーションファイル
         /// </summary>
         #region 主なアプリケーションファイル
-        private readonly List<string> ApplicationFiles =
+        private static readonly List<string> ApplicationFiles =
         [
             ".exe",
             ".ocx",
@@ -372,7 +444,7 @@ namespace FileHashCraft.Models
         /// 主な圧縮ファイル
         /// </summary>
         #region 主な圧縮ファイル
-        private readonly List<string> ArchiveFiles =
+        private static readonly List<string> ArchiveFiles =
         [
             ".7z",
             ".zip",
@@ -403,7 +475,7 @@ namespace FileHashCraft.Models
         /// 主なソースコードファイル
         /// </summary>
         #region 主なソースコードファイル
-        private readonly List<string> SourceCodeFiles =
+        private static readonly List<string> SourceCodeFiles =
         [
             ".c",
             ".cpp",
@@ -433,7 +505,7 @@ namespace FileHashCraft.Models
         /// 主な登録ファイル
         /// </summary>
         #region 主な登録ファイル
-        private readonly List<string> RegistrationFiles =
+        private static readonly List<string> RegistrationFiles =
         [
             ".reg",
             ".inf",

@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Text.RegularExpressions;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FileHashCraft.Models
 {
@@ -18,15 +20,21 @@ namespace FileHashCraft.Models
     /// <summary>
     /// 検索条件を保持するクラス
     /// </summary>
-    public class SearchCondition
+    public class Condition
     {
         #region プロパティ
         private SearchConditionType _Type = SearchConditionType.None;
         public SearchConditionType Type { get => _Type; }
-        private string _SearchConditionString = string.Empty;
-        public string SearchConditionString { get => _SearchConditionString; }
+        private string _ConditionString = string.Empty;
+        public string ConditionString { get => _ConditionString; }
+        public HashSet<HashFile> ConditionFiles { get; set; } = [];
         #endregion プロパティ
 
+        private readonly ISearchManager _SearchManager;
+        public Condition()
+        {
+            _SearchManager = Ioc.Default.GetService<ISearchManager>() ?? throw new NullReferenceException(nameof(ISearchManager)) ;
+        }
         #region 検索条件の追加と置換
         /// <summary>
         /// 正規表現検索の時は、正しい正規表現しか許容しません。
@@ -54,15 +62,27 @@ namespace FileHashCraft.Models
         /// 検索条件を設定します。
         /// </summary>
         /// <param name="type">検索条件のタイプ</param>
-        /// <param name="searchConditionString">検索条件</param>
+        /// <param name="conditionString">検索条件</param>
         /// <returns>成功の可否</returns>
-        public bool SetCondition(SearchConditionType type, string searchConditionString)
+        public bool SetCondition(SearchConditionType type, string conditionString)
         {
             if (type == SearchConditionType.None) { return false; }
-            if (!IsRegExTrue(searchConditionString)) { return false; }
-
             _Type = type;
-            _SearchConditionString = searchConditionString;
+            _ConditionString = conditionString;
+
+            switch (type)
+            {
+                case SearchConditionType.Extention:
+                    ConditionFiles.UnionWith(_SearchManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), conditionString, StringComparison.OrdinalIgnoreCase)));
+                    break;
+                case SearchConditionType.WildCard:
+                    break;
+                case SearchConditionType.RegularExprettion:
+                    if (!IsRegExTrue(conditionString)) { return false; }
+                    break;
+                default:
+                    throw new InvalidDataException("AddContidion Type is None");
+            }
             return true;
         }
 
@@ -75,9 +95,10 @@ namespace FileHashCraft.Models
         {
             if (!IsRegExTrue(searchConditionString)) { return false; }
 
-            _SearchConditionString += searchConditionString;
+            _ConditionString = searchConditionString;
             return true;
         }
+
         #endregion 検索条件の追加と置換
     }
 }

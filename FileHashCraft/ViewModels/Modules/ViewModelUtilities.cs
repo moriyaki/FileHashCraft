@@ -96,11 +96,10 @@ namespace FileHashCraft.ViewModels.Modules
     /// <summary>
     /// ハッシュ計算対象選択ページに移動するメッセージ
     /// </summary>
-    public class ToPageTargetFileSetting
+    public class ToPageSelectTarget
     {
-        public ToPageTargetFileSetting() { }
+        public ToPageSelectTarget() { }
     }
-
     /// <summary>
     /// ハッシュ計算画面ページに移動するメッセージ
     /// </summary>
@@ -116,7 +115,7 @@ namespace FileHashCraft.ViewModels.Modules
     {
         PageExplorer,
         PageSettings,
-        PageTargetFileSelect,
+        PageTargetSelect,
         PageHashCalcing,
     }
 

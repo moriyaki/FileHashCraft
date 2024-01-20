@@ -1,0 +1,17 @@
+﻿<Window x:Class="FileHashCraft.Views.TargetFilterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileHashCraft.Views"
+        xmlns:rs="clr-namespace:FileHashCraft.ViewModels.Modules"
+        mc:Ignorable="d"
+        Title="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TitleTargetFilterWindow, Mode=OneWay}"
+        Height="{Binding Height,Mode=TwoWay}" 
+        Width="{Binding Width,Mode=TwoWay}"
+        Top="{Binding Top,Mode=TwoWay}"
+        Left="{Binding Left,Mode=TwoWay}" >
+    <Grid>
+        
+    </Grid>
+</Window>

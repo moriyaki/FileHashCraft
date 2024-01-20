@@ -58,6 +58,16 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
+        /// ウィンドウの高さ
+        /// </summary>
+        private double _Height = 800d;
+        public double Height
+        {
+            get => _Height;
+            set => SetProperty(ref _Height, value);
+        }
+
+        /// <summary>
         /// ポーリング処理中か否か
         /// </summary>
         private bool _IsPolling = false;
@@ -75,10 +85,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _mainWindowViewModel.UsingFont;
+            get => _MainWindowViewModel.UsingFont;
             set
             {
-                _mainWindowViewModel.UsingFont = value;
+                _MainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -88,10 +98,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _mainWindowViewModel.FontSize;
+            get => _MainWindowViewModel.FontSize;
             set
             {
-                _mainWindowViewModel.FontSize = value;
+                _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -125,9 +135,9 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        private readonly IExpandedDirectoryManager _expandedDirectoryManager;
-        private readonly ICheckedDirectoryManager _checkedDirectoryManager;
-        private readonly IMainWindowViewModel _mainWindowViewModel;
+        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
+        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
@@ -139,12 +149,14 @@ namespace FileHashCraft.ViewModels
             IMainWindowViewModel mainViewModel
             )
         {
-            _expandedDirectoryManager = expandedDirectoryManager;
-            _checkedDirectoryManager = checkedDirectoryManager;
-            _mainWindowViewModel = mainViewModel;
+            _ExpandedDirectoryManager = expandedDirectoryManager;
+            _CheckedDirectoryManager = checkedDirectoryManager;
+            _MainWindowViewModel = mainViewModel;
 
             Top = mainViewModel.Top;
             Left = mainViewModel.Left + mainViewModel.Width;
+            Width = _MainWindowViewModel.Width / 2;
+            Height = _MainWindowViewModel.Height;
 
             timer = new DispatcherTimer();
             timer.Tick += Polling;
@@ -182,20 +194,20 @@ namespace FileHashCraft.ViewModels
             switch (pollingTarget)
             {
                 case PollingTarget.ExpandDirectoryManager:
-                    foreach (var item in _expandedDirectoryManager.Directories)
+                    foreach (var item in _ExpandedDirectoryManager.Directories)
                     {
                         sb.AppendLine(item);
                     }
                     break;
                 case PollingTarget.CheckedDirectoryManager:
                     sb.AppendLine("サブディレクトリを含まない管理");
-                    foreach (var item in _checkedDirectoryManager.NonNestedDirectories)
+                    foreach (var item in _CheckedDirectoryManager.NonNestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }
                     sb.AppendLine("-------------------------------");
                     sb.AppendLine("サブディレクトリを含む管理");
-                    foreach (var item in _checkedDirectoryManager.NestedDirectories)
+                    foreach (var item in _CheckedDirectoryManager.NestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }

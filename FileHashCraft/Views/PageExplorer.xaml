@@ -20,6 +20,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        
+        <!-- For MouseWheel Border Color To Transparent -->
+        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Background="White"/>
 
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0">

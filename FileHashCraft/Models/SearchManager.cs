@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using FileHashCraft.Views;
 
 namespace FileHashCraft.Models
 {
@@ -10,7 +12,11 @@ namespace FileHashCraft.Models
         /// </summary>
         public Dictionary<string, HashFile> AllFiles { get; }
         /// <summary>
-        /// 検索条件に合致するファイルのコレクション
+        /// 検索条件を保管するリスト
+        /// </summary>
+        public List<Condition> ConditionsList { get; }
+        /// <summary>
+        /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
         public HashSet<HashFile> ConditionFiles { get; }
         /// <summary>
@@ -18,13 +24,18 @@ namespace FileHashCraft.Models
         /// </summary>
         public void AddFile(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "");
         /// <summary>
+        /// ディレクトリをファイルディクショナリから削除します。
+        /// </summary>
+        /// <param name="directoryFullPath"></param>
+        public void RemoveDirectory(string directoryFullPath);
+        /// <summary>
         /// 検索条件コレクションに追加します。
         /// </summary>
-        public bool AddCondition(SearchConditionType type, string contidionString);
+        public Task AddCondition(SearchConditionType type, string contidionString);
         /// <summary>
         /// 検索条件コレクションから削除します。
         /// </summary>
-        public void RemoveCondition(SearchConditionType type, string contidionString);
+        public Task RemoveCondition(SearchConditionType type, string contidionString);
     }
     #endregion インターフェース
 
@@ -41,14 +52,14 @@ namespace FileHashCraft.Models
         /// <summary>
         /// 検索条件を保管するリスト
         /// </summary>
-        public List<SearchCondition> Conditions { get; } = [];
+        public List<Condition> ConditionsList { get; } = [];
         /// <summary>
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
         public HashSet<HashFile> ConditionFiles { get; } = [];
         #endregion 内部データ
 
-        #region ファイルの追加
+        #region ファイルの追加とディレクトリの削除
         /// <summary>
         /// ファイルを追加します
         /// </summary>
@@ -76,7 +87,17 @@ namespace FileHashCraft.Models
             var hashFile = new HashFile(fileFullPath, hashSHA256, hashSHA384, hashSHA512);
             AllFiles.Add(fileFullPath, hashFile);
         }
+
+        public void RemoveDirectory(string directoryFullPath)
+        {
+            foreach (var fileToRemove in AllFiles.Keys.Where(d => Path.GetDirectoryName(d) == directoryFullPath).ToList())
+            {
+                AllFiles.Remove(fileToRemove);
+            }
+        }
         #endregion ファイルの追加
+
+        private readonly object _lock = new();
 
         #region 検索条件の操作
         /// <summary>
@@ -85,27 +106,21 @@ namespace FileHashCraft.Models
         /// <param name="type">検索条件タイプ</param>
         /// <param name="contidionString">検索条件</param>
         /// <returns>成功の可否</returns>
-        public bool AddCondition(SearchConditionType type, string contidionString)
+        public async Task AddCondition(SearchConditionType type, string contidionString)
         {
-            // 共通処理
-            var condition = new SearchCondition();
-            if (!condition.SetCondition(type, contidionString)) { return false; }
-            Conditions.Add(condition);
-
-            switch (type)
+            await Task.Run(() =>
             {
-                case SearchConditionType.Extention:
-                    ExtentionFilesAdd(contidionString);
-                    break;
-                case SearchConditionType.WildCard:
-                    break;
-                case SearchConditionType.RegularExprettion:
-                    break;
-                default:
-                    throw new InvalidDataException("AddContidion Type is None");
-            }
-
-            return true;
+                var condition = new Condition();
+                if (!condition.SetCondition(type, contidionString)) { return; }
+                lock (_lock)
+                {
+                    ConditionsList.Add(condition);
+                    foreach (var file in condition.ConditionFiles)
+                    {
+                        ConditionFiles.Add(file);
+                    }
+                }
+            });
         }
 
         /// <summary>
@@ -113,52 +128,23 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="type">検索条件のタイプ</param>
         /// <param name="contidionString">検索条件</param>
-        public void RemoveCondition(SearchConditionType type, string contidionString)
+        public async Task RemoveCondition(SearchConditionType type, string contidionString)
         {
-            // 共通処理
-            var item = Conditions.Find(s => s.Type == type && s.SearchConditionString == contidionString);
-            if (item == null) return;
-            Conditions.Remove(item);
-
-            switch (type)
+            await Task.Run(() =>
             {
-                case SearchConditionType.Extention:
-                    ExtentionFilesRemove(contidionString);
-                    break;
-                case SearchConditionType.WildCard:
-                    break;
-                case SearchConditionType.RegularExprettion:
-                    break;
-            }
+                var condition = ConditionsList.Find(c => c.Type == type && c.ConditionString == contidionString);
+                if (condition == null) return;
+                lock (_lock)
+                {
+                    foreach (var file in condition.ConditionFiles)
+                    {
+                        ConditionFiles.Remove(file);
+                    }
+                    condition.ConditionFiles.Clear();
+                    ConditionsList.Remove(condition);
+                }
+            });
         }
         #endregion 検索条件の操作
-
-        #region 拡張子の条件に合致するファイルの管理
-        /// <summary>
-        /// 拡張子の条件に合致するファイルを追加する
-        /// </summary>
-        /// <param name="conditionString"></param>
-        private void ExtentionFilesAdd(string conditionString)
-        {
-            // 条件に合致するファイルを検索する
-            var addConditionFiles = AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), conditionString, StringComparison.OrdinalIgnoreCase));
-
-            // 条件に合致したファイルを追加する
-            foreach (var item in addConditionFiles) { ConditionFiles.Add(item); }
-        }
-
-        /// <summary>
-        /// 拡張子の条件から外れたファイルを削除する
-        /// </summary>
-        /// <param name="conditionString"></param>
-        private void ExtentionFilesRemove(string conditionString)
-        {
-            // 条件に合致するファイルを検索する
-            var removeConditionFiles = ConditionFiles.Where(c => Path.GetExtension(c.FileFullPath) == conditionString).ToList();
-
-            // 条件に合致したファイルを削除する
-            ConditionFiles.RemoveWhere(i => removeConditionFiles.Contains(i));
-        }
-        #endregion 検索条件に合致するファイルの管理
     }
 }

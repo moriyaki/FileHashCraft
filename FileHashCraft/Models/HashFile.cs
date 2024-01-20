@@ -77,5 +77,21 @@ namespace FileHashCraft.Models
             _SHA512 = hashSHA512;
         }
         #endregion 設定処理
+
+        #region ハッシュコードの算出
+        public override bool Equals(object? obj)
+        {
+            if (obj is HashFile hashFile)
+            {
+                return string.Equals(this.FileFullPath, hashFile.FileFullPath, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return StringComparer.OrdinalIgnoreCase.GetHashCode(this.FileFullPath);
+        }
+        #endregion ハッシュコードの算出
     }
 }

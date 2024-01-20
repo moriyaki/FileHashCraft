@@ -133,6 +133,14 @@
     <value>Hash Management</value>
     <comment>Button/PageExplorer</comment>
   </data>
+  <data name="ButtonNormalSettings" xml:space="preserve">
+    <value>Return to standard settings</value>
+    <comment>Button/PageSelectTarget</comment>
+  </data>
+  <data name="ButtonTargetFilter" xml:space="preserve">
+    <value>Hash acquisition target</value>
+    <comment>Button/PageSelectTarget</comment>
+  </data>
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
     <comment>Button/Menu</comment>
@@ -171,9 +179,11 @@
   </data>
   <data name="LabelCountFilteredGetHash" xml:space="preserve">
     <value>Number of files to get hashes from filtered files</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelCountRequireGetHash" xml:space="preserve">
     <value>Number of files requiring hash acquisition :</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelCurrentDirectory" xml:space="preserve">
     <value>Current Directory</value>
@@ -207,9 +217,6 @@
     <value>Algorithm for file hash calculation</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelFilterSetting" xml:space="preserve">
-    <value>Set search criteria (separated by Enter)</value>
-  </data>
   <data name="LabelFinished" xml:space="preserve">
     <value>Finished.</value>
     <comment>Label/PageSelectTarget</comment>
@@ -225,6 +232,10 @@
   <data name="LabelMovies" xml:space="preserve">
     <value>Movie Files</value>
     <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelNoHaveExtentions" xml:space="preserve">
+    <value>No Have Extentions</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelOtherFiles" xml:space="preserve">
     <value>Ohter Files</value>
@@ -279,7 +290,15 @@
     <comment>MenuItem</comment>
   </data>
   <data name="NoHaveExtentions" xml:space="preserve">
-    <value>No Have Extentions</value>
+    <value>No Have Extention </value>
     <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="TabContentStarndard" xml:space="preserve">
+    <value>Standard Settings</value>
+    <comment>TabContent/PageSelectTarget</comment>
+  </data>
+  <data name="TitleTargetFilterWindow" xml:space="preserve">
+    <value>Filter Result</value>
+    <comment>TargetFilterWindow</comment>
   </data>
 </root>

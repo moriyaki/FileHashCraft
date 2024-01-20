@@ -97,6 +97,24 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Return to standard settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonNormalSettings {
+            get {
+                return ResourceManager.GetString("ButtonNormalSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Hash acquisition target に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonTargetFilter {
+            get {
+                return ResourceManager.GetString("ButtonTargetFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Exit に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string Exit {
@@ -268,15 +286,6 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Set search criteria (separated by Enter) に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelFilterSetting {
-            get {
-                return ResourceManager.GetString("LabelFilterSetting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Finished. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelFinished {
@@ -309,6 +318,15 @@ namespace FileHashCraft.Properties {
         public static string LabelMovies {
             get {
                 return ResourceManager.GetString("LabelMovies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No Have Extentions に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelNoHaveExtentions {
+            get {
+                return ResourceManager.GetString("LabelNoHaveExtentions", resourceCulture);
             }
         }
         
@@ -430,11 +448,29 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   No Have Extentions に類似しているローカライズされた文字列を検索します。
+        ///   No Have Extention  に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string NoHaveExtentions {
             get {
                 return ResourceManager.GetString("NoHaveExtentions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Standard Settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TabContentStarndard {
+            get {
+                return ResourceManager.GetString("TabContentStarndard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Filter Result に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TitleTargetFilterWindow {
+            get {
+                return ResourceManager.GetString("TitleTargetFilterWindow", resourceCulture);
             }
         }
     }

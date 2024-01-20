@@ -133,6 +133,14 @@
     <value>ハッシュ管理</value>
     <comment>Button/PageExplorer</comment>
   </data>
+  <data name="ButtonNormalSettings" xml:space="preserve">
+    <value>標準設定に戻る</value>
+    <comment>Button/PageSelectTarget</comment>
+  </data>
+  <data name="ButtonTargetFilter" xml:space="preserve">
+    <value>ハッシュ取得対象</value>
+    <comment>Button/PageSelectTarget</comment>
+  </data>
   <data name="Exit" xml:space="preserve">
     <value>終了</value>
     <comment>Button</comment>
@@ -167,12 +175,15 @@
   </data>
   <data name="LabelCountAlreadyGetHash" xml:space="preserve">
     <value>ハッシュを既に取得しているファイル数 :</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelCountFilteredGetHash" xml:space="preserve">
     <value>フィルタ済みのハッシュ取得が必要なファイル数 :</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelCountRequireGetHash" xml:space="preserve">
     <value>ハッシュ取得が必要なファイル数 :</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelCurrentDirectory" xml:space="preserve">
     <value>カレントディレクトリ</value>
@@ -206,9 +217,6 @@
     <value>ファイルハッシュ計算のアルゴリズム</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelFilterSetting" xml:space="preserve">
-    <value>検索条件の設定(改行で区切ってください)</value>
-  </data>
   <data name="LabelFinished" xml:space="preserve">
     <value>完了</value>
     <comment>Label/PageSelectTarget</comment>
@@ -224,6 +232,10 @@
   <data name="LabelMovies" xml:space="preserve">
     <value>動画ファイル</value>
     <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelNoHaveExtentions" xml:space="preserve">
+    <value>拡張子なし</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelOtherFiles" xml:space="preserve">
     <value>その他のファイル</value>
@@ -280,5 +292,13 @@
   <data name="NoHaveExtentions" xml:space="preserve">
     <value>拡張子なし</value>
     <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="TabContentStarndard" xml:space="preserve">
+    <value>標準設定</value>
+    <comment>TabContent/PageSelectTarget</comment>
+  </data>
+  <data name="TitleTargetFilterWindow" xml:space="preserve">
+    <value>フィルタ結果</value>
+    <comment>TargetFilterWindow</comment>
   </data>
 </root>

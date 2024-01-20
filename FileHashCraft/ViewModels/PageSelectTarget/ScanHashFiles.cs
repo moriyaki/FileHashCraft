@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System.Diagnostics;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
 using FileHashCraft.ViewModels.Modules;
 
@@ -6,8 +7,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     public interface IScanHashFiles
     {
-        public Task ScanFiles(CancellationToken cancellationToken);
-        public void ScanExtention();
+        public Task ScanFiles(CancellationToken cancellation);
+        public void ScanExtention(CancellationToken cancellationToken);
     }
 
     public class ScanHashFiles : IScanHashFiles
@@ -32,24 +33,36 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _PageSelectTargetViewModel = pageSelectTargetViewModel;
             _CheckedDirectoryManager = checkedDirectoryManager;
         }
+
+        private readonly List<string> _oldDirectoriesList = [];
         #endregion コンストラクタと初期化
 
         /// <summary>
-        /// スキャンするディレクトリを追加します。
+        /// スキャンするファイルを検出します。
         /// </summary>
-        public async Task ScanFiles(CancellationToken cancellationToken)
+        public async Task ScanFiles(CancellationToken cancellation)
         {
             // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
+            _oldDirectoriesList.Clear();
+            _oldDirectoriesList.AddRange(_directoriesList);
             _directoriesList.Clear();
             try
             {
+                /*
+                var sw = new Stopwatch();
+                sw.Start();
+                */
                 // ディレクトリのスキャン
                 _PageSelectTargetViewModel.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
-                await DirectoriesScan(cancellationToken);
+                await DirectoriesScan(cancellation);
 
                 // ファイルのスキャン
                 _PageSelectTargetViewModel.ChangeHashScanStatus(FileScanStatus.FilesScanning);
-                await Task.Run(() => DirectoryFilesScan(cancellationToken), cancellationToken);
+                await Task.Run(() => DirectoryFilesScan(cancellation), cancellation);
+                /*
+                sw.Stop();
+                DebugManager.InfoWrite($"GetFileSecurity Version : {sw.ElapsedMilliseconds}ms.", true);
+                */
             }
             catch (OperationCanceledException)
             {
@@ -57,7 +70,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
 
             _PageSelectTargetViewModel.ClearExtentions();
-            ScanExtention();
+            ScanExtention(cancellation);
 
             // スキャン終了の表示に切り替える
             _PageSelectTargetViewModel.ChangeHashScanStatus(FileScanStatus.Finished);
@@ -67,16 +80,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュを取得するディレクトリのファイルをスキャンする
         /// </summary>
-        /// <param name="cancellationToken">キャンセリングトークン</param>
-        private void DirectoryFilesScan(CancellationToken cancellationToken)
+        /// <param name="cancellation">キャンセリングトークン</param>
+        private async Task DirectoryFilesScan(CancellationToken cancellation)
         {
             IExtentionHelper _ExtentionManager = Ioc.Default.GetService<IExtentionHelper>() ?? throw new InvalidOperationException($"{nameof(IExtentionHelper)} dependency not resolved.");
+            var semaphore = new SemaphoreSlim(5);
 
-            try
+            int fileCount = 0;
+            foreach (var directoryFullPath in _directoriesList)
             {
-                int fileCount = 0;
-                foreach (var directoryFullPath in _directoriesList)
+                try
                 {
+                    await semaphore.WaitAsync(cancellation);
                     // ファイルを保持する
                     fileCount = 0;
                     foreach (var fileFullPath in _FileManager.EnumerateFiles(directoryFullPath))
@@ -90,23 +105,27 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     // ここ、ファイル数
                     _PageSelectTargetViewModel.AddAllTargetFiles(fileCount);
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    if (cancellation.IsCancellationRequested) { return; }
                 }
+                finally { semaphore.Release(); }
             }
-            catch (OperationCanceledException)
+            var removedDirectory = _oldDirectoriesList.Except(_directoriesList).ToList();
+            foreach (var directoryFullPath in removedDirectory)
             {
-                return;
+                _SearchManager.RemoveDirectory(directoryFullPath);
             }
         }
 
         /// <summary>
         /// 拡張子によるファイルフィルタの設定
         /// </summary>
-        public void ScanExtention()
+        /// <param name="cancellation">キャンセリングトークン</param>
+        public void ScanExtention(CancellationToken cancellation)
         {
-            foreach (var extention in _ExtentionManager.GetExtensions())
+            foreach (var extention in _ExtentionManager.GetExtentions())
             {
                 _PageSelectTargetViewModel.AddExtentions(extention);
+                if (cancellation.IsCancellationRequested) { return; }
             }
             // 拡張子を集める処理
             _PageSelectTargetViewModel.AddFileTypes();
@@ -117,55 +136,63 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュを取得するディレクトリをスキャンする
         /// </summary>
-        private async Task DirectoriesScan(CancellationToken cancellationToken)
+        /// <param name="cancellation">キャンセリングトークン</param>
+        private async Task DirectoriesScan(CancellationToken cancellation)
         {
             // 各ドライブに対してタスクを回す
-            await DirectorySearch(_CheckedDirectoryManager.NestedDirectories, cancellationToken);
+            await DirectorySearch(_CheckedDirectoryManager.NestedDirectories, cancellation);
             _PageSelectTargetViewModel.AddScannedDirectoriesCount(_CheckedDirectoryManager.NonNestedDirectories.Count);
         }
 
         private readonly List<string> _directoriesList = [];
 
-        private async Task DirectorySearch(List<string> rootDirectories, CancellationToken cancellationToken)
+        /// <summary>
+        /// ディレクトリを全て検索します
+        /// </summary>
+        /// <param name="rootDirectories">検索するディレクトリのルート</param>
+        /// <param name="cancellation">キャンセリングトークン</param>
+        /// <returns></returns>
+        private async Task DirectorySearch(List<string> rootDirectories, CancellationToken cancellation)
         {
             var directoriesList = new List<string>();
 
-            try
+            await Task.Run(() =>
             {
-                await Task.Run(() =>
+                foreach (var rootDirectory in rootDirectories)
                 {
-                    foreach (var rootDirectory in rootDirectories)
-                    {
-                        _directoriesList.AddRange(GetDirectories(rootDirectory, cancellationToken));
-                    }
-                }, cancellationToken);
-            }
-            catch (OperationCanceledException) { return; }
+                    _directoriesList.AddRange(GetDirectories(rootDirectory, cancellation));
+                    if (cancellation.IsCancellationRequested) { return; }
+                }
+            }, cancellation);
         }
 
-        private List<string> GetDirectories(string rootDirectory, CancellationToken cancellationToken)
+        /// <summary>
+        /// ディレクトリ内部をを検索して取得します。
+        /// </summary>
+        /// <param name="rootDirectory">検索するディレクトリのルート</param>
+        /// <param name="cancellation">キャンセリングトークン</param>
+        /// <returns></returns>
+        private List<string> GetDirectories(string rootDirectory, CancellationToken cancellation)
         {
             List<string> result = [];
             Stack<string> paths = [];
-            try
-            {
-                paths.Push(rootDirectory);
-                while (paths.Count > 0)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    string currentDirectory = paths.Pop();
-                    result.Add(currentDirectory);
-                    _PageSelectTargetViewModel.AddScannedDirectoriesCount();
 
-                    foreach (var subDir in _FileManager.EnumerateDirectories(currentDirectory))
-                    {
-                        paths.Push(subDir);
-                    }
+            paths.Push(rootDirectory);
+            while (paths.Count > 0)
+            {
+                string currentDirectory = paths.Pop();
+                result.Add(currentDirectory);
+                _PageSelectTargetViewModel.AddScannedDirectoriesCount();
+
+                foreach (var subDir in _FileManager.EnumerateDirectories(currentDirectory))
+                {
+                    paths.Push(subDir);
+                    if (cancellation.IsCancellationRequested) { return []; }
                 }
-                return result;
             }
-            catch (OperationCanceledException) { return []; }
+            return result;
         }
+
         #endregion ディレクトリを検索する
     }
 }

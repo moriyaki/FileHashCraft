@@ -264,7 +264,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             HashCalc = new DelegateCommand(() =>
             {
                 CreateCheckBoxManager();
-                WeakReferenceMessenger.Default.Send(new ToPageTargetFileSetting());
+                WeakReferenceMessenger.Default.Send(new ToPageSelectTarget());
             });
 
             // 設定画面ページに移動するコマンド

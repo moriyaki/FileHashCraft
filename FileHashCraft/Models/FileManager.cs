@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 
 namespace FileHashCraft.Models
 {
@@ -24,10 +25,9 @@ namespace FileHashCraft.Models
     }
     #endregion インターフェース
 
+    // TODO : Hidden と ReadOnly もスキャンできるようにする
     public class FileManager : IFileManager
     {
-        // TODO : Hidden と ReadOnly もスキャンできるようにする
-
         #region ディレクトリとファイルのスキャン関連
         /// <summary>
         /// 除外するファイルエントリかどうかを判断する。
@@ -70,23 +70,19 @@ namespace FileHashCraft.Models
         /// <summary>
         /// 指定したディレクトリ内のディレクトリをスキャンします。
         /// </summary>
-        /// <param name="fullPath">スキャンするディクレトリのフルパス</param>
+        /// <param name="directoryFullPath">スキャンするディクレトリのフルパス</param>
         /// <returns>ディレクトリ情報のコレクション</returns>
-        public IEnumerable<string> EnumerateDirectories(string fullPath)
+        public IEnumerable<string> EnumerateDirectories(string directoryFullPath)
         {
-            IEnumerable<string> directories;
+            IEnumerable<string> dirs;
             try
             {
-                directories = Directory.EnumerateDirectories(fullPath);
+                 dirs = Directory.EnumerateDirectories(directoryFullPath);
             }
-            catch (Exception ex)
-            {
-                if (ex is UnauthorizedAccessException || ex is IOException) { yield break; }
-                throw;
-            }
+            catch (UnauthorizedAccessException) { yield break; }
 
             // ディレクトリを取得します
-            foreach (var dir in directories)
+            foreach (var dir in dirs)
             {
                 // システムディレクトリの除外
                 if (IsIgnoreFileEntries(dir)) continue;
@@ -98,30 +94,19 @@ namespace FileHashCraft.Models
         /// <summary>
         /// 指定したディレクトリ内のファイルをスキャンします。
         /// </summary>
-        /// <param name="fullPath">スキャンするディクレトリのフルパス</param>
+        /// <param name="directoryFullPath">スキャンするディクレトリのフルパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public IEnumerable<string> EnumerateFiles(string fullPath)
+        public IEnumerable<string> EnumerateFiles(string directoryFullPath)
         {
             IEnumerable<string> files;
             try
             {
-                files = Directory.EnumerateFiles(fullPath);
+                files = Directory.EnumerateFiles(directoryFullPath);
             }
-            catch (Exception ex)
-            {
-                if (ex is UnauthorizedAccessException || ex is IOException) { yield break; }
-                throw;
-            }
+            catch (UnauthorizedAccessException) { yield break; }
 
             foreach (var file in files)
             {
-                try
-                {
-                    using FileStream fs = File.OpenRead(file);
-                }
-                catch (UnauthorizedAccessException) { continue; }
-                catch (IOException) { }
-
                 // システムディレクトリの除外
                 if (IsIgnoreFileEntries(file)) continue;
 
@@ -132,18 +117,18 @@ namespace FileHashCraft.Models
         /// <summary>
         /// 指定したディレクトリ内のディレクトリとファイルをスキャンします。
         /// </summary>
-        /// <param name="fullPath">スキャンするディレクトリのパス</param>
+        /// <param name="itemFullPath">スキャンするディレクトリのパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public IEnumerable<string> EnumerateFileSystemEntries(string fullPath)
+        public IEnumerable<string> EnumerateFileSystemEntries(string itemFullPath)
         {
             // ディレクトリをスキャンします
-            foreach (var dir in EnumerateDirectories(fullPath))
+            foreach (var dir in EnumerateDirectories(itemFullPath))
             {
                 yield return dir;
             }
 
             // ファイルもスキャンします
-            foreach (var file in EnumerateFiles(fullPath))
+            foreach (var file in EnumerateFiles(itemFullPath))
             {
                 yield return file;
             }

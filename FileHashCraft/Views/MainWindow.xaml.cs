@@ -25,14 +25,12 @@ namespace FileHashCraft
 
             MainFrame.Navigated += MainFrame_Navigated;
             MainFrame.Navigate(new PageExplorer());
-            //MainFrame.Navigate(new PageSettings());
-            //MainFrame.Navigate(new PageTargetFileSetting());
 
             // PageExplorer へ移動のメッセージ受信したので移動
             WeakReferenceMessenger.Default.Register<ToPageExplorer>(this, (_, _) =>
                 MainFrame.Navigate(new PageExplorer()));
-            // PageTargetFileSetting へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToPageTargetFileSetting>(this, (_, _) =>
+            // PageSelectTarget へ移動のメッセージ受信したので移動
+            WeakReferenceMessenger.Default.Register<ToPageSelectTarget>(this, (_, _) =>
                 MainFrame.Navigate(new PageSelectTarget()));
             // PageHashCalcing へ移動のメッセージ受信したので移動
             WeakReferenceMessenger.Default.Register<ToPageHashCalcing>(this, (_, _) =>
@@ -52,7 +50,7 @@ namespace FileHashCraft
                         MainFrame.Navigate(new PageExplorer());
 
                         break;
-                    case ReturnPageEnum.PageTargetFileSelect:
+                    case ReturnPageEnum.PageTargetSelect:
                         MainFrame.Navigate(new PageSelectTarget());
                         break;
                     default:

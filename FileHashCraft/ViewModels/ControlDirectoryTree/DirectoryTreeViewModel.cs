@@ -221,6 +221,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             get => _HasChildren;
             set
             {
+                if (!value)
+                {
+                    Children.Clear();
+                    return;
+                }
                 if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
                 {
                     Children.Add(new DirectoryTreeViewModel() { Name = "【dummy】" });
@@ -231,12 +236,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// このディレクトリの子ディレクトリのコレクション
         /// </summary>
-        private ObservableCollection<DirectoryTreeViewModel> _Children = [];
-        public ObservableCollection<DirectoryTreeViewModel> Children
-        {
-            get => _Children;
-            set => SetProperty(ref _Children, value);
-        }
+        public ObservableCollection<DirectoryTreeViewModel> Children { get; set; } = [];
 
         /// <summary>
         /// チェックボックスの表示状態の設定
@@ -306,7 +306,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 if (_IsSelected != value)
                 {
                     SetProperty(ref _IsSelected, value);
-                    if (value)
+                    if (value && HasChildren)
                     {
                         _ControDirectoryTreeViewlViewModel.CurrentFullPath = this.FullPath;
                         KickChild();
@@ -324,6 +324,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             get => _IsExpanded;
             set
             {
+                if (!HasChildren)
+                {
+                    Children.Clear();
+                    return;
+                }
                 if (SetProperty(ref _IsExpanded, value) && IsReady)
                 {
                     if (value && !_IsKicked) { KickChild(); }

@@ -12,11 +12,11 @@
     <Grid PreviewMouseWheel="OnMouseWheel">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -25,10 +25,10 @@
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Grid.RowSpan="5" Background="White"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="6" Grid.RowSpan="4" Background="White"/>
 
         <!-- Menu -->
-        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="4">
+        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="6">
             <MenuItem Command="{Binding SettingsOpen}"
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
             <MenuItem Command="{Binding DebugOpen}"
@@ -36,11 +36,15 @@
         </Menu>
 
         <!-- Buttons -->
-        <Button Grid.Row="3" Grid.Column="3" Margin="3"
+        <Button Grid.Row="2" Grid.Column="2" Margin="3"
+                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonTargetFilter, Mode=OneWay}"
+                Command="{Binding TargetFilterWindowOpen}"/>
+        <Button Grid.Row="2" Grid.Column="4" Margin="3"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
                 Command="{Binding ToPageExplorer}"/>
-        <Button Grid.Row="3" Grid.Column="4" Margin="3"
+        <Button Grid.Row="2" Grid.Column="5" Margin="3"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
                 Command="{Binding ToPageHashCalcing}"/>
@@ -49,108 +53,120 @@
         <local:ControlDirectoryTreeView x:Name="HashTargetTreeView"
                                         Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Margin="3"/>
 
-        <GridSplitter
-			    Grid.Column="1"
-                Grid.RowSpan="9"
-			    Width="3"
-			    HorizontalAlignment="Stretch" 
-                DragDelta="GridSplitter_DragDelta"/>
+        <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Width="3"
+                        HorizontalAlignment="Stretch" 
+                        DragDelta="GridSplitter_DragDelta"/>
 
-        <!-- others -->
-        <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
+        <TabControl  Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4">
+            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}">
+                <!-- others -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            </Grid.ColumnDefinitions>
-                                            
-             <Grid.RowDefinitions>
-                <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="auto" MinHeight="30"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            
-            <!-- ハッシュ取得中かのメッセージ -->
-            <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="4" Background="{Binding StatusColor}">
-                <TextBlock 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" MinHeight="30"/>
+                        <RowDefinition Height="Auto" MinHeight="30"/>
+                        <RowDefinition Height="Auto" MinHeight="30"/>
+                        <RowDefinition Height="Auto" MinHeight="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- ハッシュ取得中かのメッセージ -->
+                    <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="4" Background="{Binding StatusColor}">
+                        <TextBlock 
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Text="{Binding StatusMessage}"/>
+                    </Border>
+
+                    <!-- Hash Algorithm Select -->
+                    <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
                     FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Text="{Binding StatusMessage}"/>
-            </Border>
-            
-            <!-- Hash Algorithm Select -->
-            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
-               FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
+                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
 
-            <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
-                  FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                  ItemsSource="{Binding HashAlgorithms}"
-                  SelectedValue="{Binding SelectedHashAlgorithm}"
-                  SelectedValuePath="Algorithm"
-                  DisplayMemberPath="Name"/>
-     
-            <!-- 総ファイル数 -->
-            <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}"/>
-            
-            <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding CountAllTargetFilesGetHash}"/>
+                    <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        ItemsSource="{Binding HashAlgorithms}"
+                        SelectedValue="{Binding SelectedHashAlgorithm}"
+                        SelectedValuePath="Algorithm"
+                        DisplayMemberPath="Name"/>
 
-            <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
-            <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}"/>
+                    <!-- 総ファイル数 -->
+                    <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}"/>
 
-            <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                   Content="{Binding CountFilteredGetHash}" />
+                    <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding CountAllTargetFilesGetHash}"/>
 
-            <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.5*"/>
-                    <ColumnDefinition Width="0.5*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                
-                <!-- 拡張子種別検索フィルタ -->
-                <Label Grid.Row="0" Grid.Column="0" Margin="3"
-                       FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                       Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtentionFilterSetting, Mode=OneWay}"/>
+                    <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
+                    <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}"/>
 
-                <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding ExtentionsGroupCollection}"
-                         Grid.Row="1" Grid.Column="0" Margin="3">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <CheckBox Content="{Binding ExtentionOrFileTypeView}" IsChecked="{Binding IsChecked, Mode=TwoWay}" 
-                                      FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding CountFilteredGetHash}" />
 
-                <!-- 拡張子検索フィルタ -->
-                <Label Grid.Row="0" Grid.Column="1" Margin="3"
-                       FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                       Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtentionFilterSetting, Mode=OneWay}"/>
+                    <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                <ListBox x:Name="checkBoxExtListBox" ItemsSource="{Binding ExtentionCollection}"
-                         Grid.Row="1" Grid.Column="1" Margin="3">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <CheckBox Content="{Binding ExtentionOrFileTypeView}" IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                                      FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-        </Grid>
+                        <!-- 拡張子種別検索フィルタ -->
+                        <Label Grid.Row="0" Grid.Column="0" Margin="3"
+                            FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtentionFilterSetting, Mode=OneWay}"/>
+
+                        <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding ExtentionsGroupCollection}"
+                                Grid.Row="1" Grid.Column="0" Margin="3">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                        <TextBlock VerticalAlignment="Center"
+                                                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                                                Text="{Binding ExtentionOrFileTypeView, Mode=OneWay}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <!-- 拡張子検索フィルタ -->
+                        <Label Grid.Row="0" Grid.Column="1" Margin="3"
+                            FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtentionFilterSetting, Mode=OneWay}"/>
+
+                        <ListBox x:Name="checkBoxExtListBox" ItemsSource="{Binding ExtentionCollection}"
+                                Grid.Row="1" Grid.Column="1" Margin="3">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                                        <TextBlock VerticalAlignment="Center"
+                                                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                                                Text="{Binding ExtentionOrFileTypeView, Mode=OneWay}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="ワイルドカード検索">
+            </TabItem>
+            <TabItem Header="正規表現検索">
+            </TabItem>
+        </TabControl>
     </Grid>
 </Page>
