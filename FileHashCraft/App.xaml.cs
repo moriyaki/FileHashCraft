@@ -115,7 +115,6 @@ namespace FileHashCraft
             services.AddSingleton<ICheckedDirectoryManager, DirectoryTreeCheckedDirectoryManager>();
 
             services.AddSingleton<IPageSelectTargetViewModel, PageSelectTargetViewModel>();
-            services.AddSingleton<ITargetFilterWindowViewModel, TargetFilterWindowViewModel>();
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
 
             // Model

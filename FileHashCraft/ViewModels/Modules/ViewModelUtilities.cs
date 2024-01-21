@@ -67,7 +67,7 @@ namespace FileHashCraft.ViewModels.Modules
     }
 
     /// <summary>
-    /// ツリーびゅ幅の変更メッセージ
+    /// ツリービュー幅の変更メッセージ
     /// </summary>
     public class TreeWidthChanged
     {
@@ -78,6 +78,21 @@ namespace FileHashCraft.ViewModels.Modules
         public TreeWidthChanged(double treeWidth)
         {
             TreeWidth = treeWidth;
+        }
+    }
+
+    /// <summary>
+    /// リストボックス幅の変更メッセージ
+    /// </summary>
+    public class ListWidthChanged
+    {
+        public double ListWidth { get; } = 300;
+
+        public ListWidthChanged() { throw new NotImplementedException(); }
+
+        public ListWidthChanged(double listWidth)
+        {
+            ListWidth = listWidth;
         }
     }
 

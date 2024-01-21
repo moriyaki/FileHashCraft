@@ -6,11 +6,15 @@
       xmlns:local="clr-namespace:FileHashCraft.Views"
       xmlns:rs="clr-namespace:FileHashCraft.ViewModels.Modules"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="1000"
       Title="PageTargetFileSetting">
 
     <Grid PreviewMouseWheel="OnMouseWheel">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -19,16 +23,37 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="6" Grid.RowSpan="4" Background="White"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="White"/>
+
+        <!-- TreeView -->
+        <local:ControlDirectoryTreeView x:Name="HashTargetTreeView"
+                                        Grid.Row="1" Grid.Column="0" Grid.RowSpan="6" Margin="3"/>
+
+        <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="6" Width="3"
+                      HorizontalAlignment="Stretch" 
+                      DragDelta="GridSplitter_TreeDragDelta"/>
+
+        <ListBox x:Name="FileListBox" 
+                 Grid.Row="1" Grid.Column="2" Grid.RowSpan="6" Margin="3" HorizontalAlignment="Left"
+                 Width="{Binding ListWidth,Mode=TwoWay}">
+
+        </ListBox>
+
+        <GridSplitter Grid.Row="1" Grid.Column="3" Grid.RowSpan="6" Width="3"
+                      HorizontalAlignment="Left"
+                      DragDelta="GridSplitter_ListDragDelta"/>
 
         <!-- Menu -->
-        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="6">
+        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="9">
             <MenuItem Command="{Binding SettingsOpen}"
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
             <MenuItem Command="{Binding DebugOpen}"
@@ -36,28 +61,54 @@
         </Menu>
 
         <!-- Buttons -->
-        <Button Grid.Row="2" Grid.Column="2" Margin="3"
-                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonTargetFilter, Mode=OneWay}"
-                Command="{Binding TargetFilterWindowOpen}"/>
-        <Button Grid.Row="2" Grid.Column="4" Margin="3"
+        <Button Grid.Row="6" Grid.Column="7" Margin="3"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
                 Command="{Binding ToPageExplorer}"/>
-        <Button Grid.Row="2" Grid.Column="5" Margin="3"
+        <Button Grid.Row="6" Grid.Column="9" Margin="3"
                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
                 Command="{Binding ToPageHashCalcing}"/>
 
-        <!-- TreeView -->
-        <local:ControlDirectoryTreeView x:Name="HashTargetTreeView"
-                                        Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Margin="3"/>
+        <!-- ハッシュ取得中かのメッセージ -->
+        <Border Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Margin="3,3,3,3" Background="{Binding StatusColor}">
+            <TextBlock 
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Text="{Binding StatusMessage}"/>
+        </Border>
 
-        <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Width="3"
-                        HorizontalAlignment="Stretch" 
-                        DragDelta="GridSplitter_DragDelta"/>
+        <!-- Hash Algorithm Select -->
+        <Label Grid.Row="2" Grid.Column="4"  HorizontalAlignment="Right"
+                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}" Grid.RowSpan="2" Width="231"/>
 
-        <TabControl  Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="4">
+        <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="5" Margin="3"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        ItemsSource="{Binding HashAlgorithms}"
+                        SelectedValue="{Binding SelectedHashAlgorithm}"
+                        SelectedValuePath="Algorithm"
+                        DisplayMemberPath="Name"/>
+
+        <!-- 総ファイル数 -->
+        <Label Grid.Row="3" Grid.Column="4" HorizontalAlignment="Right"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}" Grid.RowSpan="2"/>
+
+        <Label Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="4" HorizontalAlignment="Left"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding CountAllTargetFilesGetHash}"/>
+
+        <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
+        <Label Grid.Row="4" Grid.Column="4" HorizontalAlignment="Right"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}" Grid.RowSpan="3"/>
+
+        <Label Grid.Row="4" Grid.Column="5" Grid.ColumnSpan="4" HorizontalAlignment="Left"
+                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                        Content="{Binding CountFilteredGetHash}"/>
+
+        <TabControl  Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5" Margin="3">
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}">
                 <!-- others -->
                 <Grid>
@@ -68,52 +119,10 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- ハッシュ取得中かのメッセージ -->
-                    <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="4" Background="{Binding StatusColor}">
-                        <TextBlock 
-                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                        VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Text="{Binding StatusMessage}"/>
-                    </Border>
-
-                    <!-- Hash Algorithm Select -->
-                    <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
-                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
-
-                    <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
-                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                        ItemsSource="{Binding HashAlgorithms}"
-                        SelectedValue="{Binding SelectedHashAlgorithm}"
-                        SelectedValuePath="Algorithm"
-                        DisplayMemberPath="Name"/>
-
-                    <!-- 総ファイル数 -->
-                    <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
-                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}"/>
-
-                    <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left"
-                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                        Content="{Binding CountAllTargetFilesGetHash}"/>
-
-                    <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
-                    <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
-                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}"/>
-
-                    <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left"
-                        FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                        Content="{Binding CountFilteredGetHash}" />
-
-                    <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.5*"/>
                             <ColumnDefinition Width="0.5*"/>
@@ -163,9 +172,74 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="ワイルドカード検索">
+            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentWildCard, Mode=OneWay}">
+                <!-- others -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" MinWidth="100"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 削除ボタン -->
+                    <Button Grid.Row="0" Grid.Column="2" Margin="3" x:Name="WildcardRemove" 
+                            Command="{Binding RemoveWildcard}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
+                    <!-- 追加ボタン -->
+                    <Button Grid.Row="2" Grid.Column="2" Margin="3" x:Name="WildcardAdd"
+                            Command="{Binding AddWildcard}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
+                    <!-- ワイルドカード検索条件リストボックス -->
+                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="WildCardSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
+                    <!-- ワイルドカード検索条件ラベル -->
+                    <Label Grid.Row="2" Grid.Column="0" x:Name="LabelWildcardSearch"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildCardSearchCriteria, Mode=OneWay}"/>
+                    <!-- ワイルドカード検索条件 -->
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="WildcardCritieria"
+                             Text="{Binding WildcardCritieria,Mode=TwoWay}"/>
+                </Grid>
             </TabItem>
-            <TabItem Header="正規表現検索">
+            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentRegularExpression, Mode=OneWay}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" MinWidth="100"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" MinHeight="40"/>
+                    </Grid.RowDefinitions>
+                    <!-- 削除ボタン -->
+                    <Button Grid.Row="0" Grid.Column="2" Margin="3" x:Name="RegularExpressionRemove"
+                            Command="{Binding RemoveRegularExpression}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
+                    <!-- 追加ボタン -->
+                    <Button Grid.Row="2" Grid.Column="2" Margin="3" x:Name="RegularExpressionAdd"
+                            Command="{Binding AddRegularExpression}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
+                    <!-- 正規表現検索条件リストボックス -->
+                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressionSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
+                    <!-- 正規表現検索条件ラベル -->
+                    <Label Grid.Row="2" Grid.Column="0" x:Name="LabelRegularExpressionSearch"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpressionCritieria, Mode=OneWay}"/>
+                    <!-- 正規表現検索条件 -->
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="RegularExpressionCritieria"
+                             Text="{Binding RegularExpressionCritieria,Mode=TwoWay}"/>
+                    <!-- 正規表現検索条件エラーラベル -->
+                    <Label Grid.Row="3" Grid.Column="0" x:Name="LabelRegularExpressionError"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpressionError, Mode=OneWay}"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" x:Name="RegularExpressionError" 
+                               Background="{Binding RegularExpressionErrorStatus}" Text="{Binding RegularExpressionErrorString}"/>
+
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

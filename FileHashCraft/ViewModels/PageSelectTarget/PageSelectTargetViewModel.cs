@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -57,6 +58,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 拡張子グループのチェックボックス状態が変更されたら、拡張子にも反映します。
         /// </summary>
         public void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
+        /// <summary>
+        /// リストボックスの幅
+        /// </summary>
+        public double ListWidth { get; set; }
     }
     #endregion インターフェース
 
@@ -86,6 +91,31 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
+            }
+        }
+
+        /// <summary>
+        /// ツリー横幅の設定
+        /// </summary>
+        public double TreeWidth
+        {
+            get => _MainWindowViewModel.TreeWidth;
+            set
+            {
+                _MainWindowViewModel.TreeWidth = value;
+                OnPropertyChanged(nameof(TreeWidth));
+            }
+        }
+        /// <summary>
+        /// リストボックスの幅を設定します
+        /// </summary>
+        public double ListWidth
+        {
+            get => _MainWindowViewModel.ListWidth;
+            set
+            {
+                _MainWindowViewModel.ListWidth = value;
+                OnPropertyChanged(nameof(ListWidth));
             }
         }
         /// <summary>
@@ -145,9 +175,22 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public DelegateCommand ToPageHashCalcing { get; set; }
 
         /// <summary>
-        /// 検索対象の一覧を閲覧する画面を開きます。
+        /// ワイルドカードの条件を追加します。
         /// </summary>
-        public DelegateCommand TargetFilterWindowOpen { get; set; }
+        public DelegateCommand AddWildcard { get; set; }
+        /// <summary>
+        /// ワイルドカードの条件を削除します。
+        /// </summary>
+        public DelegateCommand RemoveWildcard { get; set; }
+
+        /// <summary>
+        /// //正規表現の条件を追加します。
+        /// </summary>
+        public DelegateCommand AddRegularExpression { get; set; }
+        /// <summary>
+        /// 正規表現の条件を削除します。
+        /// </summary>
+        public DelegateCommand RemoveRegularExpression { get; set; }
         #endregion コマンド
 
         #region コンストラクタ
@@ -186,11 +229,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 var debugWindow = new Views.DebugWindow();
                 debugWindow.Show();
             });
-            TargetFilterWindowOpen = new DelegateCommand(() =>
-            {
-                var targetFilterWIndow = new Views.TargetFilterWindow();
-                targetFilterWIndow.Show();
-            });
             // カレントハッシュ計算アルゴリズムを保存
             SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
 
@@ -205,6 +243,27 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 () => WeakReferenceMessenger.Default.Send(new ToPageHashCalcing()),
                 () => CountFilteredGetHash > 0
             );
+            // 正規表現の条件を追加するコマンド
+            AddWildcard = new DelegateCommand(
+                () => MessageBox.Show("ワイルドカードの追加：未実装"));
+
+            // 正規表現の条件を削除するコマンド
+            RemoveWildcard = new DelegateCommand(
+                () => MessageBox.Show("ワイルドカードの削除：未実装"));
+
+            // 正規表現の条件を追加するコマンド
+            AddRegularExpression = new DelegateCommand(
+                () => MessageBox.Show("正規表現の追加：未実装"));
+
+            // 正規表現の条件を削除するコマンド
+            RemoveRegularExpression = new DelegateCommand(
+                () => MessageBox.Show("正規表現の削除：未実装"));
+
+            // メインウィンドウからのツリービュー幅変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, message) => TreeWidth = message.TreeWidth);
+
+            // メインウィンドウからのリストボックス幅変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<ListWidthChanged>(this, (_, message) => ListWidth = message.ListWidth);
 
             // メインウィンドウからのフォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) =>

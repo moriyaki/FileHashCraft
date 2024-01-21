@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ButtonAdd" xml:space="preserve">
+    <value>Add</value>
+    <comment>TabContent/PageSelectTarget</comment>
+  </data>
   <data name="ButtonCancel" xml:space="preserve">
     <value>Cancel</value>
     <comment>Button/PageSelectTarget</comment>
@@ -136,6 +140,10 @@
   <data name="ButtonNormalSettings" xml:space="preserve">
     <value>Return to standard settings</value>
     <comment>Button/PageSelectTarget</comment>
+  </data>
+  <data name="ButtonRemove" xml:space="preserve">
+    <value>Remove</value>
+    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonTargetFilter" xml:space="preserve">
     <value>Hash acquisition target</value>
@@ -249,6 +257,14 @@
     <value>Registration Files</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
+  <data name="LabelRegularExpressionCritieria" xml:space="preserve">
+    <value>Regular Expression Search Criteria</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelRegularExpressionError" xml:space="preserve">
+    <value>Regular Expression Search Error</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
   <data name="LabelSettings" xml:space="preserve">
     <value>During internal file writing or other processing of found files.</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
@@ -260,6 +276,10 @@
   <data name="LabelSourceCodes" xml:space="preserve">
     <value>Source Code Files</value>
     <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelWildCardSearchCriteria" xml:space="preserve">
+    <value>Wildcard Search Criteria</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelZeroSizeFileDelete" xml:space="preserve">
     <value>Whether to delete files of size 0 or not</value>
@@ -293,12 +313,20 @@
     <value>No Have Extention </value>
     <comment>Label/PageSelectTarget</comment>
   </data>
+  <data name="TabContentRegularExpression" xml:space="preserve">
+    <value>Regular Expression Settings</value>
+    <comment>TabContent/PageSelectTarget</comment>
+  </data>
   <data name="TabContentStarndard" xml:space="preserve">
     <value>Standard Settings</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
+  <data name="TabContentWildCard" xml:space="preserve">
+    <value>Wildcard Settings</value>
+    <comment>TabContent/PageSelectTarget</comment>
+  </data>
   <data name="TitleTargetFilterWindow" xml:space="preserve">
-    <value>Filter Result</value>
+    <value>Wildcard Filter Result</value>
     <comment>TargetFilterWindow</comment>
   </data>
 </root>

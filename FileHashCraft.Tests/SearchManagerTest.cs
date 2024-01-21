@@ -29,7 +29,7 @@ namespace FileHashCraft.Tests
             SetFilesDQ();
             sm.AddCondition(SearchConditionType.Extention, ".bin");
 
-            Assert.Equal(2, sm.ConditionFiles.Count);
+            Assert.Equal(2, sm.AllConditionFiles.Count);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace FileHashCraft.Tests
             sm.AddCondition(SearchConditionType.Extention, ".iso");
             sm.RemoveCondition(SearchConditionType.Extention, ".bin");
 
-            Assert.Single(sm.ConditionFiles);
+            Assert.Single(sm.AllConditionFiles);
         }
     }
 }

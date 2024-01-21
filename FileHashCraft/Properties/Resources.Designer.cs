@@ -61,6 +61,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Add に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonAdd {
+            get {
+                return ResourceManager.GetString("ButtonAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Cancel に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ButtonCancel {
@@ -102,6 +111,15 @@ namespace FileHashCraft.Properties {
         public static string ButtonNormalSettings {
             get {
                 return ResourceManager.GetString("ButtonNormalSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Remove に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonRemove {
+            get {
+                return ResourceManager.GetString("ButtonRemove", resourceCulture);
             }
         }
         
@@ -358,6 +376,24 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Regular Expression Search Criteria に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegularExpressionCritieria {
+            get {
+                return ResourceManager.GetString("LabelRegularExpressionCritieria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Regular Expression Search Error に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegularExpressionError {
+            get {
+                return ResourceManager.GetString("LabelRegularExpressionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   During internal file writing or other processing of found files. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelSettings {
@@ -381,6 +417,15 @@ namespace FileHashCraft.Properties {
         public static string LabelSourceCodes {
             get {
                 return ResourceManager.GetString("LabelSourceCodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Wildcard Search Criteria に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelWildCardSearchCriteria {
+            get {
+                return ResourceManager.GetString("LabelWildCardSearchCriteria", resourceCulture);
             }
         }
         
@@ -457,6 +502,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Regular Expression Settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TabContentRegularExpression {
+            get {
+                return ResourceManager.GetString("TabContentRegularExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Standard Settings に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TabContentStarndard {
@@ -466,7 +520,16 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Filter Result に類似しているローカライズされた文字列を検索します。
+        ///   Wildcard Settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TabContentWildCard {
+            get {
+                return ResourceManager.GetString("TabContentWildCard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Wildcard Filter Result に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TitleTargetFilterWindow {
             get {

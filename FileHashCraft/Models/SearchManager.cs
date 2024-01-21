@@ -14,11 +14,11 @@ namespace FileHashCraft.Models
         /// <summary>
         /// 検索条件を保管するリスト
         /// </summary>
-        public List<Condition> ConditionsList { get; }
+        public List<SearchCondition> ConditionsList { get; }
         /// <summary>
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
-        public HashSet<HashFile> ConditionFiles { get; }
+        public HashSet<HashFile> AllConditionFiles { get; }
         /// <summary>
         /// 全管理対象ファイルディクショナリに追加します。
         /// </summary>
@@ -52,11 +52,11 @@ namespace FileHashCraft.Models
         /// <summary>
         /// 検索条件を保管するリスト
         /// </summary>
-        public List<Condition> ConditionsList { get; } = [];
+        public List<SearchCondition> ConditionsList { get; } = [];
         /// <summary>
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
-        public HashSet<HashFile> ConditionFiles { get; } = [];
+        public HashSet<HashFile> AllConditionFiles { get; } = [];
         #endregion 内部データ
 
         #region ファイルの追加とディレクトリの削除
@@ -110,14 +110,18 @@ namespace FileHashCraft.Models
         {
             await Task.Run(() =>
             {
-                var condition = new Condition();
-                if (!condition.SetCondition(type, contidionString)) { return; }
+                var condition = new SearchCondition();
                 lock (_lock)
                 {
+                    // 検索条件が正当であれば追加する
+                    if (!condition.SetCondition(type, contidionString)) { return; }
                     ConditionsList.Add(condition);
+
                     foreach (var file in condition.ConditionFiles)
                     {
-                        ConditionFiles.Add(file);
+                        // 条件一致カウントを増やす、ハッシュセットに存在しなければ追加
+                        file.ConditionCount++;
+                        AllConditionFiles.Add(file);
                     }
                 }
             });
@@ -138,9 +142,13 @@ namespace FileHashCraft.Models
                 {
                     foreach (var file in condition.ConditionFiles)
                     {
-                        ConditionFiles.Remove(file);
+                        // 条件一致カウントを減らす、条件一致でなくなったなら削除
+                        file.ConditionCount--;
+                        if (file.ConditionCount == 0)
+                        {
+                            AllConditionFiles.Remove(file);
+                        }
                     }
-                    condition.ConditionFiles.Clear();
                     ConditionsList.Remove(condition);
                 }
             });

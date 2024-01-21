@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Diagnostics;
+using System.Windows.Controls;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.ViewModels;
@@ -41,16 +42,24 @@ namespace FileHashCraft.Views
             }
         }
         /// <summary>
-        /// スプリッタが移動された時、TreeViewの横幅を設定する
+        /// ツリービューのスプリッタが移動された時、TreeViewの横幅を設定する
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
-        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        private void GridSplitter_TreeDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            var explorerTree = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>();
-            if (explorerTree == null) { throw new NullReferenceException(nameof(explorerTree)); }
-
+            var explorerTree = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlViewModel));
             explorerTree.TreeWidth = HashTargetTreeView.ActualWidth;
+        }
+        /// <summary>
+        /// リストボックスのスプリッタが移動された時、ListBoxの横幅を設定する
+        /// </summary>
+        /// <param name="sender">object</param>
+        /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
+        private void GridSplitter_ListDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+            var _PageSelectTargetViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new NullReferenceException(nameof(IPageSelectTargetViewModel));
+            _PageSelectTargetViewModel.ListWidth = FileListBox.ActualWidth + e.HorizontalChange;
         }
     }
 }

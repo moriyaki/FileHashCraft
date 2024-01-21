@@ -344,7 +344,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public void ExtentionCountChanged()
         {
             App.Current?.Dispatcher?.Invoke(() =>
-                CountFilteredGetHash = _SearchManager.ConditionFiles.Count);
+                CountFilteredGetHash = _SearchManager.AllConditionFiles.Count);
         }
         /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。

@@ -20,7 +20,7 @@ namespace FileHashCraft.Models
     /// <summary>
     /// 検索条件を保持するクラス
     /// </summary>
-    public class Condition
+    public class SearchCondition
     {
         #region プロパティ
         private SearchConditionType _Type = SearchConditionType.None;
@@ -31,7 +31,7 @@ namespace FileHashCraft.Models
         #endregion プロパティ
 
         private readonly ISearchManager _SearchManager;
-        public Condition()
+        public SearchCondition()
         {
             _SearchManager = Ioc.Default.GetService<ISearchManager>() ?? throw new NullReferenceException(nameof(ISearchManager)) ;
         }
@@ -73,7 +73,11 @@ namespace FileHashCraft.Models
             switch (type)
             {
                 case SearchConditionType.Extention:
-                    ConditionFiles.UnionWith(_SearchManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), conditionString, StringComparison.OrdinalIgnoreCase)));
+                    foreach (var extentionFile in _SearchManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), conditionString, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        extentionFile.ConditionCount++;
+                        ConditionFiles.Add(extentionFile);
+                    }
                     break;
                 case SearchConditionType.WildCard:
                     break;
