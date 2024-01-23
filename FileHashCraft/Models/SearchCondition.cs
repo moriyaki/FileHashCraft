@@ -27,9 +27,14 @@ namespace FileHashCraft.Models
     public class SearchCondition
     {
         #region プロパティ
+        /// <summary>
+        /// 検索条件の種類
+        /// </summary>
         public SearchConditionType Type { get; } = SearchConditionType.None;
+        /// <summary>
+        /// 検索条件文字列
+        /// </summary>
         public string ConditionString { get; private set; } = string.Empty;
-        //public HashSet<HashFile> ConditionFiles { get; set; } = [];
         #endregion プロパティ
 
         public SearchCondition()

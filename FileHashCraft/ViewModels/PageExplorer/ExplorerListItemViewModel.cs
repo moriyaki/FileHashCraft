@@ -26,7 +26,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
-        private readonly IPageExplorerViewModel _PageExplorerViewModel;
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
@@ -35,7 +34,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public ExplorerListItemViewModel()
         {
-            _PageExplorerViewModel = Ioc.Default.GetService<IPageExplorerViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageExplorerViewModel)} dependency not resolved.");
             _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
 
             // メインウィンドウからのフォント変更メッセージ受信

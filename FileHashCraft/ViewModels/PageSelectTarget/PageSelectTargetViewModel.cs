@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
@@ -68,12 +69,69 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// リストボックスの幅
         /// </summary>
         public double ListWidth { get; set; }
+        /// <summary>
+        /// ハッシュ取得対象のファイルリストアイテムの一覧です。
+        /// </summary>
+        public ObservableCollection<HashListFileItems> HashFileListItems { get; }
     }
     #endregion インターフェース
 
     public partial class PageSelectTargetViewModel : ObservableObject, IPageSelectTargetViewModel
     {
         #region バインディング
+        /// <summary>
+        /// ファイルスキャン状況
+        /// </summary>
+        private FileScanStatus _Status = FileScanStatus.None;
+        public FileScanStatus Status
+        {
+            get => _Status;
+            set
+            {
+                _Status = value;
+                switch (value)
+                {
+                    case FileScanStatus.None:
+                        StatusColor = Brushes.Pink;
+                        break;
+                    case FileScanStatus.DirectoriesScanning:
+                        StatusColor = Brushes.Pink;
+                        StatusMessage = $"{Resources.LabelDirectoryScanning} {CountScannedDirectories}";
+                        break;
+                    case FileScanStatus.FilesScanning:
+                        StatusColor = Brushes.Yellow;
+                        StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
+                        break;
+                    case FileScanStatus.Finished:
+                        StatusColor = Brushes.LightGreen;
+                        StatusMessage = Resources.LabelFinished;
+                        break;
+                    default: // 異常
+                        StatusColor = Brushes.Red;
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// ファイルスキャン状況に合わせた背景色
+        /// </summary>
+        private Brush _StatusColor = Brushes.LightGreen;
+        public Brush StatusColor
+        {
+            get => _StatusColor;
+            set => SetProperty(ref _StatusColor, value);
+        }
+
+        /// <summary>
+        /// ファイルスキャン状況に合わせた文字列
+        /// </summary>
+        private string _StatusMessage = string.Empty;
+        public string StatusMessage
+        {
+            get => _StatusMessage;
+            set => SetProperty(ref _StatusMessage, value);
+        }
         /// <summary>
         /// フォントの設定
         /// </summary>
@@ -157,80 +215,85 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _FilterTextBox, value);
             }
         }
+
+        /// <summary>
+        /// ハッシュ取得対象のファイルリストアイテムの一覧です。
+        /// </summary>
+        public ObservableCollection<HashListFileItems> HashFileListItems { get; set; } = [];
         #endregion バインディング
 
         #region コマンド
         /// <summary>
         /// 設定画面を開きます。
         /// </summary>
-        public DelegateCommand SettingsOpen { get; set; }
+        public RelayCommand SettingsOpen { get; set; }
 
         /// <summary>
         /// デバッグウィンドウを開きます。
         /// </summary>
-        public DelegateCommand DebugOpen { get; set; }
+        public RelayCommand DebugOpen { get; set; }
 
         /// <summary>
         /// エクスプローラー画面に戻ります。
         /// </summary>
-        public DelegateCommand ToPageExplorer { get; set; }
+        public RelayCommand ToPageExplorer { get; set; }
 
         /// <summary>
         /// ハッシュ計算画面に移動します。
         /// </summary>
-        public DelegateCommand ToPageHashCalcing { get; set; }
+        public RelayCommand ToPageHashCalcing { get; set; }
 
         /// <summary>
         /// ワイルドカードの条件を追加します。
         /// </summary>
-        public DelegateCommand AddWildcard { get; set; }
+        public RelayCommand AddWildcard { get; set; }
         /// <summary>
         /// ワイルドカードの条件を削除します。
         /// </summary>
-        public DelegateCommand RemoveWildcard { get; set; }
+        public RelayCommand RemoveWildcard { get; set; }
 
         /// <summary>
         /// //正規表現の条件を追加します。
         /// </summary>
-        public DelegateCommand AddRegularExpression { get; set; }
+        public RelayCommand AddRegularExpression { get; set; }
         /// <summary>
         /// 正規表現の条件を削除します。
         /// </summary>
-        public DelegateCommand RemoveRegularExpression { get; set; }
+        public RelayCommand RemoveRegularExpression { get; set; }
+
+        /// <summary>
+        /// ファイル種類のチェックボックスが選択された時の処理をします
+        /// </summary>
+        public RelayCommand<object> ExtentionGroupCheckBoxClickedCommand { get; set; }
+        /// <summary>
+        /// ファイル種類のチェックボックスが選択された時の処理をします
+        /// </summary>
+        public RelayCommand<object> ExtentionCheckBoxClickedCommand { get; set; }
         #endregion コマンド
 
         #region コンストラクタ
-        private readonly IExtentionHelper _ExtentionManager;
-        private readonly ISearchManager _SearchManager;
-        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
+        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         private bool IsExecuting = false;
 
         public PageSelectTargetViewModel(
-            IExtentionHelper extentionManager,
-            ISearchManager searchManager,
-            IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             ICheckedDirectoryManager checkedDirectoryManager,
-            ISpecialFolderAndRootDrives specialFolderAndRootDrives,
+            IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             IMainWindowViewModel mainWindowViewModel)
         {
-            _ExtentionManager = extentionManager;
-            _SearchManager = searchManager;
             _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
             _CheckedDirectoryManager = checkedDirectoryManager;
-            _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
             _MainWindowViewModel = mainWindowViewModel;
 
             // 設定画面ページに移動するコマンド
-            SettingsOpen = new DelegateCommand(() =>
+            SettingsOpen = new RelayCommand(() =>
             {
                 IsExecuting = true;
                 WeakReferenceMessenger.Default.Send(new ToPageSetting(ReturnPageEnum.PageTargetSelect));
             });
             // デバッグウィンドウを開くコマンド
-            DebugOpen = new DelegateCommand(() =>
+            DebugOpen = new RelayCommand(() =>
             {
                 var debugWindow = new Views.DebugWindow();
                 debugWindow.Show();
@@ -239,43 +302,59 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
 
             // エクスプローラー風画面に移動するコマンド
-            ToPageExplorer = new DelegateCommand(() =>
+            ToPageExplorer = new RelayCommand(() =>
             {
                 CTS?.Cancel();
                 WeakReferenceMessenger.Default.Send(new ToPageExplorer());
             });
             // ハッシュ計算画面に移動するコマンド
-            ToPageHashCalcing = new DelegateCommand(
+            ToPageHashCalcing = new RelayCommand(
                 () => WeakReferenceMessenger.Default.Send(new ToPageHashCalcing()),
                 () => CountFilteredGetHash > 0
             );
             // 正規表現の条件を追加するコマンド
-            AddWildcard = new DelegateCommand(
+            AddWildcard = new RelayCommand(
                 () => MessageBox.Show("ワイルドカードの追加：未実装"));
 
             // 正規表現の条件を削除するコマンド
-            RemoveWildcard = new DelegateCommand(
+            RemoveWildcard = new RelayCommand(
                 () => MessageBox.Show("ワイルドカードの削除：未実装"));
 
             // 正規表現の条件を追加するコマンド
-            AddRegularExpression = new DelegateCommand(
+            AddRegularExpression = new RelayCommand(
                 () => MessageBox.Show("正規表現の追加：未実装"));
 
             // 正規表現の条件を削除するコマンド
-            RemoveRegularExpression = new DelegateCommand(
+            RemoveRegularExpression = new RelayCommand(
                 () => MessageBox.Show("正規表現の削除：未実装"));
 
+            ExtentionGroupCheckBoxClickedCommand = new RelayCommand<object>((parameter) =>
+            {
+                if (parameter is ExtentionGroupCheckBoxViewModel checkBoxViewModel)
+                {
+                    App.Current?.Dispatcher?.InvokeAsync(() =>
+                        checkBoxViewModel.IsChecked = !checkBoxViewModel.IsChecked);
+                }
+            });
+            ExtentionCheckBoxClickedCommand = new RelayCommand<object>((parameter) =>
+            {
+                if (parameter is ExtensionOrTypeCheckBoxBase checkBoxViewModel)
+                {
+                    App.Current?.Dispatcher?.InvokeAsync(() =>
+                        checkBoxViewModel.IsChecked = !checkBoxViewModel.IsChecked);
+                }
+            });
             // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsReadOnlyFileIncludeClicked = new DelegateCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
+            IsReadOnlyFileIncludeClicked = new RelayCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
 
             // 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsHiddenFileIncludeClicked = new DelegateCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
+            IsHiddenFileIncludeClicked = new RelayCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
 
             //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsZeroSizeFIleDeleteClicked = new DelegateCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
+            IsZeroSizeFIleDeleteClicked = new RelayCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
 
             // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsEmptyDirectoryDeleteClicked = new DelegateCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
+            IsEmptyDirectoryDeleteClicked = new RelayCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // メインウィンドウからのツリービュー幅変更メッセージ受信
             WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, message) => TreeWidth = message.TreeWidth);
@@ -290,7 +369,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // メインウィンドウからのフォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
                 FontSize = message.FontSize);
+
+            // カレントディレクトリが変更されたメッセージ受診
+            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) =>
+                ChangeCurrentPath(message.CurrentFullPath));
         }
+
         #endregion コンストラクタ
 
         #region 初期処理
@@ -317,7 +401,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // ツリービューのアイテムを初期化する
             InitializeTreeView();
-
+            try
+            {
+                ChangeCurrentPath(_ControDirectoryTreeViewlViewModel.TreeRoot[0].FullPath);
+                _ControDirectoryTreeViewlViewModel.TreeRoot[0].IsSelected = true;
+            }
+            catch { }
             // 既にファイル検索がされていて、ディレクトリ選択設定が変わっていなければ終了
             if (Status == FileScanStatus.Finished
              && _CheckedDirectoryManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
@@ -341,7 +430,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 CountFilteredGetHash = 0;
                 ExtentionCollection.Clear();
                 ExtentionsGroupCollection.Clear();
-                _ExtentionManager.Clear();
             });
 
             var _ScanHashFilesClass = Ioc.Default.GetService<IScanHashFiles>() ?? throw new InvalidOperationException($"{nameof(IScanHashFiles)} dependency not resolved."); CTS = new CancellationTokenSource();
@@ -349,7 +437,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // 移動ボタンの利用状況を設定
             Status = FileScanStatus.None;
-            ToPageHashCalcing.RaiseCanExecuteChanged();
+            ToPageHashCalcing.NotifyCanExecuteChanged();
 
             // スキャンするディレクトリの追加
             _ScanHashFilesClass?.ScanFiles(cancellationToken);
@@ -390,19 +478,35 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _ControDirectoryTreeViewlViewModel.ClearRoot();
             _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
+            var specialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new NullReferenceException(nameof(ISpecialFolderAndRootDrives));
+
             foreach (var root in _CheckedDirectoryManager.NestedDirectories)
             {
-                var fi = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                var fi = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
             foreach (var root in _CheckedDirectoryManager.NonNestedDirectories)
             {
-                var fi = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                var fi = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 fi.HasChildren = false;
                 var node = _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
         }
         #endregion 初期処理
 
+        private void ChangeCurrentPath(string currentFullPath)
+        {
+            HashFileListItems.Clear();
+            var fileManager = Ioc.Default.GetService<IFileManager>() ?? throw new NullReferenceException(nameof(IFileManager));
+            foreach (var file in fileManager.EnumerateFiles(currentFullPath))
+            {
+                var item = new HashListFileItems
+                {
+                    FullPathFileName = file,
+                    IsHashTarget = false
+                };
+                HashFileListItems.Add(item);
+            }
+        }
     }
 }

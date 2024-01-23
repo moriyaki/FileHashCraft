@@ -36,9 +36,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
-        protected readonly IExtentionHelper _ExtentionManager;
-        protected readonly ISearchManager _SearchManager;
-        protected readonly IPageSelectTargetViewModel _PageSelectTargetFileViewModel;
         protected readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
@@ -47,9 +44,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase()
         {
-            _ExtentionManager = Ioc.Default.GetService<IExtentionHelper>() ?? throw new InvalidOperationException($"{nameof(IExtentionHelper)} dependency not resolved.");
-            _SearchManager = Ioc.Default.GetService<ISearchManager>() ?? throw new InvalidOperationException($"{nameof(ISearchManager)} dependency not resolved.");
-            _PageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
             _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
 
             // メインウィンドウからのフォント変更メッセージ受信
@@ -136,7 +130,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
          public ExtensionCheckBox(string extention) : base()
         {
             ExtentionOrGroup = extention;
-            ExtentionCount = _ExtentionManager.GetExtentionsCount(extention);
+            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
+            ExtentionCount = extentionManager.GetExtentionsCount(extention);
         }
 
         public override bool? IsChecked
@@ -144,20 +139,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             get => _IsChecked;
             set
             {
-                if (value == true)
+                var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
+                var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved."); if (value == true)
                 {
                     Task.Run(async () =>
                     {
-                        await _SearchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
-                        _PageSelectTargetFileViewModel.ExtentionCountChanged();
+                        await searchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
+                        pageSelectTargetFileViewModel.ExtentionCountChanged();
                     });
                 }
                 else
                 {
                     Task.Run(async () =>
                     {
-                        await _SearchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
-                        _PageSelectTargetFileViewModel.ExtentionCountChanged();
+                        await searchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+                        pageSelectTargetFileViewModel.ExtentionCountChanged();
                     });
                 }
                 SetProperty(ref _IsChecked, value);
@@ -179,8 +175,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public ExtentionGroupCheckBoxViewModel() : base()
         {
             FileType = FileGroupType.Others;
-            ExtentionCount = _ExtentionManager.GetGroupExtentionCount(FileType);
-            ExtentionOrGroup = FileTypeHelper.GetFileGroupName(FileGroupType.Others);
+            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
+            ExtentionCount = extentionManager.GetExtentionGroupCount(FileType);
+            ExtentionOrGroup = ExtentionTypeHelper.GetFileGroupName(FileGroupType.Others);
         }
         /// <summary>
         /// ファイルの種類用のコンストラクタ
@@ -189,8 +186,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public ExtentionGroupCheckBoxViewModel(FileGroupType fileType) : base()
         {
             FileType = fileType;
-            ExtentionCount = _ExtentionManager.GetGroupExtentionCount(FileType);
-            ExtentionOrGroup = FileTypeHelper.GetFileGroupName(FileType);
+            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
+            ExtentionCount = extentionManager.GetExtentionGroupCount(FileType);
+            ExtentionOrGroup = ExtentionTypeHelper.GetFileGroupName(FileType);
         }
         #endregion コンストラクタ
 
@@ -205,13 +203,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             get => _IsChecked;
             set
             {
+                var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
+                var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
                 if (value == true)
                 {
-                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(true, _ExtentionManager.GetGroupExtentions(FileType));
+                    pageSelectTargetFileViewModel.ChangeCheckBoxGroup(true, extentionManager.GetGroupExtentions(FileType));
                 }
                 else
                 {
-                    _PageSelectTargetFileViewModel.ChangeCheckBoxGroup(false, _ExtentionManager.GetGroupExtentions(FileType));
+                    pageSelectTargetFileViewModel.ChangeCheckBoxGroup(false, extentionManager.GetGroupExtentions(FileType));
                 }
                 SetProperty(ref _IsChecked, value);
             }

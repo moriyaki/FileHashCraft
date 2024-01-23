@@ -115,25 +115,27 @@
                                     <StackPanel Orientation="Horizontal">
                                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
                                         <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}" />
-                                        <TextBlock Text="{Binding Name, Mode=OneWay}" VerticalAlignment="Center"/>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                                                   Text="{Binding Name, Mode=OneWay}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn
 						    x:Name="UpdateDate"
-						    Width="100"
+						    Width="150"
 						    DisplayMemberBinding="{Binding LastFileUpdate, Mode=OneWay}"
                             Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewDataModified, Mode=OneWay}" />
                         <GridViewColumn
 						    x:Name="FileType"
-						    Width="100"
+						    Width="150"
 						    DisplayMemberBinding="{Binding FileType, Mode=OneWay}"
 						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewType, Mode=OneWay}" />
                         <GridViewColumn
 						    x:Name="FileSize"
 						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewSize, Mode=OneWay}"
-                               Width="100">
+                               Width="200">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding FormattedFileSize, Mode=OneWay}" TextAlignment="Right" Width="100"/>

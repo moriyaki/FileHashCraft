@@ -44,8 +44,27 @@
 
         <ListBox x:Name="FileListBox" 
                  Grid.Row="1" Grid.Column="2" Grid.RowSpan="6" Margin="3" HorizontalAlignment="Left"
-                 Width="{Binding ListWidth,Mode=TwoWay}">
-
+                 Width="{Binding ListWidth,Mode=TwoWay}"
+                 ItemsSource="{Binding HashFileListItems,Mode=OneWay}"
+                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding FileName}" Padding="0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" Value="Transparent" />
+                                <!--
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHashTarget}">
+                                        <Setter Property="Background" Value="{Binding HashTargetColor}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                                -->
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
 
         <GridSplitter Grid.Row="1" Grid.Column="3" Grid.RowSpan="6" Width="3"
@@ -109,7 +128,8 @@
                         Content="{Binding CountFilteredGetHash}"/>
 
         <TabControl  Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5" Margin="3">
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}">
+            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}"
+                     FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
                 <!-- others -->
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -143,9 +163,15 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
-                                        <TextBlock VerticalAlignment="Center"
-                                                FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                                Text="{Binding ExtentionOrFileTypeView, Mode=OneWay}"/>
+                                        <Label VerticalAlignment="Center" Padding="0"
+                                                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                                                   Content="{Binding ExtentionOrFileTypeView, Mode=OneWay}">
+                                            <Label.InputBindings>
+                                                <MouseBinding 
+                                                    Command="{Binding DataContext.ExtentionGroupCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
+                                                    CommandParameter="{Binding}" MouseAction="LeftClick"/>
+                                            </Label.InputBindings>
+                                        </Label>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -161,10 +187,18 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
-                                        <TextBlock VerticalAlignment="Center"
+                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}">
+
+                                        </CheckBox>
+                                        <Label VerticalAlignment="Center" Padding="0"
                                                 FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                                Text="{Binding ExtentionOrFileTypeView, Mode=OneWay}"/>
+                                                Content="{Binding ExtentionOrFileTypeView, Mode=OneWay}">
+                                            <Label.InputBindings>
+                                                <MouseBinding 
+                                                    Command="{Binding DataContext.ExtentionCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
+                                                    CommandParameter="{Binding}" MouseAction="LeftClick"/>
+                                            </Label.InputBindings>
+                                        </Label>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -172,7 +206,8 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentWildCard, Mode=OneWay}">
+            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentWildCard, Mode=OneWay}"
+                     FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
                 <!-- others -->
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -204,12 +239,12 @@
                              Text="{Binding WildcardCritieria,Mode=TwoWay}"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentRegularExpression, Mode=OneWay}">
+            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentRegularExpression, Mode=OneWay}"
+                     FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="375*"/>
-                        <ColumnDefinition Width="299*"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" MinWidth="100"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -227,22 +262,23 @@
                             Command="{Binding AddRegularExpression}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
                     <!-- 正規表現検索条件リストボックス -->
-                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressionSearch" Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="3,3,3,3"/>
-                    <!-- 正規表現検索条件ラベル -->
-                    <Label Grid.Row="1" Grid.Column="0" x:Name="LabelRegularExpressionSearch"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Critieria, Mode=OneWay}" Margin="0,171,0,0" Grid.RowSpan="2"/>
+                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
+                    <!-- 正規表現検索ラベル -->
+                    <Label Grid.Row="2" Grid.Column="0" x:Name="LabelRegularExpression"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Critieria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
                     <!-- 正規表現検索条件 -->
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3,3,3,3" x:Name="RegularExpressionCritieria"
-                             Text="{Binding RegularExpressionCritieria,Mode=TwoWay}" Grid.ColumnSpan="2"/>
-                    <!-- 正規表現検索条件エラーラベル -->
-                    <Label Grid.Row="2" Grid.Column="0" x:Name="LabelRegularExpressionError"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Error, Mode=OneWay}" Margin="0,29,0,0" Grid.RowSpan="2"/>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegularExpressionError" 
-                               Background="{Binding RegularExpressionErrorStatus}" Text="{Binding RegularExpressionErrorString}" Margin="0,29,0,0" Grid.RowSpan="2"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="RegularExpressionCritieria"
+                             Text="{Binding RegularExpressionCritieria,Mode=TwoWay}"/>
+                    <!-- 正規表現検索エラーラベル -->
+                    <Label Grid.Row="3" Grid.Column="0" x:Name="LabelRegularExpressionError"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegularExpressionError"
+                               Background="{Binding RegularExpressionErrorStatus}" Text="{Binding RegularExpressionErrorString}" Margin="3" Grid.RowSpan="2"/>
 
                 </Grid>
             </TabItem>
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentExpert, Mode=OneWay}">
+            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentExpert, Mode=OneWay}"
+                     FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" MinHeight="30"/>
@@ -252,46 +288,46 @@
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}"/>
-                        <TextBlock VerticalAlignment="Center"
+                        <Label VerticalAlignment="Center"
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
-                            <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
+                            <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick"/>
-                            </TextBlock.InputBindings>
-                        </TextBlock>
+                            </Label.InputBindings>
+                        </Label>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}"/>
-                        <TextBlock VerticalAlignment="Center"
+                        <Label VerticalAlignment="Center"
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
-                            <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
+                            <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick"/>
-                            </TextBlock.InputBindings>
-                        </TextBlock>
+                            </Label.InputBindings>
+                        </Label>
                     </StackPanel>
 
                     <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}"/>
-                        <TextBlock VerticalAlignment="Center"
+                        <Label VerticalAlignment="Center"
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
-                            <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
+                            <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
-                            </TextBlock.InputBindings>
-                        </TextBlock>
+                            </Label.InputBindings>
+                        </Label>
                     </StackPanel>
 
                     <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}"/>
-                        <TextBlock VerticalAlignment="Center"
+                        <Label VerticalAlignment="Center"
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
-                            <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
+                            <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
-                            </TextBlock.InputBindings>
-                        </TextBlock>
+                            </Label.InputBindings>
+                        </Label>
                     </StackPanel>
                 </Grid>
             </TabItem>

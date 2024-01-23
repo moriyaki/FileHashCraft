@@ -82,7 +82,8 @@
                   SelectedValue="{Binding SelectedHashAlgorithm}"
                   SelectedValuePath="Algorithm"
                   DisplayMemberPath="Name"/>
-        <GroupBox Header="上級者向け" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3">
+        <GroupBox Header="上級者向け" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
+                  FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
             <!-- 0サイズファイル削除するか -->
             <Grid>
                 <Grid.RowDefinitions>
@@ -95,46 +96,46 @@
 
                 <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}"/>
-                    <TextBlock VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center" 
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
-                        <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
+                        <Label.InputBindings>
                             <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick"/>
-                        </TextBlock.InputBindings>
-                    </TextBlock>
+                        </Label.InputBindings>
+                    </Label>
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}"/>
-                    <TextBlock VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
-                        <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
+                        <Label.InputBindings>
                             <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick"/>
-                        </TextBlock.InputBindings>
-                    </TextBlock>
+                        </Label.InputBindings>
+                    </Label>
                 </StackPanel>
 
                 <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}"/>
-                    <TextBlock VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
-                        <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
+                        <Label.InputBindings>
                             <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
-                        </TextBlock.InputBindings>
-                    </TextBlock>
+                        </Label.InputBindings>
+                    </Label>
                 </StackPanel>
 
                 <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}"/>
-                    <TextBlock VerticalAlignment="Center"
+                    <Label VerticalAlignment="Center"
                                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
-                                   Text="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
-                        <TextBlock.InputBindings>
+                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
+                        <Label.InputBindings>
                             <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
-                        </TextBlock.InputBindings>
-                    </TextBlock>
+                        </Label.InputBindings>
+                    </Label>
                 </StackPanel>
             </Grid>
         </GroupBox>

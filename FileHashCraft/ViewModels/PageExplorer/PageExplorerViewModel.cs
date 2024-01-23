@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
@@ -54,36 +55,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
 
         /// <summary>
-        /// 「上へ」コマンド
-        /// </summary>
-        public DelegateCommand ToUpDirectory { get; set; }
-
-        /// <summary>
-        /// リストビュー更新コマンド
-        /// </summary>
-        public DelegateCommand ListViewUpdater { get; set; }
-
-        /// <summary>
-        /// リストビューダブルクリック時のコマンド
-        /// </summary>
-        public DelegateCommand FileListViewExecuted { get; set; }
-
-        /// <summary>
-        /// ハッシュ管理ウィンドウ実行のコマンド
-        /// </summary>
-        public DelegateCommand HashCalc { get; set; }
-
-        /// <summary>
-        /// 設定画面を開く
-        /// </summary>
-        public DelegateCommand SettingsOpen { get; set; }
-
-        /// <summary>
-        /// デバッグウィンドウを開く
-        /// </summary>
-        public DelegateCommand DebugOpen { get; set; }
-
-        /// <summary>
         /// 選択されているリストビューのアイテム
         /// </summary>
         private ExplorerListItemViewModel? _SelectedListViewItem = null;
@@ -101,18 +72,18 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// カレントディレクトリ
         /// </summary>
-        private string _currentDirectory = string.Empty;
+        private string _currentFullPath = string.Empty;
         public string CurrentFullPath
         {
-            get => _currentDirectory;
+            get => _currentFullPath;
             set
             {
                 string changedDirectory = value;
 
                 // 同じディレクトリなら値をセットして終了
-                if (_currentDirectory.TrimEnd(Path.DirectorySeparatorChar) == changedDirectory.TrimEnd(Path.DirectorySeparatorChar))
+                if (_currentFullPath.TrimEnd(Path.DirectorySeparatorChar) == changedDirectory.TrimEnd(Path.DirectorySeparatorChar))
                 {
-                    SetProperty(ref _currentDirectory, changedDirectory);
+                    SetProperty(ref _currentFullPath, changedDirectory);
                     return;
                 }
                 var isDirectoreySeparatorEnd = value.EndsWith(Path.DirectorySeparatorChar);
@@ -141,12 +112,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 }
 
                 // 値のセット
-                if (!SetProperty(ref _currentDirectory, changedDirectory)) return;
+                if (!SetProperty(ref _currentFullPath, changedDirectory)) return;
                 // 異なるディレクトリに移動した時の処理
                 if (Directory.Exists(changedDirectory))
                 {
                     //FolderSelectedChanged(value);
-                    ToUpDirectory.RaiseCanExecuteChanged();
+                    ToUpDirectory.NotifyCanExecuteChanged();
                     ListViewUpdater.Execute(null);
                     WeakReferenceMessenger.Default.Send(new CurrentChangeMessage(changedDirectory));
                 }
@@ -190,6 +161,38 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
         #endregion データバインディング
 
+        #region コマンド
+        /// <summary>
+        /// 「上へ」コマンド
+        /// </summary>
+        public RelayCommand ToUpDirectory { get; set; }
+
+        /// <summary>
+        /// リストビュー更新コマンド
+        /// </summary>
+        public RelayCommand ListViewUpdater { get; set; }
+
+        /// <summary>
+        /// リストビューダブルクリック時のコマンド
+        /// </summary>
+        public RelayCommand FileListViewExecuted { get; set; }
+
+        /// <summary>
+        /// ハッシュ管理ウィンドウ実行のコマンド
+        /// </summary>
+        public RelayCommand HashCalc { get; set; }
+
+        /// <summary>
+        /// 設定画面を開く
+        /// </summary>
+        public RelayCommand SettingsOpen { get; set; }
+
+        /// <summary>
+        /// デバッグウィンドウを開く
+        /// </summary>
+        public RelayCommand DebugOpen { get; set; }
+        #endregion コマンド
+
         #region コンストラクタと初期処理
         private bool IsExecuting = false;
 
@@ -222,7 +225,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _MainWindowViewModel = mainWindowViewModel;
 
             // 「上へ」ボタンのコマンド
-            ToUpDirectory = new DelegateCommand(
+            ToUpDirectory = new RelayCommand(
                 () =>
                 {
                     var ParentPath = Path.GetDirectoryName(CurrentFullPath);
@@ -232,7 +235,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             );
 
             // リストビューの更新コマンド
-            ListViewUpdater = new DelegateCommand(async () =>
+            ListViewUpdater = new RelayCommand(async () =>
             {
                 ListItems.Clear();
                 await Task.Run(() =>
@@ -250,7 +253,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             });
 
             // リストビューアイテムがダブルクリックされた時のコマンド
-            FileListViewExecuted = new DelegateCommand(() =>
+            FileListViewExecuted = new RelayCommand(() =>
             {
                 if (SelectedListViewItem is not null)
                 {
@@ -263,18 +266,18 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             });
 
             // ハッシュ管理ウィンドウ実行のコマンド
-            HashCalc = new DelegateCommand(() =>
+            HashCalc = new RelayCommand(() =>
             {
                 CreateCheckBoxManager();
                 WeakReferenceMessenger.Default.Send(new ToPageSelectTarget());
             });
 
             // 設定画面ページに移動するコマンド
-            SettingsOpen = new DelegateCommand(() =>
+            SettingsOpen = new RelayCommand(() =>
                 WeakReferenceMessenger.Default.Send(new ToPageSetting(ReturnPageEnum.PageExplorer)));
 
             // デバッグウィンドウを開くコマンド
-            DebugOpen = new DelegateCommand(() =>
+            DebugOpen = new RelayCommand(() =>
             {
                 var debugWindow = new Views.DebugWindow();
                 debugWindow.Show();

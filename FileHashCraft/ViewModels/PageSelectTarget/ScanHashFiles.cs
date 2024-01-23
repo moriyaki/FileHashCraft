@@ -6,7 +6,6 @@
  */
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
@@ -20,15 +19,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     {
         #region コンストラクタと初期化
         private readonly IFileManager _FileManager;
-        private readonly ISearchManager _SearchManager;
-        private readonly IExtentionHelper _ExtentionManager;
+        private readonly ISearchConditionsManager _SearchManager;
+        private readonly IExtentionManager _ExtentionManager;
         private readonly IPageSelectTargetViewModel _PageSelectTargetViewModel;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
             IFileManager fileManager,
-            ISearchManager searchManager,
-            IExtentionHelper extentionManager,
+            ISearchConditionsManager searchManager,
+            IExtentionManager extentionManager,
             IPageSelectTargetViewModel pageSelectTargetViewModel,
             ICheckedDirectoryManager checkedDirectoryManager)
         {
@@ -42,6 +41,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly List<string> _oldDirectoriesList = [];
         #endregion コンストラクタと初期化
 
+        #region メイン処理
         /// <summary>
         /// スキャンするファイルを検出します。
         /// </summary>
@@ -80,6 +80,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // スキャン終了の表示に切り替える
             _PageSelectTargetViewModel.ChangeHashScanStatus(FileScanStatus.Finished);
         }
+        #endregion メイン処理
 
         #region ハッシュを取得するファイルのスキャン処理
         /// <summary>
@@ -88,7 +89,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="cancellation">キャンセリングトークン</param>
         private async Task DirectoryFilesScan(CancellationToken cancellation)
         {
-            IExtentionHelper _ExtentionHelper = Ioc.Default.GetService<IExtentionHelper>() ?? throw new InvalidOperationException($"{nameof(IExtentionHelper)} dependency not resolved.");
+            ISearchFileManager searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
             var semaphore = new SemaphoreSlim(5);
 
             int fileCount = 0;
@@ -101,8 +102,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     fileCount = 0;
                     foreach (var fileFullPath in _FileManager.EnumerateFiles(directoryFullPath))
                     {
-                        _ExtentionHelper.AddFile(fileFullPath);
-                        _SearchManager.AddFile(fileFullPath);
+                        searchFileManager.AddFile(fileFullPath);
                         fileCount++;
                     }
 
@@ -116,7 +116,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var removedDirectory = _oldDirectoriesList.Except(_directoriesList).ToList();
             foreach (var directoryFullPath in removedDirectory)
             {
-                _SearchManager.RemoveDirectory(directoryFullPath);
+                searchFileManager.RemoveDirectory(directoryFullPath);
             }
         }
 

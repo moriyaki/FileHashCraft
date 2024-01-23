@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
@@ -171,26 +172,26 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// エクスプローラー風画面にページに移動
         /// </summary>
-        public DelegateCommand ReturnPage { get; set; }
+        public RelayCommand ReturnPage { get; set; }
         #endregion バインディング
 
         #region コマンド
         /// <summary>
         /// 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
-        public DelegateCommand IsReadOnlyFileIncludeClicked { get; set; }
+        public RelayCommand IsReadOnlyFileIncludeClicked { get; set; }
         /// <summary>
         /// 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
-        public DelegateCommand IsHiddenFileIncludeClicked { get; set; }
+        public RelayCommand IsHiddenFileIncludeClicked { get; set; }
         /// <summary>
         ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
-        public DelegateCommand IsZeroSizeFIleDeleteClicked { get; set; }
+        public RelayCommand IsZeroSizeFIleDeleteClicked { get; set; }
         /// <summary>
         /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
-        public DelegateCommand IsEmptyDirectoryDeleteClicked { get; set; }
+        public RelayCommand IsEmptyDirectoryDeleteClicked { get; set; }
         #endregion コマンド
 
         #region コンストラクタと初期化
@@ -213,19 +214,19 @@ namespace FileHashCraft.ViewModels
                 FontSizes.Add(new FontSize(fontSize));
             }
             // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsReadOnlyFileIncludeClicked = new DelegateCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
+            IsReadOnlyFileIncludeClicked = new RelayCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
 
             // 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsHiddenFileIncludeClicked = new DelegateCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
+            IsHiddenFileIncludeClicked = new RelayCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
 
             //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsZeroSizeFIleDeleteClicked = new DelegateCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
+            IsZeroSizeFIleDeleteClicked = new RelayCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
 
             // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsEmptyDirectoryDeleteClicked = new DelegateCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
+            IsEmptyDirectoryDeleteClicked = new RelayCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // 「終了」で戻るページへのメッセージを送るコマンド
-            ReturnPage = new DelegateCommand(
+            ReturnPage = new RelayCommand(
                 () => WeakReferenceMessenger.Default.Send(new ReturnPageFromSettings()));
 
             // メインウィンドウからのフォント変更メッセージ受信

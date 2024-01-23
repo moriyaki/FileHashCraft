@@ -3,7 +3,7 @@
     エキスパート向けの検索条件を提供するタブの ViewModel を提供します。
  */
 
-using FileHashCraft.ViewModels.Modules;
+using CommunityToolkit.Mvvm.Input;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -70,19 +70,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
-        public DelegateCommand IsReadOnlyFileIncludeClicked { get; set; }
+        public RelayCommand IsReadOnlyFileIncludeClicked { get; set; }
         /// <summary>
         /// 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
-        public DelegateCommand IsHiddenFileIncludeClicked { get; set; }
+        public RelayCommand IsHiddenFileIncludeClicked { get; set; }
         /// <summary>
         ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
-        public DelegateCommand IsZeroSizeFIleDeleteClicked { get; set; }
+        public RelayCommand IsZeroSizeFIleDeleteClicked { get; set; }
         /// <summary>
         /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
-        public DelegateCommand IsEmptyDirectoryDeleteClicked { get; set; }
+        public RelayCommand IsEmptyDirectoryDeleteClicked { get; set; }
         #endregion コマンド
     }
 }

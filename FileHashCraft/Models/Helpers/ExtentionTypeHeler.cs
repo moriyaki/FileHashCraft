@@ -1,155 +1,11 @@
-﻿/*  ExtentionHelper.cs
+﻿/*  ExtentionTypeHeler.cs
 
-    拡張子によるファイル管理を支援するクラスです。
-    ExtentionHelper は拡張子によるファイル数を管理します。
-    FileTypeHelper はファイルの種類による拡張子管理を支援します。
-*/
-using System.IO;
+    拡張子グループから拡張子を取得するヘルパークラスです。
+ */
 using FileHashCraft.Properties;
 
 namespace FileHashCraft.Models.Helpers
 {
-    /// <summary>
-    /// ファイル拡張子を扱うクラス
-    /// </summary>
-    #region インターフェース
-    public interface IExtentionHelper
-    {
-        /// <summary>
-        /// ファイルを拡張子の辞書に登録します。
-        /// </summary>
-        /// <param name="fileFullPath"></param>
-        public void AddFile(string fileFullPath);
-        /// <summary>
-        /// 拡張子のコレクションを取得します。
-        /// </summary>
-        public IEnumerable<string> GetExtentions();
-        /// <summary>
-        /// 拡張子の種類を対象に、拡張子を取得します。
-        /// </summary>
-        public IEnumerable<string> GetGroupExtentions(FileGroupType fileGroupType);
-        /// <summary>
-        /// 拡張子を持つファイル数を取得します。
-        /// </summary>
-        public int GetExtentionsCount(string extention);
-        /// <summary>
-        /// 拡張子グループのファイル数を取得します。
-        /// </summary>
-        public int GetGroupExtentionCount(FileGroupType fileGroupType);
-        /// <summary>
-        /// 拡張子のコレクションを全削除します。
-        /// </summary>
-        public void Clear();
-    }
-    #endregion インターフェース
-    public class ExtentionHelper : IExtentionHelper
-    {
-        #region 拡張子の管理
-        /// <summary>
-        /// 拡張子をキーとしたファイルのリストを持つ辞書
-        /// </summary>
-        private readonly Dictionary<string, int> _extentionDic = [];
-
-        /// <summary>
-        /// フルパスから拡張子リストに登録します。
-        /// </summary>
-        /// <param name="fileFullPath">ファイルのフルパス</param>
-        public void AddFile(string fileFullPath)
-        {
-            var extention = Path.GetExtension(fileFullPath).ToLower();
-            if (extention == null) { return; }
-
-            if (_extentionDic.TryGetValue(extention, out int value))
-            {
-                _extentionDic[extention] = ++value;
-            }
-            else
-            {
-                _extentionDic[extention] = 1;
-            }
-        }
-
-        /// <summary>
-        /// 拡張子のコレクションを取得します。
-        /// </summary>
-        /// <returns>拡張子コレクション</returns>
-        public IEnumerable<string> GetExtentions()
-        {
-            return _extentionDic.Keys.OrderBy(key => key);
-        }
-
-        /// <summary>
-        /// 拡張子の種類を対象に、拡張子を取得します。
-        /// </summary>
-        /// <param name="fileGroupType">拡張子の種類</param>
-        /// <returns>拡張子コレクション</returns>
-        public IEnumerable<string> GetGroupExtentions(FileGroupType fileGroupType)
-        {
-            if (fileGroupType == FileGroupType.Others)
-            {
-                var excludedGroups = new[]
-                {
-                    FileGroupType.Movies,
-                    FileGroupType.Pictures,
-                    FileGroupType.Sounds,
-                    FileGroupType.Documents,
-                    FileGroupType.Applications,
-                    FileGroupType.Archives,
-                    FileGroupType.SourceCodes,
-                    FileGroupType.Registrations
-                };
-
-                foreach (var extension in _extentionDic.Keys.OrderBy(key => key))
-                {
-                    if (excludedGroups.Any(group => FileTypeHelper.GetFileGroupExtention(group).Contains(extension))) { continue; }
-                    yield return extension;
-                }
-            }
-            else
-            {
-                foreach (var extention in FileTypeHelper.GetFileGroupExtention(fileGroupType))
-                {
-                    yield return extention;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 拡張子を持つファイル数を取得します。
-        /// </summary>
-        /// <param name="extention">拡張子</param>
-        /// <returns>ファイル数</returns>
-        public int GetExtentionsCount(string extention)
-        {
-            extention = extention.ToLower();
-            return _extentionDic.TryGetValue(extention, out int value) ? value : 0;
-        }
-
-        /// <summary>
-        /// 拡張子グループのファイル数を取得します。
-        /// </summary>
-        /// <param name="fileGroupType">拡張子グループ</param>
-        /// <returns>ファイル数</returns>
-        public int GetGroupExtentionCount(FileGroupType fileGroupType)
-        {
-            var groupCount = 0;
-            foreach (var extention in GetGroupExtentions(fileGroupType))
-            {
-                groupCount += GetExtentionsCount(extention);
-            }
-            return groupCount;
-        }
-
-        /// <summary>
-        /// 拡張子コレクションを全削除します
-        /// </summary>
-        public void Clear()
-        {
-            _extentionDic.Clear();
-        }
-        #endregion 拡張子の管理
-    }
-
     #region ファイル種類
     /// <summary>
     /// ファイルの種類の列挙
@@ -171,7 +27,7 @@ namespace FileHashCraft.Models.Helpers
     /// <summary>
     /// ファイルタイプから表示名や拡張子を取得するクラス
     /// </summary>
-    public static class FileTypeHelper
+    public static class ExtentionTypeHelper
     {
         #region ファイル種類の管理
         /// <summary>

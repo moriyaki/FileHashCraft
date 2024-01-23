@@ -2,7 +2,6 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
@@ -118,9 +117,10 @@ namespace FileHashCraft
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
 
             // Model
-            services.AddSingleton<IExtentionHelper, ExtentionHelper>();
+            services.AddSingleton<IExtentionManager, ExtentionManager>();
             services.AddSingleton<IFileManager, FileManager>();
-            services.AddSingleton<ISearchManager, SearchConditionsManager>();
+            services.AddSingleton<ISearchConditionsManager, SearchConditionsManager>();
+            services.AddSingleton<ISearchFileManager, SearchFileManager>();
             return services.BuildServiceProvider();
         }
     }

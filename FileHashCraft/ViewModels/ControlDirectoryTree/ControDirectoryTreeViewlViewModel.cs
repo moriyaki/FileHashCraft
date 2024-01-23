@@ -219,8 +219,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
               * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
               * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
               */
-// ルートドライブではない場合終了
-if (item.FullPath.Length != 3) { return currentNode; }
+            // ルートドライブではない場合終了
+            if (item.FullPath.Length != 3) { return currentNode; }
 
             // 追加されたノードのフルパスで始まるノードを検索する
             var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(currentNode.FullPath));

@@ -21,7 +21,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 入力された正規表現条件にエラーがあれば色を変える
         /// </summary>
-        private Brush _RegularExpressionErrorStatus = Brushes.White;
+        private Brush _RegularExpressionErrorStatus = Brushes.Transparent;
         public Brush RegularExpressionErrorStatus
         {
             get => _RegularExpressionErrorStatus;

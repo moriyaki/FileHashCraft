@@ -306,11 +306,14 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 if (_IsSelected != value)
                 {
                     SetProperty(ref _IsSelected, value);
-                    if (value && HasChildren)
+                    if (value)
                     {
                         var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
                         controDirectoryTreeViewlViewModel.CurrentFullPath = this.FullPath;
-                        KickChild();
+                        if (HasChildren)
+                        {
+                            KickChild();
+                        }
                     }
                 }
             }

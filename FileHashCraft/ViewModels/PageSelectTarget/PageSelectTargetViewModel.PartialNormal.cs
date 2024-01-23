@@ -4,9 +4,9 @@
  */
 
 using System.Collections.ObjectModel;
-using System.Windows.Media;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
-using FileHashCraft.Properties;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -23,59 +23,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public partial class PageSelectTargetViewModel
     {
         #region バインディング
-        /// <summary>
-        /// ファイルスキャン状況
-        /// </summary>
-        private FileScanStatus _Status = FileScanStatus.None;
-        public FileScanStatus Status
-        {
-            get => _Status;
-            set
-            {
-                _Status = value;
-                switch (value)
-                {
-                    case FileScanStatus.None:
-                        StatusColor = Brushes.Pink;
-                        break;
-                    case FileScanStatus.DirectoriesScanning:
-                        StatusColor = Brushes.Pink;
-                        StatusMessage = $"{Resources.LabelDirectoryScanning} {CountScannedDirectories}";
-                        break;
-                    case FileScanStatus.FilesScanning:
-                        StatusColor = Brushes.Yellow;
-                        StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
-                        break;
-                    case FileScanStatus.Finished:
-                        StatusColor = Brushes.LightGreen;
-                        StatusMessage = Resources.LabelFinished;
-                        break;
-                    default: // 異常
-                        StatusColor = Brushes.Red;
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// ファイルスキャン状況に合わせた背景色
-        /// </summary>
-        private Brush _StatusColor = Brushes.LightGreen;
-        public Brush StatusColor
-        {
-            get => _StatusColor;
-            set => SetProperty(ref _StatusColor, value);
-        }
-
-        /// <summary>
-        /// ファイルスキャン状況に合わせた文字列
-        /// </summary>
-        private string _StatusMessage = string.Empty;
-        public string StatusMessage
-        {
-            get => _StatusMessage;
-            set => SetProperty(ref _StatusMessage, value);
-        }
 
         /// <summary>
         /// 全ディレクトリ数(StatusBar用)
@@ -130,7 +77,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 SetProperty(ref _CountFilteredGetHash, value);
-                ToPageHashCalcing.RaiseCanExecuteChanged();
+                ToPageHashCalcing.NotifyCanExecuteChanged();
             }
         }
 
@@ -216,7 +163,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="extention">拡張子</param>
         public void AddExtentions(string extention)
         {
-            if (_ExtentionManager.GetExtentionsCount(extention) > 0)
+            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
+            if (extentionManager.GetExtentionsCount(extention) > 0)
             {
                 var item = new ExtensionCheckBox(extention);
                 App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
@@ -235,8 +183,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void ExtentionCountChanged()
         {
+            var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new NullReferenceException(nameof(ISearchFileManager));
             App.Current?.Dispatcher?.Invoke(() =>
-                CountFilteredGetHash = _SearchManager.AllConditionFiles.Count);
+                CountFilteredGetHash = searchFileManager.AllConditionFiles.Count);
         }
         /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。

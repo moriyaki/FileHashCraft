@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels
@@ -132,7 +133,7 @@ namespace FileHashCraft.ViewModels
         /// ポーリング用タイマー
         /// </summary>
         private readonly DispatcherTimer timer;
-        public DelegateCommand PollingCommand { get; set; }
+        public RelayCommand PollingCommand { get; set; }
         #endregion バインディング
 
         #region コンストラクタと初期化
@@ -165,7 +166,7 @@ namespace FileHashCraft.ViewModels
             timer = new DispatcherTimer();
             timer.Tick += Polling;
             timer.Interval = TimeSpan.FromMilliseconds(200);
-            PollingCommand = new DelegateCommand(
+            PollingCommand = new RelayCommand(
                 () =>
                 {
                     if (IsPolling)

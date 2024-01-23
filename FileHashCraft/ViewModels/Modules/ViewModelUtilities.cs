@@ -210,7 +210,6 @@ namespace FileHashCraft.ViewModels.Modules
         }
     }
     #endregion FileChangeTreeSync用
-
     #region DelegateCommand
     /*
     //使い方
@@ -236,22 +235,23 @@ namespace FileHashCraft.ViewModels.Modules
     }
     */
 
-/// <summary>
-/// 型なしの ICommand実装
-/// </summary>
-public class DelegateCommand : ICommand
+    /*
+    /// <summary>
+    /// 型なしの ICommand実装
+    /// </summary>
+    public class RelayCommand : ICommand
     {
         private readonly Action _execute;
         private readonly Func<bool>? _canExecute;
 
         public event EventHandler? CanExecuteChanged;
 
-        public DelegateCommand()
+        public RelayCommand()
         {
             throw new NotImplementedException();
         }
 
-        public DelegateCommand(Action execute, Func<bool>? canExecute = null)
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
@@ -313,6 +313,7 @@ public class DelegateCommand : ICommand
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
+    */
     #endregion DelegateCommand
 
     #region リソースサービス
