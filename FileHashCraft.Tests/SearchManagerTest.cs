@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using FileHashCraft.Models;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FileHashCraft.Tests
 {
     public class SearchManagerTest
     {
-        private readonly SearchManager sm = new();
+        private readonly SearchConditionsManager sm = new();
 
         private void SetFilesDQ()
         {
@@ -24,21 +25,21 @@ namespace FileHashCraft.Tests
         }
 
         [Fact]
-        public void AddContidionTest()
+        public async Task AddContidionTest()
         {
             SetFilesDQ();
-            sm.AddCondition(SearchConditionType.Extention, ".bin");
+            await sm.AddCondition(SearchConditionType.Extention, ".bin");
 
             Assert.Equal(2, sm.AllConditionFiles.Count);
         }
 
         [Fact]
-        public void RemoveContidionTest()
+        public async Task RemoveContidionTest()
         {
             SetFilesDQ();
-            sm.AddCondition(SearchConditionType.Extention, ".bin");
-            sm.AddCondition(SearchConditionType.Extention, ".iso");
-            sm.RemoveCondition(SearchConditionType.Extention, ".bin");
+            await sm.AddCondition(SearchConditionType.Extention, ".bin");
+            await sm.AddCondition(SearchConditionType.Extention, ".iso");
+            await sm.RemoveCondition(SearchConditionType.Extention, ".bin");
 
             Assert.Single(sm.AllConditionFiles);
         }

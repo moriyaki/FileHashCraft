@@ -2,6 +2,7 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
@@ -98,7 +99,6 @@ namespace FileHashCraft
             // ViewModel
             services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
 
-            services.AddSingleton<IWindowsAPI, WindowsAPI>();
             services.AddSingleton<ISpecialFolderAndRootDrives, SpecialFolderAndRootDrives>();
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
 
@@ -120,7 +120,7 @@ namespace FileHashCraft
             // Model
             services.AddSingleton<IExtentionHelper, ExtentionHelper>();
             services.AddSingleton<IFileManager, FileManager>();
-            services.AddSingleton<ISearchManager, SearchManager>();
+            services.AddSingleton<ISearchManager, SearchConditionsManager>();
             return services.BuildServiceProvider();
         }
     }

@@ -1,4 +1,9 @@
-﻿namespace FileHashCraft.ViewModels.Modules
+﻿/*  DirectoryTreeExpandedDirectoryManager.cs
+
+    ディレクトリツリーの展開状況を管理するクラスです。
+ */
+
+namespace FileHashCraft.ViewModels.Modules
 {
     #region インターフェース
     public interface IExpandedDirectoryManager

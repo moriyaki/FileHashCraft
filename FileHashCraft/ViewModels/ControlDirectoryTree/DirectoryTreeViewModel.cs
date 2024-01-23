@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿/*  DirectoryTreeViewModel.cs
+
+    ディレクトリツリービューのアイテム ViewModel を提供します。
+ */
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
@@ -56,10 +60,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     {
         #region コンストラクタ
 
-        private readonly IFileManager _FileManager;
-        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
-        private readonly IWindowsAPI _WindowsAPI;
-        private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
@@ -67,10 +67,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public DirectoryTreeViewModel()
         {
-            _FileManager = Ioc.Default.GetService<IFileManager>() ?? throw new InvalidOperationException($"{nameof(IFileManager)} dependency not resolved.");
-            _ControDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
-            _WindowsAPI = Ioc.Default.GetService<IWindowsAPI>() ?? throw new InvalidOperationException($"{nameof(IWindowsAPI)} dependency not resolved.");
-            _SpecialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new InvalidOperationException($"{nameof(ISpecialFolderAndRootDrives)} dependency not resolved.");
             _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
 
             // メインウィンドウからのフォント変更メッセージ受信
@@ -163,12 +159,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         private void UpdatePropertiesFromFullPath()
         {
-            Name = _WindowsAPI.GetDisplayName(FullPath);
+            Name = WindowsAPI.GetDisplayName(FullPath);
 
             App.Current?.Dispatcher.Invoke(() =>
             {
-                Icon = _WindowsAPI.GetIcon(FullPath);
-                FileType = _WindowsAPI.GetType(FullPath);
+                Icon = WindowsAPI.GetIcon(FullPath);
+                FileType = WindowsAPI.GetType(FullPath);
             });
         }
 
@@ -243,7 +239,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         public Visibility IsCheckBoxVisible
         {
-            get => _ControDirectoryTreeViewlViewModel.IsCheckBoxVisible;
+            get
+            {
+                var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
+                return controDirectoryTreeViewlViewModel.IsCheckBoxVisible;
+            }
         }
 
         /// <summary>
@@ -308,7 +308,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     SetProperty(ref _IsSelected, value);
                     if (value && HasChildren)
                     {
-                        _ControDirectoryTreeViewlViewModel.CurrentFullPath = this.FullPath;
+                        var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
+                        controDirectoryTreeViewlViewModel.CurrentFullPath = this.FullPath;
                         KickChild();
                     }
                 }
@@ -333,11 +334,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     if (value && !_IsKicked) { KickChild(); }
                 }
+                var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
                 if (value)
                 {
                     foreach (var child in Children)
                     {
-                        _ControDirectoryTreeViewlViewModel.AddDirectoryToExpandedDirectoryManager(child);
+                        controDirectoryTreeViewlViewModel.AddDirectoryToExpandedDirectoryManager(child);
                         if (IsChecked == true) { child.IsChecked = true; }
                     }
                 }
@@ -345,7 +347,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     foreach (var child in Children)
                     {
-                        _ControDirectoryTreeViewlViewModel.RemoveDirectoryToExpandedDirectoryManager(child);
+                        controDirectoryTreeViewlViewModel.RemoveDirectoryToExpandedDirectoryManager(child);
                     }
                 }
             }
@@ -365,9 +367,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!_IsKicked || force)
             {
                 Children.Clear();
-                foreach (var childPath in _FileManager.EnumerateDirectories(FullPath))
+                var fileManager = Ioc.Default.GetService<IFileManager>() ?? throw new InvalidOperationException($"{nameof(IFileManager)} dependency not resolved.");
+                foreach (var childPath in fileManager.EnumerateDirectories(FullPath))
                 {
-                    var child = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
+                    var specialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new InvalidOperationException($"{nameof(ISpecialFolderAndRootDrives)} dependency not resolved.");
+                    var child = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
                     var item = new DirectoryTreeViewModel(child, this);
                     Children.Add(item);
                 }

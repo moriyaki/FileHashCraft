@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿/* PageExplorerViewModel.cs
+
+    Explorer 風の画面を提供する ViewModel を提供します。
+ */
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -7,6 +11,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
@@ -195,7 +200,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly IControDirectoryTreeViewlViewModel _DirectoryTreeViewControlViewModel;
         private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
-        public readonly IWindowsAPI _WindowsAPI;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         public PageExplorerViewModel(
             IFileManager fileManager,
@@ -205,7 +209,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             ICheckedDirectoryManager checkedDirectoryManager,
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             ISpecialFolderAndRootDrives specialFolderAndRootDrives,
-            IWindowsAPI windowsAPI,
             IMainWindowViewModel mainWindowViewModel
             )
         {
@@ -216,7 +219,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _CheckedDirectoryManager = checkedDirectoryManager;
             _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
             _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
-            _WindowsAPI = windowsAPI;
             _MainWindowViewModel = mainWindowViewModel;
 
             // 「上へ」ボタンのコマンド

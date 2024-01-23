@@ -1,5 +1,9 @@
-﻿using System.IO;
-using FileHashCraft.Models;
+﻿/*  DrivesFileSystemWatcherService.cs
+
+    ドライブ以下全てのファイルを監視するクラスです。
+ */
+using System.IO;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.FileSystemWatch

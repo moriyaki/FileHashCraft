@@ -1,13 +1,15 @@
-﻿namespace FileHashCraft.ViewModels.Modules
+﻿/*  DirectoryTreeCheckedDirectoryManager.cs
+
+    ディレクトリのチェックボックスのチェック状態を管理します。
+    
+    初期状態：どこもチェックされていない
+        true  が来たら、その下のディレクトリを全て管理にする、上位にいたら何もしない
+        false が来たら、その下のディレクトリを全て管理から外す、上位下位はUI任せ
+        null  が来たら、そのディレクトリを単独監視にする
+ */
+
+namespace FileHashCraft.ViewModels.Modules
 {
-    /* ディレクトリのチェック状態を管理する
-     *
-     * 初期状態：どこもチェックされていない
-     *
-     * true  が来たら、その下のディレクトリを全て管理にする、上位にいたら何もしない
-     * false が来たら、その下のディレクトリを全て管理から外す、上位下位はUI任せ
-     * null  が来たら、そのディレクトリを単独監視にする
-     */
     #region インターフェース
     public interface ICheckedDirectoryManager
     {

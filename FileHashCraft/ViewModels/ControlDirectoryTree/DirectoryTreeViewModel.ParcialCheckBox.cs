@@ -1,4 +1,10 @@
-﻿namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
+﻿/*  DirectoryTreeViewModel.ParcialCheckBox.cs
+
+    ディレクトリツリービューのチェックボックス状態を管理します。
+ */
+using CommunityToolkit.Mvvm.DependencyInjection;
+
+namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
     public partial class DirectoryTreeViewModel
     {
@@ -144,7 +150,8 @@
         /// <param name="value">変更された値</param>
         private void SyncSpecialDirectory(DirectoryTreeViewModel changedNode, bool? value)
         {
-            foreach (var root in _ControDirectoryTreeViewlViewModel.TreeRoot)
+            var controlDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlViewModel));
+            foreach (var root in controlDirectoryTreeViewlViewModel.TreeRoot)
             {
                 ChangeExpandedSpecialFolder(root, changedNode.FullPath, value);
             }

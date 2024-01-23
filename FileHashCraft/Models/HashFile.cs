@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿/*  HashFile.cs
+
+    ハッシュを保持するファイル情報のクラスです。
+ */
+using System.IO;
 
 namespace FileHashCraft.Models
 {

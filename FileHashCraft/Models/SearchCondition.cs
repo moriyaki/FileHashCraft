@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿/*  SearchCondition.cs
+
+    ファイルの検索条件を管理するクラスです。
+ */
+using System.IO;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
@@ -23,37 +27,37 @@ namespace FileHashCraft.Models
     public class SearchCondition
     {
         #region プロパティ
-        private SearchConditionType _Type = SearchConditionType.None;
-        public SearchConditionType Type { get => _Type; }
-        private string _ConditionString = string.Empty;
-        public string ConditionString { get => _ConditionString; }
-        public HashSet<HashFile> ConditionFiles { get; set; } = [];
+        public SearchConditionType Type { get; } = SearchConditionType.None;
+        public string ConditionString { get; private set; } = string.Empty;
+        //public HashSet<HashFile> ConditionFiles { get; set; } = [];
         #endregion プロパティ
 
-        private readonly ISearchManager _SearchManager;
         public SearchCondition()
         {
-            _SearchManager = Ioc.Default.GetService<ISearchManager>() ?? throw new NullReferenceException(nameof(ISearchManager)) ;
         }
+
+        public SearchCondition(SearchConditionType type, string conditionString)
+        {
+            Type = type;
+            ConditionString = conditionString;
+        }
+
         #region 検索条件の追加と置換
         /// <summary>
         /// 正規表現検索の時は、正しい正規表現しか許容しません。
         /// </summary>
         /// <param name="searchConditionString"></param>
         /// <returns>成功の可否</returns>
-        private bool IsRegExTrue(string searchConditionString)
+        private static bool IsRegExTrue(string searchConditionString)
         {
             // 正規表現のチェック
-            if (Type == SearchConditionType.RegularExprettion)
+            try
             {
-                try
-                {
-                    var regex = new Regex(searchConditionString);
-                }
-                catch (RegexParseException)
-                {
-                    return false;
-                }
+                var regex = new Regex(searchConditionString);
+            }
+            catch (RegexParseException)
+            {
+                return false;
             }
             return true;
         }
@@ -64,30 +68,23 @@ namespace FileHashCraft.Models
         /// <param name="type">検索条件のタイプ</param>
         /// <param name="conditionString">検索条件</param>
         /// <returns>成功の可否</returns>
-        public bool SetCondition(SearchConditionType type, string conditionString)
+        public static SearchCondition? AddCondition(SearchConditionType type, string conditionString)
         {
-            if (type == SearchConditionType.None) { return false; }
-            _Type = type;
-            _ConditionString = conditionString;
+            if (type == SearchConditionType.None) { return null; }
+            var searchCondition = new SearchCondition(type, conditionString);
 
             switch (type)
             {
                 case SearchConditionType.Extention:
-                    foreach (var extentionFile in _SearchManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), conditionString, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        extentionFile.ConditionCount++;
-                        ConditionFiles.Add(extentionFile);
-                    }
-                    break;
+                    return searchCondition;
                 case SearchConditionType.WildCard:
-                    break;
+                    return searchCondition;
                 case SearchConditionType.RegularExprettion:
-                    if (!IsRegExTrue(conditionString)) { return false; }
-                    break;
+                    if (!IsRegExTrue(conditionString)) { return null; }
+                    return searchCondition;
                 default:
                     throw new InvalidDataException("AddContidion Type is None");
             }
-            return true;
         }
 
         /// <summary>
@@ -99,7 +96,7 @@ namespace FileHashCraft.Models
         {
             if (!IsRegExTrue(searchConditionString)) { return false; }
 
-            _ConditionString = searchConditionString;
+            ConditionString = searchConditionString;
             return true;
         }
 

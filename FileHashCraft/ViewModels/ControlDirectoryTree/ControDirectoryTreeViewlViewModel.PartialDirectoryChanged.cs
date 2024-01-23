@@ -1,7 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿/*  ControDirectoryTreeViewlViewModel.PartialDirectoryChanged
+
+    ディレクトリの TreeView でドライブまたはディレクトリに変更通知が発生した時の処理をします。
+ */
+using System.Collections.ObjectModel;
 using System.IO;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
 
@@ -223,7 +227,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 var retries = 120;
                 while (retries > 0)
                 {
-                    if (drive.Icon == _WindowsAPI.GetIcon(e.FullPath) || drive.Name == _WindowsAPI.GetDisplayName(e.FullPath))
+                    if (drive.Icon == WindowsAPI.GetIcon(e.FullPath) || drive.Name == WindowsAPI.GetDisplayName(e.FullPath))
                     {
                         retries--;
                         await Task.Delay(100);
@@ -237,8 +241,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     // 光学ドライブへの挿入処理
                     App.Current?.Dispatcher?.Invoke(() =>
                     {
-                        drive.Icon = _WindowsAPI.GetIcon(e.FullPath);
-                        drive.Name = _WindowsAPI.GetDisplayName(e.FullPath);
+                        drive.Icon = WindowsAPI.GetIcon(e.FullPath);
+                        drive.Name = WindowsAPI.GetDisplayName(e.FullPath);
                         drive.HasChildren = Directory.EnumerateDirectories(e.FullPath).Any();
                     });
                 }
@@ -277,8 +281,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     var retries = 120;
                     while (retries > 0)
                     {
-                        if (drive.Icon == _WindowsAPI.GetIcon(e.FullPath) ||
-                            drive.Name == _WindowsAPI.GetDisplayName(e.FullPath))
+                        if (drive.Icon == WindowsAPI.GetIcon(e.FullPath) ||
+                            drive.Name == WindowsAPI.GetDisplayName(e.FullPath))
                         {
                             retries--;
                             await Task.Delay(100);
@@ -293,8 +297,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                         // 光学ドライブへからのイジェクト処理
                         App.Current?.Dispatcher?.Invoke(() =>
                         {
-                            drive.Icon = _WindowsAPI.GetIcon(e.FullPath);
-                            drive.Name = _WindowsAPI.GetDisplayName(e.FullPath);
+                            drive.Icon = WindowsAPI.GetIcon(e.FullPath);
+                            drive.Name = WindowsAPI.GetDisplayName(e.FullPath);
                             drive.HasChildren = false;
                         });
                     }

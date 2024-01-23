@@ -1,7 +1,11 @@
-﻿using System.Diagnostics;
+﻿/*  DebugManager.cs
+
+    デバッグログを管理するクラスです。
+ */
+using System.Diagnostics;
 using System.IO;
 
-namespace FileHashCraft.Models
+namespace FileHashCraft.Models.Helpers
 {
     /// <summary>
     /// ログレベル

@@ -1,8 +1,16 @@
-﻿using System.Windows.Media;
+﻿/*  ExtensionOrTypeCheckBoxViewModel.cs
+
+    拡張子、またはファイル種類のチェックボックスを扱うクラスです。
+    ExtensionOrTypeCheckBoxBase を継承させた
+    ExtensionCheckBox (拡張子チェックボックス) および ExtentionGroupCheckBoxViewModel (ファイル種類チェックボックス) を利用します。
+ */
+
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.ViewModels.Modules;
 
@@ -148,7 +156,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 {
                     Task.Run(async () =>
                     {
-                         await _SearchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+                        await _SearchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
                         _PageSelectTargetFileViewModel.ExtentionCountChanged();
                     });
                 }

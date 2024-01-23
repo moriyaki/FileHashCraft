@@ -1,8 +1,13 @@
-﻿using System.Diagnostics;
+﻿/*  ExtentionHelper.cs
+
+    拡張子によるファイル管理を支援するクラスです。
+    ExtentionHelper は拡張子によるファイル数を管理します。
+    FileTypeHelper はファイルの種類による拡張子管理を支援します。
+*/
 using System.IO;
 using FileHashCraft.Properties;
 
-namespace FileHashCraft.Models
+namespace FileHashCraft.Models.Helpers
 {
     /// <summary>
     /// ファイル拡張子を扱うクラス

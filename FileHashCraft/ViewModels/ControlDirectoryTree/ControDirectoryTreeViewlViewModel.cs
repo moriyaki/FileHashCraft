@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿/*  ControDirectoryTreeViewlViewModel.cs
+
+    ディレクトリツリービューの ViewModel を提供します。
+ */
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
@@ -136,8 +140,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
         private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
         private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
-        public readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
-        public readonly IWindowsAPI _WindowsAPI;
+        private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
@@ -155,14 +158,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             ICheckedDirectoryManager checkedDirectoryManager,
             IExpandedDirectoryManager expandDirectoryManager,
             ISpecialFolderAndRootDrives specialFolderAndRootDrives,
-            IWindowsAPI windowsAPI,
             IMainWindowViewModel mainViewModel)
         {
             _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
             _CheckedDirectoryManager = checkedDirectoryManager;
             _ExpandedDirectoryManager = expandDirectoryManager;
             _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
-            _WindowsAPI = windowsAPI;
             _MainWindowViewModel = mainViewModel;
 
             // カレントディレクトリの変更メッセージ
@@ -218,8 +219,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
               * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
               * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
               */
-            // ルートドライブではない場合終了
-            if (item.FullPath.Length != 3) { return currentNode; }
+// ルートドライブではない場合終了
+if (item.FullPath.Length != 3) { return currentNode; }
 
             // 追加されたノードのフルパスで始まるノードを検索する
             var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(currentNode.FullPath));

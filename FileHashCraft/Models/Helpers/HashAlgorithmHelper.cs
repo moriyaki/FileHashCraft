@@ -1,4 +1,8 @@
-﻿namespace FileHashCraft.Models
+﻿/*  HashAlgorithmHelper.cs
+
+    ハッシュアルゴリズムのタイプと文字列を相互変換するヘルパークラスです。
+ */
+namespace FileHashCraft.Models.Helpers
 {
     /// <summary>
     /// 洗濯できるハッシュアルゴリズム

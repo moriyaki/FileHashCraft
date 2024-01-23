@@ -209,17 +209,21 @@
     <value>Document Files</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
-  <data name="LabelEmptyDirDelete" xml:space="preserve">
+  <data name="LabelExpert_EmptyDirDelete" xml:space="preserve">
     <value>Whether to delete empty directories or not</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
-  <data name="LabelExtentionFilterSetting" xml:space="preserve">
-    <value>Specifying file types by extension</value>
+  <data name="LabelExpert_HiddenFiles" xml:space="preserve">
+    <value>Target hidden files</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelExtentionGroupFilterSetting" xml:space="preserve">
-    <value>Specify files by file type</value>
+  <data name="LabelExpert_ReadOnlyFiles" xml:space="preserve">
+    <value>Target read-only files</value>
     <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelExpert_ZeroSizeFileDelete" xml:space="preserve">
+    <value>Whether to delete files of size 0 or not</value>
+    <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>Algorithm for file hash calculation</value>
@@ -245,6 +249,14 @@
     <value>No Have Extentions</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
+  <data name="LabelNormal_ExtentionFilterSetting" xml:space="preserve">
+    <value>Specifying file types by extension</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelNormal_ExtentionGroupFilterSetting" xml:space="preserve">
+    <value>Specify files by file type</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
   <data name="LabelOtherFiles" xml:space="preserve">
     <value>Ohter Files</value>
     <comment>Label/ExtentionHelper</comment>
@@ -257,11 +269,11 @@
     <value>Registration Files</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
-  <data name="LabelRegularExpressionCritieria" xml:space="preserve">
+  <data name="LabelRegularExpression_Critieria" xml:space="preserve">
     <value>Regular Expression Search Criteria</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelRegularExpressionError" xml:space="preserve">
+  <data name="LabelRegularExpression_Error" xml:space="preserve">
     <value>Regular Expression Search Error</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
@@ -277,13 +289,9 @@
     <value>Source Code Files</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
-  <data name="LabelWildCardSearchCriteria" xml:space="preserve">
+  <data name="LabelWildcard_SearchCriteria" xml:space="preserve">
     <value>Wildcard Search Criteria</value>
     <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelZeroSizeFileDelete" xml:space="preserve">
-    <value>Whether to delete files of size 0 or not</value>
-    <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>Data Modified</value>
@@ -312,6 +320,10 @@
   <data name="NoHaveExtentions" xml:space="preserve">
     <value>No Have Extention </value>
     <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="TabContentExpert" xml:space="preserve">
+    <value>(Caution) Advanced Settings</value>
+    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="TabContentRegularExpression" xml:space="preserve">
     <value>Regular Expression Settings</value>

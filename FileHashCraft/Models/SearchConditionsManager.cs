@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿/*  SearchConditionsManager.cs
+
+    検索条件群とその対象ファイルを管理するクラスです。
+ */
 using System.IO;
-using FileHashCraft.Views;
 
 namespace FileHashCraft.Models
 {
@@ -12,13 +14,13 @@ namespace FileHashCraft.Models
         /// </summary>
         public Dictionary<string, HashFile> AllFiles { get; }
         /// <summary>
-        /// 検索条件を保管するリスト
-        /// </summary>
-        public List<SearchCondition> ConditionsList { get; }
-        /// <summary>
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
         public HashSet<HashFile> AllConditionFiles { get; }
+        /// <summary>
+        /// 検索条件をキーとしたファイルを保持するリスト
+        /// </summary>
+        public Dictionary<SearchCondition, HashSet<HashFile>> ConditionFiles { get; }
         /// <summary>
         /// 全管理対象ファイルディクショナリに追加します。
         /// </summary>
@@ -42,7 +44,7 @@ namespace FileHashCraft.Models
     /// <summary>
     /// 検索条件の管理クラス
     /// </summary>
-    public class SearchManager : ISearchManager
+    public class SearchConditionsManager : ISearchManager
     {
         #region 内部データ
         /// <summary>
@@ -50,13 +52,14 @@ namespace FileHashCraft.Models
         /// </summary>
         public Dictionary<string, HashFile> AllFiles { get; } = [];
         /// <summary>
-        /// 検索条件を保管するリスト
-        /// </summary>
-        public List<SearchCondition> ConditionsList { get; } = [];
-        /// <summary>
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
         public HashSet<HashFile> AllConditionFiles { get; } = [];
+        /// <summary>
+        /// 検索条件をキーとしたファイルを保持するリスト
+        /// </summary>
+        public Dictionary<SearchCondition, HashSet<HashFile>> ConditionFiles { get; } = [];
+
         #endregion 内部データ
 
         #region ファイルの追加とディレクトリの削除
@@ -110,18 +113,33 @@ namespace FileHashCraft.Models
         {
             await Task.Run(() =>
             {
-                var condition = new SearchCondition();
+                var condition = SearchCondition.AddCondition(type, contidionString);
+                if (condition == null) { return; }
                 lock (_lock)
                 {
-                    // 検索条件が正当であれば追加する
-                    if (!condition.SetCondition(type, contidionString)) { return; }
-                    ConditionsList.Add(condition);
-
-                    foreach (var file in condition.ConditionFiles)
+                    switch (type)
                     {
-                        // 条件一致カウントを増やす、ハッシュセットに存在しなければ追加
-                        file.ConditionCount++;
-                        AllConditionFiles.Add(file);
+                        case SearchConditionType.Extention:
+                            foreach (var extentionFile in AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), contidionString, StringComparison.OrdinalIgnoreCase)))
+                            {
+                                extentionFile.ConditionCount++;
+
+                                // 条件辞書にファイルを登録する
+                                if (!ConditionFiles.TryGetValue(condition, out HashSet<HashFile>? value))
+                                {
+                                    value = ([]);
+                                    ConditionFiles.Add(condition, value);
+                                }
+                                value.Add(extentionFile);
+
+                                // 全ての検索条件ファイルに登録する
+                                AllConditionFiles.Add(extentionFile);
+                            }
+                            break;
+                        case SearchConditionType.WildCard:
+                            break;
+                        case SearchConditionType.RegularExprettion:
+                            break;
                     }
                 }
             });
@@ -136,20 +154,21 @@ namespace FileHashCraft.Models
         {
             await Task.Run(() =>
             {
-                var condition = ConditionsList.Find(c => c.Type == type && c.ConditionString == contidionString);
-                if (condition == null) return;
+                var condition = ConditionFiles.Keys.FirstOrDefault(c => c.Type == type && c.ConditionString == contidionString);
+                if (condition == null) { return; }
+
                 lock (_lock)
                 {
-                    foreach (var file in condition.ConditionFiles)
+                    foreach (var file in ConditionFiles[condition])
                     {
-                        // 条件一致カウントを減らす、条件一致でなくなったなら削除
+                        ConditionFiles[condition].Remove(file);
+
                         file.ConditionCount--;
                         if (file.ConditionCount == 0)
                         {
                             AllConditionFiles.Remove(file);
                         }
                     }
-                    ConditionsList.Remove(condition);
                 }
             });
         }

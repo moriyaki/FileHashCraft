@@ -270,27 +270,36 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Whether to delete empty directories or not に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelEmptyDirDelete {
+        public static string LabelExpert_EmptyDirDelete {
             get {
-                return ResourceManager.GetString("LabelEmptyDirDelete", resourceCulture);
+                return ResourceManager.GetString("LabelExpert_EmptyDirDelete", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Specifying file types by extension に類似しているローカライズされた文字列を検索します。
+        ///   Target hidden files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFilterSetting {
+        public static string LabelExpert_HiddenFiles {
             get {
-                return ResourceManager.GetString("LabelExtentionFilterSetting", resourceCulture);
+                return ResourceManager.GetString("LabelExpert_HiddenFiles", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Specify files by file type に類似しているローカライズされた文字列を検索します。
+        ///   Target read-only files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionGroupFilterSetting {
+        public static string LabelExpert_ReadOnlyFiles {
             get {
-                return ResourceManager.GetString("LabelExtentionGroupFilterSetting", resourceCulture);
+                return ResourceManager.GetString("LabelExpert_ReadOnlyFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Whether to delete files of size 0 or not に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExpert_ZeroSizeFileDelete {
+            get {
+                return ResourceManager.GetString("LabelExpert_ZeroSizeFileDelete", resourceCulture);
             }
         }
         
@@ -349,6 +358,24 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Specifying file types by extension に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelNormal_ExtentionFilterSetting {
+            get {
+                return ResourceManager.GetString("LabelNormal_ExtentionFilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specify files by file type に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelNormal_ExtentionGroupFilterSetting {
+            get {
+                return ResourceManager.GetString("LabelNormal_ExtentionGroupFilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ohter Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelOtherFiles {
@@ -378,18 +405,18 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Regular Expression Search Criteria に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegularExpressionCritieria {
+        public static string LabelRegularExpression_Critieria {
             get {
-                return ResourceManager.GetString("LabelRegularExpressionCritieria", resourceCulture);
+                return ResourceManager.GetString("LabelRegularExpression_Critieria", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Regular Expression Search Error に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegularExpressionError {
+        public static string LabelRegularExpression_Error {
             get {
-                return ResourceManager.GetString("LabelRegularExpressionError", resourceCulture);
+                return ResourceManager.GetString("LabelRegularExpression_Error", resourceCulture);
             }
         }
         
@@ -423,18 +450,9 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Wildcard Search Criteria に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildCardSearchCriteria {
+        public static string LabelWildcard_SearchCriteria {
             get {
-                return ResourceManager.GetString("LabelWildCardSearchCriteria", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Whether to delete files of size 0 or not に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelZeroSizeFileDelete {
-            get {
-                return ResourceManager.GetString("LabelZeroSizeFileDelete", resourceCulture);
+                return ResourceManager.GetString("LabelWildcard_SearchCriteria", resourceCulture);
             }
         }
         
@@ -498,6 +516,15 @@ namespace FileHashCraft.Properties {
         public static string NoHaveExtentions {
             get {
                 return ResourceManager.GetString("NoHaveExtentions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (Caution) Advanced Settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string TabContentExpert {
+            get {
+                return ResourceManager.GetString("TabContentExpert", resourceCulture);
             }
         }
         

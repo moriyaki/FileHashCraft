@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*  PageSelectTargetViewModel.PartialRegularExpression.cs
+
+    正規表現による検索画面を提供するタブの ViewModel を提供します。
+ */
 using System.Windows.Media;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget

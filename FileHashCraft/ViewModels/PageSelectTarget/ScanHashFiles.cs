@@ -1,6 +1,12 @@
-﻿using System.Diagnostics;
+﻿/*  ScanHashFiles.cs
+
+    ファイルを全スキャンする処理を実装するクラスです。
+    ScanFiles だけを利用します。
+
+ */
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
@@ -8,7 +14,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public interface IScanHashFiles
     {
         public Task ScanFiles(CancellationToken cancellation);
-        public void ScanExtention(CancellationToken cancellationToken);
     }
 
     public class ScanHashFiles : IScanHashFiles
@@ -83,7 +88,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="cancellation">キャンセリングトークン</param>
         private async Task DirectoryFilesScan(CancellationToken cancellation)
         {
-            IExtentionHelper _ExtentionManager = Ioc.Default.GetService<IExtentionHelper>() ?? throw new InvalidOperationException($"{nameof(IExtentionHelper)} dependency not resolved.");
+            IExtentionHelper _ExtentionHelper = Ioc.Default.GetService<IExtentionHelper>() ?? throw new InvalidOperationException($"{nameof(IExtentionHelper)} dependency not resolved.");
             var semaphore = new SemaphoreSlim(5);
 
             int fileCount = 0;
@@ -96,13 +101,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     fileCount = 0;
                     foreach (var fileFullPath in _FileManager.EnumerateFiles(directoryFullPath))
                     {
-                        _ExtentionManager.AddFile(fileFullPath);
+                        _ExtentionHelper.AddFile(fileFullPath);
                         _SearchManager.AddFile(fileFullPath);
                         fileCount++;
                     }
 
                     _PageSelectTargetViewModel.AddFilesScannedDirectoriesCount();
-                    // ここ、ファイル数
                     _PageSelectTargetViewModel.AddAllTargetFiles(fileCount);
 
                     if (cancellation.IsCancellationRequested) { return; }
@@ -120,7 +124,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 拡張子によるファイルフィルタの設定
         /// </summary>
         /// <param name="cancellation">キャンセリングトークン</param>
-        public void ScanExtention(CancellationToken cancellation)
+        private void ScanExtention(CancellationToken cancellation)
         {
             foreach (var extention in _ExtentionManager.GetExtentions())
             {
@@ -144,6 +148,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _PageSelectTargetViewModel.AddScannedDirectoriesCount(_CheckedDirectoryManager.NonNestedDirectories.Count);
         }
 
+        /// <summary>
+        /// 全ディレクトリのリスト
+        /// </summary>
         private readonly List<string> _directoriesList = [];
 
         /// <summary>
@@ -192,7 +199,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
             return result;
         }
-
         #endregion ディレクトリを検索する
     }
 }

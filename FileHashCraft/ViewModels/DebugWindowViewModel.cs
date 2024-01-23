@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿/*  DebugWindowViewModel.cs
+
+    デバッグウィンドウの ViewModel を提供します。
+ */
+using System.Text;
 using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;

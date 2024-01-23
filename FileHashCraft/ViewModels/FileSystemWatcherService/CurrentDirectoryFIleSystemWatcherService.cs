@@ -1,5 +1,9 @@
-﻿using System.IO;
-using FileHashCraft.Models;
+﻿/*  CurrentDirectoryFIleSystemWatcherService.cs
+
+    カレントディレクトリの変更を監視するクラスです。
+ */
+using System.IO;
+using FileHashCraft.Models.Helpers;
 
 namespace FileHashCraft.ViewModels.FileSystemWatch
 {

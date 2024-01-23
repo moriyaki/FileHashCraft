@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿/*  FileManager.cs
+
+    ファイルの管理とスキャンをします。
+ */
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace FileHashCraft.Models
@@ -56,7 +60,9 @@ namespace FileHashCraft.Models
 
             // システム、隠しファイルファイルは除外する
             if ((attributes & FileAttributes.System) == FileAttributes.System) return true;
-            if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden) return true;
+
+            // ごみ箱は除外する
+            if (fullPath.Contains("$RECYCLE.BIN")) return true;
 
             // システム系ディレクトリは除外する
             if (ignoreDirectory.Any(ignore => fullPath.StartsWith(ignore, StringComparison.OrdinalIgnoreCase)))

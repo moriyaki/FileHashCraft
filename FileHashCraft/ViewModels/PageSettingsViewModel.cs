@@ -1,9 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿/*  PageSettingsViewModel.cs
+
+    設定画面の ViewModel を提供します。
+ */
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.ViewModels.Modules;
 
@@ -30,17 +34,17 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public string SelectedLanguage
         {
-            get => _mainWindowViewModel.SelectedLanguage;
+            get => _MainWindowViewModel.SelectedLanguage;
             set
             {
-                _mainWindowViewModel.SelectedLanguage = value;
+                _MainWindowViewModel.SelectedLanguage = value;
                 var currentHashAlgorithms = SelectedHashAlgorithm;
                 HashAlgorithms.Clear();
                 HashAlgorithms =
                     [
-                        new(HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                        new(HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                        new(HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                        new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                        new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                        new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
                     ];
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
@@ -53,9 +57,9 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
             [
-                new(HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
         /// <summary>
@@ -63,25 +67,51 @@ namespace FileHashCraft.ViewModels
         /// </summary
         public string SelectedHashAlgorithm
         {
-            get => _mainWindowViewModel.HashAlgorithm;
+            get => _MainWindowViewModel.HashAlgorithm;
             set
             {
-                if (value == _mainWindowViewModel.HashAlgorithm) return;
-                _mainWindowViewModel.HashAlgorithm = value;
+                if (value == _MainWindowViewModel.HashAlgorithm) return;
+                _MainWindowViewModel.HashAlgorithm = value;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
             }
         }
+        /// <summary>
+        ///  読み取り専用ファイルを対象にするかどうか
+        /// </summary>
+        public bool IsReadOnlyFileInclude
+        {
+            get => _MainWindowViewModel.IsReadOnlyFileInclude;
+            set
+            {
+                if (_MainWindowViewModel.IsReadOnlyFileInclude == value) return;
+                _MainWindowViewModel.IsReadOnlyFileInclude = value;
+                OnPropertyChanged(nameof(IsReadOnlyFileInclude));
+            }
+        }
 
+        /// <summary>
+        /// 隠しファイルを対象にするかどうか
+        /// </summary>
+        public bool IsHiddenFileInclude
+        {
+            get => _MainWindowViewModel.IsHiddenFileInclude;
+            set
+            {
+                if (_MainWindowViewModel.IsHiddenFileInclude == value) return;
+                _MainWindowViewModel.IsHiddenFileInclude = value;
+                OnPropertyChanged(nameof(IsHiddenFileInclude));
+            }
+        }
         /// <summary>
         ///  0 サイズのファイルを削除するかどうか
         /// </summary>
         public bool IsZeroSizeFileDelete
         {
-            get => _mainWindowViewModel.IsZeroSizeFileDelete;
+            get => _MainWindowViewModel.IsZeroSizeFileDelete;
             set
             {
-                if (_mainWindowViewModel.IsZeroSizeFileDelete == value) return;
-                _mainWindowViewModel.IsZeroSizeFileDelete = value;
+                if (_MainWindowViewModel.IsZeroSizeFileDelete == value) return;
+                _MainWindowViewModel.IsZeroSizeFileDelete = value;
                 OnPropertyChanged(nameof(IsZeroSizeFileDelete));
             }
         }
@@ -91,32 +121,25 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public bool IsEmptyDirectoryDelete
         {
-            get => _mainWindowViewModel.IsEmptyDirectoryDelete;
+            get => _MainWindowViewModel.IsEmptyDirectoryDelete;
             set
             {
-                if (_mainWindowViewModel.IsEmptyDirectoryDelete == value) return;
-                _mainWindowViewModel.IsEmptyDirectoryDelete = value;
+                if (_MainWindowViewModel.IsEmptyDirectoryDelete == value) return;
+                _MainWindowViewModel.IsEmptyDirectoryDelete = value;
                 OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
             }
         }
-        /// <summary>
-        ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
-        /// </summary>
-        public DelegateCommand IsZeroSizeFIleDeleteClicked { get; set; }
-        /// <summary>
-        /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
-        /// </summary>
-        public DelegateCommand IsEmptyDirectoryDeleteClicked { get; set; }
+
         /// <summary>
         /// フォントの取得と設定
         /// </summary>
         public FontFamily UsingFont
         {
-            get => _mainWindowViewModel.UsingFont;
+            get => _MainWindowViewModel.UsingFont;
             set
             {
-                if (_mainWindowViewModel.UsingFont == value) return;
-                _mainWindowViewModel.UsingFont = value;
+                if (_MainWindowViewModel.UsingFont == value) return;
+                _MainWindowViewModel.UsingFont = value;
                 OnPropertyChanged(nameof(UsingFont));
             }
         }
@@ -126,11 +149,11 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public double FontSize
         {
-            get => _mainWindowViewModel.FontSize;
+            get => _MainWindowViewModel.FontSize;
             set
             {
-                if (_mainWindowViewModel.FontSize == value) return;
-                _mainWindowViewModel.FontSize = value;
+                if (_MainWindowViewModel.FontSize == value) return;
+                _MainWindowViewModel.FontSize = value;
                 OnPropertyChanged(nameof(FontSize));
             }
         }
@@ -151,25 +174,49 @@ namespace FileHashCraft.ViewModels
         public DelegateCommand ReturnPage { get; set; }
         #endregion バインディング
 
+        #region コマンド
+        /// <summary>
+        /// 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
+        /// </summary>
+        public DelegateCommand IsReadOnlyFileIncludeClicked { get; set; }
+        /// <summary>
+        /// 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
+        /// </summary>
+        public DelegateCommand IsHiddenFileIncludeClicked { get; set; }
+        /// <summary>
+        ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
+        /// </summary>
+        public DelegateCommand IsZeroSizeFIleDeleteClicked { get; set; }
+        /// <summary>
+        /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
+        /// </summary>
+        public DelegateCommand IsEmptyDirectoryDeleteClicked { get; set; }
+        #endregion コマンド
+
         #region コンストラクタと初期化
-        private readonly IMainWindowViewModel _mainWindowViewModel;
+        private readonly IMainWindowViewModel _MainWindowViewModel;
 
         public PageSettingsViewModel(
             IMainWindowViewModel mainViewModel)
         {
-            _mainWindowViewModel = mainViewModel;
+            _MainWindowViewModel = mainViewModel;
 
             // 利用言語の読み込み
-            SelectedLanguage = _mainWindowViewModel.SelectedLanguage;
+            SelectedLanguage = _MainWindowViewModel.SelectedLanguage;
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
 
             // フォントサイズの一覧取得とバインド
-            foreach (var fontSize in _mainWindowViewModel.GetSelectableFontSize())
+            foreach (var fontSize in _MainWindowViewModel.GetSelectableFontSize())
             {
                 FontSizes.Add(new FontSize(fontSize));
             }
+            // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
+            IsReadOnlyFileIncludeClicked = new DelegateCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
+
+            // 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
+            IsHiddenFileIncludeClicked = new DelegateCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
 
             //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
             IsZeroSizeFIleDeleteClicked = new DelegateCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);

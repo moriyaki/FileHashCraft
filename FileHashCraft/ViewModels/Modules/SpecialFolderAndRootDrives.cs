@@ -1,12 +1,26 @@
-﻿using System.IO;
+﻿/*  SpecialFolderAndRootDrives.cs
+
+    特殊フォルダとルートドライブを取得するクラスです。
+ */
+using System.IO;
 
 namespace FileHashCraft.ViewModels.Modules
 {
     #region インターフェース
     public interface ISpecialFolderAndRootDrives
     {
+        /// <summary>
+        /// フルパスから FileItemInformationを取得します。
+        /// </summary>
         public FileItemInformation GetFileInformationFromDirectorPath(string fullPath);
+        /// <summary>
+        /// 特殊フォルダを取得します。
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<FileItemInformation> ScanSpecialFolders();
+        /// <summary>
+        /// ルートドライブを取得します。
+        /// </summary>
         public IEnumerable<FileItemInformation> ScanDrives();
     }
     #endregion インターフェース
@@ -55,14 +69,7 @@ namespace FileHashCraft.ViewModels.Modules
 
     public class SpecialFolderAndRootDrives : ISpecialFolderAndRootDrives
     {
-        private readonly IWindowsAPI _windowsAPI;
-        public SpecialFolderAndRootDrives() { throw new NotImplementedException(); }
-        public SpecialFolderAndRootDrives(
-            IWindowsAPI windowsAPI
-            )
-        {
-            _windowsAPI = windowsAPI;
-        }
+        public SpecialFolderAndRootDrives() { }
 
         #region フルパスからFileItemInformationを取得
         /// <summary>
@@ -143,14 +150,14 @@ namespace FileHashCraft.ViewModels.Modules
         {
             IEnumerable<string> special_folder_path =
             [
-                _windowsAPI.GetPath(KnownFolder.Objects3D),
-                _windowsAPI.GetPath(KnownFolder.Downloads),
-                _windowsAPI.GetPath(KnownFolder.Desktop),
-                _windowsAPI.GetPath(KnownFolder.Documents),
-                _windowsAPI.GetPath(KnownFolder.Pictures),
-                _windowsAPI.GetPath(KnownFolder.Videos),
-                _windowsAPI.GetPath(KnownFolder.Music),
-                _windowsAPI.GetPath(KnownFolder.User),
+                WindowsAPI.GetPath(KnownFolder.Objects3D),
+                WindowsAPI.GetPath(KnownFolder.Downloads),
+                WindowsAPI.GetPath(KnownFolder.Desktop),
+                WindowsAPI.GetPath(KnownFolder.Documents),
+                WindowsAPI.GetPath(KnownFolder.Pictures),
+                WindowsAPI.GetPath(KnownFolder.Videos),
+                WindowsAPI.GetPath(KnownFolder.Music),
+                WindowsAPI.GetPath(KnownFolder.User),
             ];
 
             foreach (var folder in special_folder_path)

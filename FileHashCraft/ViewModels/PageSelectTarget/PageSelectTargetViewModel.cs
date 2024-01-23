@@ -1,10 +1,16 @@
-﻿using System.Collections.ObjectModel;
+﻿/*  PageSelectTargetViewModel.cs
+
+    ハッシュを取得する検索条件ウィンドウの ViewModel を提供します。
+    PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
+ */
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.Modules;
@@ -259,6 +265,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             RemoveRegularExpression = new DelegateCommand(
                 () => MessageBox.Show("正規表現の削除：未実装"));
 
+            // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
+            IsReadOnlyFileIncludeClicked = new DelegateCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
+
+            // 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
+            IsHiddenFileIncludeClicked = new DelegateCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
+
+            //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
+            IsZeroSizeFIleDeleteClicked = new DelegateCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
+
+            // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
+            IsEmptyDirectoryDeleteClicked = new DelegateCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
+
             // メインウィンドウからのツリービュー幅変更メッセージ受信
             WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, message) => TreeWidth = message.TreeWidth);
 
@@ -274,5 +292,117 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 FontSize = message.FontSize);
         }
         #endregion コンストラクタ
+
+        #region 初期処理
+        public CancellationTokenSource? CTS;
+        public CancellationToken cancellationToken;
+
+        private readonly List<string> NestedDirectories = [];
+        private readonly List<string> NonNestedDirectories = [];
+
+        /// <summary>
+        /// 初期設定をします。
+        /// </summary>
+        public void Initialize()
+        {
+            // 言語変更に伴う対策
+            LanguageChangedMeasures();
+
+            // 設定画面から戻ってきた場合、処理を終了する
+            if (IsExecuting)
+            {
+                IsExecuting = false;
+                return;
+            }
+
+            // ツリービューのアイテムを初期化する
+            InitializeTreeView();
+
+            // 既にファイル検索がされていて、ディレクトリ選択設定が変わっていなければ終了
+            if (Status == FileScanStatus.Finished
+             && _CheckedDirectoryManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
+             && _CheckedDirectoryManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
+            {
+                return;
+            }
+
+            // 現在のディレクトリ選択設定を保存する
+            NestedDirectories.Clear();
+            NestedDirectories.AddRange(_CheckedDirectoryManager.NestedDirectories);
+            NonNestedDirectories.Clear();
+            NonNestedDirectories.AddRange(_CheckedDirectoryManager.NonNestedDirectories);
+
+            // 状況が変わっているので、必要な値の初期化をする
+            App.Current?.Dispatcher?.InvokeAsync(() =>
+            {
+                CountScannedDirectories = 0;
+                CountHashFilesDirectories = 0;
+                CountAllTargetFilesGetHash = 0;
+                CountFilteredGetHash = 0;
+                ExtentionCollection.Clear();
+                ExtentionsGroupCollection.Clear();
+                _ExtentionManager.Clear();
+            });
+
+            var _ScanHashFilesClass = Ioc.Default.GetService<IScanHashFiles>() ?? throw new InvalidOperationException($"{nameof(IScanHashFiles)} dependency not resolved."); CTS = new CancellationTokenSource();
+            cancellationToken = CTS.Token;
+
+            // 移動ボタンの利用状況を設定
+            Status = FileScanStatus.None;
+            ToPageHashCalcing.RaiseCanExecuteChanged();
+
+            // スキャンするディレクトリの追加
+            _ScanHashFilesClass?.ScanFiles(cancellationToken);
+        }
+
+        /// <summary>
+        /// 表示言語の変更に伴う対策をします。
+        /// </summary>
+        private void LanguageChangedMeasures()
+        {
+            var currentAlgorithm = _MainWindowViewModel.HashAlgorithm;
+
+            HashAlgorithms.Clear();
+            HashAlgorithms =
+            [
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+            ];
+
+            // ハッシュ計算アルゴリズムを再設定
+            SelectedHashAlgorithm = currentAlgorithm;
+            OnPropertyChanged(nameof(HashAlgorithms));
+            Status = _Status;
+
+            // 言語が変わった場合に備えて、拡張子グループを再設定
+            App.Current?.Dispatcher?.InvokeAsync(() => {
+                ExtentionsGroupCollection.Clear();
+                AddFileTypes();
+            });
+        }
+
+        /// <summary>
+        /// ツリービューの初期化をします。
+        /// </summary>
+        private void InitializeTreeView()
+        {
+            _ControDirectoryTreeViewlViewModel.ClearRoot();
+            _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
+
+            foreach (var root in _CheckedDirectoryManager.NestedDirectories)
+            {
+                var fi = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
+            }
+            foreach (var root in _CheckedDirectoryManager.NonNestedDirectories)
+            {
+                var fi = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                fi.HasChildren = false;
+                var node = _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
+            }
+        }
+        #endregion 初期処理
+
     }
 }

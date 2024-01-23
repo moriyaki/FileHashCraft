@@ -209,16 +209,20 @@
     <value>ドキュメントファイル</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
-  <data name="LabelEmptyDirDelete" xml:space="preserve">
+  <data name="LabelExpert_EmptyDirDelete" xml:space="preserve">
     <value>空のディレクトリを削除するかどうか</value>
-    <comment>Label/PageSettings/PageSelectTarget</comment>
-  </data>
-  <data name="LabelExtentionFilterSetting" xml:space="preserve">
-    <value>拡張子によるファイル種別の指定</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelExtentionGroupFilterSetting" xml:space="preserve">
-    <value>ファイル種類によるファイルの指定</value>
+  <data name="LabelExpert_HiddenFiles" xml:space="preserve">
+    <value>隠しファイルを対象にする</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelExpert_ReadOnlyFiles" xml:space="preserve">
+    <value>読み取り専用ファイルを対象にする</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelExpert_ZeroSizeFileDelete" xml:space="preserve">
+    <value>0サイズのファイルを削除するかどうか</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
@@ -245,6 +249,14 @@
     <value>拡張子なし</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
+  <data name="LabelNormal_ExtentionFilterSetting" xml:space="preserve">
+    <value>拡張子によるファイル種別の指定</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelNormal_ExtentionGroupFilterSetting" xml:space="preserve">
+    <value>ファイル種類によるファイルの指定</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
   <data name="LabelOtherFiles" xml:space="preserve">
     <value>その他のファイル</value>
     <comment>Label/ExtentionHelper</comment>
@@ -257,11 +269,11 @@
     <value>登録ファイル</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
-  <data name="LabelRegularExpressionCritieria" xml:space="preserve">
+  <data name="LabelRegularExpression_Critieria" xml:space="preserve">
     <value>正規表現検索条件</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelRegularExpressionError" xml:space="preserve">
+  <data name="LabelRegularExpression_Error" xml:space="preserve">
     <value>正規表現のエラー</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
@@ -277,29 +289,25 @@
     <value>ソースコードファイル</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
-  <data name="LabelWildCardSearchCriteria" xml:space="preserve">
+  <data name="LabelWildcard_SearchCriteria" xml:space="preserve">
     <value>ワイルドカード検索条件</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelZeroSizeFileDelete" xml:space="preserve">
-    <value>0サイズのファイルを削除するかどうか</value>
-    <comment>Label/PageSettings/PageSelectTarget</comment>
-  </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>更新日時</value>
-    <comment>ListViewHeader</comment>
+    <comment>ExplorerPage/ListViewHeader</comment>
   </data>
   <data name="ListViewName" xml:space="preserve">
     <value>名前</value>
-    <comment>ListViewHeader</comment>
+    <comment>ExplorerPage/ListViewHeader</comment>
   </data>
   <data name="ListViewSize" xml:space="preserve">
     <value>サイズ</value>
-    <comment>ListViewHeader</comment>
+    <comment>ExplorerPage/ListViewHeader</comment>
   </data>
   <data name="ListViewType" xml:space="preserve">
     <value>種類</value>
-    <comment>ListViewHeader</comment>
+    <comment>ExplorerPage/ListViewHeader</comment>
   </data>
   <data name="MenuDebug" xml:space="preserve">
     <value>デバッグ(_D)</value>
@@ -312,6 +320,10 @@
   <data name="NoHaveExtentions" xml:space="preserve">
     <value>拡張子なし</value>
     <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="TabContentExpert" xml:space="preserve">
+    <value>(注意)上級者向け設定</value>
+    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="TabContentRegularExpression" xml:space="preserve">
     <value>正規表現設定</value>

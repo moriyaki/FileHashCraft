@@ -76,12 +76,8 @@ namespace FileHashCraft.Views
 
             FileWatcherService = Ioc.Default.GetService<IDrivesFileSystemWatcherService>();
             if (FileWatcherService == null) { throw new NullReferenceException(nameof(FileWatcherService)); }
+            explorerVM.CurrentFullPath = WindowsAPI.GetPath(KnownFolder.User);
 
-            var windowsAPI = Ioc.Default.GetService<IWindowsAPI>();
-            if (windowsAPI != null)
-            {
-                explorerVM.CurrentFullPath = windowsAPI.GetPath(KnownFolder.User);
-            }
             // HwndSourceを取得
             HwndSource? hwndSource = PresentationSource.FromVisual(this) as HwndSource;
             explorerVM?.HwndAddHook(hwndSource);

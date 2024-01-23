@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿/*  ExplorerListItemViewModel.cs
+
+    Explorer 風画面の ListView のアイテム ViewModel を提供します。
+ */
+using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -23,7 +27,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
         private readonly IPageExplorerViewModel _PageExplorerViewModel;
-        private readonly IWindowsAPI _WindowsAPI;
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
@@ -33,7 +36,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public ExplorerListItemViewModel()
         {
             _PageExplorerViewModel = Ioc.Default.GetService<IPageExplorerViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageExplorerViewModel)} dependency not resolved.");
-            _WindowsAPI = Ioc.Default.GetService<IWindowsAPI>() ?? throw new InvalidOperationException($"{nameof(IWindowsAPI)} dependency not resolved.");
             _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
 
             // メインウィンドウからのフォント変更メッセージ受信
@@ -101,12 +103,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             set
             {
                 SetProperty(ref _FullPath, value);
-                Name = _WindowsAPI.GetDisplayName(FullPath);
+                Name = WindowsAPI.GetDisplayName(FullPath);
 
                 App.Current?.Dispatcher.Invoke(new Action(() =>
                 {
-                    Icon = _WindowsAPI.GetIcon(FullPath);
-                    FileType = _WindowsAPI.GetType(FullPath);
+                    Icon = WindowsAPI.GetIcon(FullPath);
+                    FileType = WindowsAPI.GetType(FullPath);
                 }));
             }
         }

@@ -1,9 +1,18 @@
-﻿using System.Globalization;
+﻿/*  ViewModelUtilities.cs
+
+    メッセージングに利用するメッセージ
+    DelegateCommandの実装
+    リソースサービスの実装
+    
+    をしているユーティリティクラスです。
+
+ */
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
-using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 
 namespace FileHashCraft.ViewModels.Modules
@@ -56,7 +65,7 @@ namespace FileHashCraft.ViewModels.Modules
     /// </summary>
     public class HashAlgorithmChanged
     {
-        public string HashAlgorithm { get; } = HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA256);
+        public string HashAlgorithm { get; } = HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
 
         public HashAlgorithmChanged() { throw new NotImplementedException(); }
 
@@ -227,10 +236,10 @@ namespace FileHashCraft.ViewModels.Modules
     }
     */
 
-    /// <summary>
-    /// 型なしの ICommand実装
-    /// </summary>
-    public class DelegateCommand : ICommand
+/// <summary>
+/// 型なしの ICommand実装
+/// </summary>
+public class DelegateCommand : ICommand
     {
         private readonly Action _execute;
         private readonly Func<bool>? _canExecute;

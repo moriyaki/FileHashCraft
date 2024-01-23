@@ -1,11 +1,15 @@
-﻿using System.IO;
+﻿/*  MainWindowViewModel.cs
+
+    メインウィンドウの ViewModel を提供します。
+ */
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels
@@ -22,6 +26,8 @@ namespace FileHashCraft.ViewModels
         public double ListWidth { get; set; }
         public bool IsZeroSizeFileDelete { get; set; }
         public bool IsEmptyDirectoryDelete { get; set; }
+        public bool IsReadOnlyFileInclude { get; set; }
+        public bool IsHiddenFileInclude { get; set; }
         public string SelectedLanguage { get; set; }
         public string HashAlgorithm { get; set; }
         public FontFamily UsingFont { get; set; }
@@ -79,10 +85,12 @@ namespace FileHashCraft.ViewModels
                         Height = Convert.ToDouble(root.Element("Height")?.Value);
                         TreeWidth = Convert.ToDouble(root.Element("TreeWidth")?.Value);
                         ListWidth = Convert.ToDouble(root.Element("ListWidth")?.Value);
+                        IsReadOnlyFileInclude = Convert.ToBoolean(root.Element("IsReadOnlyFileInclude")?.Value);
+                        IsHiddenFileInclude = Convert.ToBoolean(root.Element("IsHiddenFileInclude")?.Value);
                         IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
                         IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
                         SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
-                        HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA256);
+                        HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
 
                         var fontFamilyName = root.Element("UsingFont")?.Value ?? string.Empty;
                         UsingFont = new FontFamilyConverter().ConvertFromString(fontFamilyName) as FontFamily ?? SystemFonts.MessageFontFamily;
@@ -110,6 +118,8 @@ namespace FileHashCraft.ViewModels
                         new XElement("Height", Height),
                         new XElement("TreeWidth", TreeWidth),
                         new XElement("ListWidth", ListWidth),
+                        new XElement("IsReadOnlyFileInclude", IsReadOnlyFileInclude),
+                        new XElement("IsHiddenFileInclude", IsHiddenFileInclude),
                         new XElement("IsZeroSizeFileDelete", IsZeroSizeFileDelete),
                         new XElement("IsEmptyDirectoryDelete", IsEmptyDirectoryDelete),
                         new XElement("SelectedLanguage", SelectedLanguage),
@@ -212,13 +222,43 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
-        private string _HashAlgorithm = HashAlgorithmHelper.GetAlgorithmName(Models.FileHashAlgorithm.SHA256);
+        private string _HashAlgorithm = HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
         public string HashAlgorithm
         {
             get => _HashAlgorithm;
             set
             {
                 SetProperty(ref _HashAlgorithm, value);
+                SaveSettings();
+            }
+        }
+
+        /// <summary>
+        ///  読み取り専用ファイルを対象にするかどうか
+        /// </summary>
+        private bool _IsReadOnlyFileInclude = false;
+        public bool IsReadOnlyFileInclude
+        {
+            get => _IsReadOnlyFileInclude;
+            set
+            {
+                if (value == _IsReadOnlyFileInclude) return;
+                SetProperty(ref _IsReadOnlyFileInclude, value);
+                SaveSettings();
+            }
+        }
+
+        /// <summary>
+        /// 隠しファイルを対象にするかどうか
+        /// </summary>
+        private bool _IsHiddenFileInclude = false;
+        public bool IsHiddenFileInclude
+        {
+            get => _IsHiddenFileInclude;
+            set
+            {
+                if (value == _IsHiddenFileInclude) return;
+                SetProperty(ref _IsHiddenFileInclude, value);
                 SaveSettings();
             }
         }
