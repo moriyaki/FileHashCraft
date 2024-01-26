@@ -67,7 +67,7 @@ namespace FileHashCraft.Models
         {
             await Task.Run(() =>
             {
-                var condition = SearchCondition.AddCondition(type, contidionString);
+                var condition = SearchCondition.Add(type, contidionString);
                 if (condition == null) { return; }
                 lock (_lock)
                 {

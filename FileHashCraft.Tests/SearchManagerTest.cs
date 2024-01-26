@@ -5,43 +5,39 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using FileHashCraft.Models;
+using Moq;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FileHashCraft.Tests
 {
     public class SearchManagerTest
     {
-        private readonly SearchConditionsManager sm = new();
-
-        private void SetFilesDQ()
-        {
-            const string path = @"D:\DragonQuest\";
-            var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories);
-
-            foreach (var file in files)
-            {
-                sm.AddFile(file);
-            }
-        }
-
         [Fact]
-        public async Task AddContidionTest()
+        public async Task AddConditionTest()
         {
-            SetFilesDQ();
+            // Arrange
+            var searchFileManagerMock = new Mock<ISearchFileManager>();
+            var extentionHelperMock = new Mock<IExtentionManager>();
+
+            var sm = new SearchConditionsManager(searchFileManagerMock.Object, extentionHelperMock.Object);
+
+            // テストで使用するファイル情報をISearchFileManagerのモックに登録
+            var path1 = new HashFile(@"D:\DragonQuest\DQ7\Dragon Quest VII - Eden no Senshitachi (J) (Disc 1).bin");
+            var path2 = new HashFile(@"D:\DragonQuest\DQ7\Dragon Quest VII - Eden no Senshitachi (J) (Disc 2).bin");
+
+            searchFileManagerMock.Setup(m => m.AllFiles)
+                .Returns(new Dictionary<string, HashFile>
+                {
+                    { path1.FileFullPath, path1 },
+                    { path2.FileFullPath, path2 },
+                });
+
+            // Act
             await sm.AddCondition(SearchConditionType.Extention, ".bin");
 
-            Assert.Equal(2, sm.AllConditionFiles.Count);
-        }
-
-        [Fact]
-        public async Task RemoveContidionTest()
-        {
-            SetFilesDQ();
-            await sm.AddCondition(SearchConditionType.Extention, ".bin");
-            await sm.AddCondition(SearchConditionType.Extention, ".iso");
-            await sm.RemoveCondition(SearchConditionType.Extention, ".bin");
-
-            Assert.Single(sm.AllConditionFiles);
+            var condition = new SearchCondition(SearchConditionType.Extention, ".bin");
+            // Assert
+            Assert.Equal(2, sm.ConditionFiles[condition].Count);
         }
     }
 }

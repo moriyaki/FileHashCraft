@@ -3,6 +3,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
 using FileHashCraft.ViewModels;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.FileSystemWatch;
@@ -110,8 +111,7 @@ namespace FileHashCraft
 
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
-            services.AddSingleton<IExpandedDirectoryManager, DirectoryTreeExpandedDirectoryManager>();
-            services.AddSingleton<ICheckedDirectoryManager, DirectoryTreeCheckedDirectoryManager>();
+            services.AddSingleton<IDirectoryTreeManager, DirectoryTreeManager>();
 
             services.AddSingleton<IPageSelectTargetViewModel, PageSelectTargetViewModel>();
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();

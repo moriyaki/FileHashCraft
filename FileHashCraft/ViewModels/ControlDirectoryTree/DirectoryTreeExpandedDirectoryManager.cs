@@ -5,19 +5,8 @@
 
 namespace FileHashCraft.ViewModels.Modules
 {
-    #region インターフェース
-    public interface IExpandedDirectoryManager
-    {
-        public List<string> Directories { get; }
-        public bool IsExpandedDirectory(string path);
-        public bool HasSpecialSubFolder(string fullPath);
-        public void AddDirectory(string fullPath);
-        public void RemoveDirectory(string fullPath);
-    }
-    #endregion インターフェース
-
     // TODO : 削除するパスの特殊フォルダは除外
-    public class DirectoryTreeExpandedDirectoryManager : IExpandedDirectoryManager
+    public class DirectoryTreeExpandedDirectoryManager
     {
         public DirectoryTreeExpandedDirectoryManager(ISpecialFolderAndRootDrives specialFolderAndRootDrives)
         {
@@ -46,7 +35,7 @@ namespace FileHashCraft.ViewModels.Modules
 
         #region メソッドとプロパティ
         /// <summary>
-        /// 登録したディレクトリのリストを取得する
+        /// 登録したディレクトリのリストを取得します。
         /// </summary>
         /// <returns></returns>
         public List<string> Directories

@@ -73,7 +73,7 @@ namespace FileHashCraft.Models
         /// <param name="type">検索条件のタイプ</param>
         /// <param name="conditionString">検索条件</param>
         /// <returns>成功の可否</returns>
-        public static SearchCondition? AddCondition(SearchConditionType type, string conditionString)
+        public static SearchCondition? Add(SearchConditionType type, string conditionString)
         {
             if (type == SearchConditionType.None) { return null; }
             var searchCondition = new SearchCondition(type, conditionString);
@@ -106,5 +106,21 @@ namespace FileHashCraft.Models
         }
 
         #endregion 検索条件の追加と置換
+
+        #region SearchConditionのハッシュと等価チェック
+        public override int GetHashCode()
+        {
+            return Type.GetHashCode() + (13 * ConditionString.GetHashCode());
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is  SearchCondition searchCondition)
+            {
+                return searchCondition.Type == Type && searchCondition.ConditionString == ConditionString;
+            }
+            return false;
+        }
+        #endregion SearchConditionのハッシュと等価チェック
     }
 }

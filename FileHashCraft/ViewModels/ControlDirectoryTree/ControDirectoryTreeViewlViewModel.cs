@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
 
@@ -138,8 +139,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 
         #region 初期処理
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
         private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
@@ -155,14 +155,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         // 通常コンストラクタ
         public ControDirectoryTreeViewlViewModel(
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
-            ICheckedDirectoryManager checkedDirectoryManager,
-            IExpandedDirectoryManager expandDirectoryManager,
+            IDirectoryTreeManager directoryTreeManager,
             ISpecialFolderAndRootDrives specialFolderAndRootDrives,
             IMainWindowViewModel mainViewModel)
         {
             _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
-            _CheckedDirectoryManager = checkedDirectoryManager;
-            _ExpandedDirectoryManager = expandDirectoryManager;
+            _DirectoryTreeManager = directoryTreeManager;
             _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
             _MainWindowViewModel = mainViewModel;
 
@@ -214,7 +212,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!findSpecial) return currentNode;
 
             // 展開ディレクトリに追加
-            _ExpandedDirectoryManager.AddDirectory(item.FullPath);
+            _DirectoryTreeManager.AddDirectory(item.FullPath);
             /* ルートドライブが追加された時、特殊フォルダは追加されている
               * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
               * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
@@ -322,7 +320,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="node">展開されたノード</param>
         public void AddDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
         {
-            _ExpandedDirectoryManager.AddDirectory(node.FullPath);
+            _DirectoryTreeManager.AddDirectory(node.FullPath);
             if (!node.IsExpanded) return;
 
             foreach (var child in node.Children)
@@ -337,7 +335,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="node">展開解除されたノード</param>
         public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
         {
-            _ExpandedDirectoryManager.RemoveDirectory(node.FullPath);
+            _DirectoryTreeManager.RemoveDirectory(node.FullPath);
             if (!node.HasChildren) { return; }
 
             foreach (var child in node.Children)
@@ -354,12 +352,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         public void CheckStatusChangeFromCheckManager()
         {
             // サブディレクトリを含む管理をしているディレクトリを巡回する
-            foreach (var fullPath in _CheckedDirectoryManager.NestedDirectories)
+            foreach (var fullPath in _DirectoryTreeManager.NestedDirectories)
             {
                 CheckStatusChange(fullPath, true);
             }
             // サブディレクトリを含まない管理をしているディレクトリを巡回する
-            foreach (var fullPath in _CheckedDirectoryManager.NonNestedDirectories)
+            foreach (var fullPath in _DirectoryTreeManager.NonNestedDirectories)
             {
                 CheckStatusChange(fullPath, null);
             }

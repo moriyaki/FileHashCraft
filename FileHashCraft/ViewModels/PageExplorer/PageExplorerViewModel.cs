@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
@@ -199,8 +200,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly IFileManager _FileManager;
         private readonly ICurrentDirectoryFIleSystemWatcherService _CurrentDirectoryWatcherService;
         private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
         private readonly IControDirectoryTreeViewlViewModel _DirectoryTreeViewControlViewModel;
         private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
         private readonly IMainWindowViewModel _MainWindowViewModel;
@@ -208,8 +208,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             IFileManager fileManager,
             ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
-            IExpandedDirectoryManager expandedDirectoryManager,
-            ICheckedDirectoryManager checkedDirectoryManager,
+            IDirectoryTreeManager directoryTreeManager,
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             ISpecialFolderAndRootDrives specialFolderAndRootDrives,
             IMainWindowViewModel mainWindowViewModel
@@ -218,8 +217,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _FileManager = fileManager;
             _CurrentDirectoryWatcherService = currentDirectoryFIleSystemWatcherService;
             _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
-            _ExpandedDirectoryManager = expandedDirectoryManager;
-            _CheckedDirectoryManager = checkedDirectoryManager;
+            _DirectoryTreeManager = directoryTreeManager;
             _DirectoryTreeViewControlViewModel = directoryTreeViewControlViewModel;
             _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
             _MainWindowViewModel = mainWindowViewModel;
@@ -348,7 +346,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
 
         private void RecursiveTreeNodeCheck(DirectoryTreeViewModel node)
         {
-            _CheckedDirectoryManager.CheckChanged(node.FullPath, node.IsChecked);
+            _DirectoryTreeManager.CheckChanged(node.FullPath, node.IsChecked);
             foreach (var child in node.Children)
             {
                 if (child.FullPath != string.Empty)

@@ -4,6 +4,7 @@
  */
 using System.IO;
 using FileHashCraft.Models.Helpers;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.FileSystemWatch
@@ -93,7 +94,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <summary>
         /// 展開ディレクトリマネージャのインターフェース
         /// </summary>
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
+        private readonly IDirectoryTreeManager _IDirectoryTreeManager;
 
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
@@ -107,10 +108,10 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <summary>
         /// コンストラクタでIExpandedDirectoryManagerを設定する
         /// </summary>
-        /// <param name="expandedDirectoryManager">IExpandedDirectoryManager</param>
-        public DrivesFileSystemWatcherService(IExpandedDirectoryManager expandedDirectoryManager)
+        /// <param name="directoryTreeManager">IDirectoryTreeManager</param>
+        public DrivesFileSystemWatcherService(IDirectoryTreeManager directoryTreeManager)
         {
-            _ExpandedDirectoryManager = expandedDirectoryManager;
+            _IDirectoryTreeManager = directoryTreeManager;
         }
         #endregion コンストラクタ
 
@@ -166,7 +167,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
                 return false;
             }
             // 展開マネージャに登録されてないディレクトリ、またはその親が登録されてない場合は通知しない
-            if (!(_ExpandedDirectoryManager.IsExpandedDirectory(fullPath) || _ExpandedDirectoryManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
+            if (!(_IDirectoryTreeManager.IsExpandedDirectory(fullPath) || _IDirectoryTreeManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
             {
                 return true;
             }

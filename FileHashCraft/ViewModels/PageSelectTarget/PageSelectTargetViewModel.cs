@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.Modules;
 
@@ -272,18 +273,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion コマンド
 
         #region コンストラクタ
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
         private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         private bool IsExecuting = false;
 
         public PageSelectTargetViewModel(
-            ICheckedDirectoryManager checkedDirectoryManager,
+            IDirectoryTreeManager directoryTreeManager,
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             IMainWindowViewModel mainWindowViewModel)
         {
             _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
-            _CheckedDirectoryManager = checkedDirectoryManager;
+            _DirectoryTreeManager = directoryTreeManager;
             _MainWindowViewModel = mainWindowViewModel;
 
             // 設定画面ページに移動するコマンド
@@ -409,17 +410,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             catch { }
             // 既にファイル検索がされていて、ディレクトリ選択設定が変わっていなければ終了
             if (Status == FileScanStatus.Finished
-             && _CheckedDirectoryManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
-             && _CheckedDirectoryManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
+             && _DirectoryTreeManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
+             && _DirectoryTreeManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
             {
                 return;
             }
 
             // 現在のディレクトリ選択設定を保存する
             NestedDirectories.Clear();
-            NestedDirectories.AddRange(_CheckedDirectoryManager.NestedDirectories);
+            NestedDirectories.AddRange(_DirectoryTreeManager.NestedDirectories);
             NonNestedDirectories.Clear();
-            NonNestedDirectories.AddRange(_CheckedDirectoryManager.NonNestedDirectories);
+            NonNestedDirectories.AddRange(_DirectoryTreeManager.NonNestedDirectories);
 
             // 状況が変わっているので、必要な値の初期化をする
             App.Current?.Dispatcher?.InvokeAsync(() =>
@@ -480,12 +481,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             var specialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new NullReferenceException(nameof(ISpecialFolderAndRootDrives));
 
-            foreach (var root in _CheckedDirectoryManager.NestedDirectories)
+            foreach (var root in _DirectoryTreeManager.NestedDirectories)
             {
                 var fi = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
-            foreach (var root in _CheckedDirectoryManager.NonNestedDirectories)
+            foreach (var root in _DirectoryTreeManager.NonNestedDirectories)
             {
                 var fi = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 fi.HasChildren = false;

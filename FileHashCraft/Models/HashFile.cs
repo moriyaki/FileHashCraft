@@ -56,12 +56,6 @@ namespace FileHashCraft.Models
 
         #region 設定処理
         /// <summary>
-        /// コンストラクタに引数無しは許容しません。
-        /// </summary>
-        /// <exception cref="NotImplementedException">引数無し</exception>
-        public HashFile() { throw new NotImplementedException(); }
-
-        /// <summary>
         /// ファイル名とハッシュを保存します。
         /// </summary>
         /// <param name="fileFullPath">ファイルのフルパス</param>

@@ -6,6 +6,7 @@
  */
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
@@ -22,20 +23,20 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly ISearchConditionsManager _SearchManager;
         private readonly IExtentionManager _ExtentionManager;
         private readonly IPageSelectTargetViewModel _PageSelectTargetViewModel;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
             IFileManager fileManager,
             ISearchConditionsManager searchManager,
             IExtentionManager extentionManager,
             IPageSelectTargetViewModel pageSelectTargetViewModel,
-            ICheckedDirectoryManager checkedDirectoryManager)
+            IDirectoryTreeManager directoryTreeManager)
         {
             _SearchManager = searchManager;
             _FileManager = fileManager;
             _ExtentionManager = extentionManager;
             _PageSelectTargetViewModel = pageSelectTargetViewModel;
-            _CheckedDirectoryManager = checkedDirectoryManager;
+            _DirectoryTreeManager = directoryTreeManager;
         }
 
         private readonly List<string> _oldDirectoriesList = [];
@@ -144,8 +145,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private async Task DirectoriesScan(CancellationToken cancellation)
         {
             // 各ドライブに対してタスクを回す
-            await DirectorySearch(_CheckedDirectoryManager.NestedDirectories, cancellation);
-            _PageSelectTargetViewModel.AddScannedDirectoriesCount(_CheckedDirectoryManager.NonNestedDirectories.Count);
+            await DirectorySearch(_DirectoryTreeManager.NestedDirectories, cancellation);
+            _PageSelectTargetViewModel.AddScannedDirectoriesCount(_DirectoryTreeManager.NonNestedDirectories.Count);
         }
 
         /// <summary>

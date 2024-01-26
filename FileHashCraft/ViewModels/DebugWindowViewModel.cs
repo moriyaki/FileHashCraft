@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels
@@ -140,8 +141,7 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        private readonly IExpandedDirectoryManager _ExpandedDirectoryManager;
-        private readonly ICheckedDirectoryManager _CheckedDirectoryManager;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
         private readonly IMainWindowViewModel _MainWindowViewModel;
 
         /// <summary>
@@ -149,13 +149,11 @@ namespace FileHashCraft.ViewModels
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         public DebugWindowViewModel(
-            IExpandedDirectoryManager expandedDirectoryManager,
-            ICheckedDirectoryManager checkedDirectoryManager,
+            IDirectoryTreeManager directoryTreeManager,
             IMainWindowViewModel mainViewModel
             )
         {
-            _ExpandedDirectoryManager = expandedDirectoryManager;
-            _CheckedDirectoryManager = checkedDirectoryManager;
+            _DirectoryTreeManager = directoryTreeManager;
             _MainWindowViewModel = mainViewModel;
 
             Top = mainViewModel.Top;
@@ -199,20 +197,20 @@ namespace FileHashCraft.ViewModels
             switch (pollingTarget)
             {
                 case PollingTarget.ExpandDirectoryManager:
-                    foreach (var item in _ExpandedDirectoryManager.Directories)
+                    foreach (var item in _DirectoryTreeManager.Directories)
                     {
                         sb.AppendLine(item);
                     }
                     break;
                 case PollingTarget.CheckedDirectoryManager:
                     sb.AppendLine("サブディレクトリを含まない管理");
-                    foreach (var item in _CheckedDirectoryManager.NonNestedDirectories)
+                    foreach (var item in _DirectoryTreeManager.NonNestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }
                     sb.AppendLine("-------------------------------");
                     sb.AppendLine("サブディレクトリを含む管理");
-                    foreach (var item in _CheckedDirectoryManager.NestedDirectories)
+                    foreach (var item in _DirectoryTreeManager.NestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }

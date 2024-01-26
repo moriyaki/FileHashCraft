@@ -10,17 +10,7 @@
 
 namespace FileHashCraft.ViewModels.Modules
 {
-    #region インターフェース
-    public interface ICheckedDirectoryManager
-    {
-        public bool IsChecked(string fullPath);
-        public void CheckChanged(string fullPath, bool? checkedStatus);
-        public List<string> NestedDirectories { get; }
-        public List<string> NonNestedDirectories { get; }
-    }
-    #endregion インターフェース
-
-    public class DirectoryTreeCheckedDirectoryManager : ICheckedDirectoryManager
+    public class DirectoryTreeCheckedDirectoryManager
     {
         #region リスト
         public List<string> NestedDirectories { get; } = [];
@@ -29,7 +19,7 @@ namespace FileHashCraft.ViewModels.Modules
 
         #region メソッド
         /// <summary>
-        /// そのディレクトリがチェックされているかどうかを調べる。
+        /// そのディレクトリがチェックされているかどうかを調べます。
         /// </summary>
         /// <param name="fullPath">チェックされているかを調べるディレクトリのフルパス</param>
         /// <returns>チェックされているかどうか</returns>
@@ -40,7 +30,7 @@ namespace FileHashCraft.ViewModels.Modules
         }
 
         /// <summary>
-        /// ディレクトリのチェック状態を変化させる。
+        /// ディレクトリのチェック状態を変化させます。
         /// </summary>
         /// <param name="fullPath">変化させるディレクトリのフルパス</param>
         /// <param name="checkedStatus">変化させる状態</param>
