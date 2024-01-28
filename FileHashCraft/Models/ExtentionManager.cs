@@ -21,7 +21,7 @@ namespace FileHashCraft.Models
         /// </summary>
         public IEnumerable<string> GetExtentions();
         /// <summary>
-        /// 拡張子の種類を対象に、拡張子を取得します。
+        /// 拡張子グループを対象に、拡張子を取得します。
         /// </summary>
         public IEnumerable<string> GetGroupExtentions(FileGroupType fileGroupType);
         /// <summary>
@@ -75,7 +75,7 @@ namespace FileHashCraft.Models
         }
 
         /// <summary>
-        /// 拡張子の種類を対象に、拡張子を取得します。
+        /// 拡張子グループを対象に、拡張子を取得します。
         /// </summary>
         /// <param name="fileGroupType">拡張子の種類</param>
         /// <returns>拡張子コレクション</returns>
@@ -87,7 +87,7 @@ namespace FileHashCraft.Models
                 {
                     FileGroupType.Movies,
                     FileGroupType.Pictures,
-                    FileGroupType.Sounds,
+                    FileGroupType.Musics,
                     FileGroupType.Documents,
                     FileGroupType.Applications,
                     FileGroupType.Archives,

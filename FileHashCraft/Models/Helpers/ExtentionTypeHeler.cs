@@ -6,15 +6,15 @@ using FileHashCraft.Properties;
 
 namespace FileHashCraft.Models.Helpers
 {
-    #region ファイル種類
+    #region 拡張子グループ
     /// <summary>
-    /// ファイルの種類の列挙
+    /// 拡張子グループの列挙
     /// </summary>
     public enum FileGroupType
     {
         Movies,
         Pictures,
-        Sounds,
+        Musics,
         Documents,
         Applications,
         Archives,
@@ -25,7 +25,7 @@ namespace FileHashCraft.Models.Helpers
     #endregion ファイル種類
 
     /// <summary>
-    /// ファイルタイプから表示名や拡張子を取得するクラス
+    /// 拡張子グループから表示名や拡張子を取得するクラス
     /// </summary>
     public static class ExtentionTypeHelper
     {
@@ -41,7 +41,7 @@ namespace FileHashCraft.Models.Helpers
             {
                 FileGroupType.Movies => Resources.LabelMovies,
                 FileGroupType.Pictures => Resources.LabelPictures,
-                FileGroupType.Sounds => Resources.LabelSounds,
+                FileGroupType.Musics => Resources.LabelSounds,
                 FileGroupType.Documents => Resources.LabelDocuments,
                 FileGroupType.Applications => Resources.LabelApplications,
                 FileGroupType.Archives => Resources.LabelArchives,
@@ -52,17 +52,17 @@ namespace FileHashCraft.Models.Helpers
         }
 
         /// <summary>
-        /// ファイルタイプから、該当する拡張子を取得します。
+        /// 拡張子グループから、該当する拡張子を取得します。
         /// </summary>
         /// <param name="type"></param>
-        /// <returns>基本的にファイルタイプに該当する拡張子、ただしOthersだけは除外する拡張子</returns>
-        public static List<string> GetFileGroupExtention(FileGroupType type)
+        /// <returns>基本的にファイルタイプに該当する拡張子、ただしOthersだけは空</returns>
+        public static HashSet<string> GetFileGroupExtention(FileGroupType type)
         {
             return type switch
             {
                 FileGroupType.Movies => MovieFiles,
                 FileGroupType.Pictures => PictureFiles,
-                FileGroupType.Sounds => MusicFiles,
+                FileGroupType.Musics => MusicFiles,
                 FileGroupType.Documents => DocumentFiles,
                 FileGroupType.Applications => ApplicationFiles,
                 FileGroupType.Archives => ArchiveFiles,
@@ -71,13 +71,30 @@ namespace FileHashCraft.Models.Helpers
                 _ => [],
             };
         }
-        #endregion ファイル種類の管理
 
+        /// <summary>
+        /// 拡張子がどの拡張子グループに属しているかを取得します。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        /// <returns>拡張子グループ</returns>
+        public static FileGroupType GetFileGroupFromExtention(string extention)
+        {
+            if (MovieFiles.Contains(extention)) { return FileGroupType.Movies; }
+            if (PictureFiles.Contains(extention)) { return FileGroupType.Pictures; }
+            if (MusicFiles.Contains(extention)) { return FileGroupType.Musics; }
+            if (DocumentFiles.Contains(extention)) { return FileGroupType.Documents; }
+            if (ApplicationFiles.Contains(extention)) { return FileGroupType.Applications; }
+            if (ArchiveFiles.Contains(extention)) { return FileGroupType.Archives; }
+            if (SourceCodeFiles.Contains(extention)) { return FileGroupType.SourceCodes; }
+            if (RegistrationFiles.Contains(extention)) { return FileGroupType.Registrations; }
+            return FileGroupType.Others;
+        }
+        #endregion ファイル種類の管理
         /// <summary>
         /// 主な動画ファイル
         /// </summary>
         #region 主な動画ファイル
-        private static readonly List<string> MovieFiles =
+        private static readonly HashSet<string> MovieFiles =
         [
             ".avi",
             ".divx",
@@ -157,7 +174,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主な画像ファイル
         /// </summary>
         #region 主な画像ファイル
-        private static readonly List<string> PictureFiles =
+        private static readonly HashSet<string> PictureFiles =
         [
             ".jpeg",
             ".jpg",
@@ -194,8 +211,8 @@ namespace FileHashCraft.Models.Helpers
         /// <summary>
         /// 主なサウンドファイル
         /// </summary>
-        #region 主なサウンドファイル
-        private static readonly List<string> MusicFiles =
+        #region 主な音楽ファイル
+        private static readonly HashSet<string> MusicFiles =
         [
             ".ac3",
             ".eac3",
@@ -258,7 +275,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主なドキュメントファイル
         /// </summary>
         #region 主なドキュメントファイル
-        private static readonly List<string> DocumentFiles =
+        private static readonly HashSet<string> DocumentFiles =
         [
             ".doc",
             ".docx",
@@ -285,7 +302,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主なアプリケーションファイル
         /// </summary>
         #region 主なアプリケーションファイル
-        private static readonly List<string> ApplicationFiles =
+        private static readonly HashSet<string> ApplicationFiles =
         [
             ".exe",
             ".ocx",
@@ -305,7 +322,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主な圧縮ファイル
         /// </summary>
         #region 主な圧縮ファイル
-        private static readonly List<string> ArchiveFiles =
+        private static readonly HashSet<string> ArchiveFiles =
         [
             ".7z",
             ".zip",
@@ -336,7 +353,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主なソースコードファイル
         /// </summary>
         #region 主なソースコードファイル
-        private static readonly List<string> SourceCodeFiles =
+        private static readonly HashSet<string> SourceCodeFiles =
         [
             ".c",
             ".cpp",
@@ -366,7 +383,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主な登録ファイル
         /// </summary>
         #region 主な登録ファイル
-        private static readonly List<string> RegistrationFiles =
+        private static readonly HashSet<string> RegistrationFiles =
         [
             ".reg",
             ".inf",

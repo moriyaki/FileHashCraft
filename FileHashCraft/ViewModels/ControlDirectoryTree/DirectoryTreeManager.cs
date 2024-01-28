@@ -1,4 +1,9 @@
-﻿using FileHashCraft.ViewModels.Modules;
+﻿/*  DirectoryTreeManager.cs
+
+    TreeViewの展開状況とチェック状況をまとめて管理します。
+    Facadeパターンを利用しています。
+ */
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ControlDirectoryTree
 {
@@ -57,8 +62,8 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         }
 
         #region リスト
-        public List<string> NestedDirectories { get; } = [];
-        public List<string> NonNestedDirectories { get; } = [];
+        public List<string> NestedDirectories { get => _CheckedDirectoryManager.NestedDirectories; }
+        public List<string> NonNestedDirectories { get => _CheckedDirectoryManager.NonNestedDirectories; }
         #endregion リスト
 
         /// <summary>

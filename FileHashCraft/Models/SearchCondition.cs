@@ -4,7 +4,6 @@
  */
 using System.IO;
 using System.Text.RegularExpressions;
-using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FileHashCraft.Models
 {
@@ -73,7 +72,7 @@ namespace FileHashCraft.Models
         /// <param name="type">検索条件のタイプ</param>
         /// <param name="conditionString">検索条件</param>
         /// <returns>成功の可否</returns>
-        public static SearchCondition? Add(SearchConditionType type, string conditionString)
+        public static SearchCondition? AddCondition(SearchConditionType type, string conditionString)
         {
             if (type == SearchConditionType.None) { return null; }
             var searchCondition = new SearchCondition(type, conditionString);
@@ -81,7 +80,6 @@ namespace FileHashCraft.Models
             switch (type)
             {
                 case SearchConditionType.Extention:
-                    return searchCondition;
                 case SearchConditionType.WildCard:
                     return searchCondition;
                 case SearchConditionType.RegularExprettion:

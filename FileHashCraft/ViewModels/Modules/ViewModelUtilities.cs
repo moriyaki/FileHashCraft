@@ -17,7 +17,7 @@ using FileHashCraft.Properties;
 
 namespace FileHashCraft.ViewModels.Modules
 {
-    #region MainView用
+    #region MainView用メッセージ送受信
     /// <summary>
     /// カレントディレクトリの変更メッセージ
     /// </summary>
@@ -105,9 +105,9 @@ namespace FileHashCraft.ViewModels.Modules
         }
     }
 
-    #endregion MainView用
+    #endregion MainView用メッセージ送受信
 
-    #region ページ移動用
+    #region ページ移動用メッセージ送受信
 
     /// <summary>
     /// エクスプローラー風画面ページに移動するメッセージ
@@ -166,9 +166,9 @@ namespace FileHashCraft.ViewModels.Modules
         public ReturnPageFromSettings() { }
     }
 
-    #endregion ページ移動用
+    #endregion ページ移動用メッセージ送受信
 
-    #region DirectoryTreeViewControlViewModelから発信
+    #region ディレクトリ監視からメッセージ送受信
     /// <summary>
     /// ディレクトリ監視から、ディレクトリが作成されたメッセージ
     /// </summary>
@@ -209,112 +209,7 @@ namespace FileHashCraft.ViewModels.Modules
             FullPath = fullPath;
         }
     }
-    #endregion FileChangeTreeSync用
-    #region DelegateCommand
-    /*
-    //使い方
-    public class YourViewModel : ObservableObject
-    {
-        public YourViewModel()
-        {
-            YourCommand = new DelegateCommand<string>(ExecuteYourCommand, CanExecuteYourCommand);
-        }
-
-        public ICommand YourCommand { get; }
-
-        private void ExecuteYourCommand(string parameter)
-        {
-            // Your command logic here
-        }
-
-        private bool CanExecuteYourCommand(string parameter)
-        {
-            // Your can execute logic here
-            return true;
-        }
-    }
-    */
-
-    /*
-    /// <summary>
-    /// 型なしの ICommand実装
-    /// </summary>
-    public class RelayCommand : ICommand
-    {
-        private readonly Action _execute;
-        private readonly Func<bool>? _canExecute;
-
-        public event EventHandler? CanExecuteChanged;
-
-        public RelayCommand()
-        {
-            throw new NotImplementedException();
-        }
-
-        public RelayCommand(Action execute, Func<bool>? canExecute = null)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object? parameter)
-        {
-            var result =  _canExecute == null || _canExecute();
-            return result;
-        }
-
-        public void Execute(object? parameter)
-        {
-            _execute();
-        }
-
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
-    }
-
-    /// <summary>
-    /// 型ありの ICommand実装
-    /// </summary>
-    public class DelegateCommand<T> : ICommand
-    {
-        private readonly Action<T> _execute;
-        private readonly Func<T, bool>? _canExecute;
-
-        public event EventHandler? CanExecuteChanged;
-
-        public DelegateCommand()
-        {
-            throw new NotImplementedException();
-        }
-
-        public DelegateCommand(Action<T> execute, Func<T, bool>? canExecute = null)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object? parameter)
-        {
-            return _canExecute == null || (parameter != null && _canExecute((T)parameter));
-        }
-
-        public void Execute(object? parameter)
-        {
-            if (parameter != null)
-            {
-                _execute((T)parameter);
-            }
-        }
-
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
-    }
-    */
-    #endregion DelegateCommand
+    #endregion ディレクトリ監視からメッセージ送受信
 
     #region リソースサービス
     public class ResourceService : ObservableObject

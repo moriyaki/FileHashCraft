@@ -17,9 +17,8 @@ namespace FileHashCraft.Tests
         {
             // Arrange
             var searchFileManagerMock = new Mock<ISearchFileManager>();
-            var extentionHelperMock = new Mock<IExtentionManager>();
 
-            var sm = new SearchConditionsManager(searchFileManagerMock.Object, extentionHelperMock.Object);
+            var sm = new SearchConditionsManager(searchFileManagerMock.Object);
 
             // テストで使用するファイル情報をISearchFileManagerのモックに登録
             var path1 = new HashFile(@"D:\DragonQuest\DQ7\Dragon Quest VII - Eden no Senshitachi (J) (Disc 1).bin");

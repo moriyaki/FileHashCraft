@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Models
 {
@@ -40,6 +42,9 @@ namespace FileHashCraft.Models
             IExtentionManager extentionManager)
         {
             _ExtentionManager = extentionManager;
+
+            WeakReferenceMessenger.Default.Register<AddConditionFile>(this, (_, message) =>
+                AllConditionFiles.Add(message.ConditionFiles));
         }
 
         #region ファイルの追加とディレクトリの削除

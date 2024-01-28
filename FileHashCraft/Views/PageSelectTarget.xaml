@@ -49,20 +49,21 @@
                  FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding FileName}" Padding="0">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Background" Value="Transparent" />
-                                <!--
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsHashTarget}">
-                                        <Setter Property="Background" Value="{Binding HashTargetColor}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                                -->
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
+                        <TextBlock Text="{Binding FileName}" Padding="0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsHashTarget}">
+                                            <Setter Property="Background" Value="{Binding HashTargetColor}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

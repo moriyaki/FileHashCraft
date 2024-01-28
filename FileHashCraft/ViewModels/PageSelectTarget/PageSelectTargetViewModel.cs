@@ -47,7 +47,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void AddAllTargetFiles(int allTargetFiles);
         /// <summary>
-        /// ファイルの種類をリストボックスに追加します
+        /// ファイル拡張子グループをリストボックスに追加します
         /// </summary>
         public void AddFileTypes();
         /// <summary>
@@ -74,6 +74,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ハッシュ取得対象のファイルリストアイテムの一覧です。
         /// </summary>
         public ObservableCollection<HashListFileItems> HashFileListItems { get; }
+        /// <summary>
+        /// 拡張子チェックボックスにチェックされたので拡張子グループに反映します。
+        /// </summary>
+        public void CheckExtentionReflectToGroup(string extention);
+        /// <summary>
+        /// 拡張子チェックボックスがチェック解除されたので拡張子グループに反映します。
+        /// </summary>
+        public void UncheckExtentionReflectToGroup(string extention);
+        /// <summary>
+        /// ファイルの検索条件が変更されたのを反映します。
+        /// </summary>
+        public void ChangeCondition();
     }
     #endregion インターフェース
 
@@ -263,29 +275,35 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public RelayCommand RemoveRegularExpression { get; set; }
 
         /// <summary>
-        /// ファイル種類のチェックボックスが選択された時の処理をします
+        /// ファイル拡張子のチェックボックスが選択された時の拡張子グループチェックボックス処理をします
         /// </summary>
         public RelayCommand<object> ExtentionGroupCheckBoxClickedCommand { get; set; }
         /// <summary>
-        /// ファイル種類のチェックボックスが選択された時の処理をします
+        /// ファイル拡張子のチェックボックスが選択解除された時のグループチェックボックス処理をします
         /// </summary>
         public RelayCommand<object> ExtentionCheckBoxClickedCommand { get; set; }
         #endregion コマンド
 
         #region コンストラクタ
+        private readonly IExtentionManager _ExtentionManager;
+        private readonly ISearchFileManager _SearchFileManager;
         private readonly IDirectoryTreeManager _DirectoryTreeManager;
         private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
         private readonly IMainWindowViewModel _MainWindowViewModel;
         private bool IsExecuting = false;
 
         public PageSelectTargetViewModel(
+            IExtentionManager extentionManager,
+            ISearchFileManager searchFileManager,
             IDirectoryTreeManager directoryTreeManager,
             IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
             IMainWindowViewModel mainWindowViewModel)
         {
+            _ExtentionManager = extentionManager;
             _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
             _DirectoryTreeManager = directoryTreeManager;
             _MainWindowViewModel = mainWindowViewModel;
+            _SearchFileManager = searchFileManager;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
@@ -371,7 +389,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
                 FontSize = message.FontSize);
 
-            // カレントディレクトリが変更されたメッセージ受診
+            // カレントディレクトリが変更されたメッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) =>
                 ChangeCurrentPath(message.CurrentFullPath));
         }
@@ -495,19 +513,42 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
         #endregion 初期処理
 
+        #region ツリービュー選択処理
+        /// <summary>
+        /// ツリービューの選択ディレクトリが変更された時の処理です。
+        /// </summary>
+        /// <param name="currentFullPath">カレントディレクトリ</param>
+        /// <exception cref="NullReferenceException">IFileManagerが取得できなかった時の例外</exception>
         private void ChangeCurrentPath(string currentFullPath)
         {
-            HashFileListItems.Clear();
             var fileManager = Ioc.Default.GetService<IFileManager>() ?? throw new NullReferenceException(nameof(IFileManager));
-            foreach (var file in fileManager.EnumerateFiles(currentFullPath))
+
+            App.Current?.Dispatcher?.Invoke(() =>
             {
-                var item = new HashListFileItems
+                HashFileListItems.Clear();
+                var files = fileManager.EnumerateFiles(currentFullPath);
+                foreach (var file in files)
                 {
-                    FullPathFileName = file,
-                    IsHashTarget = false
-                };
-                HashFileListItems.Add(item);
-            }
+                    var item = new HashListFileItems
+                    {
+                        FileFullPath = file,
+                        // TOOD : 【AllConditionFilesの内部コレクションが変更されてる途中にきてしまう】
+                        IsHashTarget = _SearchFileManager.AllConditionFiles.Any(f => f.FileFullPath == file)
+                    };
+                    HashFileListItems.Add(item);
+                }
+            });
         }
+
+        private readonly object _lock = new();
+
+        /// <summary>
+        /// 検索条件が変更された時の処理です。
+        /// </summary>
+        public void ChangeCondition()
+        {
+            ChangeCurrentPath(_ControDirectoryTreeViewlViewModel.CurrentFullPath);
+        }
+        #endregion ツリービュー選択処理
     }
 }

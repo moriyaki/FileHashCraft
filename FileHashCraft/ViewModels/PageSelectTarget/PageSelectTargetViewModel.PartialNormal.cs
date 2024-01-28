@@ -82,7 +82,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// ファイルの種類による絞り込みチェックボックスを持つリストボックス
+        /// ファイルの拡張子グループによる絞り込みチェックボックスを持つリストボックス
         /// </summary>
         public ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection { get; set; } = [];
 
@@ -125,17 +125,78 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             App.Current?.Dispatcher?.InvokeAsync(() => CountAllTargetFilesGetHash += targetFilesCount);
         }
+
+        /// <summary>
+        /// 拡張子チェックボックスにチェックされた時に拡張子グループに反映します。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        public void CheckExtentionReflectToGroup(string extention)
+        {
+            var fileGroupType = ExtentionTypeHelper.GetFileGroupFromExtention(extention);
+            var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
+            if (group == null) return;
+
+            // グループの拡張子に一つもチェックが入ってなければ null にする
+            App.Current?.Dispatcher?.InvokeAsync(() =>
+            {
+                if (group.IsChecked == false)
+                {
+                    group.IsCheckedForce = null;
+                }
+
+                // グループの拡張子が全てチェックされているか調べる
+                foreach (var groupExtention in _ExtentionManager.GetGroupExtentions(fileGroupType))
+                {
+                    var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                    // 1つでもチェックされてない拡張子があればそのまま戻る
+                    if (item != null && item.IsChecked == false) { return; }
+                }
+                // 全てチェックされていたらチェック状態を null → true
+                group.IsCheckedForce = true;
+            });
+        }
+
+        /// <summary>
+        /// 拡張子チェックボックスのチェックが解除された時に拡張子グループに反映します。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        public void UncheckExtentionReflectToGroup(string extention)
+        {
+            var fileGroupType = ExtentionTypeHelper.GetFileGroupFromExtention(extention);
+            var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
+            if (group == null) return;
+
+            // グループの拡張子に全てチェックが入っていれば null にする
+            App.Current?.Dispatcher?.InvokeAsync(() =>
+            {
+                if (group.IsChecked == true)
+                {
+                    group.IsCheckedForce = null;
+                }
+
+                // グループの拡張子が全てチェック解除されているか調べる
+                foreach (var groupExtention in _ExtentionManager.GetGroupExtentions(fileGroupType))
+                {
+                    var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                    // 1つでもチェックされてない拡張子があればそのまま戻る
+                    if (item != null && item.IsChecked == true) { return; }
+                }
+                // 全てチェック解除されていたらチェック状態を null → false
+                group.IsCheckedForce = false;
+            });
+        }
+
         #endregion ファイル数の管理処理
 
         #region ファイル絞り込みの処理
         /// <summary>
-        /// ファイルの種類をリストボックスに追加します。
+        /// ファイルの拡張子グループをリストボックスに追加します。
         /// </summary>
         public void AddFileTypes()
         {
             var movies = new ExtentionGroupCheckBoxViewModel(FileGroupType.Movies);
             var pictures = new ExtentionGroupCheckBoxViewModel(FileGroupType.Pictures);
-            var musics = new ExtentionGroupCheckBoxViewModel(FileGroupType.Sounds);
+            var musics = new ExtentionGroupCheckBoxViewModel(FileGroupType.Musics);
             var documents = new ExtentionGroupCheckBoxViewModel(FileGroupType.Documents);
             var applications = new ExtentionGroupCheckBoxViewModel(FileGroupType.Applications);
             var archives = new ExtentionGroupCheckBoxViewModel(FileGroupType.Archives);
@@ -177,15 +238,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             App.Current?.Dispatcher?.Invoke(() => ExtentionCollection.Clear());
         }
-        // TODO : Modelから取得するようにする
         /// <summary>
         /// 拡張子チェックボックスにより、スキャンするファイル数が増減した時の処理をします。
         /// </summary>
         public void ExtentionCountChanged()
         {
             var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new NullReferenceException(nameof(ISearchFileManager));
-            App.Current?.Dispatcher?.Invoke(() =>
-                CountFilteredGetHash = searchFileManager.AllConditionFiles.Count);
+            App.Current?.Dispatcher?.InvokeAsync(() => CountFilteredGetHash = searchFileManager.AllConditionFiles.Count);
         }
         /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。

@@ -3,6 +3,8 @@
     検索条件群とその対象ファイルを管理するクラスです。
  */
 using System.IO;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Models
 {
@@ -38,16 +40,14 @@ namespace FileHashCraft.Models
         #endregion 内部データ
 
         #region コンストラクタ
-        private readonly IExtentionManager _ExtentionHelper;
+        //private readonly IExtentionManager _ExtentionHelper;
         private readonly ISearchFileManager _SearchFileManager;
 
         public SearchConditionsManager() { throw new NotImplementedException(); }
         public SearchConditionsManager(
-            ISearchFileManager searchFileManager,
-            IExtentionManager extentionHelper)
+            ISearchFileManager searchFileManager)
         {
             _SearchFileManager = searchFileManager;
-            _ExtentionHelper = extentionHelper;
         }
         #endregion コンストラクタ
 
@@ -67,7 +67,7 @@ namespace FileHashCraft.Models
         {
             await Task.Run(() =>
             {
-                var condition = SearchCondition.Add(type, contidionString);
+                var condition = SearchCondition.AddCondition(type, contidionString);
                 if (condition == null) { return; }
                 lock (_lock)
                 {
@@ -86,8 +86,7 @@ namespace FileHashCraft.Models
                                 }
                                 value.Add(extentionFile);
 
-                                // 全ての検索条件ファイルに登録する
-                                _SearchFileManager.AllConditionFiles.Add(extentionFile);
+                                WeakReferenceMessenger.Default.Send(new AddConditionFile(extentionFile));
                             }
                             break;
                         case SearchConditionType.WildCard:

@@ -1,10 +1,12 @@
 ﻿/*  ExtensionOrTypeCheckBoxViewModel.cs
 
-    拡張子、またはファイル種類のチェックボックスを扱うクラスです。
+    拡張子、またはファイル拡張子グループのチェックボックスを扱うクラスです。
     ExtensionOrTypeCheckBoxBase を継承させた
-    ExtensionCheckBox (拡張子チェックボックス) および ExtentionGroupCheckBoxViewModel (ファイル種類チェックボックス) を利用します。
+    ExtensionCheckBox (拡張子チェックボックス) および 
+    ExtentionGroupCheckBoxViewModel (拡張子グループチェックボックス) を利用します。
  */
 
+using System.Reflection;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -31,7 +33,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     #endregion インターフェース
 
     /// <summary>
-    /// 拡張子チェックボックスと、ファイル種類チェックボックスの基底クラス
+    /// 拡張子チェックボックスと、拡張子グループチェックボックスの基底クラス
     /// </summary>
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
@@ -74,7 +76,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public int ExtentionCount { get; set; } = 0;
 
         /// <summary>
-        /// 拡張子かファイル種類の文字列
+        /// 拡張子か拡張子グループの文字列
         /// </summary>
         private string _ExtentionOrFileType = string.Empty;
         public string ExtentionOrGroup
@@ -134,37 +136,56 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ExtentionCount = extentionManager.GetExtentionsCount(extention);
         }
 
+        public async void HandleCheckedAsync()
+        {
+            var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
+            var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
+
+            await searchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            pageSelectTargetFileViewModel.ExtentionCountChanged();
+            pageSelectTargetFileViewModel.CheckExtentionReflectToGroup(ExtentionOrGroup);
+            //pageSelectTargetFileViewModel.ChangeCondition();
+        }
+
+        public async void HandleUncheckedAsync()
+        {
+            var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
+            var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
+
+            await searchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            pageSelectTargetFileViewModel.ExtentionCountChanged();
+            pageSelectTargetFileViewModel.UncheckExtentionReflectToGroup(ExtentionOrGroup);
+            //pageSelectTargetFileViewModel.ChangeCondition();
+        }
+
         public override bool? IsChecked
         {
             get => _IsChecked;
             set
             {
-                var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
-                var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved."); if (value == true)
+                SetProperty(ref _IsChecked, value);
+
+                if (value == true)
                 {
-                    Task.Run(async () =>
-                    {
-                        await searchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
-                        pageSelectTargetFileViewModel.ExtentionCountChanged();
-                    });
+                    HandleCheckedAsync();
                 }
                 else
                 {
-                    Task.Run(async () =>
-                    {
-                        await searchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
-                        pageSelectTargetFileViewModel.ExtentionCountChanged();
-                    });
+                    HandleUncheckedAsync();
                 }
-                SetProperty(ref _IsChecked, value);
             }
+        }
+        public bool? IsCheckedForce
+        {
+            get => _IsChecked;
+            set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
         }
         #endregion バインディング
     }
 
     //----------------------------------------------------------------------------------------
     /// <summary>
-    /// ファイル種類のチェックボックスを扱うクラス
+    /// 拡張子グループのチェックボックスを扱うクラス
     /// </summary>
     public class ExtentionGroupCheckBoxViewModel : ExtensionOrTypeCheckBoxBase
     {
@@ -180,9 +201,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ExtentionOrGroup = ExtentionTypeHelper.GetFileGroupName(FileGroupType.Others);
         }
         /// <summary>
-        /// ファイルの種類用のコンストラクタ
+        /// ファイル拡張子グループ用のコンストラクタ
         /// </summary>
-        /// <param name="fileType">ファイルの種類</param>
+        /// <param name="fileType">ファイルの拡張子グループ</param>
         public ExtentionGroupCheckBoxViewModel(FileGroupType fileType) : base()
         {
             FileType = fileType;
@@ -193,8 +214,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion コンストラクタ
 
         #region バインディング
-        //private readonly List<string> _extensionList = [];
-        private FileGroupType FileType { get; }
+        public FileGroupType FileType { get; }
         /// <summary>
         /// チェックボックスの状態
         /// </summary>
@@ -215,6 +235,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
                 SetProperty(ref _IsChecked, value);
             }
+        }
+        public bool? IsCheckedForce
+        {
+            get => _IsChecked;
+            set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
         }
         #endregion バインディング
     }
