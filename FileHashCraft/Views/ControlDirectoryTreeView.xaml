@@ -18,7 +18,7 @@
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"
                                       Visibility="{Binding IsCheckBoxVisible}"/>
                         <TextBlock VerticalAlignment="Center"
-                                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Text="{Binding Name, Mode=OneWay}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>

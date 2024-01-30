@@ -6,7 +6,6 @@
     ExtentionGroupCheckBoxViewModel (拡張子グループチェックボックス) を利用します。
  */
 
-using System.Reflection;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -14,7 +13,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
-using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -38,7 +37,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
-        protected readonly IMainWindowViewModel _MainWindowViewModel;
+        protected readonly IMessageServices _messageServices;
+        protected readonly ISettingsService _settingsService;
 
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
@@ -46,15 +46,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase()
         {
-            _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
+            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
+            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
-            // メインウィンドウからのフォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) =>
-                UsingFont = message.UsingFont);
+            // フォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
 
-            // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
-                FontSize = message.FontSize);
+            // フォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
+
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
         }
         #endregion コンストラクタ
 
@@ -84,33 +86,37 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             get => _ExtentionOrFileType;
             set => SetProperty(ref _ExtentionOrFileType, value);
         }
-
         /// <summary>
         /// フォントの設定
         /// </summary>
-        public FontFamily UsingFont
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _CurrentFontFamily;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+
+                SetProperty(ref _CurrentFontFamily, value);
+                _messageServices.SendCurrentFont(value);
             }
         }
 
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
+        private double _FontSize;
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
+                if (_FontSize == value) { return; }
+
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
-
         /// <summary>
         /// チェックボックスのチェックの状態
         /// </summary>

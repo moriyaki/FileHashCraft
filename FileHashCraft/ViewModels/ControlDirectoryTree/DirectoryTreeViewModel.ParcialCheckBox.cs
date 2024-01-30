@@ -150,7 +150,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="value">変更された値</param>
         private void SyncSpecialDirectory(DirectoryTreeViewModel changedNode, bool? value)
         {
-            var controlDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlViewModel));
+            var controlDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlModel));
             foreach (var root in controlDirectoryTreeViewlViewModel.TreeRoot)
             {
                 ChangeExpandedSpecialFolder(root, changedNode.FullPath, value);

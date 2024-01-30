@@ -13,9 +13,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
-using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -146,53 +146,75 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set => SetProperty(ref _StatusMessage, value);
         }
         /// <summary>
-        /// フォントの設定
+        /// フィルタするファイル
         /// </summary>
-        public FontFamily UsingFont
+        private string _FilterTextBox = string.Empty;
+        public string FilterTextBox
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _FilterTextBox;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
+                SetProperty(ref _FilterTextBox, value);
             }
         }
-
-        /// <summary>
-        /// フォントサイズの設定
-        /// </summary>
-        public double FontSize
-        {
-            get => _MainWindowViewModel.FontSize;
-            set
-            {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
-            }
-        }
-
         /// <summary>
         /// ツリー横幅の設定
         /// </summary>
+        private double _TreeWidth;
         public double TreeWidth
         {
-            get => _MainWindowViewModel.TreeWidth;
+            get => _TreeWidth;
             set
             {
-                _MainWindowViewModel.TreeWidth = value;
-                OnPropertyChanged(nameof(TreeWidth));
+                if (value == _TreeWidth) { return; }
+
+                SetProperty(ref _TreeWidth, value);
+                _messageServices.SendTreeWidth(value);
             }
         }
         /// <summary>
         /// リストボックスの幅を設定します
         /// </summary>
+        private double _ListWidth;
         public double ListWidth
         {
-            get => _MainWindowViewModel.ListWidth;
+            get => _ListWidth;
             set
             {
-                _MainWindowViewModel.ListWidth = value;
-                OnPropertyChanged(nameof(ListWidth));
+                if (value == _ListWidth) { return; }
+
+                SetProperty(ref _ListWidth, value);
+                _messageServices.SendListWidth(value);
+            }
+        }
+        /// <summary>
+        /// フォントの設定
+        /// </summary>
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
+        {
+            get => _CurrentFontFamily;
+            set
+            {
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+
+                SetProperty(ref _CurrentFontFamily, value);
+                _messageServices.SendCurrentFont(value);
+            }
+        }
+        /// <summary>
+        /// フォントサイズの設定
+        /// </summary>
+        private double _FontSize;
+        public double FontSize
+        {
+            get => _FontSize;
+            set
+            {
+                if (_FontSize == value) { return; }
+
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
         /// <summary>
@@ -207,28 +229,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
         /// </summary>
+        private string _SelectedHashAlgorithm;
         public string SelectedHashAlgorithm
         {
-            get => _MainWindowViewModel.HashAlgorithm;
+            get => _SelectedHashAlgorithm;
             set
             {
-                _MainWindowViewModel.HashAlgorithm = value;
-                OnPropertyChanged(nameof(SelectedHashAlgorithm));
-            }
-        }
-        /// <summary>
-        /// フィルタするファイル
-        /// </summary>
-        private string _FilterTextBox = string.Empty;
-        public string FilterTextBox
-        {
-            get => _FilterTextBox;
-            set
-            {
-                SetProperty(ref _FilterTextBox, value);
-            }
-        }
+                if (value == _SelectedHashAlgorithm) return;
 
+                SetProperty(ref _SelectedHashAlgorithm, value);
+                _messageServices.SendHashAlogrithm(value);
+            }
+        }
         /// <summary>
         /// ハッシュ取得対象のファイルリストアイテムの一覧です。
         /// </summary>
@@ -285,31 +297,38 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion コマンド
 
         #region コンストラクタ
-        private readonly IExtentionManager _ExtentionManager;
-        private readonly ISearchFileManager _SearchFileManager;
-        private readonly IDirectoryTreeManager _DirectoryTreeManager;
-        private readonly IControDirectoryTreeViewlViewModel _ControDirectoryTreeViewlViewModel;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
+        private readonly ITreeManager _directoryTreeManager;
+        private readonly IExtentionManager _extentionManager;
+        private readonly ISearchFileManager _searchFileManager;
+        private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         private bool IsExecuting = false;
 
         public PageSelectTargetViewModel(
+            IMessageServices messageServices,
+            ISettingsService settingsService,
+            ITreeManager directoryTreeManager,
             IExtentionManager extentionManager,
             ISearchFileManager searchFileManager,
-            IDirectoryTreeManager directoryTreeManager,
-            IControDirectoryTreeViewlViewModel directoryTreeViewControlViewModel,
-            IMainWindowViewModel mainWindowViewModel)
+            IControDirectoryTreeViewlModel controDirectoryTreeViewlViewModel
+            )
         {
-            _ExtentionManager = extentionManager;
-            _ControDirectoryTreeViewlViewModel = directoryTreeViewControlViewModel;
-            _DirectoryTreeManager = directoryTreeManager;
-            _MainWindowViewModel = mainWindowViewModel;
-            _SearchFileManager = searchFileManager;
+            _messageServices = messageServices;
+            _settingsService = settingsService;
+            _directoryTreeManager = directoryTreeManager;
+            _extentionManager = extentionManager;
+            _searchFileManager = searchFileManager;
+            _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
+
+            // カレントハッシュ計算アルゴリズムを保存
+            SelectedHashAlgorithm = _settingsService.HashAlgorithm;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
             {
                 IsExecuting = true;
-                WeakReferenceMessenger.Default.Send(new ToPageSetting(ReturnPageEnum.PageTargetSelect));
+                _messageServices.SendToSettingsPage(ReturnPageEnum.PageTargetSelect);
             });
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -317,18 +336,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 var debugWindow = new Views.DebugWindow();
                 debugWindow.Show();
             });
-            // カレントハッシュ計算アルゴリズムを保存
-            SelectedHashAlgorithm = _MainWindowViewModel.HashAlgorithm;
-
             // エクスプローラー風画面に移動するコマンド
             ToPageExplorer = new RelayCommand(() =>
             {
                 CTS?.Cancel();
-                WeakReferenceMessenger.Default.Send(new ToPageExplorer());
+                _messageServices.SendToExplorerPage();
             });
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new RelayCommand(
-                () => WeakReferenceMessenger.Default.Send(new ToPageHashCalcing()),
+                () => _messageServices.SendToHashCalcingPage(),
                 () => CountFilteredGetHash > 0
             );
             // 正規表現の条件を追加するコマンド
@@ -364,34 +380,47 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
             });
             // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsReadOnlyFileIncludeClicked = new RelayCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
+            IsReadOnlyFileIncludeClicked = new RelayCommand(()
+                => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
 
             // 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsHiddenFileIncludeClicked = new RelayCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
+            IsHiddenFileIncludeClicked = new RelayCommand(()
+                => IsHiddenFileInclude = !IsHiddenFileInclude);
 
             //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsZeroSizeFIleDeleteClicked = new RelayCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
+            IsZeroSizeFIleDeleteClicked = new RelayCommand(()
+                => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
 
             // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsEmptyDirectoryDeleteClicked = new RelayCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
+            IsEmptyDirectoryDeleteClicked = new RelayCommand(()
+                => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
-            // メインウィンドウからのツリービュー幅変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, message) => TreeWidth = message.TreeWidth);
+            // ツリービュー幅変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, m)
+                => TreeWidth = m.TreeWidth);
 
-            // メインウィンドウからのリストボックス幅変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<ListWidthChanged>(this, (_, message) => ListWidth = message.ListWidth);
+            // リストボックス幅変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<ListWidthChanged>(this, (_, m)
+                => ListWidth = m.ListWidth);
 
-            // メインウィンドウからのフォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) =>
-                UsingFont = message.UsingFont);
+            // フォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)
+                => CurrentFontFamily = m.CurrentFontFamily);
 
-            // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) =>
-                FontSize = message.FontSize);
+            // フォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
+                => FontSize = m.FontSize);
 
             // カレントディレクトリが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) =>
-                ChangeCurrentPath(message.CurrentFullPath));
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, m)
+                => ChangeCurrentPath(m.CurrentFullPath));
+
+            _TreeWidth = _settingsService.TreeWidth;
+            _ListWidth = _settingsService.ListWidth;
+            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
+
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
         }
 
         #endregion コンストラクタ
@@ -422,23 +451,23 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             InitializeTreeView();
             try
             {
-                ChangeCurrentPath(_ControDirectoryTreeViewlViewModel.TreeRoot[0].FullPath);
-                _ControDirectoryTreeViewlViewModel.TreeRoot[0].IsSelected = true;
+                ChangeCurrentPath(_controDirectoryTreeViewlViewModel.TreeRoot[0].FullPath);
+                _controDirectoryTreeViewlViewModel.TreeRoot[0].IsSelected = true;
             }
             catch { }
             // 既にファイル検索がされていて、ディレクトリ選択設定が変わっていなければ終了
             if (Status == FileScanStatus.Finished
-             && _DirectoryTreeManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
-             && _DirectoryTreeManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
+             && _directoryTreeManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
+             && _directoryTreeManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
             {
                 return;
             }
 
             // 現在のディレクトリ選択設定を保存する
             NestedDirectories.Clear();
-            NestedDirectories.AddRange(_DirectoryTreeManager.NestedDirectories);
+            NestedDirectories.AddRange(_directoryTreeManager.NestedDirectories);
             NonNestedDirectories.Clear();
-            NonNestedDirectories.AddRange(_DirectoryTreeManager.NonNestedDirectories);
+            NonNestedDirectories.AddRange(_directoryTreeManager.NonNestedDirectories);
 
             // 状況が変わっているので、必要な値の初期化をする
             App.Current?.Dispatcher?.InvokeAsync(() =>
@@ -467,7 +496,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         private void LanguageChangedMeasures()
         {
-            var currentAlgorithm = _MainWindowViewModel.HashAlgorithm;
+            var currentAlgorithm = _settingsService.HashAlgorithm;
 
             HashAlgorithms.Clear();
             HashAlgorithms =
@@ -494,21 +523,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         private void InitializeTreeView()
         {
-            _ControDirectoryTreeViewlViewModel.ClearRoot();
-            _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
+            _controDirectoryTreeViewlViewModel.ClearRoot();
+            _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
-            var specialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new NullReferenceException(nameof(ISpecialFolderAndRootDrives));
-
-            foreach (var root in _DirectoryTreeManager.NestedDirectories)
+            foreach (var root in _directoryTreeManager.NestedDirectories)
             {
-                var fi = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
-                _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
+                var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
-            foreach (var root in _DirectoryTreeManager.NonNestedDirectories)
+            foreach (var root in _directoryTreeManager.NonNestedDirectories)
             {
-                var fi = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
+                var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 fi.HasChildren = false;
-                var node = _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
+                _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
         }
         #endregion 初期処理
@@ -521,19 +548,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <exception cref="NullReferenceException">IFileManagerが取得できなかった時の例外</exception>
         private void ChangeCurrentPath(string currentFullPath)
         {
-            var fileManager = Ioc.Default.GetService<IFileManager>() ?? throw new NullReferenceException(nameof(IFileManager));
-
             App.Current?.Dispatcher?.Invoke(() =>
             {
                 HashFileListItems.Clear();
-                var files = fileManager.EnumerateFiles(currentFullPath);
+                var files = FileManager.EnumerateFiles(currentFullPath);
                 foreach (var file in files)
                 {
                     var item = new HashListFileItems
                     {
                         FileFullPath = file,
                         // TOOD : 【AllConditionFilesの内部コレクションが変更されてる途中にきてしまう】
-                        IsHashTarget = _SearchFileManager.AllConditionFiles.Any(f => f.FileFullPath == file)
+                        IsHashTarget = _searchFileManager.AllConditionFiles.Any(f => f.FileFullPath == file)
                     };
                     HashFileListItems.Add(item);
                 }
@@ -547,7 +572,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void ChangeCondition()
         {
-            ChangeCurrentPath(_ControDirectoryTreeViewlViewModel.CurrentFullPath);
+            ChangeCurrentPath(_controDirectoryTreeViewlViewModel.CurrentFullPath);
         }
         #endregion ツリービュー選択処理
     }

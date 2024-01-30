@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:rs="clr-namespace:FileHashCraft.ViewModels.Modules"
+      xmlns:rs="clr-namespace:FileHashCraft.Services"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ExplorerPage">
@@ -40,16 +40,16 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Content="↑" Grid.Column="0" Margin="3"
-                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                     Command="{Binding ToUpDirectory}"/>
             <Label Grid.Column="1"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCurrentDirectory, Mode=OneWay}"/>
             <TextBox
                    Grid.Column="2"
                    Margin="3"
                    Name="CurrentDir"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                    Text="{Binding CurrentFullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
 
@@ -63,20 +63,20 @@
             </Grid.ColumnDefinitions>
 
             <Label Grid.Column="0"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCommand, Mode=OneWay}" />
             <TextBox Grid.Column="1"
                    Margin="3"
                    Name="UserCommand"
-                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                    Text="{Binding CommandText, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Column="2"
                     Margin="3"
-                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                     Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonExecuteCommand, Mode=OneWay}"/>
             <Button Grid.Column="3"
                     Margin="3"
-                    FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                     Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashManagement, Mode=OneWay}"
                     Command="{Binding HashCalc}"/>
         </Grid>
@@ -103,7 +103,7 @@
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingPanel.VirtualizationMode="Recycling"
                       SelectionMode="Single"
-                      FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}">
+                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn
@@ -116,7 +116,7 @@
                                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
                                         <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}" />
                                         <TextBlock VerticalAlignment="Center"
-                                                   FontFamily="{Binding UsingFont}" FontSize="{Binding FontSize}"
+                                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                                    Text="{Binding Name, Mode=OneWay}"/>
                                     </StackPanel>
                                 </DataTemplate>

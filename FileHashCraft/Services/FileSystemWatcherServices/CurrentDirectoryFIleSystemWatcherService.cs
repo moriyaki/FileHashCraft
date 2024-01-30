@@ -5,72 +5,29 @@
 using System.IO;
 using FileHashCraft.Models.Helpers;
 
-namespace FileHashCraft.ViewModels.FileSystemWatch
+namespace FileHashCraft.Services.FileSystemWatcherServices
 {
-    #region イベント引数
-    /// <summary>
-    /// カレントディレクトリへの追加削除イベント引数
-    /// </summary>
-    public class CurrentDirectoryFileChangedEventArgs : EventArgs
-    {
-        public string FullPath { get; }
-
-        public CurrentDirectoryFileChangedEventArgs()
-        {
-            throw new NotImplementedException();
-        }
-
-        public CurrentDirectoryFileChangedEventArgs(string fullPath)
-        {
-            FullPath = fullPath;
-        }
-    }
-
-    /// <summary>
-    /// カレントディレクトリへの追加削除イベント引数
-    /// </summary>
-    public class CurrentDirectoryFileRenamedEventArgs : EventArgs
-    {
-        public string OldFullPath { get; }
-        public string FullPath { get; }
-
-        public CurrentDirectoryFileRenamedEventArgs()
-        {
-            throw new NotImplementedException();
-        }
-
-        public CurrentDirectoryFileRenamedEventArgs(string fullPath)
-        {
-            throw new NotImplementedException();
-        }
-
-        public CurrentDirectoryFileRenamedEventArgs(string oldFullPath, string newFullPath)
-        {
-            OldFullPath = oldFullPath;
-            FullPath = newFullPath;
-        }
-    }
-    #endregion イベント引数
-
     #region インターフェース
     public interface ICurrentDirectoryFIleSystemWatcherService
     {
+        /// <summary>
+        /// カレントディレクトリに対してファイル変更監視の設定をします。
+        /// </summary>
         public void SetCurrentDirectoryWatcher(string currentDirectory);
-        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Created;
-        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Deleted;
-        public event EventHandler<CurrentDirectoryFileRenamedEventArgs>? Renamed;
     }
     #endregion インターフェース
     public class CurrentDirectoryFIleSystemWatcherService : ICurrentDirectoryFIleSystemWatcherService
     {
-        #region FileSystemWatcherの宣言
-        // イベントのデリゲート定義
-        public delegate void FileChangedEventHandler(object sender, CurrentDirectoryFileChangedEventArgs filePath);
-        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Created;
-        public event EventHandler<CurrentDirectoryFileChangedEventArgs>? Deleted;
-        public delegate void FileRenamedEventHandler(object sender, CurrentDirectoryFileRenamedEventArgs filePath);
-        public event EventHandler<CurrentDirectoryFileRenamedEventArgs>? Renamed;
+        public CurrentDirectoryFIleSystemWatcherService() { throw new NotImplementedException(); }
 
+        private readonly IMessageServices _messageServices;
+        public CurrentDirectoryFIleSystemWatcherService(
+            IMessageServices messageServices)
+        {
+            _messageServices = messageServices;
+        }
+
+        #region FileSystemWatcherの宣言
         private readonly FileSystemWatcher CurrentWatcher = new();
 
         /// <summary>
@@ -83,9 +40,9 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
             if (!Path.Exists(currentDirectory)) return;
             try
             {
-                CurrentWatcher.Created -= OnCreated;
-                CurrentWatcher.Deleted -= OnDeleted;
-                CurrentWatcher.Renamed -= OnRenamed;
+                CurrentWatcher.Created -= OnCurrentCreated;
+                CurrentWatcher.Deleted -= OnCurrentDeleted;
+                CurrentWatcher.Renamed -= OnCurrentRenamed;
                 CurrentWatcher.Error -= OnError;
 
                 CurrentWatcher.Path = currentDirectory;
@@ -96,9 +53,9 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
                 CurrentWatcher.EnableRaisingEvents = true;
                 CurrentWatcher.IncludeSubdirectories = false;
 
-                CurrentWatcher.Created += OnCreated;
-                CurrentWatcher.Deleted += OnDeleted;
-                CurrentWatcher.Renamed += OnRenamed;
+                CurrentWatcher.Created += OnCurrentCreated;
+                CurrentWatcher.Deleted += OnCurrentDeleted;
+                CurrentWatcher.Renamed += OnCurrentRenamed;
 
                 CurrentWatcher.Error += OnError;
             }
@@ -121,10 +78,10 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">FileSystemEventArgs</param>
-        private void OnCreated(object sender, FileSystemEventArgs e)
+        private void OnCurrentCreated(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Created) return;
-            Created?.Invoke(this, new CurrentDirectoryFileChangedEventArgs(e.FullPath));
+            _messageServices.SendCurrentItemCreated(e.FullPath);
         }
 
         /// <summary>
@@ -132,10 +89,10 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">FileSystemEventArgs</param>
-        private void OnDeleted(object sender, FileSystemEventArgs e)
+        private void OnCurrentDeleted(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
-            Deleted?.Invoke(this, new CurrentDirectoryFileChangedEventArgs(e.FullPath));
+            _messageServices.SendCurrentItemDeleted(e.FullPath);
         }
 
         /// <summary>
@@ -143,10 +100,10 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">FileSystemEventArgs</param>
-        private void OnRenamed(object sender, RenamedEventArgs e)
+        private void OnCurrentRenamed(object sender, RenamedEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;
-            Renamed?.Invoke(this, new CurrentDirectoryFileRenamedEventArgs(e.OldFullPath, e.FullPath));
+            _messageServices.SendCurrentItemRenamed(e.OldFullPath, e.FullPath);
         }
         #endregion ファイル変更通知
     }

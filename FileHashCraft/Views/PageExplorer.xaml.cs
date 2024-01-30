@@ -3,10 +3,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using FileHashCraft.ViewModels;
+using FileHashCraft.Services;
+using FileHashCraft.Services.FileSystemWatcherServices;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
-using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Views
@@ -38,11 +38,11 @@ namespace FileHashCraft.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var mainViewVM = Ioc.Default.GetService<IMainWindowViewModel>();
-                if (mainViewVM is not null)
+                var settingsService = Ioc.Default.GetService<ISettingsService>();
+                if (settingsService is not null)
                 {
-                    if (e.Delta > 0) { mainViewVM.FontSizePlus(); }
-                    else { mainViewVM.FontSizeMinus(); }
+                    if (e.Delta > 0) { settingsService.FontSizePlus(); }
+                    else { settingsService.FontSizeMinus(); }
                 }
                 e.Handled = true;
             }
@@ -62,8 +62,6 @@ namespace FileHashCraft.Views
             Loaded += ExplorerPage_Loaded;
         }
 
-        private IDrivesFileSystemWatcherService? FileWatcherService;
-
         /// <summary>
         /// ウィンドウがロードされた時のイベント、カスタムのウィンドウプロシージャをフックする
         /// </summary>
@@ -71,11 +69,8 @@ namespace FileHashCraft.Views
         /// <param name="e">RoutedEventArgs</param>
         private void ExplorerPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var explorerVM = Ioc.Default.GetService<IPageExplorerViewModel>();
-            if (explorerVM == null) { throw new NullReferenceException(nameof(explorerVM)); }
-
-            FileWatcherService = Ioc.Default.GetService<IDrivesFileSystemWatcherService>();
-            if (FileWatcherService == null) { throw new NullReferenceException(nameof(FileWatcherService)); }
+            var explorerVM = Ioc.Default.GetService<IPageExplorerViewModel>() ?? throw new NullReferenceException(nameof(IPageExplorerViewModel));
+            var fileWatcherService = Ioc.Default.GetService<IFileWatcherService>() ?? throw new NullReferenceException(nameof(IFileWatcherService));
             explorerVM.CurrentFullPath = WindowsAPI.GetPath(KnownFolder.User);
 
             // HwndSourceを取得
@@ -90,7 +85,7 @@ namespace FileHashCraft.Views
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
         private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            var controlTree = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>();
+            var controlTree = Ioc.Default.GetService<IControDirectoryTreeViewlModel>();
             if (controlTree == null) { throw new NullReferenceException(nameof(controlTree)); }
 
             controlTree.TreeWidth = ExplorerTreeView.ActualWidth;

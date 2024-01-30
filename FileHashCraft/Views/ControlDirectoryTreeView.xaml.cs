@@ -13,7 +13,7 @@ namespace FileHashCraft.Views
         public ControlDirectoryTreeView()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>();
+            DataContext = Ioc.Default.GetService<IControDirectoryTreeViewlModel>();
         }
 
         /// <summary>

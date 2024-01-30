@@ -7,8 +7,8 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
-using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels
 {
@@ -89,26 +89,28 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// フォントの取得と設定
         /// </summary>
+        private FontFamily _UsingFont;
         public FontFamily UsingFont
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _UsingFont;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
+                SetProperty(ref _UsingFont, value);
+                _messageServices.SendCurrentFont(value);
             }
         }
 
         /// <summary>
         /// フォントサイズの取得と設定
         /// </summary>
+        private double _FontSize;
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
 
@@ -141,25 +143,31 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        private readonly IDirectoryTreeManager _DirectoryTreeManager;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly ITreeManager _directoryTreeManager;
+        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         public DebugWindowViewModel(
-            IDirectoryTreeManager directoryTreeManager,
-            IMainWindowViewModel mainViewModel
+            ITreeManager directoryTreeManager,
+            IMessageServices messageServices,
+            ISettingsService settingsService
             )
         {
-            _DirectoryTreeManager = directoryTreeManager;
-            _MainWindowViewModel = mainViewModel;
+            _directoryTreeManager = directoryTreeManager;
+            _messageServices = messageServices;
+            _settingsService = settingsService;
 
-            Top = mainViewModel.Top;
-            Left = mainViewModel.Left + mainViewModel.Width;
-            Width = _MainWindowViewModel.Width / 2;
-            Height = _MainWindowViewModel.Height;
+            Top = _settingsService.Top;
+            Left = _settingsService.Left + _settingsService.Width;
+            Width = _settingsService.Width / 2;
+            Height = _settingsService.Height;
+
+            _UsingFont = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
 
             timer = new DispatcherTimer();
             timer.Tick += Polling;
@@ -197,20 +205,20 @@ namespace FileHashCraft.ViewModels
             switch (pollingTarget)
             {
                 case PollingTarget.ExpandDirectoryManager:
-                    foreach (var item in _DirectoryTreeManager.Directories)
+                    foreach (var item in _directoryTreeManager.Directories)
                     {
                         sb.AppendLine(item);
                     }
                     break;
                 case PollingTarget.CheckedDirectoryManager:
                     sb.AppendLine("サブディレクトリを含まない管理");
-                    foreach (var item in _DirectoryTreeManager.NonNestedDirectories)
+                    foreach (var item in _directoryTreeManager.NonNestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }
                     sb.AppendLine("-------------------------------");
                     sb.AppendLine("サブディレクトリを含む管理");
-                    foreach (var item in _DirectoryTreeManager.NestedDirectories)
+                    foreach (var item in _directoryTreeManager.NestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }

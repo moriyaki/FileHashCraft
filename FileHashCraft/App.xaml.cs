@@ -2,11 +2,12 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
+using FileHashCraft.Services;
+using FileHashCraft.Services.FileSystemWatcherServices;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
-using FileHashCraft.ViewModels.FileSystemWatch;
 using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.PageSelectTarget;
 using Microsoft.Extensions.DependencyInjection;
@@ -96,29 +97,32 @@ namespace FileHashCraft
         {
             var services = new ServiceCollection();
 
+            // Services
+            services.AddSingleton<IMessageServices, MessageServices>();
+            services.AddSingleton<ISettingsService, SettingsService>();
+            services.AddSingleton<IFileSystemWatcherService, FileSystemWatcherService>();
+            services.AddSingleton<ITreeCheckedManager, TreeCheckedManager>();
+            services.AddSingleton<ITreeExpandedManager, TreeExpandedManager>();
+
             // ViewModel
             services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
-
-            services.AddSingleton<ISpecialFolderAndRootDrives, SpecialFolderAndRootDrives>();
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
-
-            services.AddSingleton<IControDirectoryTreeViewlViewModel, ControDirectoryTreeViewlViewModel>();
-            services.AddTransient<IDirectoryTreeViewModel, DirectoryTreeViewModel>();
             services.AddSingleton<IPageSettingsViewModel, PageSettingsViewModel>();
+
+            services.AddSingleton<IControDirectoryTreeViewlModel, ControDirectoryTreeViewModel>();
+            services.AddTransient<IDirectoryTreeViewModel, DirectoryTreeViewModel>();
+            services.AddSingleton<ITreeManager, TreeManager>();
+            services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
+            services.AddSingleton<IFileWatcherService, DrivesFileSystemWatcherService>();
 
             services.AddSingleton<IPageExplorerViewModel, PageExplorerViewModel>();
             services.AddTransient<IExplorerListItemViewModel, ExplorerListItemViewModel>();
-
-            services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
-            services.AddSingleton<IDrivesFileSystemWatcherService, DrivesFileSystemWatcherService>();
-            services.AddSingleton<IDirectoryTreeManager, DirectoryTreeManager>();
 
             services.AddSingleton<IPageSelectTargetViewModel, PageSelectTargetViewModel>();
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
 
             // Model
             services.AddSingleton<IExtentionManager, ExtentionManager>();
-            services.AddSingleton<IFileManager, FileManager>();
             services.AddSingleton<ISearchConditionsManager, SearchConditionsManager>();
             services.AddSingleton<ISearchFileManager, SearchFileManager>();
             return services.BuildServiceProvider();

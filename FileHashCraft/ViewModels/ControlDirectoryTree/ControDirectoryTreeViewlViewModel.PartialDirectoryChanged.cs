@@ -1,12 +1,13 @@
 ﻿/*  ControDirectoryTreeViewlViewModel.PartialDirectoryChanged
 
-    ディレクトリの TreeView でドライブまたはディレクトリに変更通知が発生した時の処理をします。
+    ディレクトリの TreeView でドライブまたはディレクトリが変更された時の処理をします。
+
  */
 using System.Collections.ObjectModel;
 using System.IO;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
-using FileHashCraft.ViewModels.FileSystemWatch;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
@@ -23,41 +24,57 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
      *
      * → DirectoryDeletedは必要なし
      */
-    public partial class ControDirectoryTreeViewlViewModel
+    public partial class ControDirectoryTreeViewModel
     {
         #region ディレクトリ変更通知処理
         /// <summary>
         /// ディレクトリが変更された時の処理をします。
         /// 特に重要なのはドライブルートのアイテム削除は $RECYCLE.BIN を利用してしか不可で、
         /// 削除処理を DirectoryDeleted で取得できないため、ここでは削除処理を行います。
+        /// サブディレクトリの削除もここで行います。
         /// </summary>
-        /// <param name="sender">object</param>
-        /// <param name="e">DirectoryChangedEventArgs</param>
-        private void DirectoryChanged(object? sender, DirectoryChangedEventArgs e)
+        /// <param name="fullPath">変更されたディレクトリのフルパス</param>
+        private async Task DirectoryChanged(string fullPath)
         {
+            var directory = Path.GetDirectoryName(fullPath);
+
             try
             {
-                var deletedPath = e.FullPath;
+                var deletedPath = fullPath;
                 /// ごみ箱の変更通知はドライブルートのアイテム削除の可能性があるのでその処理
-                if (e.FullPath.Contains("$RECYCLE.BIN"))
+                if (fullPath.Contains("$RECYCLE.BIN"))
                 {
                     deletedPath = Path.GetPathRoot(deletedPath);
                 }
                 if (deletedPath == null) { return; }
 
                 // 変更が加えられたディレクトリの親ツリーアイテムを取得
-                var modifiedTreeItem = FindChangedDirectoryTree(deletedPath);
+                var modifiedParentItem = FindChangedDirectoryTree(deletedPath);
+                var modifiedSpecialParent = FindChangedSpecialDirectoryTreeItem(deletedPath);
+
                 // 変更が加えられたディレクトリ内にあるディレクトリのフルパスコレクションを取得
                 var dirs = Directory.EnumerateDirectories(deletedPath);
-                FindChangedSpecialDirectoryTreeItem(deletedPath);
-
-                // 変更が加えられたディレクトリの親ディレクトリを取得できていれば
-                if (modifiedTreeItem == null) { return; }
 
                 // 変更が加えられる前のツリービューアイテムを取得
-                var treeItems = modifiedTreeItem.Children
-                    .Where(c => !string.IsNullOrEmpty(c.FullPath))
-                    .Select(c => c.FullPath);
+                List<string>? treeItems = null;
+                if (modifiedParentItem != null)
+                {
+                    treeItems = modifiedParentItem.Children
+                        .Where(c => !string.IsNullOrEmpty(c.FullPath))
+                        .Select(c => c.FullPath)
+                        .ToList();
+                }
+                else
+                {
+                    foreach (var item in modifiedSpecialParent)
+                    {
+                        treeItems = item.Children
+                            .Where(c => !string.IsNullOrEmpty(c.FullPath))
+                            .Select(c => c.FullPath)
+                            .ToList();
+                        if (treeItems.Count > 0) break;
+                    }
+                }
                 if (treeItems == null) { return; }
 
                 // TreeViewのアイテム削除のために、新旧ディレクトリ構造の差分を取る
@@ -65,7 +82,15 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 if (deletedItemNames.Any())
                 {
                     // treeItems にあって dirs にアイテムがない場合は削除処理
-                    DirectoryDeleted(modifiedTreeItem, deletedItemNames.First());
+                    if (modifiedParentItem != null)
+                    {
+                        await DirectoryItemDeleted(modifiedParentItem, deletedItemNames.First());
+                    }
+                    // 特殊フォルダも削除
+                    foreach (var parent in modifiedSpecialParent)
+                    {
+                        await DirectoryItemDeleted(parent, deletedItemNames.First());
+                    }
                 }
             }
             catch (Exception ex)
@@ -73,109 +98,133 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 DebugManager.ExceptionWrite($"Exception in DirectoryChanged: {ex.Message}");
             }
         }
+        private readonly object _lock = new();
 
         /// <summary>
         /// サブディレクトリが削除された時の処理をします。
         /// </summary>
-        /// <param name="modifiedTreeItem">親ツリービューアイテム</param>
-        /// <param name="deletedItemName">削除されたアイテムのコレクション</param>
+        /// <param name="modifiedParentItem">親ツリービューアイテム</param>
+        /// <param name="deletedItemFullPath">削除されたアイテムのフルパス</param>
         /// <returns>Task</returns>
-        private static async void DirectoryDeleted(DirectoryTreeViewModel modifiedTreeItem, string deletedItemName)
+        private async Task DirectoryItemDeleted(DirectoryTreeViewModel modifiedParentItem, string deletedItemFullPath)
         {
             // 削除されたツリービューアイテムの取得
-            var deletedTreeItem = modifiedTreeItem.Children.FirstOrDefault(c => c.FullPath == deletedItemName);
+            var deletedTreeItem = modifiedParentItem.Children.FirstOrDefault(c => c.FullPath == deletedItemFullPath);
             if (deletedTreeItem == null) { return; }
 
-            // ディレクトリ名前変更メッセージを送信
-            WeakReferenceMessenger.Default.Send(new DirectoryDeleted(deletedItemName));
+            // カレントディレクトリに削除メッセージを送信
+            _messageServices.SendCurrentItemDeleted(deletedItemFullPath);
 
             // 削除されたツリービューアイテムの削除
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
                 try
                 {
-                    modifiedTreeItem.Children.Remove(deletedTreeItem);
+                    // TODO : 特殊フォルダ内にも存在したら反映
+                    modifiedParentItem.Children.Remove(deletedTreeItem);
                 }
                 catch (Exception ex)
                 {
                     DebugManager.ExceptionWrite($"Exception in DirectoryDeleted: {ex.Message}");
                 }
             });
-            // TODO : 特殊フォルダ内にも存在したら反映
-            //FindChangedSpecialDirectoryTreeItem(e.FullPath);
         }
 
         /// <summary>
         /// ディレクトリが作成されたイベントを処理します。
         /// ドライブルートでも、サブディレクトリでも発生します。
         /// </summary>
-        /// <param name="sender">object?</param>
-        /// <param name="e">DirectoryChangedEventArgs</param>
-        private async void DirectoryCreated(object? sender, DirectoryChangedEventArgs e)
+        /// <param name="fullPath">作成されたディレクトリのフルパス</param>
+        private async Task DirectoryCreated(string fullPath)
         {
-            if (e.FullPath.Contains("$RECYCLE.BIN")) { return; }
+            if (fullPath.Contains("$RECYCLE.BIN")) { return; }
 
             // ディレクトリが作成された親ディレクトリのパスを取得
-            var path = Path.GetDirectoryName(e.FullPath);
-            if (path == null) { return; }
+            var createdPath = Path.GetDirectoryName(fullPath);
+            if (createdPath == null) { return; }
 
             // 変更が加えられたディレクトリの親ツリーアイテムを取得
-            var modifiedTreeItem = FindChangedDirectoryTree(path);
-            if (modifiedTreeItem == null) { return; }
+            var modifiedParentItem = FindChangedDirectoryTree(createdPath);
+            var modifiedSpecialParent = FindChangedSpecialDirectoryTreeItem(createdPath);
 
-            // 作成されたディレクトリを追加
-            var fileInformation = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
+            var fileInformation = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(fullPath);
             var addTreeItem = new DirectoryTreeViewModel(fileInformation);
-            int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, addTreeItem);
 
-            // ディレクトリ作成メッセージを送信
-            WeakReferenceMessenger.Default.Send(new DirectoryCreated(e.FullPath));
+            // カレントディレクトリに作成メッセージを送信
+            _messageServices.SendCurrentItemCreated(fullPath);
 
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
                 try
                 {
-                    modifiedTreeItem.Children.Insert(newTreeIndex, addTreeItem);
+                    // 作成されたディレクトリを追加
+                    if (modifiedParentItem != null)
+                    {
+                        int newTreeIndex = FindIndexToInsert(modifiedParentItem.Children, addTreeItem);
+                        modifiedParentItem.Children.Insert(newTreeIndex, addTreeItem);
+                    }
+                    // 特殊フォルダにも追加
+                    foreach (var parent in modifiedSpecialParent)
+                    {
+                        int newTreeIndex = FindIndexToInsert(parent.Children, addTreeItem);
+                        parent.Children.Insert(newTreeIndex, addTreeItem);
+                    }
                 }
                 catch (Exception ex)
                 {
                     DebugManager.ExceptionWrite($"Exception in DirectoryCreated: {ex.Message}");
                 }
             });
-            // TODO : 特殊フォルダ内にも存在したら反映
-            //FindChangedSpecialDirectoryTreeItem(e.FullPath);
         }
 
         /// <summary>
         /// ディレクトリが名前変更されたイベントの処理をします。
         /// ドライブルートでも、サブディレクトリでも発生します。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void DirectoryRenamed(object? sender, DirectoryRenamedEventArgs e)
+        private async Task DirectoryRenamed(string oldFullPath, string newFullPath)
         {
-            if (e.FullPath.Contains("$RECYCLE.BIN")) { return; }
+            if (newFullPath.Contains("$RECYCLE.BIN")) { return; }
 
-            var path = System.IO.Path.GetDirectoryName(e.FullPath);
-            if (path == null) { return; }
+            var renamedPath = Path.GetDirectoryName(newFullPath);
+            if (renamedPath == null) { return; }
 
             // 変更が加えられたディレクトリの親ツリーアイテムを取得
-            var modifiedTreeItem = FindChangedDirectoryTree(path);
-            if (modifiedTreeItem == null) { return; }
+            var modifiedParentItem = FindChangedDirectoryTree(renamedPath);
+            var modifiedSpecialParent = FindChangedSpecialDirectoryTreeItem(renamedPath);
 
             // 名前変更されたツリービューアイテムの取得
-            var renamedTreeItem = modifiedTreeItem.Children.FirstOrDefault(item => item.FullPath == e.OldFullPath);
+            DirectoryTreeViewModel? renamedTreeItem = null;
+            if (modifiedParentItem != null)
+            {
+                renamedTreeItem = modifiedParentItem.Children.FirstOrDefault(item => item.FullPath == oldFullPath);
+            }
+            else
+            {
+                foreach (var parent in modifiedSpecialParent)
+                {
+                    renamedTreeItem = parent.Children.FirstOrDefault(item => item.FullPath == oldFullPath);
+                }
+            }
             if (renamedTreeItem == null) { return; }
 
-            // ディレクトリ名前変更メッセージを送信
-            WeakReferenceMessenger.Default.Send(new DirectoryRenamed(e.OldFullPath, e.FullPath));
-
+            // カレントディレクトリに名前変更メッセージを送信
+            _messageServices.SendCurrentItemRenamed(oldFullPath, newFullPath);
+            int newTreeIndex = 0;
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
                 try
                 {
                     // 一度名前変更前のアイテムを除去
-                    modifiedTreeItem.Children.Remove(renamedTreeItem);
+                    if (modifiedParentItem != null)
+                    {
+                        modifiedParentItem.Children.Remove(renamedTreeItem);
+                        newTreeIndex = FindIndexToInsert(modifiedParentItem.Children, renamedTreeItem);
+                    }
+                    foreach (var parent in modifiedSpecialParent)
+                    {
+                        parent.Children.Remove(renamedTreeItem);
+                        newTreeIndex = FindIndexToInsert(parent.Children, renamedTreeItem);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -184,23 +233,25 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             });
 
             // 名前変更後のアイテムを再追加
-            renamedTreeItem.FullPath = e.FullPath;
-            int newTreeIndex = FindIndexToInsert(modifiedTreeItem.Children, renamedTreeItem);
+            renamedTreeItem.FullPath = newFullPath;
 
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
                 try
                 {
-                    modifiedTreeItem.Children.Insert(newTreeIndex, renamedTreeItem);
+                    // TODO : 特殊フォルダ内にも存在したら反映
+                    // 名前変更後のアイテムを追加
+                    modifiedParentItem?.Children.Insert(newTreeIndex, renamedTreeItem);
+                    foreach (var parent in modifiedSpecialParent)
+                    {
+                        parent.Children.Insert(newTreeIndex, renamedTreeItem);
+                    }
                 }
                 catch (Exception ex)
                 {
                     DebugManager.ExceptionWrite($"Exception in DirectoryRenamed Insert: {ex.Message}");
                 }
             });
-
-            // TODO : 特殊フォルダ内にも存在したら反映
-            //FindChangedSpecialDirectoryTreeItem(e.FullPath);
         }
         #endregion ディレクトリ変更通知処理
 
@@ -208,16 +259,25 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// リムーバブルドライブが追加または挿入された時の処理をします。
         /// </summary>
-        /// <param name="sender">object?</param>
-        /// <param name="e">DirectoryChangedEventArgs</param>
-        private async void OpticalDriveMediaInserted(object? sender, DirectoryChangedEventArgs e)
+        /// <param name="fullPath">リムーバブルドライブが挿入されたフルパス</param>
+        private async Task OpticalDriveMediaInserted(string fullPath)
         {
             try
             {
-                var driveInfo = new DriveInfo(e.FullPath);
+                var driveInfo = new DriveInfo(fullPath);
                 var isCDRom = driveInfo.DriveType == DriveType.CDRom;
-                var drive = TreeRoot.FirstOrDefault(c => c.FullPath == e.FullPath);
-
+                if (!isCDRom)
+                {
+                    var newItem = new FileItemInformation
+                    {
+                        FullPath = fullPath
+                    };
+                    var insertedItem = new DirectoryTreeViewModel(newItem);
+                    int newTreeIndex = FindIndexToInsert(TreeRoot, insertedItem);
+                    TreeRoot.Insert(newTreeIndex, insertedItem);
+                    return;
+                }
+                var drive = TreeRoot.FirstOrDefault(c => c.FullPath == fullPath);
                 if (drive == null) return;
 
                 drive.Icon = drive.Icon;
@@ -227,7 +287,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 var retries = 120;
                 while (retries > 0)
                 {
-                    if (drive.Icon == WindowsAPI.GetIcon(e.FullPath) || drive.Name == WindowsAPI.GetDisplayName(e.FullPath))
+                    if (drive.Icon == WindowsAPI.GetIcon(fullPath) || drive.Name == WindowsAPI.GetDisplayName(fullPath))
                     {
                         retries--;
                         await Task.Delay(100);
@@ -235,24 +295,17 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     }
                     break;
                 }
-                DebugManager.InfoWrite($"Insert retries : {120 - retries}");
-                if (isCDRom && drive != null)
+                drive = TreeRoot.FirstOrDefault(c => c.FullPath == fullPath);
+                if (drive == null) return;
+                if (isCDRom)
                 {
                     // 光学ドライブへの挿入処理
                     App.Current?.Dispatcher?.Invoke(() =>
                     {
-                        drive.Icon = WindowsAPI.GetIcon(e.FullPath);
-                        drive.Name = WindowsAPI.GetDisplayName(e.FullPath);
-                        drive.HasChildren = Directory.EnumerateDirectories(e.FullPath).Any();
+                        drive.Icon = WindowsAPI.GetIcon(fullPath);
+                        drive.Name = WindowsAPI.GetDisplayName(fullPath);
+                        drive.HasChildren = Directory.EnumerateDirectories(fullPath).Any();
                     });
-                }
-                else
-                {
-                    // 取り外し可能なメディアの追加処理
-                    var addNewInformation = _SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(e.FullPath);
-                    var newTreeItem = new DirectoryTreeViewModel(addNewInformation);
-                    int newTreeIndex = FindIndexToInsert(TreeRoot, newTreeItem);
-                    App.Current?.Dispatcher?.Invoke(() => TreeRoot.Insert(newTreeIndex, newTreeItem));
                 }
             }
             catch (Exception ex)
@@ -261,50 +314,60 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
         }
 
+        private readonly object treeRootLock = new();
+
         /// <summary>
         /// リムーバブルメディアがイジェクトされた時の処理をします。
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void EjectOpticalDriveMedia(object? sender, DirectoryChangedEventArgs e)
+        /// <param name="fullPath">リムーバブルドライブがイジェクトされたフルパス</param>
+        private async Task OpticalDriveMediaEjected(string fullPath)
         {
             try
             {
-                var driveInfo = new DriveInfo(e.FullPath);
+                var driveInfo = new DriveInfo(fullPath);
                 var isCDRom = driveInfo.DriveType == DriveType.CDRom;
-                var drive = TreeRoot.FirstOrDefault(c => c.FullPath == e.FullPath);
+                var drive = TreeRoot.FirstOrDefault(c => c.FullPath == fullPath);
 
-                // 挿入完了まで待機
                 if (drive != null)
                 {
-                    // 変更されるまで 100ms 待機しながら 20回繰り返す
-                    var retries = 120;
-                    while (retries > 0)
-                    {
-                        if (drive.Icon == WindowsAPI.GetIcon(e.FullPath) ||
-                            drive.Name == WindowsAPI.GetDisplayName(e.FullPath))
-                        {
-                            retries--;
-                            await Task.Delay(100);
-                            continue;
-                        }
-                        break;
-                    }
-                    DebugManager.InfoWrite($"Eject retries : {120 - retries}");
-
                     if (isCDRom)
                     {
+                        // 変更されるまで 100ms 待機しながら 20回繰り返す
+                        var retries = 120;
+                        while (retries > 0)
+                        {
+                            if (drive.Icon == WindowsAPI.GetIcon(fullPath) ||
+                                drive.Name == WindowsAPI.GetDisplayName(fullPath))
+                            {
+                                retries--;
+                                await Task.Delay(100);
+                                continue;
+                            }
+                            break;
+                        }
+
                         // 光学ドライブへからのイジェクト処理
                         App.Current?.Dispatcher?.Invoke(() =>
                         {
-                            drive.Icon = WindowsAPI.GetIcon(e.FullPath);
-                            drive.Name = WindowsAPI.GetDisplayName(e.FullPath);
+                            drive.Icon = WindowsAPI.GetIcon(fullPath);
+                            drive.Name = WindowsAPI.GetDisplayName(fullPath);
                             drive.HasChildren = false;
                         });
                     }
                     else
                     {
-                        TreeRoot.Remove(drive);
+                        //App.Current?.Dispatcher?.Invoke(() => TreeRoot.Remove(drive));
+                        await App.Current.Dispatcher.InvokeAsync(() =>
+                        {
+                            lock(treeRootLock)
+                            {
+                                drive = TreeRoot.FirstOrDefault(c => c.FullPath == fullPath);
+                                if (drive != null)
+                                {
+                                    TreeRoot.Remove(drive);
+                                }
+                            }
+                        });
                     }
                 }
             }
@@ -317,29 +380,28 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 
         #region TreeNode取得関連
         /// <summary>
-        /// 変更が加えられたファイルアイテムのディレクトリツリーアイテムを検索します。
+        /// 変更が加えられたファイルアイテムのドライブディレクトリツリーアイテムを検索します。
         /// </summary>
         /// <param name="fullPath">ファイルアイテムのパス</param>
         /// <returns>変更する必要があるディレクトリツリーアイテム</returns>
-        private DirectoryTreeViewModel? FindChangedDirectoryTree(string fullPath)
+        private DirectoryTreeViewModel? FindChangedDirectoryTree(string fullPath, string rootPath = "")
         {
             DirectoryTreeViewModel? modifiedTreeItem = null;
-            foreach (var dir in GetDirectoryNames(fullPath))
+            foreach (var dir in DirectoryNameService.GetDirectoryNames(fullPath, rootPath))
             {
-                if (dir.Length == 3)
+                if (modifiedTreeItem == null)
                 {
                     // ドライブの処理
-                    modifiedTreeItem = TreeRoot.FirstOrDefault(root => root.FullPath == dir) as DirectoryTreeViewModel;
+                    modifiedTreeItem = TreeRoot.FirstOrDefault(root => root.FullPath == dir);
                     if (dir == fullPath) { return modifiedTreeItem; }
                     if (modifiedTreeItem == null) { break; }
                 }
-                else if (modifiedTreeItem != null)
+                else
                 {
                     // サブディレクトリの処理
                     modifiedTreeItem = modifiedTreeItem.Children.FirstOrDefault(child => child.FullPath == dir);
                     if (dir == fullPath) { return modifiedTreeItem; }
                     if (modifiedTreeItem == null) { break; }
-                    if (!modifiedTreeItem.IsExpanded) { break; }
                 }
             }
             return null;
@@ -350,55 +412,40 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="fullPath">特殊ユーザーディレクトリが含まれることを期待するパス</param>
         /// <returns>特殊ユーザーディレクトリ内のツリーアイテム</returns>
-        private List<DirectoryTreeViewModel> FindChangedSpecialDirectoryTreeItem(string fullPath)
+        private HashSet<DirectoryTreeViewModel> FindChangedSpecialDirectoryTreeItem(string fullPath)
         {
-            var specialTreeItems = new List<DirectoryTreeViewModel>();
+            var specialTreeItems = new HashSet<DirectoryTreeViewModel>();
 
-            foreach (var rootInfo in _SpecialFolderAndRootDrives.ScanSpecialFolders())
+            foreach (var rootInfo in SpecialFolderAndRootDrives.ScanSpecialFolders())
             {
                 // 特殊ユーザーディレクトリのパスを持つアイテムを抽出
-                if (TreeRoot.FirstOrDefault(item => item.FullPath == rootInfo.FullPath) is
-                    DirectoryTreeViewModel rootItem && fullPath.Contains(rootInfo.FullPath))
+                if (fullPath.Contains(rootInfo.FullPath))
                 {
-                    if (Equals(rootItem.FullPath, fullPath))
+                    var rootItem = TreeRoot.FirstOrDefault(item => item.FullPath == rootInfo.FullPath);
+                    if (rootItem == null) continue;
+                    var foundTreeItem = FinddDirectoryTreeViewItem(rootItem, fullPath);
+                    if (foundTreeItem != null)
                     {
-                        // ルートで見つかった場合はリストに追加
-                        specialTreeItems.Add(rootItem);
-                    }
-                    else
-                    {
-                        // 再帰的にツリービューを検索
-                        FindTreeChild(rootItem, fullPath, specialTreeItems);
+                        specialTreeItems.Add(foundTreeItem);
                     }
                 }
             }
+
             return specialTreeItems;
         }
 
-        /// <summary>
-        /// 再帰的に、パスと等しいツリービューアイテムを探して SpecialTreeItem に追加します。
-        /// </summary>
-        /// <param name="treeItem">検索中のツリービューアイテム</param>
-        /// <param name="path">探し出すファイルのフルパス</param>
-        /// <param name="specialTreeItems">見つかった時に追加するリストコレクション</param>
-        private static void FindTreeChild(DirectoryTreeViewModel treeItem, string path, List<DirectoryTreeViewModel> specialTreeItems)
+        private static DirectoryTreeViewModel? FinddDirectoryTreeViewItem(DirectoryTreeViewModel root, string fullPath)
         {
-            // 見つかったら終わり
-            if (Equals(treeItem.FullPath, path))
+            if (root.FullPath == fullPath) return root;
+            DirectoryTreeViewModel? child = root;
+            while (true)
             {
-                specialTreeItems.Add(treeItem);
-                return;
-            }
-
-            // 開いてなければそこで終わり
-            if (!treeItem.IsExpanded) return;
-
-            // 再帰的に検索する
-            foreach (var child in treeItem.Children)
-            {
-                FindTreeChild(child, path, specialTreeItems);
+                child = child.Children.FirstOrDefault(item => fullPath.Contains(item.FullPath));
+                if (child == null) return null;
+                if (child.FullPath == fullPath) return child;
             }
         }
+
         /// <summary>
         /// ソート済みの位置に挿入するためのヘルパーメソッド、挿入する位置を取得します。
         /// </summary>

@@ -4,7 +4,6 @@
  */
 using System.IO;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Models
 {

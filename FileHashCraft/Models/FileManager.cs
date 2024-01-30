@@ -3,34 +3,11 @@
     ファイルの管理とスキャンをします。
  */
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace FileHashCraft.Models
 {
-    #region インターフェース
-    public interface IFileManager
-    {
-        /// <summary>
-        /// 除外するファイルかどうかを判定します。(true = 除外)
-        /// </summary>
-        public bool IsIgnoreFileEntries(string fullPath);
-        /// <summary>
-        /// 指定したディレクトリ内のディレクトリをスキャンします。
-        /// </summary>
-        public IEnumerable<string> EnumerateDirectories(string fullPath);
-        /// <summary>
-        /// 指定したディレクトリ内のファイルをスキャンします。
-        /// </summary>
-        public IEnumerable<string> EnumerateFiles(string fullPath);
-        /// <summary>
-        /// 指定したディレクトリの内ファイルアイテムをスキャンします。
-        /// </summary>
-        public IEnumerable<string> EnumerateFileSystemEntries(string fullPath);
-    }
-    #endregion インターフェース
-
     // TODO : Hidden と ReadOnly もスキャンできるようにする
-    public class FileManager : IFileManager
+    public static class FileManager
     {
         #region ディレクトリとファイルのスキャン関連
         /// <summary>
@@ -38,7 +15,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="fullPath">ファイルエントリのフルパス</param>
         /// <returns>除外するかどうか</returns>
-        public bool IsIgnoreFileEntries(string fullPath)
+        public static bool IsIgnoreFileEntries(string fullPath)
         {
             List<string> ignoreDirectory =
                 [
@@ -78,7 +55,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="directoryFullPath">スキャンするディクレトリのフルパス</param>
         /// <returns>ディレクトリ情報のコレクション</returns>
-        public IEnumerable<string> EnumerateDirectories(string directoryFullPath)
+        public static IEnumerable<string> EnumerateDirectories(string directoryFullPath)
         {
             IEnumerable<string> dirs;
             try
@@ -102,7 +79,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="directoryFullPath">スキャンするディクレトリのフルパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public IEnumerable<string> EnumerateFiles(string directoryFullPath)
+        public static IEnumerable<string> EnumerateFiles(string directoryFullPath)
         {
             IEnumerable<string> files;
             try
@@ -125,7 +102,7 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="itemFullPath">スキャンするディレクトリのパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public IEnumerable<string> EnumerateFileSystemEntries(string itemFullPath)
+        public static IEnumerable<string> EnumerateFileSystemEntries(string itemFullPath)
         {
             // ディレクトリをスキャンします
             foreach (var dir in EnumerateDirectories(itemFullPath))

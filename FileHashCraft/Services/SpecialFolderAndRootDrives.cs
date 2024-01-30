@@ -3,28 +3,10 @@
     特殊フォルダとルートドライブを取得するクラスです。
  */
 using System.IO;
+using FileHashCraft.ViewModels.Modules;
 
-namespace FileHashCraft.ViewModels.Modules
+namespace FileHashCraft.Services
 {
-    #region インターフェース
-    public interface ISpecialFolderAndRootDrives
-    {
-        /// <summary>
-        /// フルパスから FileItemInformationを取得します。
-        /// </summary>
-        public FileItemInformation GetFileInformationFromDirectorPath(string fullPath);
-        /// <summary>
-        /// 特殊フォルダを取得します。
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<FileItemInformation> ScanSpecialFolders();
-        /// <summary>
-        /// ルートドライブを取得します。
-        /// </summary>
-        public IEnumerable<FileItemInformation> ScanDrives();
-    }
-    #endregion インターフェース
-
     #region ディレクトリとファイル情報
     /// <summary>
     /// ファイル情報
@@ -67,10 +49,8 @@ namespace FileHashCraft.ViewModels.Modules
     }
     #endregion ディレクトリとファイル情報
 
-    public class SpecialFolderAndRootDrives : ISpecialFolderAndRootDrives
+    public static class SpecialFolderAndRootDrives
     {
-        public SpecialFolderAndRootDrives() { }
-
         #region フルパスからFileItemInformationを取得
         /// <summary>
         /// 指定されたディレクトリのパスから、FileInformationを生成します。
@@ -80,7 +60,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// <remarks>
         /// メソッドの動作には、指定されたディレクトリが存在することが前提とされています。
         /// </remarks>
-        public FileItemInformation GetFileInformationFromDirectorPath(string fullPath)
+        public static FileItemInformation GetFileInformationFromDirectorPath(string fullPath)
         {
             var driveLetter = fullPath[0].ToString() ?? string.Empty;
             var driveInfo = new DriveInfo(driveLetter);
@@ -146,7 +126,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// 特殊フォルダをスキャンして情報を取得します。
         /// </summary>
         /// <returns>特殊フォルダの情報のコレクション</returns>
-        public IEnumerable<FileItemInformation> ScanSpecialFolders()
+        public static IEnumerable<FileItemInformation> ScanSpecialFolders()
         {
             IEnumerable<string> special_folder_path =
             [
@@ -171,7 +151,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// ルートドライブをスキャンして情報を取得します。
         /// </summary>
         /// <returns>ルートドライブのフォルダ情報のコレクション</returns>
-        public IEnumerable<FileItemInformation> ScanDrives()
+        public static IEnumerable<FileItemInformation> ScanDrives()
         {
             foreach (var dir in DriveInfo.GetDrives())
             {

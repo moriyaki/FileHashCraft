@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
@@ -26,7 +27,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
 
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
@@ -34,12 +36,16 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public ExplorerListItemViewModel()
         {
-            _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
+            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
+            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
-            // メインウィンドウからのフォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) => UsingFont = message.UsingFont);
-            // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
+
+            // フォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            // フォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
         }
 
         /// <summary>
@@ -217,34 +223,41 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             get
             {
                 if (FileSize == null || IsDirectory) return string.Empty;
+
                 var kb_filesize = (long)FileSize / 1024;
                 return kb_filesize.ToString("N") + "KB";
             }
         }
 
         /// <summary>
-        /// フォントの取得と設定
+        /// フォントの設定
         /// </summary>
-        public FontFamily UsingFont
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _CurrentFontFamily;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+
+                SetProperty(ref _CurrentFontFamily, value);
+                _messageServices.SendCurrentFont(value);
             }
         }
 
         /// <summary>
-        /// フォントサイズの取得と設定
+        /// フォントサイズの設定
         /// </summary>
+        private double _FontSize;
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
+                if (_FontSize == value) { return; }
+
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
         #endregion データバインディング

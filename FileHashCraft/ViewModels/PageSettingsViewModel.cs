@@ -10,7 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
-using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels
 {
@@ -25,28 +25,30 @@ namespace FileHashCraft.ViewModels
         ///  選択できる言語
         /// </summary>
         public ObservableCollection<Language> Languages { get; } =
-            [
-                new Language("en-US", "English"),
-                new Language("ja-JP", "日本語"),
-            ];
+        [
+            new Language("en-US", "English"),
+            new Language("ja-JP", "日本語"),
+        ];
 
         /// <summary>
         /// 選択されている言語
         /// </summary>
+        private string _SelectedLanguage;
         public string SelectedLanguage
         {
-            get => _MainWindowViewModel.SelectedLanguage;
+            get => _SelectedLanguage;
             set
             {
-                _MainWindowViewModel.SelectedLanguage = value;
+                _SelectedLanguage = value;
+                _messageServices.SendLanguage(_SelectedLanguage);
                 var currentHashAlgorithms = SelectedHashAlgorithm;
                 HashAlgorithms.Clear();
                 HashAlgorithms =
-                    [
-                        new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                        new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                        new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
-                    ];
+                [
+                    new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                    new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                    new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                ];
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
@@ -57,105 +59,116 @@ namespace FileHashCraft.ViewModels
         /// ハッシュ計算アルゴリズムの一覧
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
-            [
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
-            ];
+        [
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+        ];
 
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
-        /// </summary
+        /// </summary>
+        private string _SelectedHashAlgorithm;
         public string SelectedHashAlgorithm
         {
-            get => _MainWindowViewModel.HashAlgorithm;
+            get => _SelectedHashAlgorithm;
             set
             {
-                if (value == _MainWindowViewModel.HashAlgorithm) return;
-                _MainWindowViewModel.HashAlgorithm = value;
-                OnPropertyChanged(nameof(SelectedHashAlgorithm));
+                if (value == _SelectedHashAlgorithm) return;
+
+                SetProperty(ref _SelectedHashAlgorithm, value);
+                _messageServices.SendHashAlogrithm(value);
             }
         }
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
+        private bool _IsReadOnlyFileInclude;
         public bool IsReadOnlyFileInclude
         {
-            get => _MainWindowViewModel.IsReadOnlyFileInclude;
+            get => _IsReadOnlyFileInclude;
             set
             {
-                if (_MainWindowViewModel.IsReadOnlyFileInclude == value) return;
-                _MainWindowViewModel.IsReadOnlyFileInclude = value;
-                OnPropertyChanged(nameof(IsReadOnlyFileInclude));
+                if (_IsReadOnlyFileInclude == value) return;
+                SetProperty(ref _IsReadOnlyFileInclude, value);
+                _messageServices.SendReadOnlyFileInclude(value);
             }
         }
 
         /// <summary>
         /// 隠しファイルを対象にするかどうか
         /// </summary>
+        private bool _IsHiddenFileInclude;
         public bool IsHiddenFileInclude
         {
-            get => _MainWindowViewModel.IsHiddenFileInclude;
+            get => _IsHiddenFileInclude;
             set
             {
-                if (_MainWindowViewModel.IsHiddenFileInclude == value) return;
-                _MainWindowViewModel.IsHiddenFileInclude = value;
-                OnPropertyChanged(nameof(IsHiddenFileInclude));
+                if (_IsHiddenFileInclude == value) return;
+
+                SetProperty(ref _IsHiddenFileInclude, value);
+                _messageServices.SendHiddenFileInclude(value);
             }
         }
         /// <summary>
         ///  0 サイズのファイルを削除するかどうか
         /// </summary>
+        private bool _IsZeroSizeFileDelete;
         public bool IsZeroSizeFileDelete
         {
-            get => _MainWindowViewModel.IsZeroSizeFileDelete;
+            get => _IsZeroSizeFileDelete;
             set
             {
-                if (_MainWindowViewModel.IsZeroSizeFileDelete == value) return;
-                _MainWindowViewModel.IsZeroSizeFileDelete = value;
-                OnPropertyChanged(nameof(IsZeroSizeFileDelete));
+                if (_IsZeroSizeFileDelete == value) return;
+
+                SetProperty(ref _IsZeroSizeFileDelete, value);
+                _messageServices.SendZeroSizeFileDelete(value);
             }
         }
 
         /// <summary>
         /// 空のフォルダを削除するかどうか
         /// </summary>
+        private bool _IsEmptyDirectoryDelete;
         public bool IsEmptyDirectoryDelete
         {
-            get => _MainWindowViewModel.IsEmptyDirectoryDelete;
+            get => _IsEmptyDirectoryDelete;
             set
             {
-                if (_MainWindowViewModel.IsEmptyDirectoryDelete == value) return;
-                _MainWindowViewModel.IsEmptyDirectoryDelete = value;
-                OnPropertyChanged(nameof(IsEmptyDirectoryDelete));
+                if (_IsEmptyDirectoryDelete == value) return;
+
+                SetProperty(ref _IsEmptyDirectoryDelete, value);
+                _messageServices.SendEmptyDirectoryDelete(value);
             }
         }
 
         /// <summary>
-        /// フォントの取得と設定
+        /// フォントの設定
         /// </summary>
-        public FontFamily UsingFont
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _CurrentFontFamily;
             set
             {
-                if (_MainWindowViewModel.UsingFont == value) return;
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+                SetProperty(ref _CurrentFontFamily, value);
+                _messageServices.SendCurrentFont(value);
             }
         }
 
         /// <summary>
-        /// フォントサイズの取得と設定
+        /// フォントサイズの設定
         /// </summary>
+        private double _FontSize;
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _FontSize;
             set
             {
-                if (_MainWindowViewModel.FontSize == value) return;
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
+                if (_FontSize == value) { return; }
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
 
@@ -195,45 +208,62 @@ namespace FileHashCraft.ViewModels
         #endregion コマンド
 
         #region コンストラクタと初期化
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly ISettingsService _settingsService;
+        private readonly IMessageServices _messageServices;
 
         public PageSettingsViewModel(
-            IMainWindowViewModel mainViewModel)
+            ISettingsService settingsService,
+            IMessageServices messageServices
+        )
         {
-            _MainWindowViewModel = mainViewModel;
-
-            // 利用言語の読み込み
-            SelectedLanguage = _MainWindowViewModel.SelectedLanguage;
+            _settingsService = settingsService;
+            _messageServices = messageServices;
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
 
             // フォントサイズの一覧取得とバインド
-            foreach (var fontSize in _MainWindowViewModel.GetSelectableFontSize())
+            foreach (var fontSize in _settingsService.GetSelectableFontSize())
             {
                 FontSizes.Add(new FontSize(fontSize));
             }
             // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsReadOnlyFileIncludeClicked = new RelayCommand(() => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
+            IsReadOnlyFileIncludeClicked = new RelayCommand(()
+                => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
 
             // 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsHiddenFileIncludeClicked = new RelayCommand(() => IsHiddenFileInclude = !IsHiddenFileInclude);
+            IsHiddenFileIncludeClicked = new RelayCommand(()
+                => IsHiddenFileInclude = !IsHiddenFileInclude);
 
             //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsZeroSizeFIleDeleteClicked = new RelayCommand(() => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
+            IsZeroSizeFIleDeleteClicked = new RelayCommand(()
+                => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
 
             // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsEmptyDirectoryDeleteClicked = new RelayCommand(() => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
+            IsEmptyDirectoryDeleteClicked = new RelayCommand(()
+                => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // 「終了」で戻るページへのメッセージを送るコマンド
             ReturnPage = new RelayCommand(
-                () => WeakReferenceMessenger.Default.Send(new ReturnPageFromSettings()));
+                () => _messageServices.SendReturnPageFromSettings());
 
-            // メインウィンドウからのフォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, _) => OnPropertyChanged(nameof(UsingFont)));
+            // フォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)
+                => CurrentFontFamily = m.CurrentFontFamily );
 
-            // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, _) => OnPropertyChanged(nameof(FontSize)));
+            // フォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
+                => FontSize = m.FontSize);
+
+            _SelectedLanguage = _settingsService.SelectedLanguage;
+            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
+            _IsReadOnlyFileInclude = _settingsService.IsReadOnlyFileInclude;
+            _IsHiddenFileInclude = _settingsService.IsHiddenFileInclude;
+            _IsZeroSizeFileDelete = _settingsService.IsZeroSizeFileDelete;
+            _IsEmptyDirectoryDelete = _settingsService.IsEmptyDirectoryDelete;
+
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
         }
 
         /// <summary>

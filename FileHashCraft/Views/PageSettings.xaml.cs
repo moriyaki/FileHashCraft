@@ -1,6 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels;
 
 namespace FileHashCraft.Views
@@ -25,11 +26,11 @@ namespace FileHashCraft.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var mainViewVM = Ioc.Default.GetService<IMainWindowViewModel>();
-                if (mainViewVM != null)
+                var settingsService = Ioc.Default.GetService<ISettingsService>();
+                if (settingsService != null)
                 {
-                    if (e.Delta > 0) { mainViewVM.FontSizePlus(); }
-                    else { mainViewVM.FontSizeMinus(); }
+                    if (e.Delta > 0) { settingsService.FontSizePlus(); }
+                    else { settingsService.FontSizeMinus(); }
                 }
                 e.Handled = true;
             }

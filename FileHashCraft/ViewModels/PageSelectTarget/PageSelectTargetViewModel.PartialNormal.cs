@@ -145,7 +145,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
 
                 // グループの拡張子が全てチェックされているか調べる
-                foreach (var groupExtention in _ExtentionManager.GetGroupExtentions(fileGroupType))
+                foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
                 {
                     var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
                     // 1つでもチェックされてない拡張子があればそのまま戻る
@@ -175,7 +175,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
 
                 // グループの拡張子が全てチェック解除されているか調べる
-                foreach (var groupExtention in _ExtentionManager.GetGroupExtentions(fileGroupType))
+                foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
                 {
                     var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
                     // 1つでもチェックされてない拡張子があればそのまま戻る

@@ -5,96 +5,34 @@
 using System.IO;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
-using FileHashCraft.ViewModels.Modules;
 
-namespace FileHashCraft.ViewModels.FileSystemWatch
+namespace FileHashCraft.Services.FileSystemWatcherServices
 {
-    #region イベント引数
-    /// <summary>
-    /// ドライブルートの追加削除イベント引数
-    /// </summary>
-    public class DirectoryChangedEventArgs : EventArgs
-    {
-        public string FullPath { get; }
-
-        public DirectoryChangedEventArgs()
-        {
-            throw new NotImplementedException();
-        }
-
-        public DirectoryChangedEventArgs(string fullPath)
-        {
-            FullPath = fullPath;
-        }
-    }
-
-    /// <summary>
-    /// カレントディレクトリへの追加削除イベント引数
-    /// </summary>
-    public class DirectoryRenamedEventArgs : EventArgs
-    {
-        public string OldFullPath { get; }
-        public string FullPath { get; }
-
-        public DirectoryRenamedEventArgs()
-        {
-            throw new NotImplementedException();
-        }
-
-        public DirectoryRenamedEventArgs(string fullPath)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DirectoryRenamedEventArgs(string oldFullPath, string newFullPath)
-        {
-            OldFullPath = oldFullPath;
-            FullPath = newFullPath;
-        }
-    }
-    #endregion イベント引数
-
     #region インターフェース
-    public interface IDrivesFileSystemWatcherService
+    public interface IFileWatcherService
     {
+        /// <summary>
+        /// ドライブに対して、ファイルアイテム変更監視の設定をします。
+        /// </summary>
         public void SetRootDirectoryWatcher(FileItemInformation rootDrive);
-        public event EventHandler<DirectoryChangedEventArgs>? Changed;
-        public event EventHandler<DirectoryChangedEventArgs>? Created;
-        public event EventHandler<DirectoryRenamedEventArgs>? Renamed;
-
-        // リムーバブルドライブの追加と削除
-        public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaInserted;
-        public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaEjected;
+        /// <summary>
+        /// リムーバブルドライブの追加または挿入処理をします。
+        /// </summary>
         public void InsertOpticalDriveMedia(char driveLetter);
+        /// <summary>
+        /// リムーバブルメディアの削除またはイジェクト処理を行います。
+        /// </summary>
         public void EjectOpticalDriveMedia(char driveLetter);
     }
     #endregion インターフェース
 
-    public class DrivesFileSystemWatcherService : IDrivesFileSystemWatcherService
+    public class DrivesFileSystemWatcherService : IFileWatcherService
     {
-        #region イベントのデリゲート定義
-        // イベントのデリゲート定義
-        public delegate void FileChangedEventHandler(object sender, CurrentDirectoryFileChangedEventArgs filePath);
-        public event EventHandler<DirectoryChangedEventArgs>? Changed;
-        public event EventHandler<DirectoryChangedEventArgs>? Created;
-        public delegate void FileRenamedEventHandler(object sender, CurrentDirectoryFileRenamedEventArgs filePath);
-        public event EventHandler<DirectoryRenamedEventArgs>? Renamed;
-
-        // リムーバブルメディアのデリゲート定義
-        public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaInserted;
-        public event EventHandler<DirectoryChangedEventArgs>? OpticalDriveMediaEjected;
-
+        #region コンストラクタ
         /// <summary>
         /// ドライブ内のディレクトリ変更を監視するインスタンス
         /// </summary>
         private readonly List<FileSystemWatcher> DrivesWatcher = [];
-        #endregion イベントのデリゲート定義
-
-        #region コンストラクタ
-        /// <summary>
-        /// 展開ディレクトリマネージャのインターフェース
-        /// </summary>
-        private readonly IDirectoryTreeManager _IDirectoryTreeManager;
 
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
@@ -105,13 +43,20 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
             throw new NotImplementedException();
         }
 
+        private readonly IMessageServices _messageServices;
+        private readonly ITreeManager _directoryTreeManager;
+
         /// <summary>
-        /// コンストラクタでIExpandedDirectoryManagerを設定する
+        /// コンストラクタインジェクションをします。
         /// </summary>
         /// <param name="directoryTreeManager">IDirectoryTreeManager</param>
-        public DrivesFileSystemWatcherService(IDirectoryTreeManager directoryTreeManager)
+        public DrivesFileSystemWatcherService(
+            IMessageServices messageServices,
+            ITreeManager directoryTreeManager
+        )
         {
-            _IDirectoryTreeManager = directoryTreeManager;
+            _messageServices = messageServices;
+            _directoryTreeManager = directoryTreeManager;
         }
         #endregion コンストラクタ
 
@@ -119,7 +64,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <summary>
         /// ドライブに対して、ファイルアイテム変更監視の設定をします。
         /// </summary>
-        /// <param name="rootDrive"></param>
+        /// <param name="rootDrive">ドライブルートのファイルアイテム</param>
         public void SetRootDirectoryWatcher(FileItemInformation rootDrive)
         {
             var watcher = new FileSystemWatcher();
@@ -136,9 +81,9 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
                     watcher.IncludeSubdirectories = true;
                     watcher.InternalBufferSize = 65536;
 
-                    watcher.Created += OnCreated;
-                    watcher.Changed += OnChanged;
-                    watcher.Renamed += OnRenamed;
+                    watcher.Created += OnDirectoryCreated;
+                    watcher.Changed += OnDirectoryChanged;
+                    watcher.Renamed += OnDirectoryRenamed;
 
                     watcher.Error += OnError;
                     DrivesWatcher.Add(watcher);
@@ -167,7 +112,7 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
                 return false;
             }
             // 展開マネージャに登録されてないディレクトリ、またはその親が登録されてない場合は通知しない
-            if (!(_IDirectoryTreeManager.IsExpandedDirectory(fullPath) || _IDirectoryTreeManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
+            if (!(_directoryTreeManager.IsExpandedDirectory(fullPath) || _directoryTreeManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
             {
                 return true;
             }
@@ -198,14 +143,15 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         }
 
         /// <summary>
-        /// ファイルアイテムが変更された時のイベントをを処理します。
+        /// ファイルアイテムが変更された時のイベントをを処理し、削除を捕捉ます。
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">FileSystemEventArgs</param>
-        private void OnChanged(object? sender, FileSystemEventArgs e)
+        private void OnDirectoryChanged(object? sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            Changed?.Invoke(this, new DirectoryChangedEventArgs(e.FullPath));
+            //WeakReferenceMessenger.Default.Send(new DirectoryItemDeleted(e.FullPath));
+            _messageServices.SendDirectoryItemDeleted(e.FullPath);
         }
 
         /// <summary>
@@ -214,10 +160,11 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// <param name="sender">object?</param>
         /// <param name="e">FileSystemEventArgs</param>
         /// <exception cref="NotImplementedException"></exception>
-        private void OnCreated(object sender, FileSystemEventArgs e)
+        private void OnDirectoryCreated(object sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            Created?.Invoke(this, new DirectoryChangedEventArgs(e.FullPath));
+            //WeakReferenceMessenger.Default.Send(new DirectoryItemCreated(e.FullPath));
+            _messageServices.SendDirectoryItemCreated(e.FullPath);
         }
 
         /// <summary>
@@ -225,10 +172,11 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">RenamedEventArgs</param>
-        private void OnRenamed(object sender, RenamedEventArgs e)
+        private void OnDirectoryRenamed(object sender, RenamedEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            Renamed?.Invoke(this, new DirectoryRenamedEventArgs(e.OldFullPath, e.FullPath));
+            //WeakReferenceMessenger.Default.Send(new DirectoryItemRenamed(e.OldFullPath, e.FullPath));
+            _messageServices.SendDirectoryItemRenamed(e.OldFullPath, e.FullPath);
         }
         #endregion ディレクトリ変更通知処理
 
@@ -240,7 +188,8 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         public void InsertOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            OpticalDriveMediaInserted?.Invoke(this, new DirectoryChangedEventArgs(path));
+            //WeakReferenceMessenger.Default.Send(new OpticalDriveMediaInserted(path));
+            _messageServices.SendInsertOpticalMedia(path);
         }
 
         /// <summary>
@@ -250,7 +199,8 @@ namespace FileHashCraft.ViewModels.FileSystemWatch
         public void EjectOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            OpticalDriveMediaEjected?.Invoke(this, new DirectoryChangedEventArgs(path));
+            //WeakReferenceMessenger.Default.Send(new OpticalDriveMediaEjected(path));
+            _messageServices.SendEjectOpticalMedia(path);
         }
         #endregion リムーバブルディスクの着脱処理
     }

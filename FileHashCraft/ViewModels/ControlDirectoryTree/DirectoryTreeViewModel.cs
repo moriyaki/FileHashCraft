@@ -11,6 +11,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.Services;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
@@ -59,20 +61,23 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>, IDirectoryTreeViewModel
     {
         #region コンストラクタ
-
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public DirectoryTreeViewModel()
         {
-            _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new InvalidOperationException($"{nameof(IMainWindowViewModel)} dependency not resolved.");
+            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
+            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
+            // フォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            // フォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
 
-            // メインウィンドウからのフォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontChanged>(this, (_, message) => UsingFont = message.UsingFont);
-            // メインウィンドウからのフォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
+            _UsingFont = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
         }
 
         /// <summary>
@@ -241,7 +246,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             get
             {
-                var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
+                var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlModel)} dependency not resolved.");
                 return controDirectoryTreeViewlViewModel.IsCheckBoxVisible;
             }
         }
@@ -308,7 +313,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
+                        var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlModel)} dependency not resolved.");
                         controDirectoryTreeViewlViewModel.CurrentFullPath = this.FullPath;
                         if (HasChildren)
                         {
@@ -337,12 +342,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     if (value && !_IsKicked) { KickChild(); }
                 }
-                var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlViewModel)} dependency not resolved.");
+                var directorryTreeManager = Ioc.Default.GetService<ITreeManager>() ?? throw new InvalidOperationException($"{nameof(ITreeManager)} dependency not resolved.");
                 if (value)
                 {
                     foreach (var child in Children)
                     {
-                        controDirectoryTreeViewlViewModel.AddDirectoryToExpandedDirectoryManager(child);
+                        directorryTreeManager.AddExpandedDirectoryManager(child);
                         if (IsChecked == true) { child.IsChecked = true; }
                     }
                 }
@@ -350,7 +355,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     foreach (var child in Children)
                     {
-                        controDirectoryTreeViewlViewModel.RemoveDirectoryToExpandedDirectoryManager(child);
+                        directorryTreeManager.RemoveExpandedDirectoryManager(child);
                     }
                 }
             }
@@ -370,11 +375,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!_IsKicked || force)
             {
                 Children.Clear();
-                var fileManager = Ioc.Default.GetService<IFileManager>() ?? throw new InvalidOperationException($"{nameof(IFileManager)} dependency not resolved.");
-                foreach (var childPath in fileManager.EnumerateDirectories(FullPath))
+                foreach (var childPath in FileManager.EnumerateDirectories(FullPath))
                 {
-                    var specialFolderAndRootDrives = Ioc.Default.GetService<ISpecialFolderAndRootDrives>() ?? throw new InvalidOperationException($"{nameof(ISpecialFolderAndRootDrives)} dependency not resolved.");
-                    var child = specialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
+                    var child = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
                     var item = new DirectoryTreeViewModel(child, this);
                     Children.Add(item);
                 }
@@ -383,28 +386,32 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
-        /// フォントの取得と設定
+        /// フォントの設定
         /// </summary>
-        public FontFamily UsingFont
+        private FontFamily _UsingFont;
+        public FontFamily CurrentFontFamily
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _UsingFont;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
+                if (_UsingFont.Source == value.Source) { return; }
+                SetProperty(ref _UsingFont, value);
+                _messageServices.SendCurrentFont(value);
             }
         }
 
         /// <summary>
-        /// フォントサイズの取得と設定
+        /// フォントサイズの設定
         /// </summary>
+        private double _FontSize;
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
+                if (_FontSize == value) { return; }
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
         #endregion データバインディング

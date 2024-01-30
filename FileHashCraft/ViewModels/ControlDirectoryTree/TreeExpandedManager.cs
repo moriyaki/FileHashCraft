@@ -3,14 +3,53 @@
     ディレクトリツリーの展開状況を管理するクラスです。
  */
 
+using FileHashCraft.Services;
+using FileHashCraft.ViewModels.DirectoryTreeViewControl;
+
 namespace FileHashCraft.ViewModels.Modules
 {
-    // TODO : 削除するパスの特殊フォルダは除外
-    public class DirectoryTreeExpandedDirectoryManager
+    public interface ITreeExpandedManager
     {
-        public DirectoryTreeExpandedDirectoryManager(ISpecialFolderAndRootDrives specialFolderAndRootDrives)
+        /// <summary>
+        /// 登録したディレクトリのリストを取得します。
+        /// </summary>
+        public List<string> Directories { get; }
+        /// <summary>
+        /// 展開されたディレクトリかどうかを調べます。
+        /// </summary>
+        public bool IsExpandedDirectory(string path);
+        /// <summary>
+        /// 特殊フォルダの配下かどうかを調べます。
+        /// </summary>
+        public bool HasSpecialSubFolder(string fullPath);
+        /// <summary>
+        /// 特殊フォルダに含まれているサブディレクトリかどうかを取得します。
+        /// </summary>
+        public bool IsSpecialSubFolder(string fullPath);
+        /// <summary>
+        /// ディレクトリノードを展開マネージャに追加します。
+        /// </summary>
+        public void AddExpandedDirectoryManager(DirectoryTreeViewModel node);
+        /// <summary>
+        /// ディレクトリノードを展開マネージャから削除します。
+        /// </summary>
+        public void RemoveExpandedDirectoryManager(DirectoryTreeViewModel node);
+        /// <summary>
+        /// 指定したパスを管理対象に追加します。
+        /// </summary>
+        public void AddDirectory(string fullPath);
+        /// <summary>
+        /// 指定したパスを管理対象から外します。
+        /// </summary>
+        public void RemoveDirectory(string fullPath);
+    }
+
+    // TODO : 削除するパスの特殊フォルダは除外
+    public class TreeExpandedManager : ITreeExpandedManager
+    {
+        public TreeExpandedManager()
         {
-            foreach (var rootInfo in specialFolderAndRootDrives.ScanSpecialFolders())
+            foreach (var rootInfo in SpecialFolderAndRootDrives.ScanSpecialFolders())
             {
                 _specialDirectoriesRoot.Add(rootInfo.FullPath);
             }
@@ -94,6 +133,36 @@ namespace FileHashCraft.ViewModels.Modules
         #endregion メソッドとプロパティ
 
         #region 追加削除メソッド
+        /// <summary>
+        /// TreeViewItem が展開された時に展開マネージャに通知します。
+        /// </summary>
+        /// <param name="node">展開されたノード</param>
+        public void AddExpandedDirectoryManager(DirectoryTreeViewModel node)
+        {
+            AddDirectory(node.FullPath);
+            if (!node.IsExpanded) return;
+
+            foreach (var child in node.Children)
+            {
+                AddExpandedDirectoryManager(child);
+            }
+        }
+
+        /// <summary>
+        /// TreeViewItem が展開された時に展開解除マネージャに通知します。
+        /// </summary>
+        /// <param name="node">展開解除されたノード</param>
+        public void RemoveExpandedDirectoryManager(DirectoryTreeViewModel node)
+        {
+            RemoveDirectory(node.FullPath);
+            if (!node.HasChildren) { return; }
+
+            foreach (var child in node.Children)
+            {
+                RemoveExpandedDirectoryManager(child);
+            }
+        }
+
         /// <summary>
         /// 指定したパスを管理対象に追加します。
         /// </summary>

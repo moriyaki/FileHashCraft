@@ -2,149 +2,47 @@
 
     メインウィンドウの ViewModel を提供します。
  */
-using System.IO;
 using System.Windows;
 using System.Windows.Media;
-using System.Xml;
-using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models.Helpers;
-using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels
 {
     #region インターフェース
-    public interface IMainWindowViewModel
-    {
-        public double Top { get; set; }
-        public double Left { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
-        public double FontSize { get; set; }
-        public double TreeWidth { get; set; }
-        public double ListWidth { get; set; }
-        public bool IsZeroSizeFileDelete { get; set; }
-        public bool IsEmptyDirectoryDelete { get; set; }
-        public bool IsReadOnlyFileInclude { get; set; }
-        public bool IsHiddenFileInclude { get; set; }
-        public string SelectedLanguage { get; set; }
-        public string HashAlgorithm { get; set; }
-        public FontFamily UsingFont { get; set; }
-        /// <summary>
-        /// フォントサイズを取得する
-        /// </summary>
-        /// <returns>設定できるフォントサイズリスト</returns>
-        public IEnumerable<double> GetSelectableFontSize();
-
-        /// <summary>
-        /// フォントサイズを大きくする
-        /// </summary>
-        public void FontSizePlus();
-        /// <summary>
-        /// フォントサイズを小さくする
-        /// </summary>
-        public void FontSizeMinus();
-    }
+    public interface IMainWindowViewModel;
     #endregion インターフェース
     public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     {
         #region 初期設定
-        private readonly string appName = "FileHashCraft";
-        private readonly string settingXMLFile = "settings.xml";
-        private readonly string settingsFilePath;
+        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
 
-        public MainWindowViewModel()
+        public MainWindowViewModel() { throw new NotImplementedException(); }
+
+        public MainWindowViewModel(
+            ISettingsService settingsService,
+            IMessageServices messageServices)
         {
-            var localAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appName);
-            settingsFilePath = Path.Combine(localAppDataPath, settingXMLFile);
+            _settingsService = settingsService;
+            _messageServices = messageServices;
 
-            LoadSettings();
+            // 設定を読み込む
+            _settingsService.LoadSettings();
+            Top = _settingsService.Top;
+            Left = _settingsService.Left;
+            Width = _settingsService.Width;
+            Height = _settingsService.Height;
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
+
+            WeakReferenceMessenger.Default.Register<WindowTopChanged>(this, (_, m) => Top = m.Top);
+            WeakReferenceMessenger.Default.Register<WindowLeftChanged>(this, (_, m) => Left = m.Left);
+            WeakReferenceMessenger.Default.Register<WindowWidthChanged>(this, (_, m) => Width = m.Width);
+            WeakReferenceMessenger.Default.Register<WindowHeightChanged>(this, (_, m) => Height = m.Height);
         }
         #endregion 初期設定
-
-        #region 設定ファイルの読み書き
-        /// <summary>
-        /// 設定ファイルからロード
-        /// </summary>
-        private void LoadSettings()
-        {
-            if (File.Exists(settingsFilePath))
-            {
-                try
-                {
-                    // 設定ファイルが存在する場合は読み込む
-                    XDocument doc = XDocument.Load(settingsFilePath);
-                    XElement? root = doc.Element("Settings");
-
-                    if (root != null)
-                    {
-                        Top = Convert.ToDouble(root.Element("Top")?.Value);
-                        Left = Convert.ToDouble(root.Element("Left")?.Value);
-                        Width = Convert.ToDouble(root.Element("Width")?.Value);
-                        Height = Convert.ToDouble(root.Element("Height")?.Value);
-                        TreeWidth = Convert.ToDouble(root.Element("TreeWidth")?.Value);
-                        ListWidth = Convert.ToDouble(root.Element("ListWidth")?.Value);
-                        IsReadOnlyFileInclude = Convert.ToBoolean(root.Element("IsReadOnlyFileInclude")?.Value);
-                        IsHiddenFileInclude = Convert.ToBoolean(root.Element("IsHiddenFileInclude")?.Value);
-                        IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
-                        IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
-                        SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
-                        HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
-
-                        var fontFamilyName = root.Element("UsingFont")?.Value ?? string.Empty;
-                        UsingFont = new FontFamilyConverter().ConvertFromString(fontFamilyName) as FontFamily ?? SystemFonts.MessageFontFamily;
-                        FontSize = Convert.ToDouble(root.Element("FontSize")?.Value);
-                    }
-                }
-                // XMLが正当ではないときはデフォルトの値を使う
-                catch (XmlException) { }
-            }
-        }
-
-        /// <summary>
-        /// 設定ファイルに保存
-        /// </summary>
-        public void SaveSettings()
-        {
-            try
-            {
-                // 設定ファイルを保存
-                XDocument doc = new(
-                    new XElement("Settings",
-                        new XElement("Top", Top),
-                        new XElement("Left", Left),
-                        new XElement("Width", Width),
-                        new XElement("Height", Height),
-                        new XElement("TreeWidth", TreeWidth),
-                        new XElement("ListWidth", ListWidth),
-                        new XElement("IsReadOnlyFileInclude", IsReadOnlyFileInclude),
-                        new XElement("IsHiddenFileInclude", IsHiddenFileInclude),
-                        new XElement("IsZeroSizeFileDelete", IsZeroSizeFileDelete),
-                        new XElement("IsEmptyDirectoryDelete", IsEmptyDirectoryDelete),
-                        new XElement("SelectedLanguage", SelectedLanguage),
-                        new XElement("HashAlgorithm", HashAlgorithm),
-                        new XElement("UsingFont", UsingFont),
-                        new XElement("FontSize", FontSize)
-                    )
-                );
-
-                // ディレクトリが存在しない場合は作成
-                string localAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appName);
-                if (!Directory.Exists(localAppDataPath))
-                {
-                    Directory.CreateDirectory(localAppDataPath);
-                }
-
-                // 設定ファイルを保存
-                doc.Save(settingsFilePath);
-            }
-            catch (Exception ex)
-            {
-                DebugManager.ExceptionWrite($"設定の保存中にエラーが発生しました: {ex.Message}");
-            }
-        }
-        #endregion 設定ファイルの読み書き
 
         #region データバインディング
         /// <summary>
@@ -156,11 +54,11 @@ namespace FileHashCraft.ViewModels
             get => _Top;
             set
             {
+                if (value == _Top) { return; }
                 SetProperty(ref _Top, value);
-                SaveSettings();
+                _messageServices.SendWindowTop(value);
             }
         }
-
         /// <summary>
         /// ウィンドウの開始左位置
         /// </summary>
@@ -170,11 +68,11 @@ namespace FileHashCraft.ViewModels
             get => _Left;
             set
             {
+                if (value == _Left) { return; }
                 SetProperty(ref _Left, value);
-                SaveSettings();
+                _messageServices.SendWindowLeft(value);
             }
         }
-
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
@@ -184,11 +82,11 @@ namespace FileHashCraft.ViewModels
             get => _Width;
             set
             {
+                if (value == _Width) { return; }
                 SetProperty(ref _Width, value);
-                SaveSettings();
+                _messageServices.SendWindowWidth(value);
             }
         }
-
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
@@ -198,152 +96,27 @@ namespace FileHashCraft.ViewModels
             get => _Height;
             set
             {
+                if (value == _Height) { return; }
                 SetProperty(ref _Height, value);
-                SaveSettings();
+                _messageServices.SendWindowHeight(value);
             }
         }
-
-        /// <summary>
-        /// 選択されている言語
-        /// </summary>
-        private string _SelectedLanguage = "ja-JP";
-        public string SelectedLanguage
-        {
-            get => _SelectedLanguage;
-            set
-            {
-                SetProperty(ref _SelectedLanguage, value);
-                ResourceService.Current.ChangeCulture(value);
-                OnPropertyChanged("Resources");
-                SaveSettings();
-            }
-        }
-
-        /// <summary>
-        /// ハッシュ計算アルゴリズムの変更
-        /// </summary>
-        private string _HashAlgorithm = HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
-        public string HashAlgorithm
-        {
-            get => _HashAlgorithm;
-            set
-            {
-                SetProperty(ref _HashAlgorithm, value);
-                SaveSettings();
-            }
-        }
-
-        /// <summary>
-        ///  読み取り専用ファイルを対象にするかどうか
-        /// </summary>
-        private bool _IsReadOnlyFileInclude = false;
-        public bool IsReadOnlyFileInclude
-        {
-            get => _IsReadOnlyFileInclude;
-            set
-            {
-                if (value == _IsReadOnlyFileInclude) return;
-                SetProperty(ref _IsReadOnlyFileInclude, value);
-                SaveSettings();
-            }
-        }
-
-        /// <summary>
-        /// 隠しファイルを対象にするかどうか
-        /// </summary>
-        private bool _IsHiddenFileInclude = false;
-        public bool IsHiddenFileInclude
-        {
-            get => _IsHiddenFileInclude;
-            set
-            {
-                if (value == _IsHiddenFileInclude) return;
-                SetProperty(ref _IsHiddenFileInclude, value);
-                SaveSettings();
-            }
-        }
-
-        /// <summary>
-        /// 0 サイズのファイルを削除するかどうか
-        /// </summary>
-        private bool _IsZeroSizeFileDelete = false;
-        public bool IsZeroSizeFileDelete
-        {
-            get => _IsZeroSizeFileDelete;
-            set
-            {
-                if (value == _IsZeroSizeFileDelete) return;
-                SetProperty(ref _IsZeroSizeFileDelete, value);
-                SaveSettings();
-            }
-        }
-
-        /// <summary>
-        /// 空のフォルダを削除するかどうか
-        /// </summary>
-        private bool _IsEmptyDirectoryDelete = false;
-        public bool IsEmptyDirectoryDelete
-        {
-            get => _IsEmptyDirectoryDelete;
-            set
-            {
-                if (value == _IsEmptyDirectoryDelete) return;
-                SetProperty(ref _IsEmptyDirectoryDelete, value);
-                SaveSettings();
-            }
-        }
-
-        private double _TreeWidth = 300d;
-        public double TreeWidth
-        {
-            get => _TreeWidth;
-            set
-            {
-                if (value != _TreeWidth)
-                {
-                    SetProperty(ref _TreeWidth, value, nameof(TreeWidth));
-                    WeakReferenceMessenger.Default.Send(new TreeWidthChanged(value));
-                    SaveSettings();
-                }
-            }
-        }
-        private double _ListWidth = 300d;
-        public double ListWidth
-        {
-            get => _ListWidth;
-            set
-            {
-                if (value != _ListWidth)
-                {
-                    SetProperty(ref _ListWidth, value, nameof(ListWidth));
-                    WeakReferenceMessenger.Default.Send(new ListWidthChanged(value));
-                    SaveSettings();
-                }
-            }
-        }
-
         /// <summary>
         /// フォントの変更
-        /// MainWindowを参照できる所には以下のコード
         /// </summary>
-        private FontFamily _UsingFont = SystemFonts.MessageFontFamily;
-        public FontFamily UsingFont
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
         {
-            get => _UsingFont;
+            get => _CurrentFontFamily;
             set
             {
-                if (value != _UsingFont)
-                {
-                    SetProperty(ref _UsingFont, value);
-                    WeakReferenceMessenger.Default.Send(new FontChanged(value));
-                    SaveSettings();
-                }
+                if (value == _CurrentFontFamily) { return; }
+                SetProperty(ref _CurrentFontFamily, value);
+                _messageServices.SendCurrentFont(value);
             }
         }
-
         /// <summary>
         /// フォントサイズの変更
-        /// MainWindowを参照できる所には以下のコード
         /// </summary>
         private double _FontSize = SystemFonts.MessageFontSize;
         public double FontSize
@@ -351,52 +124,11 @@ namespace FileHashCraft.ViewModels
             get => _FontSize;
             set
             {
-                if (value != _FontSize)
-                {
-                    SetProperty(ref _FontSize, value, nameof(FontSize));
-                    WeakReferenceMessenger.Default.Send(new FontSizeChanged(value));
-                    SaveSettings();
-                }
+                if (value == _FontSize) { return; }
+                SetProperty(ref _FontSize, value, nameof(FontSize));
+                _messageServices.SendFontSize(value);
             }
         }
         #endregion データバインディング
-
-        #region メソッド
-        /// <summary>
-        /// 設定できるフォントサイズ
-        /// </summary>
-        private readonly List<double> FontSizes =
-            [8d, 9d, 10d, 10.5d, 11d, 12d, 13d, 14d, 15d, 16d, 18d, 20d, 21d, 22d, 24d];
-
-        /// <summary>
-        /// フォントサイズを取得する
-        /// </summary>
-        /// <returns>設定できるフォントサイズリスト</returns>
-        public IEnumerable<double> GetSelectableFontSize()
-        {
-            foreach (var fontSize in FontSizes) { yield return fontSize; }
-        }
-
-        /// <summary>
-        /// フォントサイズを大きくする
-        /// </summary>
-        public void FontSizePlus()
-        {
-            var index = FontSizes.IndexOf(FontSize);
-            if (index == FontSizes.Count - 1) return;
-
-            FontSize = FontSizes[index + 1];
-        }
-        /// <summary>
-        /// フォントサイズを小さくする
-        /// </summary>
-        public void FontSizeMinus()
-        {
-            var index = FontSizes.IndexOf(FontSize);
-            if (index == 0) return;
-
-            FontSize = FontSizes[index - 1];
-        }
-        #endregion メソッド
     }
 }

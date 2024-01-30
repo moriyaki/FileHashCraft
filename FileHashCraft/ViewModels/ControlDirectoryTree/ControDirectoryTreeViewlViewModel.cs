@@ -8,14 +8,14 @@ using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services;
+using FileHashCraft.Services.FileSystemWatcherServices;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
-using FileHashCraft.ViewModels.FileSystemWatch;
-using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
     #region インターフェース
-    public interface IControDirectoryTreeViewlViewModel
+    public interface IControDirectoryTreeViewlModel
     {
         /// <summary>
         /// ツリービューのルートコレクション
@@ -26,7 +26,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         public void SetIsCheckBoxVisible(bool isVisible);
         /// <summary>
-        /// チェックボックスが表示されるか否か
+        /// チェックボックスが表示されるか否かを設定します。
         /// </summary>
         public Visibility IsCheckBoxVisible { get; }
         /// <summary>
@@ -36,30 +36,18 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ルートにアイテムを追加します。
         /// </summary>
-        public DirectoryTreeViewModel AddRoot(FileItemInformation item, bool findSpecial);
+        public void AddRoot(FileItemInformation item, bool findSpecial);
         /// <summary>
         /// ルートアイテムをクリアします。
         /// </summary>
         public void ClearRoot();
         /// <summary>
-        /// ディレクトリノードを展開マネージャに追加します。
-        /// </summary>
-        public void AddDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
-        /// <summary>
-        /// ディレクトリノードを展開マネージャから削除します。
-        /// </summary>
-        public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node);
-        /// <summary>
-        /// チェックマネージャからツリービューのチェックボックス状態を確認します。
-        /// </summary>
-        public void CheckStatusChangeFromCheckManager();
-        /// <summary>
-        /// ツリービューの横幅設定
+        /// ツリービューの横幅設定をします。
         /// </summary>
         public double TreeWidth { get; set; }
     }
     #endregion インターフェース
-    public partial class ControDirectoryTreeViewlViewModel : ObservableObject, IControDirectoryTreeViewlViewModel
+    public partial class ControDirectoryTreeViewModel : ObservableObject, IControDirectoryTreeViewlModel
     {
         #region バインディング
         /// <summary>
@@ -78,45 +66,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         }
 
         /// <summary>
-        /// ツリー横幅の設定
-        /// </summary>
-        public double TreeWidth
-        {
-            get => _MainWindowViewModel.TreeWidth;
-            set
-            {
-                _MainWindowViewModel.TreeWidth = value;
-                OnPropertyChanged(nameof(TreeWidth));
-            }
-        }
-
-        /// <summary>
-        /// フォントの取得と設定
-        /// </summary>
-        public FontFamily UsingFont
-        {
-            get => _MainWindowViewModel.UsingFont;
-            set
-            {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの取得と設定
-        /// </summary>
-        public double FontSize
-        {
-            get => _MainWindowViewModel.FontSize;
-            set
-            {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
-            }
-        }
-
-        /// <summary>
         /// カレントディレクトリのフルパス
         /// </summary>
         private string _CurrentFullPath = string.Empty;
@@ -131,62 +80,126 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     // カレントディレクトリを TreeView の選択状態に反映
                     FolderSelectedChanged(value);
                     // カレントディレクトリ変更のメッセージ発信
-                    WeakReferenceMessenger.Default.Send(new CurrentChangeMessage(value));
+                    _messageServices.SendCurrentDirectoryChanged(value);
                 }
+            }
+        }
+        /// <summary>
+        /// ツリー横幅の設定
+        /// </summary>
+        private double _TreeWidth;
+        public double TreeWidth
+        {
+            get => _TreeWidth;
+            set
+            {
+                if (_TreeWidth == value) { return; }
+                SetProperty(ref _TreeWidth, value);
+                _messageServices.SendTreeWidth(value);
+            }
+        }
+        /// <summary>
+        /// フォントの設定
+        /// </summary>
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
+        {
+            get => _CurrentFontFamily;
+            set
+            {
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+                SetProperty(ref _CurrentFontFamily, value);
+                _messageServices.SendCurrentFont(value);
+            }
+        }
+
+        /// <summary>
+        /// フォントサイズの設定
+        /// </summary>
+        private double _FontSize;
+        public double FontSize
+        {
+            get => _FontSize;
+            set
+            {
+                if (_FontSize == value) { return; }
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
         #endregion バインディング
 
-        #region 初期処理
-        private readonly IDrivesFileSystemWatcherService _DrivesFileSystemWatcherService;
-        private readonly IDirectoryTreeManager _DirectoryTreeManager;
-        private readonly ISpecialFolderAndRootDrives _SpecialFolderAndRootDrives;
-        private readonly IMainWindowViewModel _MainWindowViewModel;
+        #region コンストラクタと初期処理
+        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
+        private readonly IFileWatcherService _fileWatcherService;
+        private readonly ITreeManager _treeManager;
 
         /// <summary>
         /// 引数なしで生成はさせない
         /// </summary>
         /// <exception cref="NotImplementedException">DIコンテナを利用するように</exception>
-        public ControDirectoryTreeViewlViewModel()
+        public ControDirectoryTreeViewModel()
         {
             throw new NotImplementedException();
         }
 
         // 通常コンストラクタ
-        public ControDirectoryTreeViewlViewModel(
-            IDrivesFileSystemWatcherService drivesFileSystemWatcherService,
-            IDirectoryTreeManager directoryTreeManager,
-            ISpecialFolderAndRootDrives specialFolderAndRootDrives,
-            IMainWindowViewModel mainViewModel)
+        public ControDirectoryTreeViewModel(
+            IMessageServices messageServices,
+            ISettingsService settingsService,
+            IFileWatcherService fileWatcherService,
+            ITreeManager treeManager)
         {
-            _DrivesFileSystemWatcherService = drivesFileSystemWatcherService;
-            _DirectoryTreeManager = directoryTreeManager;
-            _SpecialFolderAndRootDrives = specialFolderAndRootDrives;
-            _MainWindowViewModel = mainViewModel;
+            _messageServices = messageServices;
+            _settingsService = settingsService;
+            _fileWatcherService = fileWatcherService;
+            _treeManager = treeManager;
 
             // カレントディレクトリの変更メッセージ
-            WeakReferenceMessenger.Default.Register<CurrentChangeMessage>(this, (_, message) =>
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, message) =>
             {
                 if (CurrentFullPath == message.CurrentFullPath) return;
                 CurrentFullPath = message.CurrentFullPath;
                 FolderSelectedChanged(CurrentFullPath);
             });
 
-            // メインウィンドウからのツリービュー幅変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, message) => TreeWidth = message.TreeWidth);
+            // ツリービュー幅変更
+            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, m)
+                => TreeWidth = m.TreeWidth);
 
-            // フォントの変更メッセージ
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, message) => FontSize = message.FontSize);
+            // フォントサイズの変更
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
+                => FontSize = m.FontSize);
 
-            foreach (var root in _SpecialFolderAndRootDrives.ScanDrives())
+            foreach (var root in SpecialFolderAndRootDrives.ScanDrives())
             {
-                _DrivesFileSystemWatcherService.SetRootDirectoryWatcher(root);
+                _fileWatcherService.SetRootDirectoryWatcher(root);
             }
-            _DrivesFileSystemWatcherService.Changed += DirectoryChanged;
-            _DrivesFileSystemWatcherService.Created += DirectoryCreated;
-            _DrivesFileSystemWatcherService.Renamed += DirectoryRenamed;
-            _DrivesFileSystemWatcherService.OpticalDriveMediaInserted += OpticalDriveMediaInserted;
-            _DrivesFileSystemWatcherService.OpticalDriveMediaEjected += EjectOpticalDriveMedia;
+
+            // ディレクトリの内容が変更された
+            WeakReferenceMessenger.Default.Register<DirectoryItemDeleted>(this, async (_, m)
+                => await DirectoryChanged(m.DeletedFullPath));
+
+            // ディレクトリの内容が追加された
+            WeakReferenceMessenger.Default.Register<DirectoryItemCreated>(this, async (_, m)
+                => await DirectoryCreated(m.CreatedFullPath));
+
+            // ディレクトリの名前が変更された
+            WeakReferenceMessenger.Default.Register<DirectoryItemRenamed>(this, async(_, m)
+                => await DirectoryRenamed(m.OldFullPath, m.NewFullPath));
+
+            // リムーバブルドライブが追加または挿入された
+            WeakReferenceMessenger.Default.Register<OpticalDriveMediaInserted>(this, async (_, m)
+                => await OpticalDriveMediaInserted(m.InsertedPath));
+
+            // リムーバブルドライブがイジェクトされた
+            WeakReferenceMessenger.Default.Register<OpticalDriveMediaEjected>(this, async (_, m)
+                => await OpticalDriveMediaEjected(m.EjectedPath));
+
+            _TreeWidth = _settingsService.TreeWidth;
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
         }
 
         /// <summary>
@@ -203,36 +216,33 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// ルートノードにアイテムを追加します。
         /// </summary>
         /// <param name="item">追加する FileItemInformation</param>
-        /// <returns>追加されたノード</returns>
-        public DirectoryTreeViewModel AddRoot(FileItemInformation item, bool findSpecial)
+        public void AddRoot(FileItemInformation item, bool findSpecial)
         {
             var currentNode = new DirectoryTreeViewModel(item);
             TreeRoot.Add(currentNode);
             // 内部キックをしない場合そのまま終了
-            if (!findSpecial) return currentNode;
+            if (!findSpecial) return;
 
             // 展開ディレクトリに追加
-            _DirectoryTreeManager.AddDirectory(item.FullPath);
+            _treeManager.AddDirectory(item.FullPath);
             /* ルートドライブが追加された時、特殊フォルダは追加されている
               * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
               * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
               */
             // ルートドライブではない場合終了
-            if (item.FullPath.Length != 3) { return currentNode; }
+            if (item.FullPath.Length != 3) { return; }
 
             // 追加されたノードのフルパスで始まるノードを検索する
             var driveNode = TreeRoot.Where(root => root.FullPath.StartsWith(currentNode.FullPath));
-            if (driveNode == null) { return currentNode; }
+            if (driveNode == null) { return; }
 
             foreach (var drive in driveNode)
             {
                 // 各追加されたノードで始まるパスを分解する
-                var dirs = GetDirectoryNames(drive.FullPath);
+                var dirs = DirectoryNameService.GetDirectoryNames(drive.FullPath, drive.FullPath);
                 //if (node == null) continue;
                 var childNode = currentNode;
 
-                // ドライブルートを除外する
-                dirs.RemoveAt(0);
                 foreach (var dir in dirs)
                 {
                     if (childNode == null) break;
@@ -242,7 +252,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     childNode = childNode.Children.FirstOrDefault(c => c.FullPath == dir);
                 }
             }
-            return currentNode;
         }
 
         /// <summary>
@@ -252,7 +261,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             TreeRoot.Clear();
         }
-        #endregion 初期処理
+        #endregion コンストラクタと初期処理
 
         #region カレントディレクトリ移動
         /// <summary>
@@ -275,7 +284,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             searchNode.IsExpanded = true;
 
             // パス内の各ディレクトリに対して処理を実行
-            foreach (var directory in GetDirectoryNames(changedPath))
+            var directoryNames = DirectoryNameService.GetDirectoryNames(changedPath, searchNode.FullPath);
+
+            foreach (var directory in directoryNames)
             {
                 var child = searchNode.Children.FirstOrDefault(c => c.FullPath == directory);
 
@@ -293,132 +304,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 searchNode.IsExpanded = true;
             }
         }
-
-        /// <summary>
-        /// 親ディレクトリから順に、現在のディレクトリまでのコレクションを取得します。
-        /// </summary>
-        /// <param name="path">コレクションを取得するディレクトリ</param>
-        /// <returns>親ディレクトリからのコレクション</returns>
-        public static IList<string> GetDirectoryNames(string path)
-        {
-            var list = new List<string>();
-            string? parent = path;
-            list.Add(path);
-            while ((parent = Path.GetDirectoryName(parent)) != null)
-            {
-                list.Add(parent);
-            }
-            list.Reverse();
-            return list;
-        }
         #endregion カレントディレクトリ移動
-
-        #region 展開マネージャへの追加削除処理
-        /// <summary>
-        /// TreeViewItem が展開された時に展開マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開されたノード</param>
-        public void AddDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
-        {
-            _DirectoryTreeManager.AddDirectory(node.FullPath);
-            if (!node.IsExpanded) return;
-
-            foreach (var child in node.Children)
-            {
-                AddDirectoryToExpandedDirectoryManager(child);
-            }
-        }
-
-        /// <summary>
-        /// TreeViewItem が展開された時に展開解除マネージャに通知します。
-        /// </summary>
-        /// <param name="node">展開解除されたノード</param>
-        public void RemoveDirectoryToExpandedDirectoryManager(DirectoryTreeViewModel node)
-        {
-            _DirectoryTreeManager.RemoveDirectory(node.FullPath);
-            if (!node.HasChildren) { return; }
-
-            foreach (var child in node.Children)
-            {
-                RemoveDirectoryToExpandedDirectoryManager(child);
-            }
-        }
-        #endregion 展開マネージャへの追加削除処理
-
-        #region チェックマネージャからチェック状態を反映
-        /// <summary>
-        /// チェックマネージャの情報に基づき、チェック状態を変更します。
-        /// </summary>
-        public void CheckStatusChangeFromCheckManager()
-        {
-            // サブディレクトリを含む管理をしているディレクトリを巡回する
-            foreach (var fullPath in _DirectoryTreeManager.NestedDirectories)
-            {
-                CheckStatusChange(fullPath, true);
-            }
-            // サブディレクトリを含まない管理をしているディレクトリを巡回する
-            foreach (var fullPath in _DirectoryTreeManager.NonNestedDirectories)
-            {
-                CheckStatusChange(fullPath, null);
-            }
-        }
-
-        /// <summary>
-        /// ディレクトリのフルパスから、チェック状態を変更する
-        /// </summary>
-        /// <param name="fullPath"></param>
-        /// <param name="isChecked"></param>
-        /// <returns>成功の可否</returns>
-        private bool CheckStatusChange(string fullPath, bool? isChecked)
-        {
-            // 親ディレクトリから順に、現在のディレクトリまでのコレクションを取得
-            var dirs = GetDirectoryNames(fullPath);
-
-            // ドライブノードを取得する
-            DirectoryTreeViewModel? node = TreeRoot.FirstOrDefault(r => r.FullPath == dirs[0]);
-            if (node == null) return false;
-            node.KickChild();
-            node.IsExpanded = true;
-
-            if (node.FullPath == fullPath)
-            {
-                if (node.FullPath == fullPath)
-                {
-                    if (isChecked == true || isChecked == false)
-                    {
-                        node.IsChecked = isChecked;
-                    }
-                    else
-                    {
-                        node.IsCheckedForSync = null;
-                    }
-                    return true;
-                }
-            }
-
-            // リストからドライブノードを除去する
-            dirs.RemoveAt(0);
-            foreach (var dir in dirs)
-            {
-                node = node.Children.FirstOrDefault(c => c.FullPath == dir);
-                if (node == null) return false;
-
-                node.KickChild();
-                if (node.FullPath == fullPath)
-                {
-                    if (isChecked == true || isChecked == false)
-                    {
-                        node.IsChecked = isChecked;
-                    }
-                    else
-                    {
-                        node.IsCheckedForSync = null;
-                    }
-                    return true;
-                }
-            }
-            return false;
-        }
-        #endregion チェックマネージャからチェック状態を反映
     }
 }

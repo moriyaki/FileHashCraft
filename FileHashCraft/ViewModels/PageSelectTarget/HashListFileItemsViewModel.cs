@@ -7,12 +7,32 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     public class HashListFileItems : ObservableObject
     {
+        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
+        public HashListFileItems()
+        {
+            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
+            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
+
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
+
+            // フォント変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)
+                => CurrentFontFamily = m.CurrentFontFamily);
+            // フォントサイズ変更メッセージ受信
+            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
+                => FontSize = m.FontSize);
+        }
+
         #region バインディング
         private string _FullPathFileName = string.Empty;
         public string FileFullPath
@@ -55,36 +75,36 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// フォントの取得と設定
+        /// フォントの設定
         /// </summary>
-        public FontFamily UsingFont
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
         {
-            get => _MainWindowViewModel.UsingFont;
+            get => _CurrentFontFamily;
             set
             {
-                _MainWindowViewModel.UsingFont = value;
-                OnPropertyChanged(nameof(UsingFont));
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+
+                SetProperty(ref _CurrentFontFamily, value);
+                _messageServices.SendCurrentFont(value);
             }
         }
 
         /// <summary>
-        /// フォントサイズの取得と設定
+        /// フォントサイズの設定
         /// </summary>
+        private double _FontSize;
         public double FontSize
         {
-            get => _MainWindowViewModel.FontSize;
+            get => _FontSize;
             set
             {
-                _MainWindowViewModel.FontSize = value;
-                OnPropertyChanged(nameof(FontSize));
+                if (_FontSize == value) { return; }
+
+                SetProperty(ref _FontSize, value);
+                _messageServices.SendFontSize(value);
             }
         }
         #endregion バインディング
-
-        private readonly IMainWindowViewModel _MainWindowViewModel;
-        public HashListFileItems()
-        {
-            _MainWindowViewModel = Ioc.Default.GetService<IMainWindowViewModel>() ?? throw new NullReferenceException(nameof(IMainWindowViewModel));
-        }
     }
  }

@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using FileHashCraft.ViewModels;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.PageSelectTarget;
 
@@ -28,11 +27,11 @@ namespace FileHashCraft.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var mainViewVM = Ioc.Default.GetService<IMainWindowViewModel>();
-                if (mainViewVM is not null)
+                var settingsService = Ioc.Default.GetService<ISettingsService>();
+                if (settingsService is not null)
                 {
-                    if (e.Delta > 0) { mainViewVM.FontSizePlus(); }
-                    else { mainViewVM.FontSizeMinus(); }
+                    if (e.Delta > 0) { settingsService.FontSizePlus(); }
+                    else { settingsService.FontSizeMinus(); }
                 }
                 e.Handled = true;
             }
@@ -48,7 +47,7 @@ namespace FileHashCraft.Views
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
         private void GridSplitter_TreeDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            var explorerTree = Ioc.Default.GetService<IControDirectoryTreeViewlViewModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlViewModel));
+            var explorerTree = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlModel));
             explorerTree.TreeWidth = HashTargetTreeView.ActualWidth;
         }
         /// <summary>

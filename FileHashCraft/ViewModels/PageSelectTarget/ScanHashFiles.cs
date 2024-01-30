@@ -19,21 +19,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ScanHashFiles : IScanHashFiles
     {
         #region コンストラクタと初期化
-        private readonly IFileManager _FileManager;
         private readonly ISearchConditionsManager _SearchManager;
         private readonly IExtentionManager _ExtentionManager;
         private readonly IPageSelectTargetViewModel _PageSelectTargetViewModel;
-        private readonly IDirectoryTreeManager _DirectoryTreeManager;
+        private readonly ITreeManager _DirectoryTreeManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
-            IFileManager fileManager,
             ISearchConditionsManager searchManager,
             IExtentionManager extentionManager,
             IPageSelectTargetViewModel pageSelectTargetViewModel,
-            IDirectoryTreeManager directoryTreeManager)
+            ITreeManager directoryTreeManager)
         {
             _SearchManager = searchManager;
-            _FileManager = fileManager;
             _ExtentionManager = extentionManager;
             _PageSelectTargetViewModel = pageSelectTargetViewModel;
             _DirectoryTreeManager = directoryTreeManager;
@@ -101,7 +98,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     await semaphore.WaitAsync(cancellation);
                     // ファイルを保持する
                     fileCount = 0;
-                    foreach (var fileFullPath in _FileManager.EnumerateFiles(directoryFullPath))
+                    foreach (var fileFullPath in FileManager.EnumerateFiles(directoryFullPath))
                     {
                         searchFileManager.AddFile(fileFullPath);
                         fileCount++;
@@ -192,7 +189,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 result.Add(currentDirectory);
                 _PageSelectTargetViewModel.AddScannedDirectoriesCount();
 
-                foreach (var subDir in _FileManager.EnumerateDirectories(currentDirectory))
+                foreach (var subDir in FileManager.EnumerateDirectories(currentDirectory))
                 {
                     paths.Push(subDir);
                     if (cancellation.IsCancellationRequested) { return []; }

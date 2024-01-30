@@ -2,9 +2,9 @@
 using System.Windows.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ExplorerPage;
-using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.PageSelectTarget;
 using FileHashCraft.Views;
 
@@ -27,18 +27,18 @@ namespace FileHashCraft
             MainFrame.Navigate(new PageExplorer());
 
             // PageExplorer へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToPageExplorer>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ToExplorerPage>(this, (_, _) =>
                 MainFrame.Navigate(new PageExplorer()));
             // PageSelectTarget へ移動のメッセージ受信したので移動
             WeakReferenceMessenger.Default.Register<ToPageSelectTarget>(this, (_, _) =>
                 MainFrame.Navigate(new PageSelectTarget()));
             // PageHashCalcing へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToPageHashCalcing>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ToHashCalcingPage>(this, (_, _) =>
                 MainFrame.Navigate(new PageHashCalcing()));
             // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
-            WeakReferenceMessenger.Default.Register<ToPageSetting>(this, (_, message) =>
+            WeakReferenceMessenger.Default.Register<ToSettingPage>(this, (_, m) =>
             {
-                FromPage = message.ReturnPage;
+                FromPage = m.ReturnPage;
                 MainFrame.Navigate(new PageSettings());
             });
             // PageSetting の終了メッセージを受信したので、元のページへ移動
