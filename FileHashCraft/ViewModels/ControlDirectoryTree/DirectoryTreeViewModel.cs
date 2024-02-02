@@ -76,7 +76,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             // フォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
 
-            _UsingFont = _settingsService.CurrentFont;
+            _CurrentFontFamily = _settingsService.CurrentFont;
             _FontSize = _settingsService.FontSize;
         }
 
@@ -388,14 +388,14 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// フォントの設定
         /// </summary>
-        private FontFamily _UsingFont;
+        private FontFamily _CurrentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _UsingFont;
+            get => _CurrentFontFamily;
             set
             {
-                if (_UsingFont.Source == value.Source) { return; }
-                SetProperty(ref _UsingFont, value);
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+                SetProperty(ref _CurrentFontFamily, value);
                 _messageServices.SendCurrentFont(value);
             }
         }

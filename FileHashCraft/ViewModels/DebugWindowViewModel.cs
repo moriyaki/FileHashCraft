@@ -89,13 +89,13 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// フォントの取得と設定
         /// </summary>
-        private FontFamily _UsingFont;
-        public FontFamily UsingFont
+        private FontFamily _CurrentFontFamily;
+        public FontFamily CurrentFontFamily
         {
-            get => _UsingFont;
+            get => _CurrentFontFamily;
             set
             {
-                SetProperty(ref _UsingFont, value);
+                SetProperty(ref _CurrentFontFamily, value);
                 _messageServices.SendCurrentFont(value);
             }
         }
@@ -166,7 +166,7 @@ namespace FileHashCraft.ViewModels
             Width = _settingsService.Width / 2;
             Height = _settingsService.Height;
 
-            _UsingFont = _settingsService.CurrentFont;
+            _CurrentFontFamily = _settingsService.CurrentFont;
             _FontSize = _settingsService.FontSize;
 
             timer = new DispatcherTimer();
