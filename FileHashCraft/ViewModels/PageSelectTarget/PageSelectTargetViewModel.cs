@@ -552,12 +552,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 HashFileListItems.Clear();
                 var files = FileManager.EnumerateFiles(currentFullPath);
+
                 foreach (var file in files)
                 {
                     var item = new HashListFileItems
                     {
                         FileFullPath = file,
-                        // TOOD : 【AllConditionFilesの内部コレクションが変更されてる途中にきてしまう】
                         IsHashTarget = _searchFileManager.AllConditionFiles.Any(f => f.FileFullPath == file)
                     };
                     HashFileListItems.Add(item);

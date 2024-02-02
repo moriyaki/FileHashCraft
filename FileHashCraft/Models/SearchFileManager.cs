@@ -41,9 +41,6 @@ namespace FileHashCraft.Models
             IExtentionManager extentionManager)
         {
             _ExtentionManager = extentionManager;
-
-            WeakReferenceMessenger.Default.Register<AddConditionFile>(this, (_, m) =>
-                AllConditionFiles.Add(m.ConditionFiles));
         }
 
         #region ファイルの追加とディレクトリの削除

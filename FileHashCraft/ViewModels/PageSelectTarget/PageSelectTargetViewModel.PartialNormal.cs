@@ -246,22 +246,29 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new NullReferenceException(nameof(ISearchFileManager));
             App.Current?.Dispatcher?.InvokeAsync(() => CountFilteredGetHash = searchFileManager.AllConditionFiles.Count);
         }
+
         /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。
         /// </summary>
         /// <param name="changedCheck">チェックされたか外されたか</param>
         /// <param name="extentionCollention">拡張子のリストコレクション</param>
-        public void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention)
+        public async void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention)
         {
             var changedCollection = ExtentionCollection.Where(e => extentionCollention.Contains(e.ExtentionOrGroup));
 
-            App.Current?.Dispatcher?.Invoke(() =>
+            await App.Current.Dispatcher.InvokeAsync(() =>
             {
                 foreach (var extension in changedCollection)
                 {
                     extension.IsChecked = changedCheck;
                 }
             });
+            DebugManager.InfoWrite("-----------------------------------------------------------------------------------------------------------");
+            foreach (var item in _searchFileManager.AllConditionFiles)
+            {
+                DebugManager.InfoWrite($"AllConditionFiles : {item.FileFullPath}");
+            }
+            DebugManager.InfoWrite("-----------------------------------------------------------------------------------------------------------");
         }
         #endregion ファイル絞り込みの処理
     }

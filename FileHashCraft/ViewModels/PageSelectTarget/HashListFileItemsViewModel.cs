@@ -61,13 +61,24 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public bool IsHashTarget
         {
             get => _IsHashTarget;
-            set => SetProperty(ref _IsHashTarget, value);
+            set
+            {
+                SetProperty(ref _IsHashTarget, value);
+                if (value)
+                {
+                    HashTargetColor = new(Colors.LightGreen);
+                }
+                else
+                {
+                    HashTargetColor = new(Colors.Transparent);
+                }
+            }
         }
 
         /// <summary>
         /// 背景色：ハッシュ検索対象になっていたら変更される
         /// </summary>
-        private SolidColorBrush _HashTargetColor = new(Colors.LightCyan);
+        private SolidColorBrush _HashTargetColor = new(Colors.Transparent);
         public SolidColorBrush HashTargetColor
         {
             get => _HashTargetColor;

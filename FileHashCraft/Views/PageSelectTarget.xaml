@@ -54,9 +54,8 @@
                         <TextBlock Text="{Binding FileName}" Padding="0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Background" Value="Transparent" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsHashTarget}">
+                                        <DataTrigger Binding="{Binding IsHashTarget}" Value="True">
                                             <Setter Property="Background" Value="{Binding HashTargetColor}" />
                                         </DataTrigger>
                                     </Style.Triggers>

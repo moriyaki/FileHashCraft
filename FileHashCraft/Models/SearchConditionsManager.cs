@@ -18,11 +18,11 @@ namespace FileHashCraft.Models
         /// <summary>
         /// 検索条件コレクションに追加します。
         /// </summary>
-        public Task AddCondition(SearchConditionType type, string contidionString);
+        public void AddCondition(SearchConditionType type, string contidionString);
         /// <summary>
         /// 検索条件コレクションから削除します。
         /// </summary>
-        public Task RemoveCondition(SearchConditionType type, string contidionString);
+        public void RemoveCondition(SearchConditionType type, string contidionString);
     }
     #endregion インターフェース
 
@@ -62,39 +62,35 @@ namespace FileHashCraft.Models
         /// <param name="type">検索条件タイプ</param>
         /// <param name="contidionString">検索条件</param>
         /// <returns>成功の可否</returns>
-        public async Task AddCondition(SearchConditionType type, string contidionString)
+        public void AddCondition(SearchConditionType type, string contidionString)
         {
-            await Task.Run(() =>
+            var condition = SearchCondition.AddCondition(type, contidionString);
+            if (condition == null) { return; }
+            lock (_lock)
             {
-                var condition = SearchCondition.AddCondition(type, contidionString);
-                if (condition == null) { return; }
-                lock (_lock)
+                switch (type)
                 {
-                    switch (type)
-                    {
-                        case SearchConditionType.Extention:
-                            foreach (var extentionFile in _SearchFileManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), contidionString, StringComparison.OrdinalIgnoreCase)))
+                    case SearchConditionType.Extention:
+                        foreach (var extentionFile in _SearchFileManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), contidionString, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            extentionFile.ConditionCount++;
+
+                            // 条件辞書にファイルを登録する
+                            if (!ConditionFiles.TryGetValue(condition, out HashSet<HashFile>? value))
                             {
-                                extentionFile.ConditionCount++;
-
-                                // 条件辞書にファイルを登録する
-                                if (!ConditionFiles.TryGetValue(condition, out HashSet<HashFile>? value))
-                                {
-                                    value = ([]);
-                                    ConditionFiles.Add(condition, value);
-                                }
-                                value.Add(extentionFile);
-
-                                WeakReferenceMessenger.Default.Send(new AddConditionFile(extentionFile));
+                                value = ([]);
+                                ConditionFiles.Add(condition, value);
                             }
-                            break;
-                        case SearchConditionType.WildCard:
-                            break;
-                        case SearchConditionType.RegularExprettion:
-                            break;
-                    }
+                            value.Add(extentionFile);
+                            _SearchFileManager.AllConditionFiles.Add(extentionFile);
+                        }
+                        break;
+                    case SearchConditionType.WildCard:
+                        break;
+                    case SearchConditionType.RegularExprettion:
+                        break;
                 }
-            });
+            }
         }
 
         /// <summary>
@@ -102,26 +98,23 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="type">検索条件のタイプ</param>
         /// <param name="contidionString">検索条件</param>
-        public async Task RemoveCondition(SearchConditionType type, string contidionString)
+        public void RemoveCondition(SearchConditionType type, string contidionString)
         {
-            await Task.Run(() =>
-            {
-                var condition = ConditionFiles.Keys.FirstOrDefault(c => c.Type == type && c.ConditionString == contidionString);
-                if (condition == null) { return; }
+            var condition = ConditionFiles.Keys.FirstOrDefault(c => c.Type == type && c.ConditionString == contidionString);
+            if (condition == null) { return; }
 
-                lock (_lock)
+            lock (_lock)
+            {
+                foreach (var file in ConditionFiles[condition])
                 {
-                    foreach (var file in ConditionFiles[condition])
+                    file.ConditionCount--;
+                    if (file.ConditionCount == 0)
                     {
-                        file.ConditionCount--;
-                        if (file.ConditionCount == 0)
-                        {
-                            _SearchFileManager.AllConditionFiles.Remove(file);
-                        }
-                        ConditionFiles.Remove(condition);
+                        _SearchFileManager.AllConditionFiles.Remove(file);
                     }
+                    ConditionFiles.Remove(condition);
                 }
-            });
+            }
         }
         #endregion 検索条件の操作
     }
