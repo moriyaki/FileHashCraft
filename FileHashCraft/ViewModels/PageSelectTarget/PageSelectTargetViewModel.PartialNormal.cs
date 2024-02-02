@@ -243,8 +243,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void ExtentionCountChanged()
         {
-            var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new NullReferenceException(nameof(ISearchFileManager));
-            App.Current?.Dispatcher?.InvokeAsync(() => CountFilteredGetHash = searchFileManager.AllConditionFiles.Count);
+            var pageSelectTargetViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new NullReferenceException(nameof(IPageSelectTargetViewModel));
+            App.Current?.Dispatcher?.InvokeAsync(() => CountFilteredGetHash = pageSelectTargetViewModel.AllConditionFiles.Count);
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
             });
             DebugManager.InfoWrite("-----------------------------------------------------------------------------------------------------------");
-            foreach (var item in _searchFileManager.AllConditionFiles)
+            foreach (var item in AllConditionFiles)
             {
                 DebugManager.InfoWrite($"AllConditionFiles : {item.FileFullPath}");
             }

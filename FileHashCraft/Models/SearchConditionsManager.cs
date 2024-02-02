@@ -73,8 +73,6 @@ namespace FileHashCraft.Models
                     case SearchConditionType.Extention:
                         foreach (var extentionFile in _SearchFileManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), contidionString, StringComparison.OrdinalIgnoreCase)))
                         {
-                            extentionFile.ConditionCount++;
-
                             // 条件辞書にファイルを登録する
                             if (!ConditionFiles.TryGetValue(condition, out HashSet<HashFile>? value))
                             {
@@ -82,7 +80,6 @@ namespace FileHashCraft.Models
                                 ConditionFiles.Add(condition, value);
                             }
                             value.Add(extentionFile);
-                            _SearchFileManager.AllConditionFiles.Add(extentionFile);
                         }
                         break;
                     case SearchConditionType.WildCard:
@@ -107,11 +104,6 @@ namespace FileHashCraft.Models
             {
                 foreach (var file in ConditionFiles[condition])
                 {
-                    file.ConditionCount--;
-                    if (file.ConditionCount == 0)
-                    {
-                        _SearchFileManager.AllConditionFiles.Remove(file);
-                    }
                     ConditionFiles.Remove(condition);
                 }
             }

@@ -10,10 +10,6 @@ namespace FileHashCraft.Models
         /// </summary>
         public Dictionary<string, HashFile> AllFiles { get; }
         /// <summary>
-        /// 検索条件に合致するファイルを保持するリスト
-        /// </summary>
-        public HashSet<HashFile> AllConditionFiles { get; }
-        /// <summary>
         /// 全管理対象ファイルディクショナリに追加します。
         /// </summary>
         public void AddFile(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "");
@@ -29,10 +25,6 @@ namespace FileHashCraft.Models
         /// 全てのファイルを持つファイルの辞書
         /// </summary>
         public Dictionary<string, HashFile> AllFiles { get; } = [];
-        /// <summary>
-        /// 検索条件に合致するファイルを保持するリスト
-        /// </summary>
-        public HashSet<HashFile> AllConditionFiles { get; } = [];
 
         public readonly IExtentionManager _ExtentionManager;
 

@@ -6,6 +6,7 @@
     ExtentionGroupCheckBoxViewModel (拡張子グループチェックボックス) を利用します。
  */
 
+using System.IO;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -147,9 +148,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public void HandleChecked()
         {
             var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
+            var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new InvalidOperationException($"{nameof(ISearchFileManager)} dependency not resolved.");
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             searchManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            foreach (var extentionFile in searchFileManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+            {
+                if (extentionFile.ConditionCount == 0)
+                {
+                    pageSelectTargetFileViewModel.AllConditionFiles.Add(extentionFile);
+                }
+                extentionFile.ConditionCount++;
+            }
             pageSelectTargetFileViewModel.ExtentionCountChanged();
             pageSelectTargetFileViewModel.CheckExtentionReflectToGroup(ExtentionOrGroup);
             pageSelectTargetFileViewModel.ChangeCondition();
@@ -158,9 +168,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public void HandleUnchecked()
         {
             var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
+            var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new InvalidOperationException($"{nameof(ISearchFileManager)} dependency not resolved.");
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             searchManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            foreach (var extentionFile in searchFileManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+            {
+                if (--extentionFile.ConditionCount == 0)
+                {
+                    pageSelectTargetFileViewModel.AllConditionFiles.Remove(extentionFile);
+                }
+            }
             pageSelectTargetFileViewModel.ExtentionCountChanged();
             pageSelectTargetFileViewModel.UncheckExtentionReflectToGroup(ExtentionOrGroup);
             pageSelectTargetFileViewModel.ChangeCondition();

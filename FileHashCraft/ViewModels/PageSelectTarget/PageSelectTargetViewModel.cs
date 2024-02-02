@@ -86,6 +86,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ファイルの検索条件が変更されたのを反映します。
         /// </summary>
         public void ChangeCondition();
+        /// <summary>
+        /// 検索条件に合致するファイルを保持するリスト
+        /// </summary>
+        public HashSet<HashFile> AllConditionFiles { get; }
     }
     #endregion インターフェース
 
@@ -245,6 +249,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ハッシュ取得対象のファイルリストアイテムの一覧です。
         /// </summary>
         public ObservableCollection<HashListFileItems> HashFileListItems { get; set; } = [];
+
+        /// <summary>
+        /// 検索条件に合致するファイルを保持するリスト
+        /// </summary>
+        public HashSet<HashFile> AllConditionFiles { get; } = [];
         #endregion バインディング
 
         #region コマンド
@@ -558,7 +567,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     var item = new HashListFileItems
                     {
                         FileFullPath = file,
-                        IsHashTarget = _searchFileManager.AllConditionFiles.Any(f => f.FileFullPath == file)
+                        IsHashTarget = AllConditionFiles.Any(f => f.FileFullPath == file)
                     };
                     HashFileListItems.Add(item);
                 }
