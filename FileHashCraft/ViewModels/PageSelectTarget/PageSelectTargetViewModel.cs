@@ -62,11 +62,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子毎のファイル数が変更された時の処理をします。
         /// </summary>
-        public void ExtentionCountChanged();
+        public Task ExtentionCountChanged();
         /// <summary>
         /// 拡張子グループのチェックボックス状態が変更されたら、拡張子にも反映します。
         /// </summary>
-        public void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
+        public Task ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
         /// <summary>
         /// リストボックスの幅
         /// </summary>
@@ -78,11 +78,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子チェックボックスにチェックされたので拡張子グループに反映します。
         /// </summary>
-        public void CheckExtentionReflectToGroup(string extention);
+        public Task CheckExtentionReflectToGroup(string extention);
         /// <summary>
         /// 拡張子チェックボックスがチェック解除されたので拡張子グループに反映します。
         /// </summary>
-        public void UncheckExtentionReflectToGroup(string extention);
+        public Task UncheckExtentionReflectToGroup(string extention);
         /// <summary>
         /// ファイルの検索条件が変更されたのを反映します。
         /// </summary>
@@ -727,4 +727,4 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
         #endregion 検索条件の操作
     }
-    }
+}

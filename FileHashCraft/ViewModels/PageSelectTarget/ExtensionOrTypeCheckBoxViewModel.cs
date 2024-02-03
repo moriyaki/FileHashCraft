@@ -138,7 +138,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 拡張子を設定し、該当するファイル数を取得します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-         public ExtensionCheckBox(string extention) : base()
+        public ExtensionCheckBox(string extention) : base()
         {
             ExtentionOrGroup = extention;
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
@@ -150,16 +150,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             pageSelectTargetFileViewModel.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
-            foreach (var extentionFile in pageSelectTargetFileViewModel.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+            await Task.Run(() =>
             {
-                if (extentionFile.ConditionCount == 0)
+                foreach (var extentionFile in pageSelectTargetFileViewModel.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
                 {
-                    pageSelectTargetFileViewModel.AllConditionFiles.Add(extentionFile);
+                    if (extentionFile.ConditionCount == 0)
+                    {
+                        pageSelectTargetFileViewModel.AllConditionFiles.Add(extentionFile);
+                    }
+                    extentionFile.ConditionCount++;
                 }
-                extentionFile.ConditionCount++;
-            }
-            pageSelectTargetFileViewModel.ExtentionCountChanged();
-            pageSelectTargetFileViewModel.CheckExtentionReflectToGroup(ExtentionOrGroup);
+            });
+            await pageSelectTargetFileViewModel.CheckExtentionReflectToGroup(ExtentionOrGroup);
+            await pageSelectTargetFileViewModel.ExtentionCountChanged();
             await pageSelectTargetFileViewModel.ChangeCondition(ExtentionOrGroup, true);
         }
 
@@ -168,15 +171,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             pageSelectTargetFileViewModel.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
-            foreach (var extentionFile in pageSelectTargetFileViewModel.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+            await Task.Run(() =>
             {
-                if (--extentionFile.ConditionCount == 0)
+                foreach (var extentionFile in pageSelectTargetFileViewModel.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
                 {
-                    pageSelectTargetFileViewModel.AllConditionFiles.Remove(extentionFile);
+                    if (--extentionFile.ConditionCount == 0)
+                    {
+                        pageSelectTargetFileViewModel.AllConditionFiles.Remove(extentionFile);
+                    }
                 }
-            }
-            pageSelectTargetFileViewModel.ExtentionCountChanged();
-            pageSelectTargetFileViewModel.UncheckExtentionReflectToGroup(ExtentionOrGroup);
+            });
+            await pageSelectTargetFileViewModel.UncheckExtentionReflectToGroup(ExtentionOrGroup);
+            await pageSelectTargetFileViewModel.ExtentionCountChanged();
             await pageSelectTargetFileViewModel.ChangeCondition(ExtentionOrGroup, false);
         }
 
@@ -245,6 +251,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             get => _IsChecked;
             set
             {
+                SetProperty(ref _IsChecked, value);
                 var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
                 var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
                 if (value == true)
@@ -255,7 +262,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 {
                     pageSelectTargetFileViewModel.ChangeCheckBoxGroup(false, extentionManager.GetGroupExtentions(FileType));
                 }
-                SetProperty(ref _IsChecked, value);
             }
         }
         public override bool? IsCheckedForce

@@ -4,6 +4,7 @@
  */
 
 using System.Collections.ObjectModel;
+using System.IO;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
@@ -130,60 +131,54 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 拡張子チェックボックスにチェックされた時に拡張子グループに反映します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        public void CheckExtentionReflectToGroup(string extention)
+        public async Task CheckExtentionReflectToGroup(string extention)
         {
             var fileGroupType = ExtentionTypeHelper.GetFileGroupFromExtention(extention);
             var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
             if (group == null) return;
 
             // グループの拡張子に一つもチェックが入ってなければ null にする
-            App.Current?.Dispatcher?.InvokeAsync(() =>
+            if (group.IsChecked == false)
             {
-                if (group.IsChecked == false)
-                {
-                    group.IsCheckedForce = null;
-                }
+                await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = null);
+            }
 
-                // グループの拡張子が全てチェックされているか調べる
-                foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
-                {
-                    var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
-                    // 1つでもチェックされてない拡張子があればそのまま戻る
-                    if (item != null && item.IsChecked == false) { return; }
-                }
-                // 全てチェックされていたらチェック状態を null → true
-                group.IsCheckedForce = true;
-            });
+            // グループの拡張子が全てチェックされているか調べる
+            foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
+            {
+                var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                // 1つでもチェックされてない拡張子があればそのまま戻る
+                if (item != null && item.IsChecked == false) { return; }
+            }
+            // 全てチェックされていたらチェック状態を null → true
+            await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = true);
         }
 
         /// <summary>
         /// 拡張子チェックボックスのチェックが解除された時に拡張子グループに反映します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        public void UncheckExtentionReflectToGroup(string extention)
+        public async Task UncheckExtentionReflectToGroup(string extention)
         {
             var fileGroupType = ExtentionTypeHelper.GetFileGroupFromExtention(extention);
             var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
             if (group == null) return;
 
             // グループの拡張子に全てチェックが入っていれば null にする
-            App.Current?.Dispatcher?.InvokeAsync(() =>
+            if (group.IsChecked == true)
             {
-                if (group.IsChecked == true)
-                {
-                    group.IsCheckedForce = null;
-                }
+                await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = null);
+            }
 
-                // グループの拡張子が全てチェック解除されているか調べる
-                foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
-                {
-                    var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
-                    // 1つでもチェックされてない拡張子があればそのまま戻る
-                    if (item != null && item.IsChecked == true) { return; }
-                }
-                // 全てチェック解除されていたらチェック状態を null → false
-                group.IsCheckedForce = false;
-            });
+            // グループの拡張子が全てチェック解除されているか調べる
+            foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
+            {
+                var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                // 1つでもチェックされてない拡張子があればそのまま戻る
+                if (item != null && item.IsChecked == true) { return; }
+            }
+            // 全てチェック解除されていたらチェック状態を null → false
+            await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = false);
         }
 
         #endregion ファイル数の管理処理
@@ -242,28 +237,44 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子チェックボックスにより、スキャンするファイル数が増減した時の処理をします。
         /// </summary>
-        public void ExtentionCountChanged()
+        public async Task ExtentionCountChanged()
         {
-            var pageSelectTargetViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new NullReferenceException(nameof(IPageSelectTargetViewModel));
-            App.Current?.Dispatcher?.InvokeAsync(() => CountFilteredGetHash = pageSelectTargetViewModel.AllConditionFiles.Count);
+            await App.Current.Dispatcher.InvokeAsync(() => CountFilteredGetHash = AllConditionFiles.Count);
         }
+
+        /// <summary>
+        /// ChangeCheckBoxGroupで使うロックオブジェクト
+        /// </summary>
+        private readonly object _changedLock = new();
 
         /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。
         /// </summary>
         /// <param name="changedCheck">チェックされたか外されたか</param>
         /// <param name="extentionCollention">拡張子のリストコレクション</param>
-        public async void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention)
+        public async Task ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention)
         {
             var changedCollection = ExtentionCollection.Where(e => extentionCollention.Contains(e.ExtentionOrGroup));
 
-            await App.Current.Dispatcher.InvokeAsync(() =>
+            foreach (var extension in changedCollection)
             {
-                foreach (var extension in changedCollection)
+                await App.Current.Dispatcher.InvokeAsync(() => extension.IsCheckedForce = changedCheck);
+                await Task.Run(() =>
                 {
-                    extension.IsChecked = changedCheck;
-                }
-            });
+                    foreach (var file in AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), extension.ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        if (changedCheck)
+                        {
+                            lock (_changedLock) { AllConditionFiles.Add(file); }
+                        }
+                        else
+                        {
+                            lock (_changedLock) { AllConditionFiles.Remove(file); }
+                        }
+                    }
+                });
+                await ExtentionCountChanged();
+            }
         }
         #endregion ファイル絞り込みの処理
     }
