@@ -32,6 +32,10 @@ namespace FileHashCraft.Models
         /// 拡張子グループのファイル数を取得します。
         /// </summary>
         public int GetExtentionGroupCount(FileGroupType fileGroupType);
+        /// <summary>
+        /// 拡張子を全て削除する
+        /// </summary>
+        public void ClearExtentions();
     }
     #endregion インターフェース
 
@@ -135,6 +139,14 @@ namespace FileHashCraft.Models
             }
             return groupCount;
         }
+        /// <summary>
+        /// 拡張子を全て削除する
+        /// </summary>
+        public void ClearExtentions()
+        {
+            _extentionCountDictionary.Clear();
+        }
+
         #endregion 拡張子の管理
     }
 }

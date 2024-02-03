@@ -237,6 +237,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public void ClearExtentions()
         {
             App.Current?.Dispatcher?.Invoke(() => ExtentionCollection.Clear());
+            _extentionManager.ClearExtentions();
         }
         /// <summary>
         /// 拡張子チェックボックスにより、スキャンするファイル数が増減した時の処理をします。

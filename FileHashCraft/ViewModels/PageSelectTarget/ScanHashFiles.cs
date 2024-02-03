@@ -17,18 +17,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ScanHashFiles : IScanHashFiles
     {
         #region コンストラクタと初期化
-        private readonly IExtentionManager _ExtentionManager;
+        private readonly IExtentionManager _extentionManager;
         private readonly IPageSelectTargetViewModel _pageSelectTargetViewModel;
-        private readonly ITreeManager _DirectoryTreeManager;
+        private readonly ITreeManager _directoryTreeManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
             IExtentionManager extentionManager,
             IPageSelectTargetViewModel pageSelectTargetViewModel,
             ITreeManager directoryTreeManager)
         {
-            _ExtentionManager = extentionManager;
+            _extentionManager = extentionManager;
             _pageSelectTargetViewModel = pageSelectTargetViewModel;
-            _DirectoryTreeManager = directoryTreeManager;
+            _directoryTreeManager = directoryTreeManager;
         }
 
         #endregion コンストラクタと初期化
@@ -40,12 +40,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public async Task ScanFiles(CancellationToken cancellation)
         {
             // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
-            _oldDirectoriesHashSet.Clear();
-            foreach (var dir in _directoriesHashSet)
-            {
-                _oldDirectoriesHashSet.Add(dir);
-            }
+            _pageSelectTargetViewModel.AllFiles.Clear();
             _directoriesHashSet.Clear();
+            _pageSelectTargetViewModel.ClearExtentions();
+
             try
             {
                 /*
@@ -69,7 +67,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 return;
             }
 
-            _pageSelectTargetViewModel.ClearExtentions();
             ScanExtention(cancellation);
 
             // スキャン終了の表示に切り替える
@@ -106,11 +103,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
                 finally { semaphore.Release(); }
             }
-            var removedDirectory = _oldDirectoriesHashSet.Except(_directoriesHashSet).ToList();
-            foreach (var directoryFullPath in removedDirectory)
-            {
-                _pageSelectTargetViewModel.RemoveDirectoryFromAllFiles(directoryFullPath);
-            }
         }
 
         /// <summary>
@@ -119,7 +111,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="cancellation">キャンセリングトークン</param>
         private void ScanExtention(CancellationToken cancellation)
         {
-            foreach (var extention in _ExtentionManager.GetExtentions())
+            foreach (var extention in _extentionManager.GetExtentions())
             {
                 _pageSelectTargetViewModel.AddExtentions(extention);
                 if (cancellation.IsCancellationRequested) { return; }
@@ -137,14 +129,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private async Task DirectoriesScan(CancellationToken cancellation)
         {
             // 各ドライブに対してタスクを回す
-            await DirectorySearch(_DirectoryTreeManager.NestedDirectories, cancellation);
-            _pageSelectTargetViewModel.AddScannedDirectoriesCount(_DirectoryTreeManager.NonNestedDirectories.Count);
+            await DirectorySearch(_directoryTreeManager.NestedDirectories, cancellation);
+            _pageSelectTargetViewModel.AddScannedDirectoriesCount(_directoryTreeManager.NonNestedDirectories.Count);
         }
 
-        /// <summary>
-        /// 旧：全ディレクトリのリスト
-        /// </summary>
-        private readonly HashSet<string> _oldDirectoriesHashSet = [];
         /// <summary>
         /// 全ディレクトリのリスト
         /// </summary>
