@@ -3,7 +3,9 @@
     エキスパート向けの検索条件を提供するタブの ViewModel を提供します。
  */
 
+using System.IO;
 using CommunityToolkit.Mvvm.Input;
+using FileHashCraft.Models;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -88,5 +90,65 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public RelayCommand IsEmptyDirectoryDeleteClicked { get; set; }
         #endregion コマンド
+
+        #region 検索条件の操作
+        /// <summary>
+        /// ロックオブジェクト
+        /// </summary>
+        private readonly object _conditionLock = new();
+
+        /// <summary>
+        /// 正規表現なら正しければ、それ以外は type=None でなければ無条件に検索条件リストに追加します。
+        /// </summary>
+        /// <param name="type">検索条件タイプ</param>
+        /// <param name="contidionString">検索条件</param>
+        /// <returns>成功の可否</returns>
+        public void AddCondition(SearchConditionType type, string contidionString)
+        {
+            var condition = SearchCondition.AddCondition(type, contidionString);
+            if (condition == null) { return; }
+            lock (_conditionLock)
+            {
+                switch (type)
+                {
+                    case SearchConditionType.Extention:
+                        foreach (var extentionFile in AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), contidionString, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            // 条件辞書にファイルを登録する
+                            if (!ConditionFiles.TryGetValue(condition, out HashSet<HashFile>? value))
+                            {
+                                value = ([]);
+                                ConditionFiles.Add(condition, value);
+                            }
+                            value.Add(extentionFile);
+                        }
+                        break;
+                    case SearchConditionType.WildCard:
+                        break;
+                    case SearchConditionType.RegularExprettion:
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 検索条件を削除します。
+        /// </summary>
+        /// <param name="type">検索条件のタイプ</param>
+        /// <param name="contidionString">検索条件</param>
+        public void RemoveCondition(SearchConditionType type, string contidionString)
+        {
+            var condition = ConditionFiles.Keys.FirstOrDefault(c => c.Type == type && c.ConditionString == contidionString);
+            if (condition == null) { return; }
+
+            lock (_conditionLock)
+            {
+                foreach (var file in ConditionFiles[condition])
+                {
+                    ConditionFiles.Remove(condition);
+                }
+            }
+        }
+        #endregion 検索条件の操作
     }
 }

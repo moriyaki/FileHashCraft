@@ -66,7 +66,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsHashTarget, value);
                 if (value)
                 {
-                    HashTargetColor = new(Colors.LightGreen);
+                    HashTargetColor = new(Colors.LightCyan);
                 }
                 else
                 {

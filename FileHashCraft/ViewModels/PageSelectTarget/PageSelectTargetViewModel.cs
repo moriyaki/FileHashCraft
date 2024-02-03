@@ -4,6 +4,7 @@
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -90,6 +91,30 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
         public HashSet<HashFile> AllConditionFiles { get; }
+        /// <summary>
+        /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
+        /// </summary>
+        public Dictionary<string, HashFile> AllFiles { get; }
+        /// <summary>
+        /// 全管理対象ファイルディクショナリに追加します。
+        /// </summary>
+        public void AddFileToAllFiles(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "");
+        /// <summary>
+        /// ディレクトリをファイルディクショナリから削除します。
+        /// </summary>
+        public void RemoveDirectoryFromAllFiles(string directoryFullPath);
+        /// <summary>
+        /// 検索条件をキーとしたファイルを保持するリスト
+        /// </summary>
+        public Dictionary<SearchCondition, HashSet<HashFile>> ConditionFiles { get; }
+        /// <summary>
+        /// 検索条件コレクションに追加します。
+        /// </summary>
+        public void AddCondition(SearchConditionType type, string contidionString);
+        /// <summary>
+        /// 検索条件コレクションから削除します。
+        /// </summary>
+        public void RemoveCondition(SearchConditionType type, string contidionString);
     }
     #endregion インターフェース
 
@@ -254,6 +279,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
         public HashSet<HashFile> AllConditionFiles { get; } = [];
+        /// <summary>
+        /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
+        /// </summary>
+        public Dictionary<string, HashFile> AllFiles { get; } = [];
+        /// <summary>
+        /// 検索条件をキーとしたファイルを保持するリスト
+        /// </summary>
+        public Dictionary<SearchCondition, HashSet<HashFile>> ConditionFiles { get; } = [];
         #endregion バインディング
 
         #region コマンド
@@ -310,7 +343,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly ISettingsService _settingsService;
         private readonly ITreeManager _directoryTreeManager;
         private readonly IExtentionManager _extentionManager;
-        private readonly ISearchFileManager _searchFileManager;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         private bool IsExecuting = false;
 
@@ -319,7 +351,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ISettingsService settingsService,
             ITreeManager directoryTreeManager,
             IExtentionManager extentionManager,
-            ISearchFileManager searchFileManager,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlViewModel
             )
         {
@@ -327,7 +358,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _settingsService = settingsService;
             _directoryTreeManager = directoryTreeManager;
             _extentionManager = extentionManager;
-            _searchFileManager = searchFileManager;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
 
             // カレントハッシュ計算アルゴリズムを保存
@@ -584,5 +614,50 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ChangeCurrentPath(_controDirectoryTreeViewlViewModel.CurrentFullPath);
         }
         #endregion ツリービュー選択処理
+
+        #region ファイルの追加とディレクトリの削除
+        /// <summary>
+        /// ファイルを追加します
+        /// </summary>
+        /// <param name="fileFullPath">追加するファイルのフルパス</param>
+        /// <param name="hashSHA256">SHA256のハッシュ</param>
+        /// <param name="hashSHA384">SHA384のハッシュ</param>
+        /// <param name="hashSHA512">SHA512のハッシュ</param>
+        public void AddFileToAllFiles(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "")
+        {
+            var fileInfo = new FileInfo(fileFullPath);
+            if (AllFiles.TryGetValue(fileFullPath, out HashFile? value))
+            {
+                // 同一日付とサイズなら追加しない
+                if (fileInfo.LastWriteTime == value.LastWriteTime && fileInfo.Length == value.Length) { return; }
+
+                // 既にハッシュを持っているなら設定する
+                if (!string.IsNullOrEmpty(value.SHA256) && string.IsNullOrEmpty(hashSHA256)) { hashSHA256 = value.SHA256; }
+                if (!string.IsNullOrEmpty(value.SHA384) && string.IsNullOrEmpty(hashSHA384)) { hashSHA384 = value.SHA384; }
+                if (!string.IsNullOrEmpty(value.SHA512) && string.IsNullOrEmpty(hashSHA512)) { hashSHA512 = value.SHA512; }
+
+                // データが異なるか、ハッシュ更新されていれば昔のデータを削除する
+                AllFiles.Remove(fileFullPath);
+            }
+            // 新しいデータなら追加する(日付と更新日はコンストラクタで設定される)
+            var hashFile = new HashFile(fileFullPath, hashSHA256, hashSHA384, hashSHA512);
+            AllFiles.Add(fileFullPath, hashFile);
+
+            // 拡張子ヘルパーに拡張子を登録する(カウントもする)
+            _extentionManager.AddFile(fileFullPath);
+        }
+
+        /// <summary>
+        /// ディレクトリを削除します
+        /// </summary>
+        /// <param name="directoryFullPath">削除するディレクトリのフルパス</param>
+        public void RemoveDirectoryFromAllFiles(string directoryFullPath)
+        {
+            foreach (var fileToRemove in AllFiles.Keys.Where(d => Path.GetDirectoryName(d) == directoryFullPath).ToList())
+            {
+                AllFiles.Remove(fileToRemove);
+            }
+        }
+        #endregion ファイルの追加とディレクトリの削除
     }
 }

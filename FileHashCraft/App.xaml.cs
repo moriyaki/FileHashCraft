@@ -123,8 +123,6 @@ namespace FileHashCraft
 
             // Model
             services.AddSingleton<IExtentionManager, ExtentionManager>();
-            services.AddSingleton<ISearchConditionsManager, SearchConditionsManager>();
-            services.AddSingleton<ISearchFileManager, SearchFileManager>();
             return services.BuildServiceProvider();
         }
     }

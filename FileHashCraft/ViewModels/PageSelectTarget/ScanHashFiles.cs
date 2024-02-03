@@ -19,18 +19,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ScanHashFiles : IScanHashFiles
     {
         #region コンストラクタと初期化
-        private readonly ISearchConditionsManager _SearchManager;
         private readonly IExtentionManager _ExtentionManager;
         private readonly IPageSelectTargetViewModel _PageSelectTargetViewModel;
         private readonly ITreeManager _DirectoryTreeManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
-            ISearchConditionsManager searchManager,
             IExtentionManager extentionManager,
             IPageSelectTargetViewModel pageSelectTargetViewModel,
             ITreeManager directoryTreeManager)
         {
-            _SearchManager = searchManager;
             _ExtentionManager = extentionManager;
             _PageSelectTargetViewModel = pageSelectTargetViewModel;
             _DirectoryTreeManager = directoryTreeManager;
@@ -87,20 +84,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="cancellation">キャンセリングトークン</param>
         private async Task DirectoryFilesScan(CancellationToken cancellation)
         {
-            ISearchFileManager searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
+            //ISearchFileManager searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
             var semaphore = new SemaphoreSlim(5);
-
-            int fileCount = 0;
             foreach (var directoryFullPath in _directoriesList)
             {
                 try
                 {
                     await semaphore.WaitAsync(cancellation);
                     // ファイルを保持する
-                    fileCount = 0;
+                    int fileCount = 0;
                     foreach (var fileFullPath in FileManager.EnumerateFiles(directoryFullPath))
                     {
-                        searchFileManager.AddFile(fileFullPath);
+                        _PageSelectTargetViewModel.AddFileToAllFiles(fileFullPath);
                         fileCount++;
                     }
 
@@ -114,7 +109,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var removedDirectory = _oldDirectoriesList.Except(_directoriesList).ToList();
             foreach (var directoryFullPath in removedDirectory)
             {
-                searchFileManager.RemoveDirectory(directoryFullPath);
+                _PageSelectTargetViewModel.RemoveDirectoryFromAllFiles(directoryFullPath);
             }
         }
 
