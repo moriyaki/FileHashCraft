@@ -145,10 +145,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ExtentionCount = extentionManager.GetExtentionsCount(extention);
         }
 
-        public void HandleChecked()
+        public async Task HandleChecked()
         {
-            //var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
-            //var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new InvalidOperationException($"{nameof(ISearchFileManager)} dependency not resolved.");
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             pageSelectTargetFileViewModel.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
@@ -162,13 +160,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
             pageSelectTargetFileViewModel.ExtentionCountChanged();
             pageSelectTargetFileViewModel.CheckExtentionReflectToGroup(ExtentionOrGroup);
-            pageSelectTargetFileViewModel.ChangeCondition();
+            await pageSelectTargetFileViewModel.ChangeCondition(ExtentionOrGroup, true);
         }
 
-        public void HandleUnchecked()
+        public async Task HandleUnchecked()
         {
-            //var searchManager = Ioc.Default.GetService<ISearchConditionsManager>() ?? throw new InvalidOperationException($"{nameof(ISearchConditionsManager)} dependency not resolved.");
-            //var searchFileManager = Ioc.Default.GetService<ISearchFileManager>() ?? throw new InvalidOperationException($"{nameof(ISearchFileManager)} dependency not resolved.");
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             pageSelectTargetFileViewModel.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
@@ -181,7 +177,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
             pageSelectTargetFileViewModel.ExtentionCountChanged();
             pageSelectTargetFileViewModel.UncheckExtentionReflectToGroup(ExtentionOrGroup);
-            pageSelectTargetFileViewModel.ChangeCondition();
+            await pageSelectTargetFileViewModel.ChangeCondition(ExtentionOrGroup, false);
         }
 
         public override bool? IsChecked
@@ -193,11 +189,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
                 if (value == true)
                 {
-                    HandleChecked();
+                    Task.Run(async() => await HandleChecked());
                 }
                 else
                 {
-                    HandleUnchecked();
+                    Task.Run(async () => await HandleUnchecked());
                 }
             }
         }

@@ -263,12 +263,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     extension.IsChecked = changedCheck;
                 }
             });
-            DebugManager.InfoWrite("-----------------------------------------------------------------------------------------------------------");
-            foreach (var item in AllConditionFiles)
-            {
-                DebugManager.InfoWrite($"AllConditionFiles : {item.FileFullPath}");
-            }
-            DebugManager.InfoWrite("-----------------------------------------------------------------------------------------------------------");
         }
         #endregion ファイル絞り込みの処理
     }

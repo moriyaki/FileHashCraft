@@ -86,7 +86,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ファイルの検索条件が変更されたのを反映します。
         /// </summary>
-        public void ChangeCondition();
+        public Task ChangeCondition(string extention, bool IsTarget);
         /// <summary>
         /// 検索条件に合致するファイルを保持するリスト
         /// </summary>
@@ -609,9 +609,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 検索条件が変更された時の処理です。
         /// </summary>
-        public void ChangeCondition()
+        public async Task ChangeCondition(string extention, bool IsTarget)
         {
-            ChangeCurrentPath(_controDirectoryTreeViewlViewModel.CurrentFullPath);
+            foreach (var item in HashFileListItems)
+            {
+                var fileExtention = Path.GetExtension(item.FileFullPath);
+                if (string.Equals(fileExtention, extention, StringComparison.OrdinalIgnoreCase))
+                {
+                    await App.Current.Dispatcher.InvokeAsync(() => item.IsHashTarget = IsTarget);
+                }
+            }
         }
         #endregion ツリービュー選択処理
 
@@ -659,5 +666,65 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
         }
         #endregion ファイルの追加とディレクトリの削除
+
+        #region 検索条件の操作
+        /// <summary>
+        /// ロックオブジェクト
+        /// </summary>
+        private readonly object _conditionLock = new();
+
+        /// <summary>
+        /// 正規表現なら正しければ、それ以外は type=None でなければ無条件に検索条件リストに追加します。
+        /// </summary>
+        /// <param name="type">検索条件タイプ</param>
+        /// <param name="contidionString">検索条件</param>
+        /// <returns>成功の可否</returns>
+        public void AddCondition(SearchConditionType type, string contidionString)
+        {
+            var condition = SearchCondition.AddCondition(type, contidionString);
+            if (condition == null) { return; }
+            lock (_conditionLock)
+            {
+                switch (type)
+                {
+                    case SearchConditionType.Extention:
+                        foreach (var extentionFile in AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), contidionString, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            // 条件辞書にファイルを登録する
+                            if (!ConditionFiles.TryGetValue(condition, out HashSet<HashFile>? value))
+                            {
+                                value = ([]);
+                                ConditionFiles.Add(condition, value);
+                            }
+                            value.Add(extentionFile);
+                        }
+                        break;
+                    case SearchConditionType.WildCard:
+                        break;
+                    case SearchConditionType.RegularExprettion:
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 検索条件を削除します。
+        /// </summary>
+        /// <param name="type">検索条件のタイプ</param>
+        /// <param name="contidionString">検索条件</param>
+        public void RemoveCondition(SearchConditionType type, string contidionString)
+        {
+            var condition = ConditionFiles.Keys.FirstOrDefault(c => c.Type == type && c.ConditionString == contidionString);
+            if (condition == null) { return; }
+
+            lock (_conditionLock)
+            {
+                foreach (var file in ConditionFiles[condition])
+                {
+                    ConditionFiles.Remove(condition);
+                }
+            }
+        }
+        #endregion 検索条件の操作
     }
-}
+    }
