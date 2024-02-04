@@ -166,7 +166,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         private static void ChangeExpandedSpecialFolder(DirectoryTreeViewModel searchNode, string fullPath, bool? value)
         {
             // ノード自身が探しているパスなら反映します
-            if (searchNode.FullPath == fullPath)
+            if (searchNode.FullPath.Contains(fullPath))
             {
                 searchNode.IsChecked = value;
                 return;
