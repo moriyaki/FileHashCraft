@@ -259,19 +259,26 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             foreach (var extension in changedCollection)
             {
                 await App.Current.Dispatcher.InvokeAsync(() => extension.IsCheckedForce = changedCheck);
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     foreach (var file in AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), extension.ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (changedCheck)
                         {
-                            lock (_changedLock) { AllConditionFiles.Add(file); }
+                            lock (_changedLock)
+                            {
+                                AllConditionFiles.Add(file);
+                            }
                         }
                         else
                         {
-                            lock (_changedLock) { AllConditionFiles.Remove(file); }
+                            lock (_changedLock)
+                            {
+                                AllConditionFiles.Remove(file);
+                            }
                         }
                     }
+                    await ChangeCondition(extension.ExtentionOrGroup, changedCheck);
                 });
                 await ExtentionCountChanged();
             }

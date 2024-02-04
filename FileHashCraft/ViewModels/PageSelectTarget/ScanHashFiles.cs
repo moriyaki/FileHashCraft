@@ -19,16 +19,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタと初期化
         private readonly IExtentionManager _extentionManager;
         private readonly IPageSelectTargetViewModel _pageSelectTargetViewModel;
-        private readonly ITreeManager _directoryTreeManager;
+        private readonly ITreeManager _treeManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
             IExtentionManager extentionManager,
             IPageSelectTargetViewModel pageSelectTargetViewModel,
-            ITreeManager directoryTreeManager)
+            ITreeManager treeManager)
         {
             _extentionManager = extentionManager;
             _pageSelectTargetViewModel = pageSelectTargetViewModel;
-            _directoryTreeManager = directoryTreeManager;
+            _treeManager = treeManager;
         }
 
         #endregion コンストラクタと初期化
@@ -129,8 +129,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private async Task DirectoriesScan(CancellationToken cancellation)
         {
             // 各ドライブに対してタスクを回す
-            await DirectorySearch(_directoryTreeManager.NestedDirectories, cancellation);
-            _pageSelectTargetViewModel.AddScannedDirectoriesCount(_directoryTreeManager.NonNestedDirectories.Count);
+            await DirectorySearch(_treeManager.NestedDirectories, cancellation);
+            _pageSelectTargetViewModel.AddScannedDirectoriesCount(_treeManager.NonNestedDirectories.Count);
         }
 
         /// <summary>

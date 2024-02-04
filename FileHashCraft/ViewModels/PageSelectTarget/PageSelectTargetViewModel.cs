@@ -604,8 +604,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
         }
 
-        private readonly object _lock = new();
-
         /// <summary>
         /// 検索条件が変更された時の処理です。
         /// </summary>

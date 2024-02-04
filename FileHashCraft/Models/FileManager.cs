@@ -35,7 +35,7 @@ namespace FileHashCraft.Models
 
             FileAttributes attributes = File.GetAttributes(fullPath);
 
-            // システム、隠しファイルファイルは除外する
+            // システムファイルは除外する
             if ((attributes & FileAttributes.System) == FileAttributes.System) return true;
 
             // ごみ箱は除外する
@@ -79,12 +79,12 @@ namespace FileHashCraft.Models
         /// </summary>
         /// <param name="directoryFullPath">スキャンするディクレトリのフルパス</param>
         /// <returns>ファイル情報のコレクション</returns>
-        public static IEnumerable<string> EnumerateFiles(string directoryFullPath)
+        public static IEnumerable<string> EnumerateFiles(string directoryFullPath, string searchPattern = "*.*")
         {
             IEnumerable<string> files;
             try
             {
-                files = Directory.EnumerateFiles(directoryFullPath);
+                files = Directory.EnumerateFiles(directoryFullPath, searchPattern);
             }
             catch (UnauthorizedAccessException) { yield break; }
 

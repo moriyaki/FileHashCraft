@@ -209,6 +209,10 @@
     <value>ドキュメントファイル</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
+  <data name="LabelExpert" xml:space="preserve">
+    <value>上級者向け</value>
+    <comment>Label/PageSettings</comment>
+  </data>
   <data name="LabelExpert_EmptyDirDelete" xml:space="preserve">
     <value>空のディレクトリを削除するかどうか</value>
     <comment>Label/PageSelectTarget</comment>
@@ -288,6 +292,10 @@
   <data name="LabelSourceCodes" xml:space="preserve">
     <value>ソースコードファイル</value>
     <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelWildcard_Error" xml:space="preserve">
+    <value>ワイルドカードエラー</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelWildcard_SearchCriteria" xml:space="preserve">
     <value>ワイルドカード検索条件</value>

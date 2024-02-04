@@ -363,6 +363,8 @@ namespace FileHashCraft.Services
                 SaveSettings();
             }
         }
+
+        
         #endregion プロパティ
 
         #region フォントサイズの変更メソッド

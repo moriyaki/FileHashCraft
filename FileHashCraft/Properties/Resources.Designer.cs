@@ -268,6 +268,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   For Advanced User に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExpert {
+            get {
+                return ResourceManager.GetString("LabelExpert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Whether to delete empty directories or not に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelExpert_EmptyDirDelete {
@@ -444,6 +453,15 @@ namespace FileHashCraft.Properties {
         public static string LabelSourceCodes {
             get {
                 return ResourceManager.GetString("LabelSourceCodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Wildcard Error に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelWildcard_Error {
+            get {
+                return ResourceManager.GetString("LabelWildcard_Error", resourceCulture);
             }
         }
         

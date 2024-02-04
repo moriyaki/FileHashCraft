@@ -209,6 +209,10 @@
     <value>Document Files</value>
     <comment>Label/ExtentionHelper</comment>
   </data>
+  <data name="LabelExpert" xml:space="preserve">
+    <value>For Advanced User</value>
+    <comment>Label/PageSettings</comment>
+  </data>
   <data name="LabelExpert_EmptyDirDelete" xml:space="preserve">
     <value>Whether to delete empty directories or not</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
@@ -288,6 +292,10 @@
   <data name="LabelSourceCodes" xml:space="preserve">
     <value>Source Code Files</value>
     <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelWildcard_Error" xml:space="preserve">
+    <value>Wildcard Error</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelWildcard_SearchCriteria" xml:space="preserve">
     <value>Wildcard Search Criteria</value>

@@ -32,7 +32,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="White"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="Transparent"/>
 
         <!-- TreeView -->
         <local:ControlDirectoryTreeView x:Name="HashTargetTreeView"
@@ -219,6 +219,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" MinHeight="40"/>
                     </Grid.RowDefinitions>
 
                     <!-- 削除ボタン -->
@@ -237,6 +238,12 @@
                     <!-- ワイルドカード検索条件 -->
                     <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="WildcardCritieria"
                              Text="{Binding WildcardCritieria,Mode=TwoWay}"/>
+                    <!-- ワイルドカードエラーラベル -->
+                    <Label Grid.Row="3" Grid.Column="0" x:Name="LabelWildcardError"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="WildcardError"
+                               Background="{Binding WildcardErrorStatus}" Text="{Binding RegularExpressionErrorString}" Margin="3" Grid.RowSpan="2"/>
+
                 </Grid>
             </TabItem>
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentRegularExpression, Mode=OneWay}"

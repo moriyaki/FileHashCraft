@@ -27,7 +27,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="9" Background="White"/>
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="9" Background="Transparent"/>
 
         <Button Grid.Row="8" Grid.Column="2" Margin="5" Command="{Binding ReturnPage}"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -82,7 +82,10 @@
                   SelectedValue="{Binding SelectedHashAlgorithm}"
                   SelectedValuePath="Algorithm"
                   DisplayMemberPath="Name"/>
-        <GroupBox Header="上級者向け" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
+
+        <GroupBox Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert, Mode=OneWay}"
+                  Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
+                  Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
             <!-- 0サイズファイル削除するか -->
             <Grid>
