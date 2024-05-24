@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ExplorerPage

@@ -98,7 +98,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 DebugManager.ExceptionWrite($"Exception in DirectoryChanged: {ex.Message}");
             }
         }
-        private readonly object _lock = new();
 
         /// <summary>
         /// サブディレクトリが削除された時の処理をします。

@@ -1,4 +1,4 @@
-﻿namespace FileHashCraft.Services
+﻿namespace FileHashCraft.Services.Messages
 {
     #region カレントディレクトリ変更メッセージ
     /// <summary>

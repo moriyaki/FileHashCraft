@@ -38,6 +38,7 @@ namespace FileHashCraft.Models
 
         public SearchCondition()
         {
+            throw new NotImplementedException("Search Condition");
         }
 
         public SearchCondition(SearchConditionType type, string conditionString)

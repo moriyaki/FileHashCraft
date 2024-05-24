@@ -2,8 +2,10 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Models;
+using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
@@ -93,7 +95,7 @@ namespace FileHashCraft
         /// サービスをここで登録する
         /// </summary>
         /// <returns></returns>
-        private static IServiceProvider ConfigureServices()
+        private static ServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
 
@@ -122,6 +124,7 @@ namespace FileHashCraft
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
 
             // Model
+            services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();
             services.AddSingleton<IExtentionManager, ExtentionManager>();
             return services.BuildServiceProvider();
         }

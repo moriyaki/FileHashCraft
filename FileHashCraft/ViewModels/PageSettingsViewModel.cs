@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels
 {

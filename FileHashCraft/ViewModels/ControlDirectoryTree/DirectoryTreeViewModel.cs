@@ -12,6 +12,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.Modules;
 

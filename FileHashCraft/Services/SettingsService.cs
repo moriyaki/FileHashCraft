@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.Services
 {
@@ -363,8 +364,6 @@ namespace FileHashCraft.Services
                 SaveSettings();
             }
         }
-
-        
         #endregion プロパティ
 
         #region フォントサイズの変更メソッド

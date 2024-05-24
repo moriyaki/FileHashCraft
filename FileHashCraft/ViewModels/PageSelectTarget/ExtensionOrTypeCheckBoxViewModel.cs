@@ -12,9 +12,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -38,6 +40,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
+        protected readonly IScannedFilesManager _allFilesManager;
         protected readonly IMessageServices _messageServices;
         protected readonly ISettingsService _settingsService;
 
@@ -47,6 +50,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase()
         {
+            _allFilesManager = Ioc.Default.GetService<IScannedFilesManager>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
             _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
@@ -149,41 +153,41 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
-            pageSelectTargetFileViewModel.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            _allFilesManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
             await Task.Run(() =>
             {
-                foreach (var extentionFile in pageSelectTargetFileViewModel.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+                foreach (var extentionFile in _allFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (extentionFile.ConditionCount == 0)
                     {
-                        pageSelectTargetFileViewModel.AllConditionFiles.Add(extentionFile);
+                        _allFilesManager.AllConditionFiles.Add(extentionFile);
                     }
                     extentionFile.ConditionCount++;
                 }
             });
             await pageSelectTargetFileViewModel.CheckExtentionReflectToGroup(ExtentionOrGroup);
             await pageSelectTargetFileViewModel.ExtentionCountChanged();
-            await pageSelectTargetFileViewModel.ChangeCondition(ExtentionOrGroup, true);
+            await pageSelectTargetFileViewModel.ChangeExtension(ExtentionOrGroup, true);
         }
 
         public async Task HandleUnchecked()
         {
             var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
-            pageSelectTargetFileViewModel.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            _allFilesManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
             await Task.Run(() =>
             {
-                foreach (var extentionFile in pageSelectTargetFileViewModel.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+                foreach (var extentionFile in _allFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (--extentionFile.ConditionCount == 0)
                     {
-                        pageSelectTargetFileViewModel.AllConditionFiles.Remove(extentionFile);
+                        _allFilesManager.AllConditionFiles.Remove(extentionFile);
                     }
                 }
             });
             await pageSelectTargetFileViewModel.UncheckExtentionReflectToGroup(ExtentionOrGroup);
             await pageSelectTargetFileViewModel.ExtentionCountChanged();
-            await pageSelectTargetFileViewModel.ChangeCondition(ExtentionOrGroup, false);
+            await pageSelectTargetFileViewModel.ChangeExtension(ExtentionOrGroup, false);
         }
 
         public override bool? IsChecked

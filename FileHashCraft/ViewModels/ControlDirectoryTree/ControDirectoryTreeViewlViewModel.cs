@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
@@ -85,7 +86,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
         }
         /// <summary>
-        /// ツリー横幅の設定
+        /// ツリービュー横幅の設定
         /// </summary>
         private double _TreeWidth;
         public double TreeWidth

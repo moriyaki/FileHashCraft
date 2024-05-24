@@ -1,6 +1,4 @@
-﻿using FileHashCraft.Services.FileSystemWatcherServices;
-
-namespace FileHashCraft.Services
+﻿namespace FileHashCraft.Services.FileSystemWatcherServices
 {
     public interface IFileSystemWatcherService
     {

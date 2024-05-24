@@ -12,14 +12,26 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
+    #region ハッシュ計算するファイルの取得状況
+    public enum FileScanStatus
+    {
+        None,
+        DirectoriesScanning,
+        FilesScanning,
+        Finished,
+    }
+    #endregion ハッシュ計算するファイルの取得状況
+
     #region インターフェース
     public interface IPageSelectTargetViewModel
     {
@@ -27,6 +39,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
         public void Initialize();
+        /// <summary>
+        /// リストボックスの幅
+        /// </summary>
+        public double ListWidth { get; set; }
         /// <summary>
         /// ハッシュアルゴリズム
         /// </summary>
@@ -68,10 +84,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public Task ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
         /// <summary>
-        /// リストボックスの幅
-        /// </summary>
-        public double ListWidth { get; set; }
-        /// <summary>
         /// ハッシュ取得対象のファイルリストアイテムの一覧です。
         /// </summary>
         public ObservableCollection<HashListFileItems> HashFileListItems { get; }
@@ -84,43 +96,86 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public Task UncheckExtentionReflectToGroup(string extention);
         /// <summary>
-        /// ファイルの検索条件が変更されたのを反映します。
+        /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
-        public Task ChangeCondition(string extention, bool IsTarget);
+        public Task ChangeExtension(string extention, bool IsTarget);
         /// <summary>
-        /// 検索条件に合致するファイルを保持するリスト
+        /// 全管理対象ファイルを追加します。
         /// </summary>
-        public HashSet<HashFile> AllConditionFiles { get; }
-        /// <summary>
-        /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
-        /// </summary>
-        public Dictionary<string, HashFile> AllFiles { get; }
-        /// <summary>
-        /// 全管理対象ファイルディクショナリに追加します。
-        /// </summary>
-        public void AddFileToAllFiles(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "");
-        /// <summary>
-        /// ディレクトリをファイルディクショナリから削除します。
-        /// </summary>
-        public void RemoveDirectoryFromAllFiles(string directoryFullPath);
-        /// <summary>
-        /// 検索条件をキーとしたファイルを保持するリスト
-        /// </summary>
-        public Dictionary<SearchCondition, HashSet<HashFile>> ConditionFiles { get; }
-        /// <summary>
-        /// 検索条件コレクションに追加します。
-        /// </summary>
-        public void AddCondition(SearchConditionType type, string contidionString);
-        /// <summary>
-        /// 検索条件コレクションから削除します。
-        /// </summary>
-        public void RemoveCondition(SearchConditionType type, string contidionString);
+        public void AddFileToAllFiles(string fileFullPath);
     }
     #endregion インターフェース
 
     public partial class PageSelectTargetViewModel : ObservableObject, IPageSelectTargetViewModel
     {
         #region バインディング
+        /// <summary>
+        /// 全ディレクトリ数(StatusBar用)
+        /// </summary>
+        private int _CountScannedDirectories = 0;
+        public int CountScannedDirectories
+        {
+            get => _CountScannedDirectories;
+            set
+            {
+                SetProperty(ref _CountScannedDirectories, value);
+                Status = FileScanStatus.DirectoriesScanning;
+            }
+        }
+
+        /// <summary>
+        /// ファイルスキャンが完了したディレクトリ数(StatusBar用)
+        /// </summary>
+        private int _CountHashFilesDirectories = 0;
+        public int CountHashFilesDirectories
+        {
+            get => _CountHashFilesDirectories;
+            set
+            {
+                SetProperty(ref _CountHashFilesDirectories, value);
+                Status = FileScanStatus.FilesScanning;
+                OnPropertyChanged(nameof(StatusMessage));
+            }
+        }
+
+        /// <summary>
+        /// ハッシュを取得する全ファイル数
+        /// </summary>
+        private int _CountAllTargetFilesGetHash = 0;
+        public int CountAllTargetFilesGetHash
+        {
+            get => _CountAllTargetFilesGetHash;
+            set
+            {
+                SetProperty(ref _CountAllTargetFilesGetHash, value);
+                OnPropertyChanged(nameof(StatusMessage));
+            }
+        }
+
+        /// <summary>
+        /// 絞り込みをした時の、ハッシュを獲得するファイル数
+        /// </summary>
+        private int _CountFilteredGetHash = 0;
+        public int CountFilteredGetHash
+        {
+            get => _CountFilteredGetHash;
+            set
+            {
+                SetProperty(ref _CountFilteredGetHash, value);
+                ToPageHashCalcing.NotifyCanExecuteChanged();
+            }
+        }
+
+        /// <summary>
+        /// ファイルの拡張子グループによる絞り込みチェックボックスを持つリストボックス
+        /// </summary>
+        public ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection { get; set; } = [];
+
+        /// <summary>
+        /// 拡張子による絞り込みチェックボックスを持つリストボックス
+        /// </summary>
+        public ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection { get; set; } = [];
+
         /// <summary>
         /// ファイルスキャン状況
         /// </summary>
@@ -181,13 +236,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public string FilterTextBox
         {
             get => _FilterTextBox;
-            set
-            {
-                SetProperty(ref _FilterTextBox, value);
-            }
+            set => SetProperty(ref _FilterTextBox, value);
         }
         /// <summary>
-        /// ツリー横幅の設定
+        /// ツリービュー横幅の設定
         /// </summary>
         private double _TreeWidth;
         public double TreeWidth
@@ -196,7 +248,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 if (value == _TreeWidth) { return; }
-
                 SetProperty(ref _TreeWidth, value);
                 _messageServices.SendTreeWidth(value);
             }
@@ -211,7 +262,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 if (value == _ListWidth) { return; }
-
                 SetProperty(ref _ListWidth, value);
                 _messageServices.SendListWidth(value);
             }
@@ -226,7 +276,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
-
                 SetProperty(ref _CurrentFontFamily, value);
                 _messageServices.SendCurrentFont(value);
             }
@@ -241,7 +290,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 if (_FontSize == value) { return; }
-
                 SetProperty(ref _FontSize, value);
                 _messageServices.SendFontSize(value);
             }
@@ -265,7 +313,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 if (value == _SelectedHashAlgorithm) return;
-
                 SetProperty(ref _SelectedHashAlgorithm, value);
                 _messageServices.SendHashAlogrithm(value);
             }
@@ -274,19 +321,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ハッシュ取得対象のファイルリストアイテムの一覧です。
         /// </summary>
         public ObservableCollection<HashListFileItems> HashFileListItems { get; set; } = [];
-
-        /// <summary>
-        /// 検索条件に合致するファイルを保持するリスト
-        /// </summary>
-        public HashSet<HashFile> AllConditionFiles { get; } = [];
-        /// <summary>
-        /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
-        /// </summary>
-        public Dictionary<string, HashFile> AllFiles { get; } = [];
-        /// <summary>
-        /// 検索条件をキーとしたファイルを保持するリスト
-        /// </summary>
-        public Dictionary<SearchCondition, HashSet<HashFile>> ConditionFiles { get; } = [];
         #endregion バインディング
 
         #region コマンド
@@ -339,25 +373,34 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion コマンド
 
         #region コンストラクタ
-        private readonly IMessageServices _messageServices;
-        private readonly ISettingsService _settingsService;
-        private readonly ITreeManager _directoryTreeManager;
+        // スキャンした全ファイルの管理
+        private readonly IScannedFilesManager _allFilesManager;
+        // 拡張子の管理
         private readonly IExtentionManager _extentionManager;
+        // メッセージング
+        private readonly IMessageServices _messageServices;
+        // 設定画面
+        private readonly ISettingsService _settingsService;
+        // エクスプローラー風画面のツリービュー
+        private readonly ITreeManager _directoryTreeManager;
+        // ツリービューコントロール
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         private bool IsExecuting = false;
 
         public PageSelectTargetViewModel(
+            IScannedFilesManager allFilesManager,
+            IExtentionManager extentionManager,
             IMessageServices messageServices,
             ISettingsService settingsService,
             ITreeManager directoryTreeManager,
-            IExtentionManager extentionManager,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlViewModel
-            )
+        )
         {
+            _allFilesManager = allFilesManager;
+            _extentionManager = extentionManager;
             _messageServices = messageServices;
             _settingsService = settingsService;
             _directoryTreeManager = directoryTreeManager;
-            _extentionManager = extentionManager;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
 
             // カレントハッシュ計算アルゴリズムを保存
@@ -386,11 +429,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 () => _messageServices.SendToHashCalcingPage(),
                 () => CountFilteredGetHash > 0
             );
-            // 正規表現の条件を追加するコマンド
+            // ワイルドカードの条件を追加するコマンド
             AddWildcard = new RelayCommand(
                 () => MessageBox.Show("ワイルドカードの追加：未実装"));
 
-            // 正規表現の条件を削除するコマンド
+            // ワイルドカードの条件を削除するコマンド
             RemoveWildcard = new RelayCommand(
                 () => MessageBox.Show("ワイルドカードの削除：未実装"));
 
@@ -418,21 +461,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                         checkBoxViewModel.IsChecked = !checkBoxViewModel.IsChecked);
                 }
             });
-            // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsReadOnlyFileIncludeClicked = new RelayCommand(()
-                => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);
-
-            // 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
-            IsHiddenFileIncludeClicked = new RelayCommand(()
-                => IsHiddenFileInclude = !IsHiddenFileInclude);
-
-            //  0 サイズのファイルを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsZeroSizeFIleDeleteClicked = new RelayCommand(()
-                => IsZeroSizeFileDelete = !IsZeroSizeFileDelete);
-
-            // 空のフォルダを削除するかどうかのテキストがクリックされた時、チェック状態を切り替えるコマンド
-            IsEmptyDirectoryDeleteClicked = new RelayCommand(()
-                => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // ツリービュー幅変更メッセージ受信
             WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, m)
@@ -503,31 +531,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
 
             // 現在のディレクトリ選択設定を保存する
-            NestedDirectories.Clear();
-            NestedDirectories.AddRange(_directoryTreeManager.NestedDirectories);
-            NonNestedDirectories.Clear();
-            NonNestedDirectories.AddRange(_directoryTreeManager.NonNestedDirectories);
+            SaveCurrentDirectorySelectionSettings();
 
             // 状況が変わっているので、必要な値の初期化をする
-            App.Current?.Dispatcher?.InvokeAsync(() =>
-            {
-                CountScannedDirectories = 0;
-                CountHashFilesDirectories = 0;
-                CountAllTargetFilesGetHash = 0;
-                CountFilteredGetHash = 0;
-                ExtentionCollection.Clear();
-                ExtentionsGroupCollection.Clear();
-            });
+            ResetInitializedValues();
 
-            var _ScanHashFilesClass = Ioc.Default.GetService<IScanHashFiles>() ?? throw new InvalidOperationException($"{nameof(IScanHashFiles)} dependency not resolved."); CTS = new CancellationTokenSource();
-            cancellationToken = CTS.Token;
-
-            // 移動ボタンの利用状況を設定
-            Status = FileScanStatus.None;
-            ToPageHashCalcing.NotifyCanExecuteChanged();
-
-            // スキャンするディレクトリの追加
-            _ScanHashFilesClass?.ScanFiles(cancellationToken);
+            // ファイルスキャンの開始
+            StartFileScan();
         }
 
         /// <summary>
@@ -565,11 +575,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _controDirectoryTreeViewlViewModel.ClearRoot();
             _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
+            // 該当以下のディレクトリを含むディレクトリのパスをツリービューに追加する。
             foreach (var root in _directoryTreeManager.NestedDirectories)
             {
                 var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
+            // 該当ディレクトリのみを単独でツリービューに追加する。
             foreach (var root in _directoryTreeManager.NonNestedDirectories)
             {
                 var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
@@ -577,9 +589,245 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
         }
+
+        /// <summary>
+        /// 現在のディレクトリ選択設定を保存します。
+        /// </summary>
+        private void SaveCurrentDirectorySelectionSettings()
+        {
+            NestedDirectories.Clear();
+            NestedDirectories.AddRange(_directoryTreeManager.NestedDirectories);
+            NonNestedDirectories.Clear();
+            NonNestedDirectories.AddRange(_directoryTreeManager.NonNestedDirectories);
+        }
+
+        /// <summary>
+        /// 必要な値の初期化をします。
+        /// </summary>
+        private void ResetInitializedValues()
+        {
+            App.Current?.Dispatcher?.InvokeAsync(() =>
+            {
+                CountScannedDirectories = 0;
+                CountHashFilesDirectories = 0;
+                CountAllTargetFilesGetHash = 0;
+                CountFilteredGetHash = 0;
+                ExtentionCollection.Clear();
+                ExtentionsGroupCollection.Clear();
+            });
+        }
+
+        /// <summary>
+        /// チェックされたディレクトリのファイルスキャンをします。
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        private void StartFileScan()
+        {
+            var scanHashFilesClass = Ioc.Default.GetService<IScanHashFiles>() ?? throw new InvalidOperationException($"{nameof(IScanHashFiles)} dependency not resolved.");
+            CTS = new CancellationTokenSource();
+            cancellationToken = CTS.Token;
+
+            // 移動ボタンの利用状況を設定
+            Status = FileScanStatus.None;
+            ToPageHashCalcing.NotifyCanExecuteChanged();
+
+            // スキャンするディレクトリの追加
+            scanHashFilesClass.ScanFiles(cancellationToken);
+        }
         #endregion 初期処理
 
-        #region ツリービュー選択処理
+        #region ファイル数の管理処理
+        /// <summary>
+        /// 検索のステータスを変更します。
+        /// </summary>
+        /// <param name="status">変更するステータス</param>
+        public void ChangeHashScanStatus(FileScanStatus status)
+        {
+            App.Current?.Dispatcher?.InvokeAsync(() => Status = status);
+        }
+        /// <summary>
+        /// スキャンした全ディレクトリ数に加算します。
+        /// </summary>
+        /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
+        public void AddScannedDirectoriesCount(int directoriesCount = 1)
+        {
+            App.Current?.Dispatcher?.InvokeAsync(() => CountScannedDirectories += directoriesCount);
+        }
+        /// <summary>
+        /// ファイルスキャンが完了したディレクトリ数に加算します。
+        /// </summary>
+        /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
+        public void AddFilesScannedDirectoriesCount(int directoriesCount = 1)
+        {
+            App.Current?.Dispatcher?.InvokeAsync(() => CountHashFilesDirectories += directoriesCount);
+        }
+        /// <summary>
+        /// ハッシュ取得対象となる全てのファイル数を設定します。
+        /// </summary>
+        public void AddAllTargetFiles(int targetFilesCount)
+        {
+            App.Current?.Dispatcher?.InvokeAsync(() => CountAllTargetFilesGetHash += targetFilesCount);
+        }
+        #endregion ファイル数の管理処理
+
+        #region 拡張子チェックボックスの管理
+        /// <summary>
+        /// 拡張子チェックボックスにチェックされた時に拡張子グループに反映します。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        public async Task CheckExtentionReflectToGroup(string extention)
+        {
+            var fileGroupType = ExtentionTypeHelper.GetFileGroupFromExtention(extention);
+            var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
+            if (group == null) return;
+
+            // グループの拡張子に一つもチェックが入ってなければ null にする
+            if (group.IsChecked == false)
+            {
+                await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = null);
+            }
+
+            // グループの拡張子が全てチェックされているか調べる
+            foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
+            {
+                var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                // 1つでもチェックされてない拡張子があればそのまま戻る
+                if (item != null && item.IsChecked == false) { return; }
+            }
+            // 全てチェックされていたらチェック状態を null → true
+            await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = true);
+        }
+
+        /// <summary>
+        /// 拡張子チェックボックスのチェックが解除された時に拡張子グループに反映します。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        public async Task UncheckExtentionReflectToGroup(string extention)
+        {
+            var fileGroupType = ExtentionTypeHelper.GetFileGroupFromExtention(extention);
+            var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
+            if (group == null) return;
+
+            // グループの拡張子に全てチェックが入っていれば null にする
+            if (group.IsChecked == true)
+            {
+                await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = null);
+            }
+
+            // グループの拡張子が全てチェック解除されているか調べる
+            foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
+            {
+                var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                // 1つでもチェックされてない拡張子があればそのまま戻る
+                if (item != null && item.IsChecked == true) { return; }
+            }
+            // 全てチェック解除されていたらチェック状態を null → false
+            await App.Current.Dispatcher.InvokeAsync(() => group.IsCheckedForce = false);
+        }
+        #endregion 拡張子チェックボックスの管理
+
+        #region ファイル絞り込みの処理
+        /// <summary>
+        /// ファイルの拡張子グループをリストボックスに追加します。
+        /// </summary>
+        public void AddFileTypes()
+        {
+            var movies = new ExtentionGroupCheckBoxViewModel(FileGroupType.Movies);
+            var pictures = new ExtentionGroupCheckBoxViewModel(FileGroupType.Pictures);
+            var musics = new ExtentionGroupCheckBoxViewModel(FileGroupType.Musics);
+            var documents = new ExtentionGroupCheckBoxViewModel(FileGroupType.Documents);
+            var applications = new ExtentionGroupCheckBoxViewModel(FileGroupType.Applications);
+            var archives = new ExtentionGroupCheckBoxViewModel(FileGroupType.Archives);
+            var sources = new ExtentionGroupCheckBoxViewModel(FileGroupType.SourceCodes);
+            var registrations = new ExtentionGroupCheckBoxViewModel(FileGroupType.Registrations);
+            var others = new ExtentionGroupCheckBoxViewModel();
+
+            App.Current?.Dispatcher.Invoke(() =>
+            {
+                if (movies.ExtentionCount > 0) { ExtentionsGroupCollection.Add(movies); }
+                if (pictures.ExtentionCount > 0) { ExtentionsGroupCollection.Add(pictures); }
+                if (musics.ExtentionCount > 0) { ExtentionsGroupCollection.Add(musics); }
+                if (documents.ExtentionCount > 0) { ExtentionsGroupCollection.Add(documents); }
+                if (applications.ExtentionCount > 0) { ExtentionsGroupCollection.Add(applications); }
+                if (archives.ExtentionCount > 0) { ExtentionsGroupCollection.Add(archives); }
+                if (sources.ExtentionCount > 0) { ExtentionsGroupCollection.Add(sources); }
+                if (registrations.ExtentionCount > 0) { ExtentionsGroupCollection.Add(registrations); }
+                if (others.ExtentionCount > 0) { ExtentionsGroupCollection.Add(others); }
+            });
+        }
+
+        /// <summary>
+        /// 拡張子をリストボックスに追加します。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        public void AddExtentions(string extention)
+        {
+            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
+            if (extentionManager.GetExtentionsCount(extention) > 0)
+            {
+                var item = new ExtensionCheckBox(extention);
+                App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
+            }
+        }
+        /// <summary>
+        /// 拡張子のコレクションをクリアします。
+        /// </summary>
+        public void ClearExtentions()
+        {
+            App.Current?.Dispatcher?.Invoke(() => ExtentionCollection.Clear());
+            _extentionManager.ClearExtentions();
+        }
+        /// <summary>
+        /// 拡張子チェックボックスにより、スキャンするファイル数が増減した時の処理をします。
+        /// </summary>
+        public async Task ExtentionCountChanged()
+        {
+            await App.Current.Dispatcher.InvokeAsync(() => CountFilteredGetHash = _allFilesManager.AllConditionFiles.Count);
+        }
+
+        /// <summary>
+        /// ChangeCheckBoxGroupで使うロックオブジェクト
+        /// </summary>
+        private readonly object _changedLock = new();
+
+        /// <summary>
+        /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。
+        /// </summary>
+        /// <param name="changedCheck">チェックされたか外されたか</param>
+        /// <param name="extentionCollention">拡張子のリストコレクション</param>
+        public async Task ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention)
+        {
+            var changedCollection = ExtentionCollection.Where(e => extentionCollention.Contains(e.ExtentionOrGroup));
+
+            foreach (var extension in changedCollection)
+            {
+                await App.Current.Dispatcher.InvokeAsync(() => extension.IsCheckedForce = changedCheck);
+                await Task.Run(async () =>
+                {
+                    foreach (var file in _allFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), extension.ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        if (changedCheck)
+                        {
+                            lock (_changedLock)
+                            {
+                                _allFilesManager.AllConditionFiles.Add(file);
+                            }
+                        }
+                        else
+                        {
+                            lock (_changedLock)
+                            {
+                                _allFilesManager.AllConditionFiles.Remove(file);
+                            }
+                        }
+                    }
+                    await ChangeExtension(extension.ExtentionOrGroup, changedCheck);
+                });
+                await ExtentionCountChanged();
+            }
+        }
+        #endregion ファイル絞り込みの処理
+
         /// <summary>
         /// ツリービューの選択ディレクトリが変更された時の処理です。
         /// </summary>
@@ -590,14 +838,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             App.Current?.Dispatcher?.Invoke(() =>
             {
                 HashFileListItems.Clear();
-                var files = FileManager.EnumerateFiles(currentFullPath);
 
-                foreach (var file in files)
+                foreach (var file in FileManager.EnumerateFiles(currentFullPath))
                 {
                     var item = new HashListFileItems
                     {
                         FileFullPath = file,
-                        IsHashTarget = AllConditionFiles.Any(f => f.FileFullPath == file)
+                        IsHashTarget = _allFilesManager.AllConditionFiles.Any(f => f.FileFullPath == file)
                     };
                     HashFileListItems.Add(item);
                 }
@@ -605,9 +852,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// 検索条件が変更された時の処理です。
+        /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
-        public async Task ChangeCondition(string extention, bool IsTarget)
+        public async Task ChangeExtension(string extention, bool IsTarget)
         {
             foreach (var item in HashFileListItems)
             {
@@ -618,111 +865,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
             }
         }
-        #endregion ツリービュー選択処理
 
-        #region ファイルの追加とディレクトリの削除
         /// <summary>
-        /// ファイルを追加します
+        /// 全管理対象ファイルを追加します。
         /// </summary>
         /// <param name="fileFullPath">追加するファイルのフルパス</param>
-        /// <param name="hashSHA256">SHA256のハッシュ</param>
-        /// <param name="hashSHA384">SHA384のハッシュ</param>
-        /// <param name="hashSHA512">SHA512のハッシュ</param>
-        public void AddFileToAllFiles(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "")
+        public void AddFileToAllFiles(string fileFullPath)
         {
-            var fileInfo = new FileInfo(fileFullPath);
-            if (AllFiles.TryGetValue(fileFullPath, out HashFile? value))
-            {
-                // 同一日付とサイズなら追加しない
-                if (fileInfo.LastWriteTime == value.LastWriteTime && fileInfo.Length == value.Length) { return; }
-
-                // 既にハッシュを持っているなら設定する
-                if (!string.IsNullOrEmpty(value.SHA256) && string.IsNullOrEmpty(hashSHA256)) { hashSHA256 = value.SHA256; }
-                if (!string.IsNullOrEmpty(value.SHA384) && string.IsNullOrEmpty(hashSHA384)) { hashSHA384 = value.SHA384; }
-                if (!string.IsNullOrEmpty(value.SHA512) && string.IsNullOrEmpty(hashSHA512)) { hashSHA512 = value.SHA512; }
-
-                // データが異なるか、ハッシュ更新されていれば昔のデータを削除する
-                AllFiles.Remove(fileFullPath);
-            }
-            // 新しいデータなら追加する(日付と更新日はコンストラクタで設定される)
-            var hashFile = new HashFile(fileFullPath, hashSHA256, hashSHA384, hashSHA512);
-            AllFiles.Add(fileFullPath, hashFile);
-
+            // 全管理対象ファイルをModelに追加する
+            _allFilesManager.AddFileToAllFiles(fileFullPath);
             // 拡張子ヘルパーに拡張子を登録する(カウントもする)
             _extentionManager.AddFile(fileFullPath);
         }
-
-        /// <summary>
-        /// ディレクトリを削除します
-        /// </summary>
-        /// <param name="directoryFullPath">削除するディレクトリのフルパス</param>
-        public void RemoveDirectoryFromAllFiles(string directoryFullPath)
-        {
-            foreach (var fileToRemove in AllFiles.Keys.Where(d => Path.GetDirectoryName(d) == directoryFullPath).ToList())
-            {
-                AllFiles.Remove(fileToRemove);
-            }
-        }
-        #endregion ファイルの追加とディレクトリの削除
-
-        #region 検索条件の操作
-        /// <summary>
-        /// ロックオブジェクト
-        /// </summary>
-        private readonly object _conditionLock = new();
-
-        /// <summary>
-        /// 正規表現なら正しければ、それ以外は type=None でなければ無条件に検索条件リストに追加します。
-        /// </summary>
-        /// <param name="type">検索条件タイプ</param>
-        /// <param name="contidionString">検索条件</param>
-        /// <returns>成功の可否</returns>
-        public void AddCondition(SearchConditionType type, string contidionString)
-        {
-            var condition = SearchCondition.AddCondition(type, contidionString);
-            if (condition == null) { return; }
-            lock (_conditionLock)
-            {
-                switch (type)
-                {
-                    case SearchConditionType.Extention:
-                        foreach (var extentionFile in AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), contidionString, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            // 条件辞書にファイルを登録する
-                            if (!ConditionFiles.TryGetValue(condition, out HashSet<HashFile>? value))
-                            {
-                                value = ([]);
-                                ConditionFiles.Add(condition, value);
-                            }
-                            value.Add(extentionFile);
-                        }
-                        break;
-                    case SearchConditionType.WildCard:
-                        break;
-                    case SearchConditionType.RegularExprettion:
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 検索条件を削除します。
-        /// </summary>
-        /// <param name="type">検索条件のタイプ</param>
-        /// <param name="contidionString">検索条件</param>
-        public void RemoveCondition(SearchConditionType type, string contidionString)
-        {
-            var condition = ConditionFiles.Keys.FirstOrDefault(c => c.Type == type && c.ConditionString == contidionString);
-            if (condition == null) { return; }
-
-            lock (_conditionLock)
-            {
-                foreach (var file in ConditionFiles[condition])
-                {
-                    ConditionFiles.Remove(condition);
-                }
-            }
-        }
-        #endregion 検索条件の操作
     }
 }

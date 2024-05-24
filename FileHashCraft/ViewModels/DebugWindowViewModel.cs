@@ -8,6 +8,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 
 namespace FileHashCraft.ViewModels

@@ -4,7 +4,7 @@
  */
 using System.Windows.Media;
 
-namespace FileHashCraft.Services
+namespace FileHashCraft.Services.Messages
 {
     #region MainView用メッセージ
     /// <summary>
@@ -19,10 +19,10 @@ namespace FileHashCraft.Services
     /// <summary>
     /// ウィンドウの左位置を変更するメッセージ
     /// </summary>
-    public class  WindowLeftChanged
+    public class WindowLeftChanged
     {
         public double Left { get; }
-        public WindowLeftChanged() {  throw new NotImplementedException(); }
+        public WindowLeftChanged() { throw new NotImplementedException(); }
         public WindowLeftChanged(double left) => Left = left;
     }
     /// <summary>
@@ -39,7 +39,7 @@ namespace FileHashCraft.Services
     public class WindowHeightChanged
     {
         public double Height { get; }
-        public WindowHeightChanged() {  throw new NotImplementedException(); }
+        public WindowHeightChanged() { throw new NotImplementedException(); }
         public WindowHeightChanged(double height) => Height = height;
     }
     /// <summary>
@@ -98,7 +98,7 @@ namespace FileHashCraft.Services
     public class HiddenFileIncludeChanged
     {
         public bool HiddenFileInclude { get; }
-        public HiddenFileIncludeChanged() { throw new NotImplementedException() ; }
+        public HiddenFileIncludeChanged() { throw new NotImplementedException(); }
         public HiddenFileIncludeChanged(bool hiddenFileInclude) => HiddenFileInclude = hiddenFileInclude;
     }
 

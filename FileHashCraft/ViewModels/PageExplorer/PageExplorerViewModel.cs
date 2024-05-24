@@ -14,6 +14,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
+using FileHashCraft.Services.FileSystemWatcherServices;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 

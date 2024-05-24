@@ -32,7 +32,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="Transparent"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="White"/>
 
         <!-- TreeView -->
         <local:ControlDirectoryTreeView x:Name="HashTargetTreeView"
@@ -224,11 +224,9 @@
 
                     <!-- 削除ボタン -->
                     <Button Grid.Row="0" Grid.Column="2" Margin="3" x:Name="WildcardRemove" 
-                            Command="{Binding RemoveWildcard}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
                     <!-- 追加ボタン -->
                     <Button Grid.Row="2" Grid.Column="2" Margin="3" x:Name="WildcardAdd"
-                            Command="{Binding AddWildcard}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
                     <!-- ワイルドカード検索条件リストボックス -->
                     <ListBox Grid.Row="0" Grid.Column="0" x:Name="WildCardSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
@@ -237,12 +235,12 @@
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_SearchCriteria, Mode=OneWay}"/>
                     <!-- ワイルドカード検索条件 -->
                     <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="WildcardCritieria"
-                             Text="{Binding WildcardCritieria,Mode=TwoWay}"/>
+                             Text=""/>
                     <!-- ワイルドカードエラーラベル -->
                     <Label Grid.Row="3" Grid.Column="0" x:Name="LabelWildcardError"
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
                     <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="WildcardError"
-                               Background="{Binding WildcardErrorStatus}" Text="{Binding RegularExpressionErrorString}" Margin="3" Grid.RowSpan="2"/>
+                               Background="Red" Text="" Margin="3" Grid.RowSpan="2"/>
 
                 </Grid>
             </TabItem>
@@ -262,11 +260,9 @@
                     </Grid.RowDefinitions>
                     <!-- 削除ボタン -->
                     <Button Grid.Row="0" Grid.Column="3" Margin="3,3,3,3" x:Name="RegularExpressionRemove"
-                            Command="{Binding RemoveRegularExpression}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
                     <!-- 追加ボタン -->
                     <Button Grid.Row="2" Grid.Column="3" Margin="3,3,3,3" x:Name="RegularExpressionAdd"
-                            Command="{Binding AddRegularExpression}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
                     <!-- 正規表現検索条件リストボックス -->
                     <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
@@ -275,12 +271,12 @@
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Critieria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
                     <!-- 正規表現検索条件 -->
                     <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="RegularExpressionCritieria"
-                             Text="{Binding RegularExpressionCritieria,Mode=TwoWay}"/>
+                             Text="{}"/>
                     <!-- 正規表現検索エラーラベル -->
                     <Label Grid.Row="3" Grid.Column="0" x:Name="LabelRegularExpressionError"
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
                     <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegularExpressionError"
-                               Background="{Binding RegularExpressionErrorStatus}" Text="{Binding RegularExpressionErrorString}" Margin="3" Grid.RowSpan="2"/>
+                               Background="Red" Text="" Margin="3" Grid.RowSpan="2"/>
 
                 </Grid>
             </TabItem>
@@ -293,47 +289,59 @@
                         <RowDefinition Height="Auto" MinHeight="30"/>
                         <RowDefinition Height="Auto" MinHeight="30"/>
                     </Grid.RowDefinitions>
+                    <!-- 読み取り専用ファイルを対象とするか -->
                     <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}"/>
+                        <CheckBox VerticalAlignment="Center"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
+                            <!--
                             <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
+                            -->
                         </Label>
                     </StackPanel>
 
+                    <!-- 隠しファイルを対象とするか -->
                     <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}"/>
+                        <CheckBox VerticalAlignment="Center"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
+                            <!--
                             <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
+                            -->
                         </Label>
                     </StackPanel>
 
+                    <!-- 0サイズのファイルを削除するか -->
                     <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}"/>
+                        <CheckBox VerticalAlignment="Center"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
+                            <!--
                             <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
+                            -->
                         </Label>
                     </StackPanel>
 
+                    <!-- からのディレクトリを削除するか -->
                     <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}"/>
+                        <CheckBox VerticalAlignment="Center"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
+                            <!--
                             <Label.InputBindings>
                                 <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
+                            -->
                         </Label>
                     </StackPanel>
                 </Grid>
