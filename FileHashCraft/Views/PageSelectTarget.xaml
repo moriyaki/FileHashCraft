@@ -87,14 +87,14 @@
         <Button Grid.Row="6" Grid.Column="9" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
-                Command="{Binding ToPageHashCalcing}"/>
+                Command="{Binding ViewModelMain.ToPageHashCalcing}"/>
 
         <!-- ハッシュ取得中かのメッセージ -->
-        <Border Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Margin="3,3,3,3" Background="{Binding StatusColor}">
+        <Border Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Margin="3,3,3,3" Background="{Binding ViewModelMain.StatusColor}">
             <TextBlock 
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Text="{Binding StatusMessage}"/>
+                        Text="{Binding ViewModelMain.StatusMessage}"/>
         </Border>
 
         <!-- Hash Algorithm Select -->
@@ -116,7 +116,7 @@
 
         <Label Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="4" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding CountAllTargetFilesGetHash}"/>
+                        Content="{Binding ViewModelMain.CountAllTargetFilesGetHash}"/>
 
         <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
         <Label Grid.Row="4" Grid.Column="4" HorizontalAlignment="Right"
@@ -125,7 +125,7 @@
 
         <Label Grid.Row="4" Grid.Column="5" Grid.ColumnSpan="4" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding CountFilteredGetHash}"/>
+                        Content="{Binding ViewModelMain.CountFilteredGetHash}"/>
 
         <TabControl  Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5" Margin="3">
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}"

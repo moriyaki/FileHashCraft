@@ -55,11 +55,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 sw.Start();
                 */
                 // ディレクトリのスキャン
-                _pageSelectTargetViewModel.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
+                _pageSelectTargetViewModel.ViewModelMain.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
                 await DirectoriesScan(cancellation);
 
                 // ファイルのスキャン
-                _pageSelectTargetViewModel.ChangeHashScanStatus(FileScanStatus.FilesScanning);
+                _pageSelectTargetViewModel.ViewModelMain.ChangeHashScanStatus(FileScanStatus.FilesScanning);
                 await Task.Run(() => DirectoryFilesScan(cancellation), cancellation);
                 /*
                 sw.Stop();
@@ -74,7 +74,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ScanExtention(cancellation);
 
             // スキャン終了の表示に切り替える
-            _pageSelectTargetViewModel.ChangeHashScanStatus(FileScanStatus.Finished);
+            _pageSelectTargetViewModel.ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
         }
         #endregion メイン処理
 
@@ -100,8 +100,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                         fileCount++;
                     }
 
-                    _pageSelectTargetViewModel.AddFilesScannedDirectoriesCount();
-                    _pageSelectTargetViewModel.AddAllTargetFiles(fileCount);
+                    _pageSelectTargetViewModel.ViewModelMain.AddFilesScannedDirectoriesCount();
+                    _pageSelectTargetViewModel.ViewModelMain.AddAllTargetFiles(fileCount);
 
                     if (cancellation.IsCancellationRequested) { return; }
                 }
@@ -134,7 +134,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             // 各ドライブに対してタスクを回す
             await DirectorySearch(_treeManager.NestedDirectories, cancellation);
-            _pageSelectTargetViewModel.AddScannedDirectoriesCount(_treeManager.NonNestedDirectories.Count);
+            _pageSelectTargetViewModel.ViewModelMain.AddScannedDirectoriesCount(_treeManager.NonNestedDirectories.Count);
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 string currentDirectory = paths.Pop();
                 result.Add(currentDirectory);
-                _pageSelectTargetViewModel.AddScannedDirectoriesCount();
+                _pageSelectTargetViewModel.ViewModelMain.AddScannedDirectoriesCount();
 
                 foreach (var subDir in FileManager.EnumerateDirectories(currentDirectory))
                 {

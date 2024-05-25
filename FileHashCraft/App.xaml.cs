@@ -122,6 +122,7 @@ namespace FileHashCraft
 
             services.AddSingleton<IPageSelectTargetViewModel, PageSelectTargetViewModel>();
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
+            services.AddSingleton<IPageSelectTargetViewModelMain, PageSelectTargetViewModelMain>();
 
             // Model
             services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();
