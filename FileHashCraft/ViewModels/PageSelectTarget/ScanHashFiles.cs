@@ -46,7 +46,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
             _allFilesManager.AllFiles.Clear();
             _directoriesHashSet.Clear();
-            _pageSelectTargetViewModel.ClearExtentions();
+            _pageSelectTargetViewModel.ViewModelExtention.ClearExtentions();
 
             try
             {
@@ -96,7 +96,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     var fileCount = 0;
                     foreach (var fileFullPath in FileManager.EnumerateFiles(directoryFullPath))
                     {
-                        _pageSelectTargetViewModel.AddFileToAllFiles(fileFullPath);
+                        _pageSelectTargetViewModel.ViewModelExtention.AddFileToAllFiles(fileFullPath);
                         fileCount++;
                     }
 
@@ -117,11 +117,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             foreach (var extention in _extentionManager.GetExtentions())
             {
-                _pageSelectTargetViewModel.AddExtentions(extention);
+                _pageSelectTargetViewModel.ViewModelExtention.AddExtentions(extention);
                 if (cancellation.IsCancellationRequested) { return; }
             }
             // 拡張子を集める処理
-            _pageSelectTargetViewModel.AddFileTypes();
+            _pageSelectTargetViewModel.ViewModelExtention.AddFileTypes();
         }
         #endregion ハッシュを取得するファイルのスキャン処理
 

@@ -40,19 +40,22 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
-        protected readonly IScannedFilesManager _allFilesManager;
+        protected readonly IScannedFilesManager _scannedFilesManager;
         protected readonly IMessageServices _messageServices;
         protected readonly ISettingsService _settingsService;
-
+        protected readonly IExtentionManager _extentionManager;
+        protected readonly IPageSelectTargetViewModel _pageSelectTargetFileViewModel;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase()
         {
-            _allFilesManager = Ioc.Default.GetService<IScannedFilesManager>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
+            _scannedFilesManager = Ioc.Default.GetService<IScannedFilesManager>() ?? throw new InvalidOperationException($"{nameof(IScannedFilesManager)} dependency not resolved.");
             _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
+            _extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
+            _pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
@@ -151,43 +154,39 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         public async Task HandleChecked()
         {
-            var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
-
-            _allFilesManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            _scannedFilesManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
             await Task.Run(() =>
             {
-                foreach (var extentionFile in _allFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+                foreach (var extentionFile in _scannedFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (extentionFile.ConditionCount == 0)
                     {
-                        _allFilesManager.AllConditionFiles.Add(extentionFile);
+                        _scannedFilesManager.AllConditionFiles.Add(extentionFile);
                     }
                     extentionFile.ConditionCount++;
                 }
             });
-            await pageSelectTargetFileViewModel.CheckExtentionReflectToGroup(ExtentionOrGroup);
-            await pageSelectTargetFileViewModel.ExtentionCountChanged();
-            await pageSelectTargetFileViewModel.ChangeExtension(ExtentionOrGroup, true);
+            await _pageSelectTargetFileViewModel.ViewModelExtention.CheckExtentionReflectToGroup(ExtentionOrGroup);
+            await _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
+            await _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, true);
         }
 
         public async Task HandleUnchecked()
         {
-            var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
-
-            _allFilesManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
+            _scannedFilesManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
             await Task.Run(() =>
             {
-                foreach (var extentionFile in _allFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
+                foreach (var extentionFile in _scannedFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
                 {
                     if (--extentionFile.ConditionCount == 0)
                     {
-                        _allFilesManager.AllConditionFiles.Remove(extentionFile);
+                        _scannedFilesManager.AllConditionFiles.Remove(extentionFile);
                     }
                 }
             });
-            await pageSelectTargetFileViewModel.UncheckExtentionReflectToGroup(ExtentionOrGroup);
-            await pageSelectTargetFileViewModel.ExtentionCountChanged();
-            await pageSelectTargetFileViewModel.ChangeExtension(ExtentionOrGroup, false);
+            await _pageSelectTargetFileViewModel.ViewModelExtention.UncheckExtentionReflectToGroup(ExtentionOrGroup);
+            await _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
+            await _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, false);
         }
 
         public override bool? IsChecked
@@ -256,15 +255,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 SetProperty(ref _IsChecked, value);
-                var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
-                var pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
                 if (value == true)
                 {
-                    pageSelectTargetFileViewModel.ChangeCheckBoxGroup(true, extentionManager.GetGroupExtentions(FileType));
+                    _pageSelectTargetFileViewModel.ViewModelExtention.ChangeCheckBoxGroup(true, _extentionManager.GetGroupExtentions(FileType));
                 }
                 else
                 {
-                    pageSelectTargetFileViewModel.ChangeCheckBoxGroup(false, extentionManager.GetGroupExtentions(FileType));
+                    _pageSelectTargetFileViewModel.ViewModelExtention.ChangeCheckBoxGroup(false, _extentionManager.GetGroupExtentions(FileType));
                 }
             }
         }

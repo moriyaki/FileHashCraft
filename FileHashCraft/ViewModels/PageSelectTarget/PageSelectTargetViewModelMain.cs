@@ -1,6 +1,11 @@
-﻿using System.Windows.Media;
+﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models;
+using FileHashCraft.Models.FileScan;
 using FileHashCraft.Properties;
 using FileHashCraft.Services.Messages;
 
@@ -19,6 +24,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     #region インターフェース
     public interface IPageSelectTargetViewModelMain
     {
+        /// <summary>
+        /// ハッシュ取得対象のファイルリストアイテムのリストボックスコレクションです。
+        /// </summary>
+        public ObservableCollection<HashListFileItems> HashFileListItems { get; }
         /// <summary>
         /// ファイルスキャン状況
         /// </summary>
@@ -67,6 +76,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 総対象ファイル数に加算します。
         /// </summary>
         public void AddAllTargetFiles(int allTargetFiles);
+        /// <summary>
+        /// ツリービューの選択ディレクトリが変更された時の処理です。
+        /// </summary>
+        public void ChangeCurrentPath(string currentFullPath);
+        /// <summary>
+        /// 拡張子の検索条件が変更された時の処理です。
+        /// </summary>
+        public Task ChangeExtensionToListBox(string extention, bool IsTarget);
     }
     #endregion インターフェース
 
@@ -185,24 +202,36 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
+        /// ハッシュ取得対象のファイルリストアイテムのリストボックスコレクションです。
+        /// </summary>
+        public ObservableCollection<HashListFileItems> HashFileListItems { get; set; } = [];
+
+        /// <summary>
         /// ハッシュ計算画面に移動します。
         /// </summary>
         public RelayCommand ToPageHashCalcing { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
+        private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IMessageServices _messageServices;
         public PageSelectTargetViewModelMain(
+            IScannedFilesManager scannedFilesManager,
             IMessageServices messageServices
         )
         {
             _messageServices = messageServices;
+            _scannedFilesManager = scannedFilesManager;
 
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new RelayCommand(
                 () => _messageServices.SendToHashCalcingPage(),
                 () => CountFilteredGetHash > 0
             );
+
+            // カレントディレクトリが変更されたメッセージ受信
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, m)
+                => ChangeCurrentPath(m.CurrentFullPath));
         }
         #endregion コンストラクタ
 
@@ -242,5 +271,46 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
         #endregion ファイル数の管理処理
 
+        #region ツリービューのカレントディレクトリ、リストビューの色変え処理
+        /// <summary>
+        /// ツリービューの選択ディレクトリが変更された時の処理です。
+        /// </summary>
+        /// <param name="currentFullPath">カレントディレクトリ</param>
+        /// <exception cref="NullReferenceException">IFileManagerが取得できなかった時の例外</exception>
+        public void ChangeCurrentPath(string currentFullPath)
+        {
+            App.Current?.Dispatcher?.Invoke(() =>
+            {
+                HashFileListItems.Clear();
+
+                foreach (var file in FileManager.EnumerateFiles(currentFullPath))
+                {
+                    var item = new HashListFileItems
+                    {
+                        FileFullPath = file,
+                        IsHashTarget = _scannedFilesManager.AllConditionFiles.Any(f => f.FileFullPath == file)
+                    };
+                    HashFileListItems.Add(item);
+                }
+            });
+        }
+        /// <summary>
+        /// 拡張子の検索条件が変更された時の処理です。
+        /// </summary>
+        /// <param name="extention">拡張子</param>
+        /// <param name="IsTarget">対象ファイルかどうか</param>
+        public async Task ChangeExtensionToListBox(string extention, bool IsTarget)
+        {
+            foreach (var item in HashFileListItems)
+            {
+                var fileExtention = Path.GetExtension(item.FileFullPath);
+                if (string.Equals(fileExtention, extention, StringComparison.OrdinalIgnoreCase))
+                {
+                    await App.Current.Dispatcher.InvokeAsync(() => item.IsHashTarget = IsTarget);
+                }
+            }
+        }
+
+        #endregion ツリービューのカレントディレクトリ、リストビューの色変え処理
     }
 }

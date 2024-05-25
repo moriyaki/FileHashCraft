@@ -32,7 +32,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="White"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="Transparent"/>
 
         <!-- TreeView -->
         <local:ControlDirectoryTreeView x:Name="HashTargetTreeView"
@@ -45,7 +45,7 @@
         <ListBox x:Name="FileListBox" 
                  Grid.Row="1" Grid.Column="2" Grid.RowSpan="6" Margin="3" HorizontalAlignment="Left"
                  Width="{Binding ListWidth,Mode=TwoWay}"
-                 ItemsSource="{Binding HashFileListItems,Mode=OneWay}"
+                 ItemsSource="{Binding ViewModelMain.HashFileListItems,Mode=OneWay}"
                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -157,7 +157,7 @@
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelNormal_ExtentionGroupFilterSetting, Mode=OneWay}"/>
 
-                        <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding ExtentionsGroupCollection}"
+                        <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding ViewModelExtention.ExtentionsGroupCollection}"
                                 Grid.Row="1" Grid.Column="0" Margin="3">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -168,7 +168,7 @@
                                                    Content="{Binding ExtentionOrFileTypeView, Mode=OneWay}">
                                             <Label.InputBindings>
                                                 <MouseBinding 
-                                                    Command="{Binding DataContext.ExtentionGroupCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
+                                                    Command="{Binding DataContext.ViewModelExtention.ExtentionGroupCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
                                                     CommandParameter="{Binding}" MouseAction="LeftClick"/>
                                             </Label.InputBindings>
                                         </Label>
@@ -182,7 +182,7 @@
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelNormal_ExtentionFilterSetting, Mode=OneWay}"/>
 
-                        <ListBox x:Name="checkBoxExtListBox" ItemsSource="{Binding ExtentionCollection}"
+                        <ListBox x:Name="checkBoxExtListBox" ItemsSource="{Binding ViewModelExtention.ExtentionCollection}"
                                 Grid.Row="1" Grid.Column="1" Margin="3">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -195,7 +195,7 @@
                                                 Content="{Binding ExtentionOrFileTypeView, Mode=OneWay}">
                                             <Label.InputBindings>
                                                 <MouseBinding 
-                                                    Command="{Binding DataContext.ExtentionCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
+                                                    Command="{Binding DataContext.ViewModelExtention.ExtentionCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
                                                     CommandParameter="{Binding}" MouseAction="LeftClick"/>
                                             </Label.InputBindings>
                                         </Label>
