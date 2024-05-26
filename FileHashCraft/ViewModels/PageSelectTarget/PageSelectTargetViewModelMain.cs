@@ -83,7 +83,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
-        public Task ChangeExtensionToListBox(string extention, bool IsTarget);
+        public void ChangeExtensionToListBox(string extention, bool IsTarget);
     }
     #endregion インターフェース
 
@@ -242,7 +242,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="status">変更するステータス</param>
         public void ChangeHashScanStatus(FileScanStatus status)
         {
-            App.Current?.Dispatcher?.InvokeAsync(() => Status = status);
+            App.Current?.Dispatcher?.Invoke(() => Status = status);
         }
         /// <summary>
         /// スキャンした全ディレクトリ数に加算します。
@@ -250,7 +250,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
         public void AddScannedDirectoriesCount(int directoriesCount = 1)
         {
-            App.Current?.Dispatcher?.InvokeAsync(() => CountScannedDirectories += directoriesCount);
+            App.Current?.Dispatcher?.Invoke(() => CountScannedDirectories += directoriesCount);
         }
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数に加算します。
@@ -258,7 +258,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
         public void AddFilesScannedDirectoriesCount(int directoriesCount = 1)
         {
-            App.Current?.Dispatcher?.InvokeAsync(() => CountHashFilesDirectories += directoriesCount);
+            App.Current?.Dispatcher?.Invoke(() => CountHashFilesDirectories += directoriesCount);
         }
 
         /// <summary>
@@ -267,7 +267,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="targetFilesCount">ハッシュ取得対象となるファイル数</param>
         public void AddAllTargetFiles(int targetFilesCount)
         {
-            App.Current?.Dispatcher?.InvokeAsync(() => CountAllTargetFilesGetHash += targetFilesCount);
+            App.Current?.Dispatcher?.Invoke(() => CountAllTargetFilesGetHash += targetFilesCount);
         }
         #endregion ファイル数の管理処理
 
@@ -279,34 +279,31 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <exception cref="NullReferenceException">IFileManagerが取得できなかった時の例外</exception>
         public void ChangeCurrentPath(string currentFullPath)
         {
-            App.Current?.Dispatcher?.Invoke(() =>
-            {
-                HashFileListItems.Clear();
+            App.Current?.Dispatcher?.Invoke(() => HashFileListItems.Clear());
 
-                foreach (var file in FileManager.EnumerateFiles(currentFullPath))
+            foreach (var file in FileManager.EnumerateFiles(currentFullPath))
+            {
+                var item = new HashListFileItems
                 {
-                    var item = new HashListFileItems
-                    {
-                        FileFullPath = file,
-                        IsHashTarget = _scannedFilesManager.AllConditionFiles.Any(f => f.FileFullPath == file)
-                    };
-                    HashFileListItems.Add(item);
-                }
-            });
+                    FileFullPath = file,
+                    IsHashTarget = _scannedFilesManager.GetAllCriteriaFileName().Any(f => f.FileFullPath == file)
+                };
+                App.Current?.Dispatcher?.Invoke(() => HashFileListItems.Add(item));
+            }
         }
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
         /// <param name="extention">拡張子</param>
         /// <param name="IsTarget">対象ファイルかどうか</param>
-        public async Task ChangeExtensionToListBox(string extention, bool IsTarget)
+        public void ChangeExtensionToListBox(string extention, bool IsTarget)
         {
             foreach (var item in HashFileListItems)
             {
                 var fileExtention = Path.GetExtension(item.FileFullPath);
                 if (string.Equals(fileExtention, extention, StringComparison.OrdinalIgnoreCase))
                 {
-                    await App.Current.Dispatcher.InvokeAsync(() => item.IsHashTarget = IsTarget);
+                    App.Current.Dispatcher.Invoke(() => item.IsHashTarget = IsTarget);
                 }
             }
         }

@@ -6,12 +6,16 @@ using System.IO;
 
 namespace FileHashCraft.Models
 {
+    /// <summary>
+    /// ファイル属性
+    /// </summary>
+    [Flags]
     public enum HashFileAttribute
     {
-        Normal,
-        Readonly,
-        Hidden,
-        ReadonlyAndHidden,
+        Normal = 0,
+        Readonly = 1,
+        Hidden = 2,
+        ReadonlyAndHidden = Readonly | Hidden,
     }
 
     /// <summary>
@@ -48,11 +52,23 @@ namespace FileHashCraft.Models
         /// SHA512ハッシュ
         /// </summary>
         public string SHA512 { get; set; } = string.Empty;
-        /// <summary>
-        /// 条件に合致している件数
-        /// </summary>
-        public int ConditionCount { get; set; } = 0;
         #endregion メンバ
+
+        #region DictionaryやHashSet用ハッシュコードの算出
+        public override bool Equals(object? obj)
+        {
+            if (obj is HashFile hashFile)
+            {
+                return string.Equals(this.FileFullPath, hashFile.FileFullPath, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return StringComparer.OrdinalIgnoreCase.GetHashCode(this.FileFullPath);
+        }
+        #endregion DictionaryやHashSet用ハッシュコードの算出
 
         #region 設定処理
         /// <summary>
@@ -71,40 +87,18 @@ namespace FileHashCraft.Models
             var fileInfo = new FileInfo(fileFullPath);
             LastWriteTime = fileInfo.LastWriteTime;
             Length = fileInfo.Length;
-            if (((fileInfo.Attributes & FileAttributes.ReadOnly)== FileAttributes.ReadOnly)
-             && ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden))
+
+            Attribute = HashFileAttribute.Normal;
+            if ((fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
             {
-                Attribute = HashFileAttribute.ReadonlyAndHidden;
+                Attribute |= HashFileAttribute.Readonly;
             }
-            else if ((fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+            if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
             {
-                Attribute = HashFileAttribute.Readonly;
-            }
-            else if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-            {
-                Attribute = HashFileAttribute.Hidden;
-            }
-            else
-            {
-                Attribute = HashFileAttribute.Normal;
+                Attribute |= HashFileAttribute.Hidden;
             }
         }
         #endregion 設定処理
 
-        #region DictionaryやHashSet用ハッシュコードの算出
-        public override bool Equals(object? obj)
-        {
-            if (obj is HashFile hashFile)
-            {
-                return string.Equals(this.FileFullPath, hashFile.FileFullPath, StringComparison.OrdinalIgnoreCase);
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return StringComparer.OrdinalIgnoreCase.GetHashCode(this.FileFullPath);
-        }
-        #endregion DictionaryやHashSet用ハッシュコードの算出
     }
 }

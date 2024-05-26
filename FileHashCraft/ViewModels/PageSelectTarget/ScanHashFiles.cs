@@ -18,18 +18,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ScanHashFiles : IScanHashFiles
     {
         #region コンストラクタと初期化
-        private readonly IScannedFilesManager _allFilesManager;
+        private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IExtentionManager _extentionManager;
         private readonly IPageSelectTargetViewModel _pageSelectTargetViewModel;
         private readonly ITreeManager _treeManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
-            IScannedFilesManager allFilesManager,
+            IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,
             IPageSelectTargetViewModel pageSelectTargetViewModel,
             ITreeManager treeManager)
         {
-            _allFilesManager = allFilesManager;
+            _scannedFilesManager = scannedFilesManager;
             _extentionManager = extentionManager;
             _pageSelectTargetViewModel = pageSelectTargetViewModel;
             _treeManager = treeManager;
@@ -44,7 +44,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public async Task ScanFiles(CancellationToken cancellation)
         {
             // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
-            _allFilesManager.AllFiles.Clear();
+            _scannedFilesManager.AllFiles.Clear();
             _directoriesHashSet.Clear();
             _pageSelectTargetViewModel.ViewModelExtention.ClearExtentions();
 

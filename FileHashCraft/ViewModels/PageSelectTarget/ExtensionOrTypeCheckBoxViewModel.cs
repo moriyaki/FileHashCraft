@@ -152,57 +152,26 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ExtentionCount = extentionManager.GetExtentionsCount(extention);
         }
 
-        public async Task HandleChecked()
-        {
-            _scannedFilesManager.AddCondition(SearchConditionType.Extention, ExtentionOrGroup);
-            await Task.Run(() =>
-            {
-                foreach (var extentionFile in _scannedFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
-                {
-                    if (extentionFile.ConditionCount == 0)
-                    {
-                        _scannedFilesManager.AllConditionFiles.Add(extentionFile);
-                    }
-                    extentionFile.ConditionCount++;
-                }
-            });
-            await _pageSelectTargetFileViewModel.ViewModelExtention.CheckExtentionReflectToGroup(ExtentionOrGroup);
-            await _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
-            await _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, true);
-        }
-
-        public async Task HandleUnchecked()
-        {
-            _scannedFilesManager.RemoveCondition(SearchConditionType.Extention, ExtentionOrGroup);
-            await Task.Run(() =>
-            {
-                foreach (var extentionFile in _scannedFilesManager.AllFiles.Values.Where(c => string.Equals(Path.GetExtension(c.FileFullPath), ExtentionOrGroup, StringComparison.OrdinalIgnoreCase)))
-                {
-                    if (--extentionFile.ConditionCount == 0)
-                    {
-                        _scannedFilesManager.AllConditionFiles.Remove(extentionFile);
-                    }
-                }
-            });
-            await _pageSelectTargetFileViewModel.ViewModelExtention.UncheckExtentionReflectToGroup(ExtentionOrGroup);
-            await _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
-            await _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, false);
-        }
-
+        //private readonly object _changedLock = new();
         public override bool? IsChecked
         {
             get => _IsChecked;
             set
             {
                 SetProperty(ref _IsChecked, value);
-
                 if (value == true)
                 {
-                    Task.Run(async() => await HandleChecked());
+                    FileSearchCriteriaManager.AddCriteriaExtention(ExtentionOrGroup);
+                    _pageSelectTargetFileViewModel.ViewModelExtention.CheckExtentionReflectToGroup(ExtentionOrGroup);
+                    _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
+                    _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, true);
                 }
                 else
                 {
-                    Task.Run(async () => await HandleUnchecked());
+                    FileSearchCriteriaManager.RemoveCriteriaExtention(ExtentionOrGroup);
+                    _pageSelectTargetFileViewModel.ViewModelExtention.UncheckExtentionReflectToGroup(ExtentionOrGroup);
+                    _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
+                    _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, false);
                 }
             }
         }
