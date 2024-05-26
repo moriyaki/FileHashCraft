@@ -5,7 +5,6 @@ using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
-using FileHashCraft.Messages;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
@@ -13,6 +12,7 @@ using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.PageSelectTarget;
 using Microsoft.Extensions.DependencyInjection;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft
 {

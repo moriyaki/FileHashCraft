@@ -4,7 +4,7 @@
  */
 using System.IO;
 using FileHashCraft.Models.Helpers;
-using FileHashCraft.Messages;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.Services.FileSystemWatcherServices
 {

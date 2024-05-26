@@ -8,8 +8,8 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileHashCraft.Services;
-using FileHashCraft.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels
 {

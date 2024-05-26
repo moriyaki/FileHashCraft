@@ -4,7 +4,7 @@
  */
 using System.Windows.Media;
 
-namespace FileHashCraft.Messages
+namespace FileHashCraft.Services.Messages
 {
     #region MainView用メッセージ
     /// <summary>

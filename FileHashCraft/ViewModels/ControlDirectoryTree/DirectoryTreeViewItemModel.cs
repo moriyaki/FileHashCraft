@@ -12,9 +12,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Services;
-using FileHashCraft.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
@@ -63,7 +63,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     {
         #region コンストラクタ
         private readonly IMessageServices _messageServices;
-        private readonly ISettingsService _settingsService;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
         /// </summary>
@@ -71,14 +70,14 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         public DirectoryTreeViewItemModel()
         {
             _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
-            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
+            _CurrentFontFamily = settingsService.CurrentFont;
+            _FontSize = settingsService.FontSize;
         }
 
         /// <summary>

@@ -10,8 +10,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
-using FileHashCraft.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {

@@ -15,9 +15,9 @@ using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
-using FileHashCraft.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
 {

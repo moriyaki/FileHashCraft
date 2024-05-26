@@ -2,7 +2,7 @@
 using System.Windows.Navigation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Messages;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.PageSelectTarget;

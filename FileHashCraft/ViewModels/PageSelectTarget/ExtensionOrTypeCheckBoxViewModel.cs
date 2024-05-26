@@ -6,17 +6,15 @@
     ExtentionGroupCheckBoxViewModel (拡張子グループチェックボックス) を利用します。
  */
 
-using System.IO;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
-using FileHashCraft.Messages;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -47,11 +45,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 必ず通すサービスロケータによる依存性注入
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
-        protected ExtensionOrTypeCheckBoxBase()
+        protected ExtensionOrTypeCheckBoxBase(
+            IMessageServices messageService,
+            ISettingsService settingsService,
+            IExtentionManager extentionManager)
         {
-            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
-            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
-            _extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
+            _messageServices = messageService;
+            _settingsService = settingsService;
+            _extentionManager = extentionManager;
 
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
@@ -130,23 +131,28 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public virtual bool? IsCheckedForce { get; set; }
         #endregion バインディング
     }
-    //----------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// ファイル拡張子のチェックボックスを扱うクラス
     /// </summary>
-    public class ExtensionCheckBox : ExtensionOrTypeCheckBoxBase
+    public class ExtensionCheckBox(
+        IMessageServices messageService,
+        ISettingsService settingsService,
+        IExtentionManager extentionManager
+        ) : ExtensionOrTypeCheckBoxBase(messageService, settingsService, extentionManager)
     {
         #region コンストラクタと初期化
+
         /// <summary>
         /// 拡張子を設定し、該当するファイル数を取得します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        public ExtensionCheckBox(string extention) : base()
+        public void Initialize(string extention)
         {
             Name = extention;
             ExtentionCount = _extentionManager.GetExtentionsCount(extention);
         }
-        #endregion コンストラクタと初期化
+        #endregion 初期化
 
         #region バインディング
         public override bool? IsChecked
@@ -177,36 +183,42 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
     }
 
-    //----------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// 拡張子グループのチェックボックスを扱うクラス
     /// </summary>
-    public class ExtentionGroupCheckBoxViewModel : ExtensionOrTypeCheckBoxBase
+    public class ExtentionGroupCheckBoxViewModel(
+        IMessageServices messageService,
+        ISettingsService settingsService,
+        IExtentionManager extentionManager
+        ) : ExtensionOrTypeCheckBoxBase(messageService, settingsService, extentionManager)
     {
-        #region コンストラクタと初期化
+        #region 初期化
+
         /// <summary>
-        /// その他のドキュメント専用のコンストラクタ
+        /// その他ドキュメント用初期化
         /// </summary>
-        public ExtentionGroupCheckBoxViewModel() : base()
+        public void Initialize()
         {
             FileType = FileGroupType.Others;
             ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
             Name = ExtentionTypeHelper.GetFileGroupName(FileGroupType.Others);
         }
+
         /// <summary>
-        /// ファイル拡張子グループ用のコンストラクタ
+        /// ファイル拡張子グループ用初期化
         /// </summary>
-        /// <param name="fileType">ファイルの拡張子グループ</param>
-        public ExtentionGroupCheckBoxViewModel(FileGroupType fileType) : base()
+        /// <param name="fileType">ファイル拡張子グループ</param>
+        public void Initialize(FileGroupType fileType)
         {
             FileType = fileType;
             ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
             Name = ExtentionTypeHelper.GetFileGroupName(FileType);
         }
-        #endregion コンストラクタと初期化
+        #endregion 初期化
 
         #region バインディング
-        public FileGroupType FileType { get; }
+        public FileGroupType FileType { get; set; }
         /// <summary>
         /// チェックボックスの状態
         /// </summary>

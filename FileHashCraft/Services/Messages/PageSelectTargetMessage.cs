@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileHashCraft.Messages
+namespace FileHashCraft.Services.Messages
 {
     /// <summary>
     /// 拡張子チェックボックスがチェックされたら拡張子グループ変更するメッセージ

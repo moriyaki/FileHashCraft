@@ -1,7 +1,7 @@
 ﻿using System.Windows.Media;
 using CommunityToolkit.Mvvm.Messaging;
 
-namespace FileHashCraft.Messages
+namespace FileHashCraft.Services.Messages
 {
     public interface IMessageServices
     {

@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Properties;
-using FileHashCraft.Messages;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
