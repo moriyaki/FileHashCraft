@@ -21,7 +21,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ツリービューのルートコレクション
         /// </summary>
-        public ObservableCollection<DirectoryTreeViewModel> TreeRoot { get; }
+        public ObservableCollection<DirectoryTreeViewItemModel> TreeRoot { get; }
         /// <summary>
         /// チェックボックスを表示するか否か
         /// </summary>
@@ -54,7 +54,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// TreeView にバインドするコレクション
         /// </summary>
-        public ObservableCollection<DirectoryTreeViewModel> TreeRoot { get; set; } = [];
+        public ObservableCollection<DirectoryTreeViewItemModel> TreeRoot { get; set; } = [];
 
         /// <summary>
         /// チェックボックスの表示状態の設定
@@ -219,7 +219,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="item">追加する FileItemInformation</param>
         public void AddRoot(FileItemInformation item, bool findSpecial)
         {
-            var currentNode = new DirectoryTreeViewModel(item);
+            var currentNode = new DirectoryTreeViewItemModel(item);
             TreeRoot.Add(currentNode);
             // 内部キックをしない場合そのまま終了
             if (!findSpecial) return;

@@ -23,9 +23,9 @@ namespace FileHashCraft.Views
         /// <param name="e"></param>
         private void DirectoryTreeRoot_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (e.NewValue is DirectoryTreeViewModel)
+            if (e.NewValue is DirectoryTreeViewItemModel)
             {
-                if (e.NewValue is not DirectoryTreeViewModel item) { return; }
+                if (e.NewValue is not DirectoryTreeViewItemModel item) { return; }
 
                 // 対応するTreeViewItemを取得
                 var treeViewItem = FindTreeViewItem(DirectoryTreeRoot, item);
@@ -40,7 +40,7 @@ namespace FileHashCraft.Views
         /// <param name="parent"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        private static TreeViewItem? FindTreeViewItem(ItemsControl parent, DirectoryTreeViewModel? data)
+        private static TreeViewItem? FindTreeViewItem(ItemsControl parent, DirectoryTreeViewItemModel? data)
         {
             TreeViewItem? result = null;
             foreach (object item in parent.Items)

@@ -19,7 +19,7 @@ using FileHashCraft.ViewModels.Modules;
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
     #region インターフェース
-    public interface IDirectoryTreeViewModel
+    public interface IDirectoryTreeViewItemModel
     {
         /// <summary>
         /// ファイル表示名を設定もしくは取得します。
@@ -40,7 +40,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// 子ディレクトリのコレクションを取得します。
         /// </summary>
-        public ObservableCollection<DirectoryTreeViewModel> Children { get; }
+        public ObservableCollection<DirectoryTreeViewItemModel> Children { get; }
         /// <summary>
         /// 子ディレクトリを取得します。
         /// </summary>
@@ -59,7 +59,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         public bool IsExpanded { get; }
     }
     #endregion インターフェース
-    public partial class DirectoryTreeViewModel : ObservableObject, IComparable<DirectoryTreeViewModel>, IDirectoryTreeViewModel
+    public partial class DirectoryTreeViewItemModel : ObservableObject, IComparable<DirectoryTreeViewItemModel>, IDirectoryTreeViewItemModel
     {
         #region コンストラクタ
         private readonly IMessageServices _messageServices;
@@ -68,7 +68,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// 必ず通すサービスロケータによる依存性注入です。
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
-        public DirectoryTreeViewModel()
+        public DirectoryTreeViewItemModel()
         {
             _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
@@ -85,7 +85,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// コンストラクタで、ファイル情報の設定をします。
         /// </summary>
         /// <param name="f">ファイル情報</param>
-        public DirectoryTreeViewModel(FileItemInformation f) : this()
+        public DirectoryTreeViewItemModel(FileItemInformation f) : this()
         {
             FullPath = f.FullPath;
             IsReady = f.IsReady;
@@ -98,7 +98,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="f">ファイル情報</param>
         /// <param name="parent">親ディレクトリ</param>
-        public DirectoryTreeViewModel(FileItemInformation f, DirectoryTreeViewModel parent) : this(f)
+        public DirectoryTreeViewItemModel(FileItemInformation f, DirectoryTreeViewItemModel parent) : this(f)
         {
             Parent = parent;
         }
@@ -110,7 +110,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="other">ExplorerListItemViewModel?</param>
         /// <returns><bool/returns>
-        public int CompareTo(DirectoryTreeViewModel? other)
+        public int CompareTo(DirectoryTreeViewItemModel? other)
         {
             return FullPath.CompareTo(other?.FullPath);
         }
@@ -230,7 +230,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
                 if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
                 {
-                    Children.Add(new DirectoryTreeViewModel() { Name = "【dummy】" });
+                    Children.Add(new DirectoryTreeViewItemModel() { Name = "【dummy】" });
                 }
             }
         }
@@ -238,7 +238,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// このディレクトリの子ディレクトリのコレクション
         /// </summary>
-        public ObservableCollection<DirectoryTreeViewModel> Children { get; set; } = [];
+        public ObservableCollection<DirectoryTreeViewItemModel> Children { get; set; } = [];
 
         /// <summary>
         /// チェックボックスの表示状態の設定
@@ -293,8 +293,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリの親ディレクトリ
         /// </summary>
-        private DirectoryTreeViewModel? _Parent;
-        public DirectoryTreeViewModel? Parent
+        private DirectoryTreeViewItemModel? _Parent;
+        public DirectoryTreeViewItemModel? Parent
         {
             get => _Parent;
             protected set => SetProperty(ref _Parent, value);
@@ -379,7 +379,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 foreach (var childPath in FileManager.EnumerateDirectories(FullPath))
                 {
                     var child = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
-                    var item = new DirectoryTreeViewModel(child, this);
+                    var item = new DirectoryTreeViewItemModel(child, this);
                     Children.Add(item);
                 }
             }

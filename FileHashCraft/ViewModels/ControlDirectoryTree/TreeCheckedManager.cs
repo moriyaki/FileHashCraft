@@ -35,11 +35,11 @@ namespace FileHashCraft.ViewModels.Modules
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
-        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewModel> treeRoot);
+        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
-        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewModel> treeRoot);
+        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
     }
     public class TreeCheckedManager : ITreeCheckedManager
     {
@@ -131,7 +131,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
-        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewModel> treeRoot)
+        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot)
         {
             // サブディレクトリを含む管理をしているディレクトリを巡回する
             foreach (var fullPath in NestedDirectories)
@@ -151,13 +151,13 @@ namespace FileHashCraft.ViewModels.Modules
         /// <param name="fullPath">チェック状態を変更するディレクトリのフルパス</param>
         /// <param name="isChecked">変更するチェック状態</param>
         /// <returns>成功の可否</returns>
-        private static bool CheckStatusChange(string fullPath, bool? isChecked, ObservableCollection<DirectoryTreeViewModel> treeRoot)
+        private static bool CheckStatusChange(string fullPath, bool? isChecked, ObservableCollection<DirectoryTreeViewItemModel> treeRoot)
         {
             // 親ディレクトリから順に、現在のディレクトリまでのコレクションを取得
             var dirs = DirectoryNameService.GetDirectoryNames(fullPath);
 
             // ドライブノードを取得する
-            DirectoryTreeViewModel? node = treeRoot.FirstOrDefault(r => r.FullPath == dirs[0]);
+            DirectoryTreeViewItemModel? node = treeRoot.FirstOrDefault(r => r.FullPath == dirs[0]);
             if (node == null) return false;
             node.KickChild();
             node.IsExpanded = true;
@@ -207,7 +207,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
-        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewModel> treeRoot)
+        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot)
         {
             foreach (var root in treeRoot)
             {
@@ -218,7 +218,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// <summary>
         /// 再帰的にチェックされたアイテムのチェック状態を変更します。
         /// </summary>
-        private void RecursiveTreeNodeCheck(DirectoryTreeViewModel node)
+        private void RecursiveTreeNodeCheck(DirectoryTreeViewItemModel node)
         {
             CheckChanged(node.FullPath, node.IsChecked);
             foreach (var child in node.Children)

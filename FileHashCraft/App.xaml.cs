@@ -112,7 +112,7 @@ namespace FileHashCraft
             services.AddSingleton<IPageSettingsViewModel, PageSettingsViewModel>();
 
             services.AddSingleton<IControDirectoryTreeViewlModel, ControDirectoryTreeViewModel>();
-            services.AddTransient<IDirectoryTreeViewModel, DirectoryTreeViewModel>();
+            services.AddTransient<IDirectoryTreeViewItemModel, DirectoryTreeViewItemModel>();
             services.AddSingleton<ITreeManager, TreeManager>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IFileWatcherService, DrivesFileSystemWatcherService>();
