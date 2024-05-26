@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Properties;
-using FileHashCraft.Services.Messages;
+using FileHashCraft.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -232,6 +232,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // カレントディレクトリが変更されたメッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, m)
                 => ChangeCurrentPath(m.CurrentFullPath));
+
+            // 拡張子チェックボックスのチェック状態が変更されたら、カレントディレクトリリストボックス変更
+            WeakReferenceMessenger.Default.Register<ExtentionCheckChangedToListBox>(this, (_, m)
+                => ChangeExtensionToListBox(m.Name, m.IsChecked));
         }
         #endregion コンストラクタ
 

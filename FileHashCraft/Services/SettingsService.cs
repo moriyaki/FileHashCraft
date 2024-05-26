@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
-using FileHashCraft.Services.Messages;
+using FileHashCraft.Messages;
 
 namespace FileHashCraft.Services
 {

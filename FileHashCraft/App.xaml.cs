@@ -5,7 +5,7 @@ using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
-using FileHashCraft.Services.Messages;
+using FileHashCraft.Messages;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;

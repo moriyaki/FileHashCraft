@@ -16,9 +16,10 @@ using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
-using FileHashCraft.Services.Messages;
+using FileHashCraft.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
+using System.Xml.Linq;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {

@@ -7,7 +7,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
-using FileHashCraft.Services.Messages;
+using FileHashCraft.Messages;
 
 namespace FileHashCraft.ViewModels
 {

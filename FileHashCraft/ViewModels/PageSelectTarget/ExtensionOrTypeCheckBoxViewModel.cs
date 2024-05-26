@@ -16,7 +16,7 @@ using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
-using FileHashCraft.Services.Messages;
+using FileHashCraft.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -30,7 +30,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子またはそのグループを参照する
         /// </summary>
-        public string ExtentionOrGroup { get; }
+        public string Name { get; }
     }
     #endregion インターフェース
 
@@ -40,22 +40,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
-        protected readonly IScannedFilesManager _scannedFilesManager;
         protected readonly IMessageServices _messageServices;
         protected readonly ISettingsService _settingsService;
         protected readonly IExtentionManager _extentionManager;
-        protected readonly IPageSelectTargetViewModel _pageSelectTargetFileViewModel;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase()
         {
-            _scannedFilesManager = Ioc.Default.GetService<IScannedFilesManager>() ?? throw new InvalidOperationException($"{nameof(IScannedFilesManager)} dependency not resolved.");
             _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
             _extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
-            _pageSelectTargetFileViewModel = Ioc.Default.GetService<IPageSelectTargetViewModel>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModel)} dependency not resolved.");
 
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
@@ -76,11 +72,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             get
             {
-                if (string.IsNullOrEmpty(ExtentionOrGroup))
+                if (string.IsNullOrEmpty(Name))
                 {
                     return $"{Resources.NoHaveExtentions} ({ExtentionCount})";
                 }
-                return $"{ExtentionOrGroup} ({ExtentionCount})";
+                return $"{Name} ({ExtentionCount})";
             }
         }
         public int ExtentionCount { get; set; } = 0;
@@ -88,11 +84,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子か拡張子グループの文字列
         /// </summary>
-        private string _ExtentionOrFileType = string.Empty;
-        public string ExtentionOrGroup
+        private string _Name = string.Empty;
+        public string Name
         {
-            get => _ExtentionOrFileType;
-            set => SetProperty(ref _ExtentionOrFileType, value);
+            get => _Name;
+            set => SetProperty(ref _Name, value);
         }
         /// <summary>
         /// フォントの設定
@@ -140,19 +136,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// </summary>
     public class ExtensionCheckBox : ExtensionOrTypeCheckBoxBase
     {
-        #region バインディング
+        #region コンストラクタと初期化
         /// <summary>
         /// 拡張子を設定し、該当するファイル数を取得します。
         /// </summary>
         /// <param name="extention">拡張子</param>
         public ExtensionCheckBox(string extention) : base()
         {
-            ExtentionOrGroup = extention;
-            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
-            ExtentionCount = extentionManager.GetExtentionsCount(extention);
+            Name = extention;
+            ExtentionCount = _extentionManager.GetExtentionsCount(extention);
         }
+        #endregion コンストラクタと初期化
 
-        //private readonly object _changedLock = new();
+        #region バインディング
         public override bool? IsChecked
         {
             get => _IsChecked;
@@ -161,17 +157,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsChecked, value);
                 if (value == true)
                 {
-                    FileSearchCriteriaManager.AddCriteriaExtention(ExtentionOrGroup);
-                    _pageSelectTargetFileViewModel.ViewModelExtention.CheckExtentionReflectToGroup(ExtentionOrGroup);
-                    _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
-                    _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, true);
+                    FileSearchCriteriaManager.AddCriteriaExtention(Name);
+                    WeakReferenceMessenger.Default.Send(new ExtentionChechReflectToGroup(Name));
+                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBox(Name, true));
                 }
                 else
                 {
-                    FileSearchCriteriaManager.RemoveCriteriaExtention(ExtentionOrGroup);
-                    _pageSelectTargetFileViewModel.ViewModelExtention.UncheckExtentionReflectToGroup(ExtentionOrGroup);
-                    _pageSelectTargetFileViewModel.ViewModelExtention.ExtentionCountChanged();
-                    _pageSelectTargetFileViewModel.ViewModelMain.ChangeExtensionToListBox(ExtentionOrGroup, false);
+                    FileSearchCriteriaManager.RemoveCriteriaExtention(Name);
+                    WeakReferenceMessenger.Default.Send(new ExtentionUnchechReflectToGroup(Name));
+                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBox(Name, false));
                 }
             }
         }
@@ -189,16 +183,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// </summary>
     public class ExtentionGroupCheckBoxViewModel : ExtensionOrTypeCheckBoxBase
     {
-        #region コンストラクタ
+        #region コンストラクタと初期化
         /// <summary>
         /// その他のドキュメント専用のコンストラクタ
         /// </summary>
         public ExtentionGroupCheckBoxViewModel() : base()
         {
             FileType = FileGroupType.Others;
-            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
-            ExtentionCount = extentionManager.GetExtentionGroupCount(FileType);
-            ExtentionOrGroup = ExtentionTypeHelper.GetFileGroupName(FileGroupType.Others);
+            ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
+            Name = ExtentionTypeHelper.GetFileGroupName(FileGroupType.Others);
         }
         /// <summary>
         /// ファイル拡張子グループ用のコンストラクタ
@@ -207,11 +200,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public ExtentionGroupCheckBoxViewModel(FileGroupType fileType) : base()
         {
             FileType = fileType;
-            var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new InvalidOperationException($"{nameof(IExtentionManager)} dependency not resolved.");
-            ExtentionCount = extentionManager.GetExtentionGroupCount(FileType);
-            ExtentionOrGroup = ExtentionTypeHelper.GetFileGroupName(FileType);
+            ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
+            Name = ExtentionTypeHelper.GetFileGroupName(FileType);
         }
-        #endregion コンストラクタ
+        #endregion コンストラクタと初期化
 
         #region バインディング
         public FileGroupType FileType { get; }
@@ -226,11 +218,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsChecked, value);
                 if (value == true)
                 {
-                    _pageSelectTargetFileViewModel.ViewModelExtention.ChangeCheckBoxGroup(true, _extentionManager.GetGroupExtentions(FileType));
+                    WeakReferenceMessenger.Default.Send(new ExtentionGroupChecked(true, _extentionManager.GetGroupExtentions(FileType)));
                 }
                 else
                 {
-                    _pageSelectTargetFileViewModel.ViewModelExtention.ChangeCheckBoxGroup(false, _extentionManager.GetGroupExtentions(FileType));
+                    WeakReferenceMessenger.Default.Send(new ExtentionGroupChecked(false, _extentionManager.GetGroupExtentions(FileType)));
                 }
             }
         }

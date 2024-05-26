@@ -1,10 +1,14 @@
 ﻿using System.Collections.ObjectModel;
+using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Messages;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.Helpers;
+using Microsoft.VisualBasic.FileIO;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -115,6 +119,24 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                         checkBoxViewModel.IsChecked = !checkBoxViewModel.IsChecked);
                 }
             });
+
+            // 拡張子がチェックされたらグループも変更する
+            WeakReferenceMessenger.Default.Register<ExtentionChechReflectToGroup>(this, (_, m) =>
+            {
+                CheckExtentionReflectToGroup(m.Name);
+                ExtentionCountChanged();
+            });
+
+            // 拡張子がチェック解除されたらグループも変更する
+            WeakReferenceMessenger.Default.Register<ExtentionUnchechReflectToGroup>(this, (_, m) =>
+            {
+                UncheckExtentionReflectToGroup(m.Name);
+                ExtentionCountChanged();
+            });
+
+            // 拡張子グループのチェック変更に連動して拡張子チェックボックス変更
+            WeakReferenceMessenger.Default.Register<ExtentionGroupChecked>(this, (_, m) =>
+                ChangeCheckBoxGroup(m.IsChecked, m.ExtentionCollection));
         }
         #endregion コンストラクタ
 
@@ -180,7 +202,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionSet = new HashSet<string>(extensionCollection);
 
             // 更新対象の拡張子をまとめて変更
-            var extensionsToUpdate = ExtentionCollection.Where(e => extentionSet.Contains(e.ExtentionOrGroup)).ToList();
+            var extensionsToUpdate = ExtentionCollection.Where(e => extentionSet.Contains(e.Name)).ToList();
 
             // UIスレッドでの更新を一回のInvokeでまとめて行う
             App.Current.Dispatcher.Invoke(() =>
@@ -208,7 +230,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var viewModelMain = Ioc.Default.GetService<IPageSelectTargetViewModelMain>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModelMain)} dependency not resolved.");
             foreach (var extension in extensionsToUpdate)
             {
-                viewModelMain.ChangeExtensionToListBox(extension.ExtentionOrGroup, changedCheck);
+                viewModelMain.ChangeExtensionToListBox(extension.Name, changedCheck);
             }
 
             // 拡張子数の変更通知
@@ -256,7 +278,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // グループの拡張子が全てチェックされているか調べる
             foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
             {
-                var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                var item = ExtentionCollection.FirstOrDefault(i => i.Name == groupExtention);
                 // 1つでもチェックされてない拡張子があればそのまま戻る
                 if (item != null && item.IsChecked == false) { return; }
             }
@@ -283,7 +305,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // グループの拡張子が全てチェック解除されているか調べる
             foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
             {
-                var item = ExtentionCollection.FirstOrDefault(i => i.ExtentionOrGroup == groupExtention);
+                var item = ExtentionCollection.FirstOrDefault(i => i.Name == groupExtention);
                 // 1つでもチェックされてない拡張子があればそのまま戻る
                 if (item != null && item.IsChecked == true) { return; }
             }
