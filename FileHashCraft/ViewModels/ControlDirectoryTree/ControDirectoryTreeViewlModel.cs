@@ -3,15 +3,14 @@
     ディレクトリツリービューの ViewModel を提供します。
  */
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
-using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.Services.Messages;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
@@ -197,6 +196,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             // リムーバブルドライブがイジェクトされた
             WeakReferenceMessenger.Default.Register<OpticalDriveMediaEjected>(this, async (_, m)
                 => await OpticalDriveMediaEjected(m.EjectedPath));
+
+            // ツリービューのチェックボックスを表示するか否か
+            WeakReferenceMessenger.Default.Register<TreeViewIsCheckBoxVisible>(this, (_, m)
+                => m.Reply(IsCheckBoxVisible));
 
             _TreeWidth = _settingsService.TreeWidth;
             _CurrentFontFamily = _settingsService.CurrentFont;

@@ -242,13 +242,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// チェックボックスの表示状態の設定
         /// </summary>
-        public Visibility IsCheckBoxVisible
+        public static Visibility IsCheckBoxVisible
         {
-            get
-            {
-                var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlModel)} dependency not resolved.");
-                return controDirectoryTreeViewlViewModel.IsCheckBoxVisible;
-            }
+            get => WeakReferenceMessenger.Default.Send(new TreeViewIsCheckBoxVisible());
         }
 
         /// <summary>
@@ -313,8 +309,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        var controDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new InvalidOperationException($"{nameof(IControDirectoryTreeViewlModel)} dependency not resolved.");
-                        controDirectoryTreeViewlViewModel.CurrentFullPath = this.FullPath;
+                        WeakReferenceMessenger.Default.Send(new CurrentDirectoryChanged(this.FullPath));
                         if (HasChildren)
                         {
                             KickChild();
@@ -342,12 +337,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     if (value && !_IsKicked) { KickChild(); }
                 }
-                var directorryTreeManager = Ioc.Default.GetService<ITreeManager>() ?? throw new InvalidOperationException($"{nameof(ITreeManager)} dependency not resolved.");
                 if (value)
                 {
                     foreach (var child in Children)
                     {
-                        directorryTreeManager.AddExpandedDirectoryManager(child);
+                        // ディレクトリノードを展開マネージャに追加
+                        WeakReferenceMessenger.Default.Send(new AddToExpandDirectoryManager(child));
                         if (IsChecked == true) { child.IsChecked = true; }
                     }
                 }
@@ -355,7 +350,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 {
                     foreach (var child in Children)
                     {
-                        directorryTreeManager.RemoveExpandedDirectoryManager(child);
+                        // ディレクトリノードを展開マネージャから削除
+                        WeakReferenceMessenger.Default.Send(new RemoveFromExpandDirectoryManager(child));
                     }
                 }
             }

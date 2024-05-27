@@ -4,6 +4,8 @@
     Facadeパターンを利用しています。
  */
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.Modules;
 
@@ -81,6 +83,12 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         {
             _treeCheckedManager = treeCheckedManager;
             _treeExpandedManager = treeExpandedManager;
+
+            WeakReferenceMessenger.Default.Register<AddToExpandDirectoryManager>(this, (_, m)
+                => AddExpandedDirectoryManager(m.Child));
+
+            WeakReferenceMessenger.Default.Register<RemoveFromExpandDirectoryManager>(this, (_, m)
+                => RemoveExpandedDirectoryManager(m.Child));
         }
         //-----------------------------------TreeCheckedManager
         #region リスト

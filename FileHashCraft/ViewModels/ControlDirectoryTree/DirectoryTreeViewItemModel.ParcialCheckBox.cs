@@ -3,6 +3,8 @@
     ディレクトリツリービューのチェックボックス状態を管理します。
  */
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {

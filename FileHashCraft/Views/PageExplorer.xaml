@@ -89,7 +89,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <local:ControlDirectoryTreeView x:Name="ExplorerTreeView" Grid.Column="0"/>
+            <local:ControlDirectoryTreeViewModel x:Name="ExplorerTreeView" Grid.Column="0"/>
 
             <GridSplitter
 			    Grid.Column="1"

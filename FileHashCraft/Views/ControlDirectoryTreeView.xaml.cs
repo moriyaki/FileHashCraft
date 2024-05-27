@@ -8,9 +8,9 @@ namespace FileHashCraft.Views
     /// <summary>
     /// DirectoryTreeViewControl.xaml の相互作用ロジック
     /// </summary>
-    public partial class ControlDirectoryTreeView : UserControl
+    public partial class ControlDirectoryTreeViewModel : UserControl
     {
-        public ControlDirectoryTreeView()
+        public ControlDirectoryTreeViewModel()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<IControDirectoryTreeViewlModel>();
