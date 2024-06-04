@@ -16,8 +16,8 @@ namespace FileHashCraft.ViewModels
     #region インターフェース
     public interface IDebugWindowViewModel
     {
-        public double Top { get; set; }
-        public double Left { get; set; }
+        double Top { get; set; }
+        double Left { get; set; }
     }
     #endregion インターフェース
     public class DebugWindowViewModel : ObservableObject, IDebugWindowViewModel

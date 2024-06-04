@@ -15,27 +15,27 @@ namespace FileHashCraft.Models
         /// ファイルを拡張子の辞書に登録します。
         /// </summary>
         /// <param name="fileFullPath"></param>
-        public void AddFile(string fileFullPath);
+        void AddFile(string fileFullPath);
         /// <summary>
         /// 拡張子のコレクションを取得します。
         /// </summary>
-        public IEnumerable<string> GetExtentions();
+        IEnumerable<string> GetExtentions();
         /// <summary>
         /// 拡張子グループを対象に、拡張子を取得します。
         /// </summary>
-        public IEnumerable<string> GetGroupExtentions(FileGroupType fileGroupType);
+        IEnumerable<string> GetGroupExtentions(FileGroupType fileGroupType);
         /// <summary>
         /// 拡張子を持つファイル数を取得します。
         /// </summary>
-        public int GetExtentionsCount(string extention);
+        int GetExtentionsCount(string extention);
         /// <summary>
         /// 拡張子グループのファイル数を取得します。
         /// </summary>
-        public int GetExtentionGroupCount(FileGroupType fileGroupType);
+        int GetExtentionGroupCount(FileGroupType fileGroupType);
         /// <summary>
         /// 拡張子を全て削除する
         /// </summary>
-        public void ClearExtentions();
+        void ClearExtentions();
     }
     #endregion インターフェース
 

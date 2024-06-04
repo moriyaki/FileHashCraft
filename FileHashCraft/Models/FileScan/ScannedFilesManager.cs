@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Windows;
 
 namespace FileHashCraft.Models.FileScan
 {
@@ -8,19 +7,19 @@ namespace FileHashCraft.Models.FileScan
         /// <summary>
         /// 全管理対象ファイルディクショナリに追加します。
         /// </summary>
-        public void AddFile(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "");
+        void AddFile(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "");
         /// <summary>
         /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
         /// </summary>
-        public HashSet<HashFile> AllFiles { get; }
+        HashSet<HashFile> AllFiles { get; }
         /// <summary>
         /// 検索条件に合致する全てのファイル数を取得します。
         /// </summary>
-        public int GetAllCriteriaFileCount();
+        int GetAllCriteriaFileCount();
         /// <summary>
         /// 検索条件に合致するファイルを取得する
         /// </summary>
-        public HashSet<HashFile> GetAllCriteriaFileName();
+        HashSet<HashFile> GetAllCriteriaFileName();
     }
 
     public class ScannedFilesManager : IScannedFilesManager

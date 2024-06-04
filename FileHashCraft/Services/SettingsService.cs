@@ -16,76 +16,76 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ウィンドウの開始上位置
         /// </summary>
-        public double Top { get; }
+        double Top { get; }
         /// <summary>
         /// ウィンドウの開始左位置
         /// </summary>
-        public double Left { get; }
+        double Left { get; }
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
-        public double Width { get; }
+        double Width { get; }
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
-        public double Height { get; }
+        double Height { get; }
         /// <summary>
         /// ツリービューの幅
         /// </summary>
-        public double TreeWidth { get; }
+        double TreeWidth { get; }
         /// <summary>
         /// リストボックスの幅
         /// </summary>
-        public double ListWidth { get; }
+        double ListWidth { get; }
         /// <summary>
         /// 選択されている言語
         /// </summary>
-        public string SelectedLanguage { get; }
+        string SelectedLanguage { get; }
         /// <summary>
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
-        public string HashAlgorithm { get; }
+        string HashAlgorithm { get; }
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
-        public bool IsReadOnlyFileInclude { get; }
+        bool IsReadOnlyFileInclude { get; }
         /// <summary>
         /// 隠しファイルを対象にするかどうか
         /// </summary>
-        public bool IsHiddenFileInclude { get; }
+        bool IsHiddenFileInclude { get; }
         /// <summary>
         /// 0 サイズのファイルを削除するかどうか
         /// </summary>
-        public bool IsZeroSizeFileDelete { get; }
+        bool IsZeroSizeFileDelete { get; }
         /// <summary>
         /// 空のフォルダを削除するかどうか
         /// </summary>
-        public bool IsEmptyDirectoryDelete { get; }
+        bool IsEmptyDirectoryDelete { get; }
         /// <summary>
         /// フォントの変更
         /// MainWindowを参照できる所には以下のコード
         /// </summary>
-        public FontFamily CurrentFont { get; }
+        FontFamily CurrentFont { get; }
         /// <summary>
         /// フォントのサイズ
         /// </summary>
-        public double FontSize { get; }
+        double FontSize { get; }
         /// <summary>
         /// 設定できるフォントサイズのコレクションを取得します。
         /// </summary>
-        public IEnumerable<double> GetSelectableFontSize();
+        IEnumerable<double> GetSelectableFontSize();
         /// <summary>
         /// フォントサイズを大きくします。
         /// </summary>
-        public void FontSizePlus();
+        void FontSizePlus();
         /// <summary>
         /// フォントサイズを小さくします。
         /// </summary>
-        public void FontSizeMinus();
+        void FontSizeMinus();
         /// <summary>
         /// 設定を読み込みます。
         /// </summary>
-        public void LoadSettings();
+        void LoadSettings();
     }
     #endregion インターフェース
 

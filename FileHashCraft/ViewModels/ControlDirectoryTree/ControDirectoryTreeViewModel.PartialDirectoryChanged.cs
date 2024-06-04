@@ -5,7 +5,6 @@
  */
 using System.Collections.ObjectModel;
 using System.IO;
-using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
 using FileHashCraft.ViewModels.Modules;

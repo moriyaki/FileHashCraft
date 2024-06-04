@@ -20,31 +20,31 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ツリービューのルートコレクション
         /// </summary>
-        public ObservableCollection<DirectoryTreeViewItemModel> TreeRoot { get; }
+        ObservableCollection<DirectoryTreeViewItemModel> TreeRoot { get; }
         /// <summary>
         /// チェックボックスを表示するか否か
         /// </summary>
-        public void SetIsCheckBoxVisible(bool isVisible);
+        void SetIsCheckBoxVisible(bool isVisible);
         /// <summary>
         /// チェックボックスが表示されるか否かを設定します。
         /// </summary>
-        public Visibility IsCheckBoxVisible { get; }
+        Visibility IsCheckBoxVisible { get; }
         /// <summary>
         /// カレントディレクトリ
         /// </summary>
-        public string CurrentFullPath { get; set; }
+        string CurrentFullPath { get; set; }
         /// <summary>
         /// ルートにアイテムを追加します。
         /// </summary>
-        public void AddRoot(FileItemInformation item, bool findSpecial);
+        void AddRoot(FileItemInformation item, bool findSpecial);
         /// <summary>
         /// ルートアイテムをクリアします。
         /// </summary>
-        public void ClearRoot();
+        void ClearRoot();
         /// <summary>
         /// ツリービューの横幅設定をします。
         /// </summary>
-        public double TreeWidth { get; set; }
+        double TreeWidth { get; set; }
     }
     #endregion インターフェース
     public partial class ControDirectoryTreeViewModel : ObservableObject, IControDirectoryTreeViewlModel

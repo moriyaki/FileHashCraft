@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FileHashCraft.Models.FileScan
+﻿namespace FileHashCraft.Models.FileScan
 {
     /// <summary>
     /// ファイル検索の種類

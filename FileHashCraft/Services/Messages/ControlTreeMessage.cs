@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Windows;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 

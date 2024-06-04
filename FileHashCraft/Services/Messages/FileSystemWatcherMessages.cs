@@ -6,7 +6,7 @@
     /// </summary>
     public class CurrentDirectoryItemCreated
     {
-        public string CreatedFullPath = string.Empty;
+        public string CreatedFullPath { get; set; } = string.Empty;
         public CurrentDirectoryItemCreated() { throw new NotImplementedException(); }
         public CurrentDirectoryItemCreated(string createdFullPath) => CreatedFullPath = createdFullPath;
     }
@@ -16,7 +16,7 @@
     /// </summary>
     public class CurrentDirectoryItemDeleted
     {
-        public string DeletedFullPath = string.Empty;
+        public string DeletedFullPath { get; set; } = string.Empty;
         public CurrentDirectoryItemDeleted() { throw new NotImplementedException(); }
         public CurrentDirectoryItemDeleted(string deletedFullPath) => DeletedFullPath = deletedFullPath;
     }
@@ -26,8 +26,8 @@
     /// </summary>
     public class CurrentDirectoryItemRenamed
     {
-        public string OldFullPath = string.Empty;
-        public string NewFullPath = string.Empty;
+        public string OldFullPath { get; set; } = string.Empty;
+        public string NewFullPath { get; set; } = string.Empty;
         public CurrentDirectoryItemRenamed() { throw new NotImplementedException(); }
         public CurrentDirectoryItemRenamed(string oldFullPath, string newFullPath)
         {
@@ -43,7 +43,7 @@
     /// </summary>
     public class DirectoryItemCreated
     {
-        public string CreatedFullPath = string.Empty;
+        public string CreatedFullPath { get; set; } = string.Empty;
         public DirectoryItemCreated() { throw new NotImplementedException(); }
         public DirectoryItemCreated(string createdFullPath) => CreatedFullPath = createdFullPath;
     }
@@ -53,7 +53,7 @@
     /// </summary>
     public class DirectoryItemDeleted
     {
-        public string DeletedFullPath = string.Empty;
+        public string DeletedFullPath { get; set; } = string.Empty;
         public DirectoryItemDeleted() { throw new NotImplementedException(); }
         public DirectoryItemDeleted(string deletedFullPath) => DeletedFullPath = deletedFullPath;
     }
@@ -63,8 +63,8 @@
     /// </summary>
     public class DirectoryItemRenamed
     {
-        public string OldFullPath = string.Empty;
-        public string NewFullPath = string.Empty;
+        public string OldFullPath { get; set; } = string.Empty;
+        public string NewFullPath { get; set; } = string.Empty;
         public DirectoryItemRenamed() { throw new NotImplementedException(); }
         public DirectoryItemRenamed(string oldFullPath, string newFullPath)
         {
@@ -78,7 +78,7 @@
     /// </summary>
     public class OpticalDriveMediaInserted
     {
-        public string InsertedPath = string.Empty;
+        public string InsertedPath { get; set; } = string.Empty;
         public OpticalDriveMediaInserted() { throw new NotImplementedException(); }
         public OpticalDriveMediaInserted(string insertedPath) => InsertedPath = insertedPath;
     }
@@ -88,7 +88,7 @@
     /// </summary>
     public class OpticalDriveMediaEjected
     {
-        public string EjectedPath = string.Empty;
+        public string EjectedPath { get; set; } = string.Empty;
         public OpticalDriveMediaEjected() { throw new NotImplementedException(); }
         public OpticalDriveMediaEjected(string ejectedPath) => EjectedPath = ejectedPath;
     }

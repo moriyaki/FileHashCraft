@@ -15,15 +15,15 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// <summary>
         /// ドライブに対して、ファイルアイテム変更監視の設定をします。
         /// </summary>
-        public void SetRootDirectoryWatcher(FileItemInformation rootDrive);
+        void SetRootDirectoryWatcher(FileItemInformation rootDrive);
         /// <summary>
         /// リムーバブルドライブの追加または挿入処理をします。
         /// </summary>
-        public void InsertOpticalDriveMedia(char driveLetter);
+        void InsertOpticalDriveMedia(char driveLetter);
         /// <summary>
         /// リムーバブルメディアの削除またはイジェクト処理を行います。
         /// </summary>
-        public void EjectOpticalDriveMedia(char driveLetter);
+        void EjectOpticalDriveMedia(char driveLetter);
     }
     #endregion インターフェース
 

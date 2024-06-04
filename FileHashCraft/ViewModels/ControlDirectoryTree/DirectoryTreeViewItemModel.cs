@@ -12,9 +12,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Services;
-using FileHashCraft.ViewModels.ControlDirectoryTree;
-using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.Services.Messages;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
@@ -24,39 +23,39 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ファイル表示名を設定もしくは取得します。
         /// </summary>
-        public string Name { get; set; }
+        string Name { get; set; }
         /// <summary>
         /// ファイルのアイコンを設定もしくは取得します。
         /// </summary>
-        public BitmapSource? Icon { get; set; }
+        BitmapSource? Icon { get; set; }
         /// <summary>
         /// ファイルのフルパスを取得します。
         /// </summary>
-        public string FullPath { get; }
+        string FullPath { get; }
         /// <summary>
         /// 子ディレクトリを持っているかどうかを取得します。
         /// </summary>
-        public bool HasChildren { get; }
+        bool HasChildren { get; }
         /// <summary>
         /// 子ディレクトリのコレクションを取得します。
         /// </summary>
-        public ObservableCollection<DirectoryTreeViewItemModel> Children { get; }
+        ObservableCollection<DirectoryTreeViewItemModel> Children { get; }
         /// <summary>
         /// 子ディレクトリを取得します。
         /// </summary>
-        public void KickChild(bool force = false);
+        void KickChild(bool force = false);
         /// <summary>        /// <summary>
         /// ノードがチェックされているかどうかを設定もしくは取得します。
         /// </summary>
-        public bool? IsChecked { get; set; }
+        bool? IsChecked { get; set; }
         /// <summary>
         /// ノードが選択されているかどうかを取得します。
         /// </summary>
-        public bool IsSelected { get; }
+        bool IsSelected { get; }
         /// <summary>
         /// ノードが展開されているかどうかを取得します。
         /// </summary>
-        public bool IsExpanded { get; }
+        bool IsExpanded { get; }
     }
     #endregion インターフェース
     public partial class DirectoryTreeViewItemModel : ObservableObject, IComparable<DirectoryTreeViewItemModel>, IDirectoryTreeViewItemModel

@@ -17,57 +17,57 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// <summary>
         /// 子ディレクトリを含むチェックされたディレクトリです。
         /// </summary>
-        public List<string> NestedDirectories { get; }
+        List<string> NestedDirectories { get; }
         /// <summary>
         /// 子ディレクトリを含まないチェックされたディレクトリです。
         /// </summary>
-        public List<string> NonNestedDirectories { get; }
+        List<string> NonNestedDirectories { get; }
         /// <summary>
         /// そのディレクトリがチェックされているかどうか。
         /// </summary>
-        public bool IsChecked(string fullPath);
+        bool IsChecked(string fullPath);
         /// <summary>
         /// ディレクトリのチェック状態を変化させます。
         /// </summary>
-        public void CheckChanged(string fullPath, bool? checkedStatus);
+        void CheckChanged(string fullPath, bool? checkedStatus);
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
-        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
+        void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
-        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
+        void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
 
         // ExpandedTreeManager
         /// <summary>
         /// 全てのディレクトリです。
         /// </summary>
-        public List<string> Directories { get; }
+        List<string> Directories { get; }
         /// <summary>
         /// 展開されたディレクトリかどうか。
         /// </summary>
-        public bool IsExpandedDirectory(string path);
+        bool IsExpandedDirectory(string path);
         /// <summary>
         /// 特殊フォルダの子ディレクトリかどうか。
         /// </summary>
-        public bool HasSpecialSubFolder(string fullPath);
+        bool HasSpecialSubFolder(string fullPath);
         /// <summary>
         /// ディレクトリノードを展開マネージャに追加します。
         /// </summary>
-        public void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node);
         /// <summary>
         /// ディレクトリノードを展開マネージャから削除します。
         /// </summary>
-        public void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node);
         /// <summary>
         /// ディレクトリを追加します。
         /// </summary>
-        public void AddDirectory(string fullPath);
+        void AddDirectory(string fullPath);
         /// <summary>
         /// ディレクトリを削除します。
         /// </summary>
-        public void RemoveDirectory(string fullPath);
+        void RemoveDirectory(string fullPath);
     }
 
     public class TreeManager : ITreeManager

@@ -13,35 +13,35 @@ namespace FileHashCraft.ViewModels.Modules
         /// <summary>
         /// 登録したディレクトリのリストを取得します。
         /// </summary>
-        public List<string> Directories { get; }
+        List<string> Directories { get; }
         /// <summary>
         /// 展開されたディレクトリかどうかを調べます。
         /// </summary>
-        public bool IsExpandedDirectory(string path);
+        bool IsExpandedDirectory(string path);
         /// <summary>
         /// 特殊フォルダの配下かどうかを調べます。
         /// </summary>
-        public bool HasSpecialSubFolder(string fullPath);
+        bool HasSpecialSubFolder(string fullPath);
         /// <summary>
         /// 特殊フォルダに含まれているサブディレクトリかどうかを取得します。
         /// </summary>
-        public bool IsSpecialSubFolder(string fullPath);
+        bool IsSpecialSubFolder(string fullPath);
         /// <summary>
         /// ディレクトリノードを展開マネージャに追加します。
         /// </summary>
-        public void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node);
         /// <summary>
         /// ディレクトリノードを展開マネージャから削除します。
         /// </summary>
-        public void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node);
         /// <summary>
         /// 指定したパスを管理対象に追加します。
         /// </summary>
-        public void AddDirectory(string fullPath);
+        void AddDirectory(string fullPath);
         /// <summary>
         /// 指定したパスを管理対象から外します。
         /// </summary>
-        public void RemoveDirectory(string fullPath);
+        void RemoveDirectory(string fullPath);
     }
 
     // TODO : 削除するパスの特殊フォルダは除外

@@ -27,63 +27,63 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュ取得対象のファイルリストアイテムのリストボックスコレクションです。
         /// </summary>
-        public ObservableCollection<HashListFileItems> HashFileListItems { get; }
+        ObservableCollection<HashListFileItems> HashFileListItems { get; }
         /// <summary>
         /// ファイルスキャン状況
         /// </summary>
-        public FileScanStatus Status { get; set; }
+        FileScanStatus Status { get; set; }
         /// <summary>
         /// ファイルスキャン状況に合わせた背景色
         /// </summary>
-        public Brush StatusColor { get; set; }
+        Brush StatusColor { get; set; }
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
-        public string StatusMessage { get; set; }
+        string StatusMessage { get; set; }
         /// <summary>
         /// 全ディレクトリ数(StatusBar用)
         /// </summary>
-        public int CountScannedDirectories { get; set; }
+        int CountScannedDirectories { get; set; }
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数(StatusBar用)
         /// </summary>
-        public int CountHashFilesDirectories { get; set; }
+        int CountHashFilesDirectories { get; set; }
         /// <summary>
         /// ハッシュを取得する全ファイル数
         /// </summary>
-        public int CountAllTargetFilesGetHash { get; set; }
+        int CountAllTargetFilesGetHash { get; set; }
         /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
-        public int CountFilteredGetHash { get; set; }
+        int CountFilteredGetHash { get; set; }
         /// <summary>
         /// ハッシュ計算画面に移動します。
         /// </summary>
-        public RelayCommand ToPageHashCalcing { get; set; }
+        RelayCommand ToPageHashCalcing { get; set; }
         /// <summary>
         /// 検索ステータスを変更します。
         /// </summary>
-        public void ChangeHashScanStatus(FileScanStatus status);
+        void ChangeHashScanStatus(FileScanStatus status);
         /// <summary>
         /// スキャンした全ディレクトリ数に加算します。
         /// </summary>
-        public void AddScannedDirectoriesCount(int count = 1);
+        void AddScannedDirectoriesCount(int count = 1);
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数に加算します。
         /// </summary>
-        public void AddFilesScannedDirectoriesCount(int count = 1);
+        void AddFilesScannedDirectoriesCount(int count = 1);
         /// <summary>
         /// 総対象ファイル数に加算します。
         /// </summary>
-        public void AddAllTargetFiles(int allTargetFiles);
+        void AddAllTargetFiles(int allTargetFiles);
         /// <summary>
         /// ツリービューの選択ディレクトリが変更された時の処理です。
         /// </summary>
-        public void ChangeCurrentPath(string currentFullPath);
+        void ChangeCurrentPath(string currentFullPath);
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
-        public void ChangeExtensionToListBox(string extention, bool IsTarget);
+        void ChangeExtensionToListBox(string extention, bool IsTarget);
     }
     #endregion インターフェース
 

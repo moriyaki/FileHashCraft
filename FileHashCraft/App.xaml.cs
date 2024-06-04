@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;

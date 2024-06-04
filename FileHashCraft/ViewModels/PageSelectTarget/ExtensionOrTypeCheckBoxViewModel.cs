@@ -24,11 +24,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// チェックボックス状態を参照または変更する
         /// </summary>
-        public bool? IsChecked { get; set; }
+        bool? IsChecked { get; set; }
         /// <summary>
         /// 拡張子またはそのグループを参照する
         /// </summary>
-        public string Name { get; }
+        string Name { get; }
     }
     #endregion インターフェース
 

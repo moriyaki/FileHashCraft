@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -18,45 +17,45 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ファイルの拡張子グループによる絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        public ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection { get; set; }
+        ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection { get; set; }
 
         /// <summary>
         /// 拡張子による絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        public ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection { get; set; }
+        ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection { get; set; }
         /// <summary>
         /// ファイルの拡張子グループをリストボックスに追加します。
         /// </summary>
-        public void AddFileTypes();
+        void AddFileTypes();
         /// <summary>
         /// 拡張子をリストボックスに追加します。
         /// </summary>
-        public void AddExtentions(string extention);
+        void AddExtentions(string extention);
         /// <summary>
         /// 拡張子のコレクションをクリアします。
         /// </summary>
-        public void ClearExtentions();
+        void ClearExtentions();
         /// <summary>
         /// スキャンするファイル数が増減した時の処理をします。
         /// </summary>
-        public void ExtentionCountChanged();
+        void ExtentionCountChanged();
 
         /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。
         /// </summary>
-        public void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
+        void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
         /// <summary>
         /// 全管理対象ファイルを追加します。
         /// </summary>
-        public void AddFileToAllFiles(string fileFullPath);
+        void AddFileToAllFiles(string fileFullPath);
         /// <summary>
         /// 拡張子チェックボックスにチェックされた時に拡張子グループに反映します。
         /// </summary>
-        public void CheckExtentionReflectToGroup(string extention);
+        void CheckExtentionReflectToGroup(string extention);
         /// <summary>
         /// 拡張子チェックボックスのチェックが解除された時に拡張子グループに反映します。
         /// </summary>
-        public void UncheckExtentionReflectToGroup(string extention);
+        void UncheckExtentionReflectToGroup(string extention);
     }
     #endregion インターフェース
 

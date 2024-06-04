@@ -14,7 +14,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// <summary>
         /// カレントディレクトリに対してファイル変更監視の設定をします。
         /// </summary>
-        public void SetCurrentDirectoryWatcher(string currentDirectory);
+        void SetCurrentDirectoryWatcher(string currentDirectory);
     }
     #endregion インターフェース
     public class CurrentDirectoryFIleSystemWatcherService : ICurrentDirectoryFIleSystemWatcherService

@@ -9,64 +9,64 @@ namespace FileHashCraft.Services.Messages
         /// <summary>
         /// ウィンドウの上位置を設定します。
         /// </summary>
-        public void SendWindowTop(double top);
+        void SendWindowTop(double top);
         /// <summary>
         /// ウィンドウの左位置を設定します。
         /// </summary>
-        public void SendWindowLeft(double left);
+        void SendWindowLeft(double left);
         /// <summary>
         /// ウィンドウの幅を設定します。
         /// </summary>
-        public void SendWindowWidth(double width);
+        void SendWindowWidth(double width);
         /// <summary>
         /// ウィンドウの高さを設定します。
         /// </summary>
-        public void SendWindowHeight(double height);
+        void SendWindowHeight(double height);
         /// <summary>
         /// ツリービューの幅を設定します。
         /// </summary>
-        public void SendTreeWidth(double width);
+        void SendTreeWidth(double width);
         /// <summary>
         /// リストボックスの幅を設定します。
         /// </summary>
-        public void SendListWidth(double width);
+        void SendListWidth(double width);
         /// <summary>
         /// 利用言語を設定します。
         /// </summary>
-        public void SendLanguage(string language);
+        void SendLanguage(string language);
         /// <summary>
         /// ファイルのハッシュアルゴリズムを設定します。
         /// </summary>
-        public void SendHashAlogrithm(string hashAlogrithm);
+        void SendHashAlogrithm(string hashAlogrithm);
         /// <summary>
         /// 削除対象に読み取り専用ファイルを含むかどうかを設定します。
         /// </summary>
         /// <param name="readOnlyFileInclude">読み取り専用ファイルを含むかどうか</param>
-        public void SendReadOnlyFileInclude(bool readOnlyFileInclude);
+        void SendReadOnlyFileInclude(bool readOnlyFileInclude);
         /// <summary>
         /// 削除対象に隠しファイルを含むかどうかを設定します。
         /// </summary>
         /// <param name="hiddenFileInclude">隠しファイルを含むかどうか</param>
-        public void SendHiddenFileInclude(bool hiddenFileInclude);
+        void SendHiddenFileInclude(bool hiddenFileInclude);
         /// <summary>
         /// 削除対象に0サイズのファイルを含むかどうかを設定します。
         /// </summary>
         /// <param name="zeroSizeFileDelete">0サイズファイルを含むかどうか</param>
-        public void SendZeroSizeFileDelete(bool zeroSizeFileDelete);
+        void SendZeroSizeFileDelete(bool zeroSizeFileDelete);
         /// <summary>
         /// 削除対象に空のディレクトリを含むかどうかを設定します。
         /// </summary>
         /// <param name="emptyDirectoryDelete">空のディレクトリを含むかどうか</param>
-        public void SendEmptyDirectoryDelete(bool emptyDirectoryDelete);
+        void SendEmptyDirectoryDelete(bool emptyDirectoryDelete);
 
         /// <summary>
         /// フォントを設定します
         /// </summary>
-        public void SendCurrentFont(FontFamily font);
+        void SendCurrentFont(FontFamily font);
         /// <summary>
         /// フォントサイズを設定します。
         /// </summary>
-        public void SendFontSize(double fontSize);
+        void SendFontSize(double fontSize);
         #endregion 重要設定
 
         #region 移動処理

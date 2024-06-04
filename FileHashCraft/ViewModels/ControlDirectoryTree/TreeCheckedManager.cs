@@ -19,27 +19,27 @@ namespace FileHashCraft.ViewModels.Modules
         /// <summary>
         /// 子ディレクトリを含む、ファイルハッシュ取得対象のディレクトリを保持します。
         /// </summary>
-        public List<string> NestedDirectories { get; }
+        List<string> NestedDirectories { get; }
         /// <summary>
         /// 子ディレクトリを含まない、ファイルハッシュ取得対象のディレクトリを保持します。
         /// </summary>
-        public List<string> NonNestedDirectories { get; }
+        List<string> NonNestedDirectories { get; }
         /// <summary>
         /// そのディレクトリがチェックされているかどうかを調べます。
         /// </summary>
-        public bool IsChecked(string fullPath);
+        bool IsChecked(string fullPath);
         /// <summary>
         /// ディレクトリのチェック状態を変化させます。
         /// </summary>
-        public void CheckChanged(string fullPath, bool? checkedStatus);
+        void CheckChanged(string fullPath, bool? checkedStatus);
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
-        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
+        void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
-        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
+        void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
     }
     public class TreeCheckedManager : ITreeCheckedManager
     {

@@ -4,22 +4,18 @@
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
-using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
-using System.Xml.Linq;
-using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -29,27 +25,27 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// PageSelectTargetViewModelのメインViewModel
         /// </summary>
-        public IPageSelectTargetViewModelMain ViewModelMain { get; }
+        IPageSelectTargetViewModelMain ViewModelMain { get; }
         /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
-        public IPageSelectTargetViewModelExtention ViewModelExtention { get; }
+        IPageSelectTargetViewModelExtention ViewModelExtention { get; }
         /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
-        public void Initialize();
+        void Initialize();
         /// <summary>
         /// リストボックスの幅
         /// </summary>
-        public double ListWidth { get; set; }
+        double ListWidth { get; set; }
         /// <summary>
         /// ハッシュアルゴリズム
         /// </summary>
-        public string SelectedHashAlgorithm { get; set; }
+        string SelectedHashAlgorithm { get; set; }
         /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
-        public int CountFilteredGetHash { get; }
+        int CountFilteredGetHash { get; }
     }
     #endregion インターフェース
 

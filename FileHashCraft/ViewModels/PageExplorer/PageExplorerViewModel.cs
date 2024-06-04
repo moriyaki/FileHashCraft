@@ -27,28 +27,28 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// リストビューのアイテムコレクション
         /// </summary>
-        public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; }
+        ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; }
         /// <summary>
         /// ツリービューのチェックボックスの表示状態
         /// </summary>
-        public Visibility IsCheckBoxVisible { get; }
+        Visibility IsCheckBoxVisible { get; }
         /// <summary>
         /// 初期化処理
         /// </summary>
-        public void Initialize();
+        void Initialize();
         /// <summary>
         /// カレントディレクトリを取得または設定する
         /// </summary>
-        public string CurrentFullPath { get; set; }
+        string CurrentFullPath { get; set; }
         /// <summary>
         /// リムーバブルストレージ用のフック処理
         /// </summary>
         /// <param name="hwndSource"></param>
-        public void HwndAddHook(HwndSource? hwndSource);
+        void HwndAddHook(HwndSource? hwndSource);
         /// <summary>
         /// リムーバブルストレージ用のフック解除処理
         /// </summary>
-        public void HwndRemoveHook();
+        void HwndRemoveHook();
     }
     #endregion インターフェース
     public partial class PageExplorerViewModel : ObservableObject, IPageExplorerViewModel
