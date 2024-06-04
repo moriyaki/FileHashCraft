@@ -67,6 +67,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public IPageSelectTargetViewModelExtention ViewModelExtention { get; }
 
         /// <summary>
+        /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
+        /// </summary>
+        public IPageSelectTargetViewModelExpert ViewModelExpert { get; }
+
+        /// <summary>
         /// フィルタするファイル
         /// </summary>
         private string _FilterTextBox = string.Empty;
@@ -198,6 +203,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public PageSelectTargetViewModel(
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
             IPageSelectTargetViewModelExtention pageSelectTargetViewModelExtention,
+            IPageSelectTargetViewModelExpert pageSelectTargetViewModelExpert,
             IMessageServices messageServices,
             ISettingsService settingsService,
             ITreeManager directoryTreeManager,
@@ -206,6 +212,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             ViewModelMain = pageSelectTargetViewModelMain;
             ViewModelExtention = pageSelectTargetViewModelExtention;
+            ViewModelExpert = pageSelectTargetViewModelExpert;
             _messageServices = messageServices;
             _settingsService = settingsService;
             _directoryTreeManager = directoryTreeManager;
@@ -316,6 +323,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // 現在のディレクトリ選択設定を保存する
             SaveCurrentDirectorySelectionSettings();
 
+            // 上級者向け設定の反映をする
+            ReflectionExpertSettings();
+
             // 状況が変わっているので、必要な値の初期化をする
             ResetInitializedValues();
 
@@ -382,6 +392,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             NestedDirectories.AddRange(_directoryTreeManager.NestedDirectories);
             NonNestedDirectories.Clear();
             NonNestedDirectories.AddRange(_directoryTreeManager.NonNestedDirectories);
+        }
+
+        /// <summary>
+        /// 上級者向けの設定を反映する
+        /// </summary>
+        private void ReflectionExpertSettings()
+        {
+            ViewModelExpert.IsReadOnlyFileInclude = _settingsService.IsReadOnlyFileInclude;
+            ViewModelExpert.IsHiddenFileInclude = _settingsService.IsHiddenFileInclude;
+            ViewModelExpert.IsZeroSizeFileDelete = _settingsService.IsZeroSizeFileDelete;
+            ViewModelExpert.IsEmptyDirectoryDelete = _settingsService.IsEmptyDirectoryDelete;
         }
 
         /// <summary>

@@ -291,57 +291,49 @@
                     </Grid.RowDefinitions>
                     <!-- 読み取り専用ファイルを対象とするか -->
                     <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center"/>
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsReadOnlyFileInclude}"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
-                            <!--
                             <Label.InputBindings>
-                                <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick"/>
+                                <MouseBinding Command="{Binding ViewModelExpert.IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
-                            -->
                         </Label>
                     </StackPanel>
 
                     <!-- 隠しファイルを対象とするか -->
                     <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center"/>
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsHiddenFileInclude}"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
-                            <!--
                             <Label.InputBindings>
-                                <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick"/>
+                                <MouseBinding Command="{Binding ViewModelExpert.IsHiddenFileIncludeClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
-                            -->
                         </Label>
                     </StackPanel>
 
                     <!-- 0サイズのファイルを削除するか -->
                     <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center"/>
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsZeroSizeFileDelete}"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
-                            <!--
                             <Label.InputBindings>
-                                <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
+                                <MouseBinding Command="{Binding ViewModelExpert.IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
-                            -->
                         </Label>
                     </StackPanel>
 
                     <!-- からのディレクトリを削除するか -->
                     <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center"/>
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsEmptyDirectoryDelete}"/>
                         <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
-                            <!--
                             <Label.InputBindings>
-                                <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
+                                <MouseBinding Command="{Binding ViewModelExpert.IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
                             </Label.InputBindings>
-                            -->
                         </Label>
                     </StackPanel>
                 </Grid>

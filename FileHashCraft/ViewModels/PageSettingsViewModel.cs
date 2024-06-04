@@ -106,7 +106,6 @@ namespace FileHashCraft.ViewModels
             set
             {
                 if (_IsHiddenFileInclude == value) return;
-
                 SetProperty(ref _IsHiddenFileInclude, value);
                 _messageServices.SendHiddenFileInclude(value);
             }
@@ -121,7 +120,6 @@ namespace FileHashCraft.ViewModels
             set
             {
                 if (_IsZeroSizeFileDelete == value) return;
-
                 SetProperty(ref _IsZeroSizeFileDelete, value);
                 _messageServices.SendZeroSizeFileDelete(value);
             }
@@ -137,7 +135,6 @@ namespace FileHashCraft.ViewModels
             set
             {
                 if (_IsEmptyDirectoryDelete == value) return;
-
                 SetProperty(ref _IsEmptyDirectoryDelete, value);
                 _messageServices.SendEmptyDirectoryDelete(value);
             }
@@ -247,6 +244,22 @@ namespace FileHashCraft.ViewModels
             // 「終了」で戻るページへのメッセージを送るコマンド
             ReturnPage = new RelayCommand(
                 () => _messageServices.SendReturnPageFromSettings());
+
+            // 読み取り専用ファイルを利用するかどうかが変更されたメッセージ受信
+            WeakReferenceMessenger.Default.Register<ReadOnlyFileIncludeChanged>(this, (_, m)
+                => IsReadOnlyFileInclude = m.ReadOnlyFileInclude);
+
+            // 隠しファイルを利用するかどうかが変更されたメッセージ受信
+            WeakReferenceMessenger.Default.Register<HiddenFileIncludeChanged>(this, (_, m)
+                => IsHiddenFileInclude = m.HiddenFileInclude);
+
+            // 0サイズファイルを削除するかどうかが変更されたメッセージ受信
+            WeakReferenceMessenger.Default.Register<ZeroSizeFileDeleteChanged>(this, (_, m)
+                => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
+
+            //空ディレクトリを削除するかどうかが変更されたメッセージ受信
+            WeakReferenceMessenger.Default.Register<EmptyDirectoryDeleteChanged>(this, (_, m)
+                => IsEmptyDirectoryDelete = m.EmptyDirectoryDelete);
 
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)

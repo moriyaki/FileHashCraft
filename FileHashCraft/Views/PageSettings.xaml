@@ -87,7 +87,6 @@
                   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
                   Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
-            <!-- 0サイズファイル削除するか -->
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="30"/>
@@ -97,6 +96,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- 読み取り専用ファイルを削除するか -->
                 <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}"/>
                     <Label VerticalAlignment="Center" 
@@ -108,6 +108,7 @@
                     </Label>
                 </StackPanel>
 
+                <!-- 隠しファイルを削除するか -->
                 <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}"/>
                     <Label VerticalAlignment="Center"
@@ -119,6 +120,7 @@
                     </Label>
                 </StackPanel>
 
+                <!-- 0サイズファイル削除するか -->
                 <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}"/>
                     <Label VerticalAlignment="Center"
@@ -130,6 +132,7 @@
                     </Label>
                 </StackPanel>
 
+                <!-- 空ディレクトリを削除するか -->
                 <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}"/>
                     <Label VerticalAlignment="Center"
