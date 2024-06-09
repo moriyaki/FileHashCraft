@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 
 namespace FileHashCraft.Models.FileScan
 {
@@ -15,15 +16,19 @@ namespace FileHashCraft.Models.FileScan
         /// <summary>
         /// 属性条件に合致する全てのファイル数を取得します。
         /// </summary>
-        int GetAllFilesCount(bool includeHidden = false, bool includeReadOnly = false);
+        int GetAllFilesCount(bool includeHidden, bool includeReadOnly);
         /// <summary>
         /// 検索条件に合致する全てのファイル数を取得します。
         /// </summary>
-        int GetAllCriteriaFilesCount(bool includeHidden = false, bool includeReadOnly = false);
+        int GetAllCriteriaFilesCount(bool includeHidden, bool includeReadOnly);
         /// <summary>
         /// 検索条件に合致するファイルを取得する
         /// </summary>
         HashSet<HashFile> GetAllCriteriaFileName();
+        /// <summary>
+        /// ファイルが検索条件に合致しているかを取得します。
+        /// </summary>
+        bool IsCriteriaFile(string fileFullPath, bool includeHidden, bool includeReadOnly);
     }
 
     public class ScannedFilesManager : IScannedFilesManager
@@ -58,7 +63,7 @@ namespace FileHashCraft.Models.FileScan
         /// </summary>
         private readonly object lockObject = new();
 
-        private static bool MatchFileAttributesCriteria(HashFile file, bool includeHidden = false, bool includeReadOnly = false)
+        private static bool MatchFileAttributesCriteria(HashFile file, bool includeHidden, bool includeReadOnly)
         {
             var isReadOnly = (file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
             var matchesReadOnlyCriteria = includeReadOnly || !isReadOnly;
@@ -75,7 +80,7 @@ namespace FileHashCraft.Models.FileScan
         /// <param name="includeHidden">隠しファイルを含むかどうか</param>
         /// <param name="includeReadOnly">読み取り専用ファイルを含むかどうか</param>
         /// <returns>属性条件に合致するファイル</returns>
-        public int GetAllFilesCount(bool includeHidden = false, bool includeReadOnly = false)
+        public int GetAllFilesCount(bool includeHidden, bool includeReadOnly)
         {
             return AllFiles.Count(c => MatchFileAttributesCriteria(c, includeHidden, includeReadOnly));
         }
@@ -86,7 +91,7 @@ namespace FileHashCraft.Models.FileScan
         /// <param name="includeHidden">隠しファイルを含むかどうか</param>
         /// <param name="includeReadOnly">読み取り専用ファイルを含むかどうか</param>
         /// <returns>検索条件合致ファイル数</returns>
-        public int GetAllCriteriaFilesCount(bool includeHidden = false, bool includeReadOnly = false)
+        public int GetAllCriteriaFilesCount(bool includeHidden, bool includeReadOnly)
         {
             lock (lockObject)
             {
@@ -129,8 +134,8 @@ namespace FileHashCraft.Models.FileScan
                 switch (criteria.SearchOption)
                 {
                     case FileSearchOption.Extention:
-                        files = AllFiles.Where(
-                        f => String.Equals(criteria.SearchPattern, Path.GetExtension(f.FileFullPath), StringComparison.CurrentCultureIgnoreCase)).ToHashSet();
+                        files.UnionWith(AllFiles.Where(
+                        f => String.Equals(criteria.SearchPattern, Path.GetExtension(f.FileFullPath), StringComparison.CurrentCultureIgnoreCase)));
                         break;
                     case FileSearchOption.Wildcar:
                         break;
@@ -141,6 +146,41 @@ namespace FileHashCraft.Models.FileScan
                 }
             }
             return files;
+        }
+
+        /// <summary>
+        /// ファイルが検索条件に合致しているかを取得します。
+        /// </summary>
+        /// <param name="fileFullPath">ファイルのフルパス</param>
+        /// <returns>検索条件に合致してるかどうか</returns>
+        public bool IsCriteriaFile(string fileFullPath, bool includeHidden, bool includeReadOnly)
+        {
+            var file = AllFiles.FirstOrDefault(c => c.FileFullPath == fileFullPath);
+            if (file == null) { return false; }
+            foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
+            {
+                switch (criteria.SearchOption)
+                {
+                    case FileSearchOption.Extention:
+                        var count = AllFiles.Count(c =>
+                        {
+                            return String.Equals(
+                                criteria.SearchPattern,
+                                Path.GetExtension(c.FileFullPath),
+                                StringComparison.CurrentCultureIgnoreCase)
+                            && MatchFileAttributesCriteria(c, includeHidden, includeReadOnly);
+                        });
+                        if (count > 0) { return true; }
+                        break;
+                    case FileSearchOption.Wildcar:
+                        break;
+                    case FileSearchOption.Regex:
+                        break;
+                    default:
+                        throw new NotFiniteNumberException("IsCriteriaFile");
+                }
+            }
+            return false;
         }
     }
 }

@@ -294,7 +294,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 var item = new HashListFileItems
                 {
                     FileFullPath = file,
-                    IsHashTarget = _scannedFilesManager.GetAllCriteriaFileName().Any(f => f.FileFullPath == file)
+                    //IsHashTarget = _scannedFilesManager.GetAllCriteriaFileName().Any(f => f.FileFullPath == file)
+                    IsHashTarget = _scannedFilesManager.IsCriteriaFile(file, _settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude),
                 };
                 App.Current?.Dispatcher?.Invoke(() => HashFileListItems.Add(item));
             }
