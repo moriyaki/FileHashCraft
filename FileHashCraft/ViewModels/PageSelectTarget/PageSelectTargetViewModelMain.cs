@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Properties;
+using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
@@ -73,9 +74,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         void AddFilesScannedDirectoriesCount(int count = 1);
         /// <summary>
-        /// 総対象ファイル数に加算します。
+        /// 総対象ファイル数を設定します。
         /// </summary>
-        void AddAllTargetFiles(int allTargetFiles);
+        void SetAllTargetfilesCount();
         /// <summary>
         /// ツリービューの選択ディレクトリが変更された時の処理です。
         /// </summary>
@@ -215,13 +216,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
         public PageSelectTargetViewModelMain(
             IScannedFilesManager scannedFilesManager,
-            IMessageServices messageServices
+            IMessageServices messageServices,
+            ISettingsService settingsService
         )
         {
-            _messageServices = messageServices;
             _scannedFilesManager = scannedFilesManager;
+            _messageServices = messageServices;
+            _settingsService = settingsService;
 
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new RelayCommand(
@@ -266,12 +270,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// ハッシュ取得対象となる全てのファイル数を設定します。
+        /// ハッシュ取得対象となる総対象ファイル数にファイル数を設定します
         /// </summary>
-        /// <param name="targetFilesCount">ハッシュ取得対象となるファイル数</param>
-        public void AddAllTargetFiles(int targetFilesCount)
+        public void SetAllTargetfilesCount()
         {
-            App.Current?.Dispatcher?.Invoke(() => CountAllTargetFilesGetHash += targetFilesCount);
+            App.Current?.Dispatcher?.Invoke(() =>
+            CountAllTargetFilesGetHash = _scannedFilesManager.GetAllFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
         }
         #endregion ファイル数の管理処理
 

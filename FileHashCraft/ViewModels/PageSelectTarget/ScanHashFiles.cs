@@ -50,10 +50,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             try
             {
-                /*
-                var sw = new Stopwatch();
-                sw.Start();
-                */
                 // ディレクトリのスキャン
                 _pageSelectTargetViewModel.ViewModelMain.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
                 await DirectoriesScan(cancellation);
@@ -61,10 +57,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 // ファイルのスキャン
                 _pageSelectTargetViewModel.ViewModelMain.ChangeHashScanStatus(FileScanStatus.FilesScanning);
                 await Task.Run(() => DirectoryFilesScan(cancellation), cancellation);
-                /*
-                sw.Stop();
-                DebugManager.InfoWrite($"GetFileSecurity Version : {sw.ElapsedMilliseconds}ms.", true);
-                */
             }
             catch (OperationCanceledException)
             {
@@ -93,15 +85,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 {
                     await semaphore.WaitAsync(cancellation);
                     // ファイルを保持する
-                    var fileCount = 0;
                     foreach (var fileFullPath in FileManager.EnumerateFiles(directoryFullPath))
                     {
                         _pageSelectTargetViewModel.ViewModelExtention.AddFileToAllFiles(fileFullPath);
-                        fileCount++;
                     }
 
                     _pageSelectTargetViewModel.ViewModelMain.AddFilesScannedDirectoriesCount();
-                    _pageSelectTargetViewModel.ViewModelMain.AddAllTargetFiles(fileCount);
+                    _pageSelectTargetViewModel.ViewModelMain.SetAllTargetfilesCount();
 
                     if (cancellation.IsCancellationRequested) { return; }
                 }

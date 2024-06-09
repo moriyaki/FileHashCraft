@@ -7,18 +7,6 @@ using System.IO;
 namespace FileHashCraft.Models
 {
     /// <summary>
-    /// ファイル属性
-    /// </summary>
-    [Flags]
-    public enum HashFileAttribute
-    {
-        Normal = 0,
-        Readonly = 1,
-        Hidden = 2,
-        ReadonlyAndHidden = Readonly | Hidden,
-    }
-
-    /// <summary>
     /// ファイル情報を保持するクラス
     /// </summary>
     public class HashFile
@@ -39,7 +27,7 @@ namespace FileHashCraft.Models
         /// <summary>
         /// ファイルの属性
         /// </summary>
-        public HashFileAttribute Attribute { get; }
+        public FileAttributes Attributes { get; }
         /// <summary>
         /// SHA256ハッシュ
         /// </summary>
@@ -87,16 +75,7 @@ namespace FileHashCraft.Models
             var fileInfo = new FileInfo(fileFullPath);
             LastWriteTime = fileInfo.LastWriteTime;
             Length = fileInfo.Length;
-
-            Attribute = HashFileAttribute.Normal;
-            if ((fileInfo.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-            {
-                Attribute |= HashFileAttribute.Readonly;
-            }
-            if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-            {
-                Attribute |= HashFileAttribute.Hidden;
-            }
+            Attributes = fileInfo.Attributes;
         }
         #endregion 設定処理
 

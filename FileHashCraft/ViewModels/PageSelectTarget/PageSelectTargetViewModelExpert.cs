@@ -28,6 +28,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_IsReadOnlyFileInclude == value) return;
                 SetProperty(ref _IsReadOnlyFileInclude, value);
                 _messageServices.SendReadOnlyFileInclude(value);
+                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
+                _pageSelectTargetViewModelExtention.ExtentionCountChanged();
             }
         }
 
@@ -43,6 +45,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_IsHiddenFileInclude == value) return;
                 SetProperty(ref _IsHiddenFileInclude, value);
                 _messageServices.SendHiddenFileInclude(value);
+                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
+                _pageSelectTargetViewModelExtention.ExtentionCountChanged();
             }
         }
         /// <summary>
@@ -96,16 +100,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         #region コンストラクタ
         private readonly IMessageServices _messageServices;
-
+        private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
+        private readonly IPageSelectTargetViewModelExtention _pageSelectTargetViewModelExtention;
         public PageSelectTargetViewModelExpert()
         {
             throw new NotImplementedException();
         }
         public PageSelectTargetViewModelExpert(
-            IMessageServices messageService
+            IMessageServices messageService,
+            IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
+            IPageSelectTargetViewModelExtention pageSelectTargetViewModelExtention
         )
         {
             _messageServices = messageService;
+            _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
+            _pageSelectTargetViewModelExtention = pageSelectTargetViewModelExtention;
 
             // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
             IsReadOnlyFileIncludeClicked = new RelayCommand(()

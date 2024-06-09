@@ -241,11 +241,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
             }
 
-            // Iocから取得するViewModelの更新
-            var viewModelMain = Ioc.Default.GetService<IPageSelectTargetViewModelMain>() ?? throw new InvalidOperationException($"{nameof(IPageSelectTargetViewModelMain)} dependency not resolved.");
             foreach (var extension in extensionsToUpdate)
             {
-                viewModelMain.ChangeExtensionToListBox(extension.Name, changedCheck);
+                _pageSelectTargetViewModelMain.ChangeExtensionToListBox(extension.Name, changedCheck);
             }
 
             // 拡張子数の変更通知
@@ -257,7 +255,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void ExtentionCountChanged()
         {
-            App.Current.Dispatcher.Invoke(() => _pageSelectTargetViewModelMain.CountFilteredGetHash = _scannedFilesManager.GetAllCriteriaFileCount());
+            App.Current.Dispatcher.Invoke(() =>
+            _pageSelectTargetViewModelMain.CountFilteredGetHash = _scannedFilesManager.GetAllCriteriaFilesCount(_settingssService.IsHiddenFileInclude, _settingssService.IsReadOnlyFileInclude));
         }
 
         /// <summary>

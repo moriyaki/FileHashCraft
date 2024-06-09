@@ -13,9 +13,13 @@ namespace FileHashCraft.Models.FileScan
         /// </summary>
         HashSet<HashFile> AllFiles { get; }
         /// <summary>
+        /// 属性条件に合致する全てのファイル数を取得します。
+        /// </summary>
+        int GetAllFilesCount(bool includeHidden = false, bool includeReadOnly = false);
+        /// <summary>
         /// 検索条件に合致する全てのファイル数を取得します。
         /// </summary>
-        int GetAllCriteriaFileCount();
+        int GetAllCriteriaFilesCount(bool includeHidden = false, bool includeReadOnly = false);
         /// <summary>
         /// 検索条件に合致するファイルを取得する
         /// </summary>
@@ -54,21 +58,59 @@ namespace FileHashCraft.Models.FileScan
         /// </summary>
         private readonly object lockObject = new();
 
+        private static bool MatchFileAttributesCriteria(HashFile file, bool includeHidden = false, bool includeReadOnly = false)
+        {
+            var isReadOnly = (file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
+            var matchesReadOnlyCriteria = includeReadOnly || !isReadOnly;
+
+            var isHidden = (file.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden;
+            var matchesHiddenCriteria = includeHidden || !isHidden;
+
+            return matchesReadOnlyCriteria && matchesHiddenCriteria;
+        }
+
+        /// <summary>
+        /// 属性条件に合致する全てのファイル数を取得します。
+        /// </summary>
+        /// <param name="includeHidden">隠しファイルを含むかどうか</param>
+        /// <param name="includeReadOnly">読み取り専用ファイルを含むかどうか</param>
+        /// <returns>属性条件に合致するファイル</returns>
+        public int GetAllFilesCount(bool includeHidden = false, bool includeReadOnly = false)
+        {
+            return AllFiles.Count(c => MatchFileAttributesCriteria(c, includeHidden, includeReadOnly));
+        }
+
         /// <summary>
         /// 検索条件に合致する全てのファイル数を取得します。
         /// </summary>
+        /// <param name="includeHidden">隠しファイルを含むかどうか</param>
+        /// <param name="includeReadOnly">読み取り専用ファイルを含むかどうか</param>
         /// <returns>検索条件合致ファイル数</returns>
-        public int GetAllCriteriaFileCount()
+        public int GetAllCriteriaFilesCount(bool includeHidden = false, bool includeReadOnly = false)
         {
             lock (lockObject)
             {
                 var count = 0;
                 foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
                 {
-                    if (criteria.SearchOption == FileSearchOption.Extention)
+                    switch (criteria.SearchOption)
                     {
-                        count += AllFiles.Count(
-                            c => String.Equals(criteria.SearchPattern, Path.GetExtension(c.FileFullPath), StringComparison.CurrentCultureIgnoreCase));
+                        case FileSearchOption.Extention:
+                            count += AllFiles.Count(c =>
+                            {
+                                return String.Equals(
+                                    criteria.SearchPattern,
+                                    Path.GetExtension(c.FileFullPath),
+                                    StringComparison.CurrentCultureIgnoreCase)
+                                && MatchFileAttributesCriteria(c, includeHidden, includeReadOnly);
+                            });
+                            break;
+                        case FileSearchOption.Wildcar:
+                            break;
+                        case FileSearchOption.Regex:
+                            break;
+                        default:
+                            throw new NotFiniteNumberException("GetAllCriteriaFilesCount");
                     }
                 }
                 return count;
@@ -81,15 +123,24 @@ namespace FileHashCraft.Models.FileScan
         /// <returns>検索条件合致ファイル</returns>
         public HashSet<HashFile> GetAllCriteriaFileName()
         {
+            var files = new HashSet<HashFile>();
             foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
             {
-                if (criteria.SearchOption == FileSearchOption.Extention)
+                switch (criteria.SearchOption)
                 {
-                    return AllFiles.Where(
+                    case FileSearchOption.Extention:
+                        files = AllFiles.Where(
                         f => String.Equals(criteria.SearchPattern, Path.GetExtension(f.FileFullPath), StringComparison.CurrentCultureIgnoreCase)).ToHashSet();
+                        break;
+                    case FileSearchOption.Wildcar:
+                        break;
+                    case FileSearchOption.Regex:
+                        break;
+                    default:
+                        throw new NotFiniteNumberException("GetAllCriteriaFilesCount");
                 }
             }
-            return [];
+            return files;
         }
     }
 }
