@@ -169,24 +169,6 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Application Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelApplications {
-            get {
-                return ResourceManager.GetString("LabelApplications", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Archive Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelArchives {
-            get {
-                return ResourceManager.GetString("LabelArchives", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Command に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelCommand {
@@ -259,15 +241,6 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Document Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelDocuments {
-            get {
-                return ResourceManager.GetString("LabelDocuments", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   For Advanced User に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelExpert {
@@ -313,6 +286,114 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Specifying file types by extension に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtention_FilterSetting {
+            get {
+                return ResourceManager.GetString("LabelExtention_FilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specify files by file type に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtention_GroupFilterSetting {
+            get {
+                return ResourceManager.GetString("LabelExtention_GroupFilterSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Application Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_Applications {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_Applications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Archive Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_Archives {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_Archives", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Document Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_Documents {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_Documents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Movie Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_Movies {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_Movies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No Have Extentions に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_NoHaveExtentions {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_NoHaveExtentions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ohter Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_OtherFiles {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_OtherFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Picture Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_Pictures {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_Pictures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Registration Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_Registrations {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_Registrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sound Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_Sounds {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_Sounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Source Code Files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelExtentionFiles_SourceCodes {
+            get {
+                return ResourceManager.GetString("LabelExtentionFiles_SourceCodes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Algorithm for file hash calculation に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelFileHashAlgorithmString {
@@ -349,83 +430,20 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Movie Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelMovies {
-            get {
-                return ResourceManager.GetString("LabelMovies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   No Have Extentions に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelNoHaveExtentions {
-            get {
-                return ResourceManager.GetString("LabelNoHaveExtentions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Specifying file types by extension に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelNormal_ExtentionFilterSetting {
-            get {
-                return ResourceManager.GetString("LabelNormal_ExtentionFilterSetting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Specify files by file type に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelNormal_ExtentionGroupFilterSetting {
-            get {
-                return ResourceManager.GetString("LabelNormal_ExtentionGroupFilterSetting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ohter Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelOtherFiles {
-            get {
-                return ResourceManager.GetString("LabelOtherFiles", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Picture Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelPictures {
-            get {
-                return ResourceManager.GetString("LabelPictures", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Registration Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelRegistrations {
-            get {
-                return ResourceManager.GetString("LabelRegistrations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Regular Expression Search Criteria に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegularExpression_Critieria {
+        public static string LabelRegex_Critieria {
             get {
-                return ResourceManager.GetString("LabelRegularExpression_Critieria", resourceCulture);
+                return ResourceManager.GetString("LabelRegex_Critieria", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Regular Expression Search Error に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegularExpression_Error {
+        public static string LabelRegex_Error {
             get {
-                return ResourceManager.GetString("LabelRegularExpression_Error", resourceCulture);
+                return ResourceManager.GetString("LabelRegex_Error", resourceCulture);
             }
         }
         
@@ -435,24 +453,6 @@ namespace FileHashCraft.Properties {
         public static string LabelSettings {
             get {
                 return ResourceManager.GetString("LabelSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sound Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelSounds {
-            get {
-                return ResourceManager.GetString("LabelSounds", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Source Code Files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelSourceCodes {
-            get {
-                return ResourceManager.GetString("LabelSourceCodes", resourceCulture);
             }
         }
         
@@ -471,6 +471,24 @@ namespace FileHashCraft.Properties {
         public static string LabelWildcard_SearchCriteria {
             get {
                 return ResourceManager.GetString("LabelWildcard_SearchCriteria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Characters not allowed in file names に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelWildcardError_NotAllowedCharacter {
+            get {
+                return ResourceManager.GetString("LabelWildcardError_NotAllowedCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Too much use of &apos;*&apos; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelWildcardError_TooManyAsterisk {
+            get {
+                return ResourceManager.GetString("LabelWildcardError_TooManyAsterisk", resourceCulture);
             }
         }
         

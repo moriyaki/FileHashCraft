@@ -39,15 +39,15 @@ namespace FileHashCraft.Models.Helpers
         {
             return type switch
             {
-                FileGroupType.Movies => Resources.LabelMovies,
-                FileGroupType.Pictures => Resources.LabelPictures,
-                FileGroupType.Musics => Resources.LabelSounds,
-                FileGroupType.Documents => Resources.LabelDocuments,
-                FileGroupType.Applications => Resources.LabelApplications,
-                FileGroupType.Archives => Resources.LabelArchives,
-                FileGroupType.SourceCodes => Resources.LabelSourceCodes,
-                FileGroupType.Registrations => Resources.LabelRegistrations,
-                _ => Resources.LabelOtherFiles,
+                FileGroupType.Movies => Resources.LabelExtentionFiles_Movies,
+                FileGroupType.Pictures => Resources.LabelExtentionFiles_Pictures,
+                FileGroupType.Musics => Resources.LabelExtentionFiles_Sounds,
+                FileGroupType.Documents => Resources.LabelExtentionFiles_Documents,
+                FileGroupType.Applications => Resources.LabelExtentionFiles_Applications,
+                FileGroupType.Archives => Resources.LabelExtentionFiles_Archives,
+                FileGroupType.SourceCodes => Resources.LabelExtentionFiles_SourceCodes,
+                FileGroupType.Registrations => Resources.LabelExtentionFiles_Registrations,
+                _ => Resources.LabelExtentionFiles_OtherFiles,
             };
         }
 

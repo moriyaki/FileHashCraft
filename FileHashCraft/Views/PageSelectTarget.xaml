@@ -155,7 +155,7 @@
                         <!-- 拡張子種別検索フィルタ -->
                         <Label Grid.Row="0" Grid.Column="0" Margin="3"
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelNormal_ExtentionGroupFilterSetting, Mode=OneWay}"/>
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtention_GroupFilterSetting, Mode=OneWay}"/>
 
                         <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding ViewModelExtention.ExtentionsGroupCollection}"
                                 Grid.Row="1" Grid.Column="0" Margin="3">
@@ -180,7 +180,7 @@
                         <!-- 拡張子検索フィルタ -->
                         <Label Grid.Row="0" Grid.Column="1" Margin="3"
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelNormal_ExtentionFilterSetting, Mode=OneWay}"/>
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtention_FilterSetting, Mode=OneWay}"/>
 
                         <ListBox x:Name="checkBoxExtListBox" ItemsSource="{Binding ViewModelExtention.ExtentionCollection}"
                                 Grid.Row="1" Grid.Column="1" Margin="3">
@@ -268,13 +268,13 @@
                     <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
                     <!-- 正規表現検索ラベル -->
                     <Label Grid.Row="2" Grid.Column="0" x:Name="LabelRegularExpression"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Critieria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Critieria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
                     <!-- 正規表現検索条件 -->
                     <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="RegularExpressionCritieria"
                              Text="{}"/>
                     <!-- 正規表現検索エラーラベル -->
                     <Label Grid.Row="3" Grid.Column="0" x:Name="LabelRegularExpressionError"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegularExpression_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
                     <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegularExpressionError"
                                Background="Red" Text="" Margin="3" Grid.RowSpan="2"/>
 

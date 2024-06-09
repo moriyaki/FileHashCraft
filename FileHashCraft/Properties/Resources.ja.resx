@@ -165,14 +165,6 @@
     <value>SHA-512 (最大セキュリティ：セキュリティ強度は非常に高いが、計算が遅い)</value>
     <comment>PageSettings/Security</comment>
   </data>
-  <data name="LabelApplications" xml:space="preserve">
-    <value>アプリケーションファイル</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelArchives" xml:space="preserve">
-    <value>圧縮ファイル</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
   <data name="LabelCommand" xml:space="preserve">
     <value>コマンド</value>
     <comment>Label/PageExplorer</comment>
@@ -205,28 +197,72 @@
     <value>ディレクトリスキャン中...：発見数</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelDocuments" xml:space="preserve">
-    <value>ドキュメントファイル</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
   <data name="LabelExpert" xml:space="preserve">
     <value>上級者向け</value>
     <comment>Label/PageSettings</comment>
   </data>
   <data name="LabelExpert_EmptyDirDelete" xml:space="preserve">
     <value>空のディレクトリを削除するかどうか</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSettings/PageSelectTargetExpert</comment>
   </data>
   <data name="LabelExpert_HiddenFiles" xml:space="preserve">
     <value>隠しファイルを対象にする</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSelectTargetExpert</comment>
   </data>
   <data name="LabelExpert_ReadOnlyFiles" xml:space="preserve">
     <value>読み取り専用ファイルを対象にする</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSelectTargetExpert</comment>
   </data>
   <data name="LabelExpert_ZeroSizeFileDelete" xml:space="preserve">
     <value>0サイズのファイルを削除するかどうか</value>
+    <comment>Label/PageSettings/PageSelectTargetExpert</comment>
+  </data>
+  <data name="LabelExtentionFiles_Applications" xml:space="preserve">
+    <value>アプリケーションファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Archives" xml:space="preserve">
+    <value>圧縮ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Documents" xml:space="preserve">
+    <value>ドキュメントファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Movies" xml:space="preserve">
+    <value>動画ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_NoHaveExtentions" xml:space="preserve">
+    <value>拡張子なし</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_OtherFiles" xml:space="preserve">
+    <value>その他のファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Pictures" xml:space="preserve">
+    <value>画像ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Registrations" xml:space="preserve">
+    <value>登録ファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Sounds" xml:space="preserve">
+    <value>サウンドファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_SourceCodes" xml:space="preserve">
+    <value>ソースコードファイル</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtention_FilterSetting" xml:space="preserve">
+    <value>拡張子によるファイル種別の指定</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelExtention_GroupFilterSetting" xml:space="preserve">
+    <value>ファイル種類によるファイルの指定</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
@@ -245,61 +281,33 @@
     <value>フォント</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelMovies" xml:space="preserve">
-    <value>動画ファイル</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelNoHaveExtentions" xml:space="preserve">
-    <value>拡張子なし</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelNormal_ExtentionFilterSetting" xml:space="preserve">
-    <value>拡張子によるファイル種別の指定</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelNormal_ExtentionGroupFilterSetting" xml:space="preserve">
-    <value>ファイル種類によるファイルの指定</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelOtherFiles" xml:space="preserve">
-    <value>その他のファイル</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelPictures" xml:space="preserve">
-    <value>画像ファイル</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelRegistrations" xml:space="preserve">
-    <value>登録ファイル</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelRegularExpression_Critieria" xml:space="preserve">
+  <data name="LabelRegex_Critieria" xml:space="preserve">
     <value>正規表現検索条件</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSelectTargetRegEx</comment>
   </data>
-  <data name="LabelRegularExpression_Error" xml:space="preserve">
+  <data name="LabelRegex_Error" xml:space="preserve">
     <value>正規表現のエラー</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSelectTargetRegEx</comment>
   </data>
   <data name="LabelSettings" xml:space="preserve">
     <value>見つかったファイルの内部ファイル書き込み等の処理中</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
-  <data name="LabelSounds" xml:space="preserve">
-    <value>サウンドファイル</value>
-    <comment>Label/ExtentionHelper</comment>
+  <data name="LabelWildcardError_NotAllowedCharacter" xml:space="preserve">
+    <value>ファイル名に許可されてない文字です</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
   </data>
-  <data name="LabelSourceCodes" xml:space="preserve">
-    <value>ソースコードファイル</value>
-    <comment>Label/ExtentionHelper</comment>
+  <data name="LabelWildcardError_TooManyAsterisk" xml:space="preserve">
+    <value>'*'の利用が多すぎます</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
   </data>
   <data name="LabelWildcard_Error" xml:space="preserve">
     <value>ワイルドカードエラー</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSelectTargetWildcard</comment>
   </data>
   <data name="LabelWildcard_SearchCriteria" xml:space="preserve">
     <value>ワイルドカード検索条件</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSelectTargetWildcard</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>更新日時</value>
@@ -327,7 +335,7 @@
   </data>
   <data name="NoHaveExtentions" xml:space="preserve">
     <value>拡張子なし</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/PageSelectTargetExtention</comment>
   </data>
   <data name="TabContentExpert" xml:space="preserve">
     <value>(注意)上級者向け設定</value>

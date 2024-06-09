@@ -63,6 +63,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public IPageSelectTargetViewModelExtention ViewModelExtention { get; }
 
         /// <summary>
+        ///  PageSelectTargetViewModelのワイルドカードViewModel
+        /// </summary>
+        public IPageSelectTargetViewModelWildcard ViewModelWildcard { get; }
+
+        /// <summary>
+        ///  PageSelectTargetViewModelの正規表現ViewModel
+        /// </summary>
+        public IPageSelectTargetViewModelRegEx ViewModelRegEx { get; }
+
+        /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
         /// </summary>
         public IPageSelectTargetViewModelExpert ViewModelExpert { get; }
@@ -199,6 +209,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public PageSelectTargetViewModel(
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
             IPageSelectTargetViewModelExtention pageSelectTargetViewModelExtention,
+            IPageSelectTargetViewModelWildcard pageSelectTargetViewModelWildcard,
+            IPageSelectTargetViewModelRegEx pageSelectTargetViewModelRegEx,
             IPageSelectTargetViewModelExpert pageSelectTargetViewModelExpert,
             IMessageServices messageServices,
             ISettingsService settingsService,
@@ -208,6 +220,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             ViewModelMain = pageSelectTargetViewModelMain;
             ViewModelExtention = pageSelectTargetViewModelExtention;
+            ViewModelWildcard = pageSelectTargetViewModelWildcard;
+            ViewModelRegEx = pageSelectTargetViewModelRegEx;
             ViewModelExpert = pageSelectTargetViewModelExpert;
             _messageServices = messageServices;
             _settingsService = settingsService;

@@ -165,14 +165,6 @@
     <value>SHA-512 (maximum security: very high security strength, but slow computation)</value>
     <comment>PageSettings/Security</comment>
   </data>
-  <data name="LabelApplications" xml:space="preserve">
-    <value>Application Files</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelArchives" xml:space="preserve">
-    <value>Archive Files</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
   <data name="LabelCommand" xml:space="preserve">
     <value>Command</value>
     <comment>Label/PageExplorer</comment>
@@ -205,17 +197,13 @@
     <value>Directory Scanning...: Found</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelDocuments" xml:space="preserve">
-    <value>Document Files</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
   <data name="LabelExpert" xml:space="preserve">
     <value>For Advanced User</value>
     <comment>Label/PageSettings</comment>
   </data>
   <data name="LabelExpert_EmptyDirDelete" xml:space="preserve">
     <value>Whether to delete empty directories or not</value>
-    <comment>Label/PageSettings/PageSelectTarget</comment>
+    <comment>Label/PageSettings/PageSelectTargetExpert</comment>
   </data>
   <data name="LabelExpert_HiddenFiles" xml:space="preserve">
     <value>Target hidden files</value>
@@ -227,7 +215,55 @@
   </data>
   <data name="LabelExpert_ZeroSizeFileDelete" xml:space="preserve">
     <value>Whether to delete files of size 0 or not</value>
-    <comment>Label/PageSettings/PageSelectTarget</comment>
+    <comment>Label/PageSettings/PageSelectTargetExpert</comment>
+  </data>
+  <data name="LabelExtentionFiles_Applications" xml:space="preserve">
+    <value>Application Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Archives" xml:space="preserve">
+    <value>Archive Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Documents" xml:space="preserve">
+    <value>Document Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Movies" xml:space="preserve">
+    <value>Movie Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_NoHaveExtentions" xml:space="preserve">
+    <value>No Have Extentions</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_OtherFiles" xml:space="preserve">
+    <value>Ohter Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Pictures" xml:space="preserve">
+    <value>Picture Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Registrations" xml:space="preserve">
+    <value>Registration Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_Sounds" xml:space="preserve">
+    <value>Sound Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtentionFiles_SourceCodes" xml:space="preserve">
+    <value>Source Code Files</value>
+    <comment>Label/ExtentionHelper</comment>
+  </data>
+  <data name="LabelExtention_FilterSetting" xml:space="preserve">
+    <value>Specifying file types by extension</value>
+    <comment>Label/PageSelectTarget</comment>
+  </data>
+  <data name="LabelExtention_GroupFilterSetting" xml:space="preserve">
+    <value>Specify files by file type</value>
+    <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="LabelFileHashAlgorithmString" xml:space="preserve">
     <value>Algorithm for file hash calculation</value>
@@ -245,39 +281,11 @@
     <value>Font</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelMovies" xml:space="preserve">
-    <value>Movie Files</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelNoHaveExtentions" xml:space="preserve">
-    <value>No Have Extentions</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelNormal_ExtentionFilterSetting" xml:space="preserve">
-    <value>Specifying file types by extension</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelNormal_ExtentionGroupFilterSetting" xml:space="preserve">
-    <value>Specify files by file type</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelOtherFiles" xml:space="preserve">
-    <value>Ohter Files</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelPictures" xml:space="preserve">
-    <value>Picture Files</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelRegistrations" xml:space="preserve">
-    <value>Registration Files</value>
-    <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelRegularExpression_Critieria" xml:space="preserve">
+  <data name="LabelRegex_Critieria" xml:space="preserve">
     <value>Regular Expression Search Criteria</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelRegularExpression_Error" xml:space="preserve">
+  <data name="LabelRegex_Error" xml:space="preserve">
     <value>Regular Expression Search Error</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
@@ -285,13 +293,13 @@
     <value>During internal file writing or other processing of found files.</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
-  <data name="LabelSounds" xml:space="preserve">
-    <value>Sound Files</value>
-    <comment>Label/ExtentionHelper</comment>
+  <data name="LabelWildcardError_NotAllowedCharacter" xml:space="preserve">
+    <value>Characters not allowed in file names</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
   </data>
-  <data name="LabelSourceCodes" xml:space="preserve">
-    <value>Source Code Files</value>
-    <comment>Label/ExtentionHelper</comment>
+  <data name="LabelWildcardError_TooManyAsterisk" xml:space="preserve">
+    <value>Too much use of '*'</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
   </data>
   <data name="LabelWildcard_Error" xml:space="preserve">
     <value>Wildcard Error</value>
