@@ -61,11 +61,11 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Add に類似しているローカライズされた文字列を検索します。
+        ///   Add/Modify に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonAdd {
+        public static string ButtonAddOrModify {
             get {
-                return ResourceManager.GetString("ButtonAdd", resourceCulture);
+                return ResourceManager.GetString("ButtonAddOrModify", resourceCulture);
             }
         }
         
@@ -75,6 +75,15 @@ namespace FileHashCraft.Properties {
         public static string ButtonCancel {
             get {
                 return ResourceManager.GetString("ButtonCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Remove Checked Items に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonCheckedRemove {
+            get {
+                return ResourceManager.GetString("ButtonCheckedRemove", resourceCulture);
             }
         }
         
@@ -111,15 +120,6 @@ namespace FileHashCraft.Properties {
         public static string ButtonNormalSettings {
             get {
                 return ResourceManager.GetString("ButtonNormalSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Remove に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ButtonRemove {
-            get {
-                return ResourceManager.GetString("ButtonRemove", resourceCulture);
             }
         }
         
@@ -432,9 +432,9 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Regular Expression Search Criteria に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegex_Critieria {
+        public static string LabelRegex_Criteria {
             get {
-                return ResourceManager.GetString("LabelRegex_Critieria", resourceCulture);
+                return ResourceManager.GetString("LabelRegex_Criteria", resourceCulture);
             }
         }
         
@@ -457,6 +457,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Wildcard Search Criteria に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelWildcard_Criteria {
+            get {
+                return ResourceManager.GetString("LabelWildcard_Criteria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Wildcard Error に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelWildcard_Error {
@@ -466,11 +475,11 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Wildcard Search Criteria に類似しているローカライズされた文字列を検索します。
+        ///   Wildcard search criteria not entered に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildcard_SearchCriteria {
+        public static string LabelWildcardError_Empty {
             get {
-                return ResourceManager.GetString("LabelWildcard_SearchCriteria", resourceCulture);
+                return ResourceManager.GetString("LabelWildcardError_Empty", resourceCulture);
             }
         }
         

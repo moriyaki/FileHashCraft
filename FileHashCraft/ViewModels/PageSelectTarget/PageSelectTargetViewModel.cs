@@ -31,6 +31,20 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         IPageSelectTargetViewModelExtention ViewModelExtention { get; }
         /// <summary>
+        /// PageSelectTargetViewModelのワイルドカードViewModel
+        /// </summary>
+        IPageSelectTargetViewModelWildcard ViewModelWildcard { get; }
+
+        /// <summary>
+        ///  PageSelectTargetViewModelの正規表現ViewModel
+        /// </summary>
+        IPageSelectTargetViewModelRegex ViewModelRegEx { get; }
+
+        /// <summary>
+        /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
+        /// </summary>
+        IPageSelectTargetViewModelExpert ViewModelExpert { get; }
+        /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
         void Initialize();
@@ -70,7 +84,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         ///  PageSelectTargetViewModelの正規表現ViewModel
         /// </summary>
-        public IPageSelectTargetViewModelRegEx ViewModelRegEx { get; }
+        public IPageSelectTargetViewModelRegex ViewModelRegEx { get; }
 
         /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
@@ -185,22 +199,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// エクスプローラー画面に戻ります。
         /// </summary>
         public RelayCommand ToPageExplorer { get; set; }
-        /// <summary>
-        /// ワイルドカードの条件を追加します。
-        /// </summary>
-        public RelayCommand AddWildcard { get; set; }
-        /// <summary>
-        /// ワイルドカードの条件を削除します。
-        /// </summary>
-        public RelayCommand RemoveWildcard { get; set; }
-       /// <summary>
-        /// //正規表現の条件を追加します。
-        /// </summary>
-        public RelayCommand AddRegularExpression { get; set; }
-        /// <summary>
-        /// 正規表現の条件を削除します。
-        /// </summary>
-        public RelayCommand RemoveRegularExpression { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
@@ -215,7 +213,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
             IPageSelectTargetViewModelExtention pageSelectTargetViewModelExtention,
             IPageSelectTargetViewModelWildcard pageSelectTargetViewModelWildcard,
-            IPageSelectTargetViewModelRegEx pageSelectTargetViewModelRegEx,
+            IPageSelectTargetViewModelRegex pageSelectTargetViewModelRegEx,
             IPageSelectTargetViewModelExpert pageSelectTargetViewModelExpert,
             IMessageServices messageServices,
             ISettingsService settingsService,
@@ -263,22 +261,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 CTS?.Cancel();
                 _messageServices.SendToExplorerPage();
             });
-
-            // ワイルドカードの条件を追加するコマンド
-            AddWildcard = new RelayCommand(
-                () => MessageBox.Show("ワイルドカードの追加：未実装"));
-
-            // ワイルドカードの条件を削除するコマンド
-            RemoveWildcard = new RelayCommand(
-                () => MessageBox.Show("ワイルドカードの削除：未実装"));
-
-            // 正規表現の条件を追加するコマンド
-            AddRegularExpression = new RelayCommand(
-                () => MessageBox.Show("正規表現の追加：未実装"));
-
-            // 正規表現の条件を削除するコマンド
-            RemoveRegularExpression = new RelayCommand(
-                () => MessageBox.Show("正規表現の削除：未実装"));
 
             // ツリービュー幅変更メッセージ受信
             WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, m)

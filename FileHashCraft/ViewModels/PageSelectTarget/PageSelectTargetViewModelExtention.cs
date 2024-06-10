@@ -71,11 +71,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public ObservableCollection<ExtensionCheckBoxViewModel> ExtentionCollection { get; set; } = [];
         /// <summary>
-        /// ファイル拡張子のチェックボックスが選択された時の拡張子グループチェックボックス処理をします
+        /// ファイル拡張子のチェックボックスラベルが選択された時の処理をします
         /// </summary>
         public RelayCommand<object> ExtentionGroupCheckBoxClickedCommand { get; set; }
         /// <summary>
-        /// ファイル拡張子のチェックボックスが選択解除された時のグループチェックボックス処理をします
+        /// ファイル拡張子のチェックボックスラベルが選択解除された時の処理をします
         /// </summary>
         public RelayCommand<object> ExtentionCheckBoxClickedCommand { get; set; }
         #endregion バインディング

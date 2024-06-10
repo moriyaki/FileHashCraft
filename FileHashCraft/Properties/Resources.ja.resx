@@ -117,13 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ButtonAdd" xml:space="preserve">
-    <value>追加</value>
+  <data name="ButtonAddOrModify" xml:space="preserve">
+    <value>追加/変更</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonCancel" xml:space="preserve">
     <value>キャンセル</value>
     <comment>Button/PageSelectTarget</comment>
+  </data>
+  <data name="ButtonCheckedRemove" xml:space="preserve">
+    <value>チェックした項目の削除</value>
+    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>コマンド実行</value>
@@ -140,10 +144,6 @@
   <data name="ButtonNormalSettings" xml:space="preserve">
     <value>標準設定に戻る</value>
     <comment>Button/PageSelectTarget</comment>
-  </data>
-  <data name="ButtonRemove" xml:space="preserve">
-    <value>削除</value>
-    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonTargetFilter" xml:space="preserve">
     <value>ハッシュ取得対象</value>
@@ -281,8 +281,8 @@
     <value>フォント</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelRegex_Critieria" xml:space="preserve">
-    <value>正規表現検索条件</value>
+  <data name="LabelRegex_Criteria" xml:space="preserve">
+    <value>正規表現での検索条件</value>
     <comment>Label/PageSelectTargetRegEx</comment>
   </data>
   <data name="LabelRegex_Error" xml:space="preserve">
@@ -293,6 +293,10 @@
     <value>見つかったファイルの内部ファイル書き込み等の処理中</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
+  <data name="LabelWildcardError_Empty" xml:space="preserve">
+    <value>ワイルドカード検索条件が入力されていません</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
+  </data>
   <data name="LabelWildcardError_NotAllowedCharacter" xml:space="preserve">
     <value>ファイル名に許可されてない文字です</value>
     <comment>Label/PageSelectTargetWildcard</comment>
@@ -301,12 +305,12 @@
     <value>'*'の利用が多すぎます</value>
     <comment>Label/PageSelectTargetWildcard</comment>
   </data>
-  <data name="LabelWildcard_Error" xml:space="preserve">
-    <value>ワイルドカードエラー</value>
+  <data name="LabelWildcard_Criteria" xml:space="preserve">
+    <value>ワイルドカードでの検索条件</value>
     <comment>Label/PageSelectTargetWildcard</comment>
   </data>
-  <data name="LabelWildcard_SearchCriteria" xml:space="preserve">
-    <value>ワイルドカード検索条件</value>
+  <data name="LabelWildcard_Error" xml:space="preserve">
+    <value>ワイルドカードのエラー</value>
     <comment>Label/PageSelectTargetWildcard</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">

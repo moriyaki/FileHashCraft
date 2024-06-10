@@ -184,7 +184,7 @@
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtention_FilterSetting, Mode=OneWay}"/>
 
-                        <ListBox x:Name="checkBoxExtListBox" ItemsSource="{Binding ViewModelExtention.ExtentionCollection}"
+                        <ListBox x:Name="checkBoxExtentionListBox" ItemsSource="{Binding ViewModelExtention.ExtentionCollection}"
                                 Grid.Row="1" Grid.Column="1" Margin="3">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -210,7 +210,6 @@
             </TabItem>
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentWildCard, Mode=OneWay}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
-                <!-- others -->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -222,38 +221,59 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto" MinHeight="40"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- 削除ボタン -->
+                    <!-- Remove button -->
                     <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="WildcardRemove" 
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
-                    <!-- 追加ボタン -->
-                    <Button Grid.Row="2" Grid.Column="2" Margin="3" x:Name="WildcardAdd"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCheckedRemove, Mode=OneWay}"/>
+                    <!-- Add or modiry button -->
+                    <Button Grid.Row="2" Grid.Column="2" Margin="3" x:Name="WildcardAddOrModify"
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
-                    <!-- ヘルプボタン -->
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAddOrModify, Mode=OneWay}"
+                            Command="{Binding ViewModelWildcard.WildcardAddOrModifyCommand}"/>
+                    <!-- Help button -->
                     <Button Grid.Row="2" Grid.Column="3" Margin="3" x:Name="WildcardHelp" 
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="?"
                             Command="{Binding ViewModelWildcard.WildcardHelpOpen}"/>
 
-                    <!-- ワイルドカード検索条件リストボックス -->
-                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="WildCardSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"
-                             />
-                    <!-- ワイルドカード検索条件ラベル -->
+                    <!-- Wildcard Search Criteria ListBox -->
+                    <ListBox x:Name="WildCardSearchListBox" ItemsSource="{Binding ViewModelWildcard.WildcardCollection}"
+                                Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}">
+
+                                    </CheckBox>
+                                    <Label VerticalAlignment="Center" Padding="0"
+                                                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                                                Content="{Binding WildcardCriteria, Mode=OneWay}">
+                                        <Label.InputBindings>
+                                            <MouseBinding 
+                                                    Command="{Binding DataContext.ViewModelWildcard.WildcardCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
+                                                    CommandParameter="{Binding}" MouseAction="LeftClick"/>
+                                        </Label.InputBindings>
+                                    </Label>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!-- Wildcard Search Criteria -->
                     <Label Grid.Row="2" Grid.Column="0" x:Name="LabelWildcardSearch"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_SearchCriteria, Mode=OneWay}"/>
-                    <!-- ワイルドカード検索条件 -->
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="WildcardCritieria"
-                             Text=""/>
-                    <!-- ワイルドカードエラーラベル -->
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Criteria, Mode=OneWay}"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="WildcardCriteria"
+                             Text="{Binding ViewModelWildcard.WildcardSearch,UpdateSourceTrigger=PropertyChanged}"/>
+                    <!-- Wildcard Search Criteria Error -->
                     <Label Grid.Row="3" Grid.Column="0" x:Name="LabelWildcardError"
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
-                    <!-- ワイルドカードエラーメッセージ -->
-                    <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="WildcardError"
-                               Background="Red" Text="" Margin="3" Grid.RowSpan="2"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="3" VerticalAlignment="Center"
+                               x:Name="WildcardError"
+                               Background="{Binding ViewModelWildcard.WildcardBackground}" 
+                               Text="{Binding ViewModelWildcard.WildcardErrorOutput}" />
 
                 </Grid>
             </TabItem>
@@ -264,28 +284,33 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" MinWidth="100"/>
+                        <ColumnDefinition Width="Auto" MinWidth="30"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto" MinHeight="40"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <!-- 削除ボタン -->
-                    <Button Grid.Row="0" Grid.Column="3" Margin="3,3,3,3" x:Name="RegularExpressionRemove"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
-                    <!-- 追加ボタン -->
-                    <Button Grid.Row="2" Grid.Column="3" Margin="3,3,3,3" x:Name="RegularExpressionAdd"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
-                    <!-- 正規表現検索条件リストボックス -->
+                    <!-- Remove button -->
+                    <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="RegularExpressionRemove"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCheckedRemove, Mode=OneWay}"/>
+                    <!-- Add or modiry button -->
+                    <Button Grid.Row="2" Grid.Column="2"  Margin="3" x:Name="RegularExpressionAddOrModify"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAddOrModify, Mode=OneWay}"/>
+                    <!-- Help button -->
+                    <Button Grid.Row="2" Grid.Column="3" Margin="3" x:Name="RegexHelp" 
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Content="?"
+                            />
+                    <!-- Regular Expression Search Criteria ListBox -->
                     <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
-                    <!-- 正規表現検索ラベル -->
+                    <!-- Regular Expression Search Criteria -->
                     <Label Grid.Row="2" Grid.Column="0" x:Name="LabelRegularExpression"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Critieria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
-                    <!-- 正規表現検索条件 -->
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="RegularExpressionCritieria"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Criteria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="3" x:Name="RegularExpressionCriteria"
                              Text="{}"/>
-                    <!-- 正規表現検索エラーラベル -->
+                    <!-- Regular Expression Search Criteria Error -->
                     <Label Grid.Row="3" Grid.Column="0" x:Name="LabelRegularExpressionError"
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
                     <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegularExpressionError"

@@ -126,7 +126,7 @@ namespace FileHashCraft
             services.AddSingleton<IPageSelectTargetViewModelMain, PageSelectTargetViewModelMain>();
             services.AddSingleton<IPageSelectTargetViewModelExtention, PageSelectTargetViewModelExtention>();
             services.AddSingleton<IPageSelectTargetViewModelWildcard, PageSelectTargetViewModelWildcard>();
-            services.AddSingleton<IPageSelectTargetViewModelRegEx, PageSelectTargetViewModelRegEx>();
+            services.AddSingleton<IPageSelectTargetViewModelRegex, PageSelectTargetViewModelRegex>();
             services.AddSingleton<IPageSelectTargetViewModelExpert, PageSelectTargetViewModelExpert>();
 
             // Model

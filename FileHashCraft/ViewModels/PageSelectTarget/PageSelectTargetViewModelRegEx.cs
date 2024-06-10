@@ -12,6 +12,6 @@ using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
-    public interface IPageSelectTargetViewModelRegEx;
-    public class PageSelectTargetViewModelRegEx : IPageSelectTargetViewModelRegEx;
+    public interface IPageSelectTargetViewModelRegex;
+    public class PageSelectTargetViewModelRegex : IPageSelectTargetViewModelRegex;
 }

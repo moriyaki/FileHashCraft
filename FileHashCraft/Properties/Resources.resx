@@ -117,13 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ButtonAdd" xml:space="preserve">
-    <value>Add</value>
+  <data name="ButtonAddOrModify" xml:space="preserve">
+    <value>Add/Modify</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonCancel" xml:space="preserve">
     <value>Cancel</value>
     <comment>Button/PageSelectTarget</comment>
+  </data>
+  <data name="ButtonCheckedRemove" xml:space="preserve">
+    <value>Remove Checked Items</value>
+    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>Execute Command</value>
@@ -140,10 +144,6 @@
   <data name="ButtonNormalSettings" xml:space="preserve">
     <value>Return to standard settings</value>
     <comment>Button/PageSelectTarget</comment>
-  </data>
-  <data name="ButtonRemove" xml:space="preserve">
-    <value>Remove</value>
-    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonTargetFilter" xml:space="preserve">
     <value>Hash acquisition target</value>
@@ -281,7 +281,7 @@
     <value>Font</value>
     <comment>Label/PageSettings</comment>
   </data>
-  <data name="LabelRegex_Critieria" xml:space="preserve">
+  <data name="LabelRegex_Criteria" xml:space="preserve">
     <value>Regular Expression Search Criteria</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
@@ -293,6 +293,10 @@
     <value>During internal file writing or other processing of found files.</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
+  <data name="LabelWildcardError_Empty" xml:space="preserve">
+    <value>Wildcard search criteria not entered</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
+  </data>
   <data name="LabelWildcardError_NotAllowedCharacter" xml:space="preserve">
     <value>Characters not allowed in file names</value>
     <comment>Label/PageSelectTargetWildcard</comment>
@@ -301,12 +305,12 @@
     <value>Too much use of '*'</value>
     <comment>Label/PageSelectTargetWildcard</comment>
   </data>
-  <data name="LabelWildcard_Error" xml:space="preserve">
-    <value>Wildcard Error</value>
+  <data name="LabelWildcard_Criteria" xml:space="preserve">
+    <value>Wildcard Search Criteria</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
-  <data name="LabelWildcard_SearchCriteria" xml:space="preserve">
-    <value>Wildcard Search Criteria</value>
+  <data name="LabelWildcard_Error" xml:space="preserve">
+    <value>Wildcard Error</value>
     <comment>Label/PageSelectTarget</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
