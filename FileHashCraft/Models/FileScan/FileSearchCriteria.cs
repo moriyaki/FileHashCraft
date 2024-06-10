@@ -6,7 +6,7 @@
     public enum FileSearchOption
     {
         Extention,
-        Wildcar,
+        Wildcard,
         Regex
     }
 

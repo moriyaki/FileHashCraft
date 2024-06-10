@@ -63,6 +63,13 @@ namespace FileHashCraft.Models.FileScan
         /// </summary>
         private readonly object lockObject = new();
 
+        /// <summary>
+        /// ファイルが属性対象かどうかを取得します。
+        /// </summary>
+        /// <param name="file">HashFile型のファイル情報</param>
+        /// <param name="includeHidden">隠しファイルを含むかどうか</param>
+        /// <param name="includeReadOnly">読み取り専用ファイルを含むかどうか</param>
+        /// <returns>属性対象かどうか</returns>
         private static bool MatchFileAttributesCriteria(HashFile file, bool includeHidden, bool includeReadOnly)
         {
             var isReadOnly = (file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
@@ -110,7 +117,7 @@ namespace FileHashCraft.Models.FileScan
                                 && MatchFileAttributesCriteria(c, includeHidden, includeReadOnly);
                             });
                             break;
-                        case FileSearchOption.Wildcar:
+                        case FileSearchOption.Wildcard:
                             break;
                         case FileSearchOption.Regex:
                             break;
@@ -123,7 +130,7 @@ namespace FileHashCraft.Models.FileScan
         }
 
         /// <summary>
-        /// 検索条件に合致するファイルを取得する
+        /// 検索条件に合致するファイルを取得します。
         /// </summary>
         /// <returns>検索条件合致ファイル</returns>
         public HashSet<HashFile> GetAllCriteriaFileName()
@@ -137,7 +144,7 @@ namespace FileHashCraft.Models.FileScan
                         files.UnionWith(AllFiles.Where(
                         f => String.Equals(criteria.SearchPattern, Path.GetExtension(f.FileFullPath), StringComparison.CurrentCultureIgnoreCase)));
                         break;
-                    case FileSearchOption.Wildcar:
+                    case FileSearchOption.Wildcard:
                         break;
                     case FileSearchOption.Regex:
                         break;
@@ -172,7 +179,7 @@ namespace FileHashCraft.Models.FileScan
                         });
                         if (count > 0) { return true; }
                         break;
-                    case FileSearchOption.Wildcar:
+                    case FileSearchOption.Wildcard:
                         break;
                     case FileSearchOption.Regex:
                         break;
