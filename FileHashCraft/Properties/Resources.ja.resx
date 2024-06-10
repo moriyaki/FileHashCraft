@@ -329,6 +329,10 @@
     <value>デバッグ(_D)</value>
     <comment>MenuItem</comment>
   </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>ヘルプ(_H)</value>
+    <comment>MenuItem</comment>
+  </data>
   <data name="MenuSettings" xml:space="preserve">
     <value>設定(_S)</value>
     <comment>MenuItem</comment>

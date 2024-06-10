@@ -538,6 +538,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Help(_H) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MenuHelp {
+            get {
+                return ResourceManager.GetString("MenuHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Settings(_X) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MenuSettings {

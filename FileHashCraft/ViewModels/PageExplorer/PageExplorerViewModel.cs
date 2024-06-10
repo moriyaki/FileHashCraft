@@ -196,9 +196,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public RelayCommand SettingsOpen { get; set; }
 
         /// <summary>
-        /// デバッグウィンドウを開く
+        /// デバッグウィンドウを開きます。
         /// </summary>
         public RelayCommand DebugOpen { get; set; }
+
+        /// <summary>
+        /// ヘルプウィンドウを開きます。
+        /// </summary>
+        public RelayCommand HelpOpen { get; set; }
         #endregion コマンド
 
         #region コンストラクタと初期処理
@@ -208,12 +213,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly ISettingsService _settingsService;
         private readonly IFileSystemWatcherService _fileSystemWatcherService;
         private readonly ITreeManager _treeManager;
+        private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         public PageExplorerViewModel(
             IMessageServices messageServices,
             ISettingsService settingsService,
             IFileSystemWatcherService fileSystemWatcherService,
             ITreeManager treeManager,
+            IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
             )
         {
@@ -221,6 +228,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _settingsService = settingsService;
             _fileSystemWatcherService = fileSystemWatcherService;
             _treeManager = treeManager;
+            _helpWindowViewModel = helpWindowViewModel;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlModel;
 
             // 「上へ」ボタンのコマンド
@@ -280,6 +288,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             {
                 var debugWindow = new Views.DebugWindow();
                 debugWindow.Show();
+            });
+
+            // ヘルプウィンドウを開くコマンド
+            HelpOpen = new RelayCommand(() =>
+            {
+                var helpWindow = new Views.HelpWindow();
+                helpWindow.Show();
+                _helpWindowViewModel.Initialize(HelpPage.Index);
             });
 
             // カレントディレクトリ変更のメッセージ受信

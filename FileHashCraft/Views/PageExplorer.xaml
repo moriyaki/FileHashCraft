@@ -30,6 +30,8 @@
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
             <MenuItem Command="{Binding DebugOpen}"
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
+            <MenuItem Command="{Binding HelpOpen}"
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
         </Menu>
 
         <!-- CUrrent Directory -->

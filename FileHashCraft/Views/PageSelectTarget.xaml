@@ -77,6 +77,8 @@
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
             <MenuItem Command="{Binding DebugOpen}"
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
+            <MenuItem Command="{Binding HelpOpen}"
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
         </Menu>
 
         <!-- Buttons -->
@@ -214,6 +216,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto" MinWidth="100"/>
+                        <ColumnDefinition Width="Auto" MinWidth="30"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -223,11 +226,19 @@
                     </Grid.RowDefinitions>
 
                     <!-- 削除ボタン -->
-                    <Button Grid.Row="0" Grid.Column="2" Margin="3" x:Name="WildcardRemove" 
+                    <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="WildcardRemove" 
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
                     <!-- 追加ボタン -->
                     <Button Grid.Row="2" Grid.Column="2" Margin="3" x:Name="WildcardAdd"
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
+                    <!-- ヘルプボタン -->
+                    <Button Grid.Row="2" Grid.Column="3" Margin="3" x:Name="WildcardHelp" 
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Content="?"
+                            Command="{Binding ViewModelWildcard.WildcardHelpOpen}"/>
+
                     <!-- ワイルドカード検索条件リストボックス -->
                     <ListBox Grid.Row="0" Grid.Column="0" x:Name="WildCardSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
                     <!-- ワイルドカード検索条件ラベル -->

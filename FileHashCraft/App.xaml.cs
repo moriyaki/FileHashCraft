@@ -110,6 +110,7 @@ namespace FileHashCraft
             services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
             services.AddSingleton<IPageSettingsViewModel, PageSettingsViewModel>();
+            services.AddSingleton<IHelpWindowViewModel, HelpWindowViewModel>();
 
             services.AddSingleton<IControDirectoryTreeViewlModel, ControDirectoryTreeViewModel>();
             services.AddTransient<IDirectoryTreeViewItemModel, DirectoryTreeViewItemModel>();

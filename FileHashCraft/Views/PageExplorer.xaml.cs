@@ -22,13 +22,6 @@ namespace FileHashCraft.Views
             DataContext = Ioc.Default.GetService<IPageExplorerViewModel>();
         }
 
-        // とりあえずのデバッグウィンドウ開く処理
-        private void DebugClick(object sender, RoutedEventArgs e)
-        {
-            var debugWindow = new Views.DebugWindow();
-            debugWindow.Show();
-        }
-
         /// <summary>
         /// Ctrl + マウスホイールで拡大縮小を行う
         /// </summary>

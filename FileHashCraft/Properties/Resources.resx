@@ -329,6 +329,10 @@
     <value>Debug(_D)</value>
     <comment>MenuItem</comment>
   </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Help(_H)</value>
+    <comment>MenuItem</comment>
+  </data>
   <data name="MenuSettings" xml:space="preserve">
     <value>Settings(_X)</value>
     <comment>MenuItem</comment>

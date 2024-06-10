@@ -178,6 +178,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public RelayCommand DebugOpen { get; set; }
         /// <summary>
+        /// ヘルプウィンドウを開きます。
+        /// </summary>
+        public RelayCommand HelpOpen { get; set; }
+        /// <summary>
         /// エクスプローラー画面に戻ります。
         /// </summary>
         public RelayCommand ToPageExplorer { get; set; }
@@ -203,6 +207,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IMessageServices _messageServices;
         private readonly ISettingsService _settingsService;
         private readonly ITreeManager _directoryTreeManager;
+        private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         private bool IsExecuting = false;
 
@@ -215,6 +220,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IMessageServices messageServices,
             ISettingsService settingsService,
             ITreeManager directoryTreeManager,
+            IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlViewModel
         )
         {
@@ -226,6 +232,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _messageServices = messageServices;
             _settingsService = settingsService;
             _directoryTreeManager = directoryTreeManager;
+            _helpWindowViewModel = helpWindowViewModel;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
 
             // カレントハッシュ計算アルゴリズムを保存
@@ -242,6 +249,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 var debugWindow = new Views.DebugWindow();
                 debugWindow.Show();
+            });
+            // ヘルプウィンドウを開くコマンド
+            HelpOpen = new RelayCommand(() =>
+            {
+                var helpWindow = new Views.HelpWindow();
+                helpWindow.Show();
+                _helpWindowViewModel.Initialize(HelpPage.Index);
             });
             // エクスプローラー風画面に移動するコマンド
             ToPageExplorer = new RelayCommand(() =>
