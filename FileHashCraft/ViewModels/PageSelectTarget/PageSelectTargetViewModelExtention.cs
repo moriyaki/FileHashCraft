@@ -22,7 +22,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子による絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection { get; set; }
+        ObservableCollection<ExtensionCheckBoxViewModel> ExtentionCollection { get; set; }
         /// <summary>
         /// ファイルの拡張子グループをリストボックスに追加します。
         /// </summary>
@@ -69,7 +69,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子による絞り込みチェックボックスを持つリストボックス
         /// </summary>
-        public ObservableCollection<ExtensionOrTypeCheckBoxBase> ExtentionCollection { get; set; } = [];
+        public ObservableCollection<ExtensionCheckBoxViewModel> ExtentionCollection { get; set; } = [];
         /// <summary>
         /// ファイル拡張子のチェックボックスが選択された時の拡張子グループチェックボックス処理をします
         /// </summary>
@@ -192,7 +192,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
             if (extentionManager.GetExtentionsCount(extention) > 0)
             {
-                var item = new ExtensionCheckBox(_messageServices, _settingssService, _extentionManager);
+                var item = new ExtensionCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
                 item.Initialize(extention);
                 App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
             }

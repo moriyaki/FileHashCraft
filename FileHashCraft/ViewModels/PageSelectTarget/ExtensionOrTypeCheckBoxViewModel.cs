@@ -135,7 +135,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// <summary>
     /// ファイル拡張子のチェックボックスを扱うクラス
     /// </summary>
-    public class ExtensionCheckBox(
+    public class ExtensionCheckBoxViewModel(
         IMessageServices messageService,
         ISettingsService settingsService,
         IExtentionManager extentionManager

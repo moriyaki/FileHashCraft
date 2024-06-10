@@ -240,7 +240,8 @@
                             Command="{Binding ViewModelWildcard.WildcardHelpOpen}"/>
 
                     <!-- ワイルドカード検索条件リストボックス -->
-                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="WildCardSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
+                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="WildCardSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"
+                             />
                     <!-- ワイルドカード検索条件ラベル -->
                     <Label Grid.Row="2" Grid.Column="0" x:Name="LabelWildcardSearch"
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_SearchCriteria, Mode=OneWay}"/>
@@ -250,6 +251,7 @@
                     <!-- ワイルドカードエラーラベル -->
                     <Label Grid.Row="3" Grid.Column="0" x:Name="LabelWildcardError"
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+                    <!-- ワイルドカードエラーメッセージ -->
                     <TextBlock Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" x:Name="WildcardError"
                                Background="Red" Text="" Margin="3" Grid.RowSpan="2"/>
 
