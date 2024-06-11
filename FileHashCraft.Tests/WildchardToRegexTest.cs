@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.Models.FileScan;
 
 namespace FileHashCraft.Tests
 {
@@ -13,7 +14,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void WildcardFilename()
         {
-            Regex regex = PageSelectTargetViewModelWildcard.WildcardToRegexPattern("*.txt");
+            Regex regex = ScannedFilesManager.WildcardToRegexPattern("*.txt");
 
             Assert.Matches(regex, "test.txt");
             Assert.DoesNotMatch(regex, "test.csv");
@@ -26,7 +27,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void WildchardExtention()
         {
-            Regex regex = PageSelectTargetViewModelWildcard.WildcardToRegexPattern("file.*");
+            Regex regex = ScannedFilesManager.WildcardToRegexPattern("file.*");
 
             Assert.Matches(regex, "file.txt");
             Assert.Matches(regex, "file.csv");
@@ -38,7 +39,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void WildcardCharIncludeExtention()
         {
-            Regex regex = PageSelectTargetViewModelWildcard.WildcardToRegexPattern("*.m*");
+            Regex regex = ScannedFilesManager.WildcardToRegexPattern("*.m*");
 
             Assert.Matches(regex, "file.m.txt");
             Assert.Matches(regex, "file.m");
@@ -51,7 +52,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void WildcardAllAsterisk1()
         {
-            Regex regex = PageSelectTargetViewModelWildcard.WildcardToRegexPattern("*");
+            Regex regex = ScannedFilesManager.WildcardToRegexPattern("*");
 
             Assert.Matches(regex, "file.m.txt");
             Assert.Matches(regex, "file.m");
@@ -65,7 +66,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void WildcardAllAsterisk2()
         {
-            Regex regex = PageSelectTargetViewModelWildcard.WildcardToRegexPattern("*.*");
+            Regex regex = ScannedFilesManager.WildcardToRegexPattern("*.*");
 
             Assert.Matches(regex, "file.m.txt");
             Assert.Matches(regex, "file.m");

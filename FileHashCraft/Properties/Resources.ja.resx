@@ -117,17 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ButtonAddOrModify" xml:space="preserve">
-    <value>追加/変更</value>
+  <data name="ButtonAdd" xml:space="preserve">
+    <value>追加</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonCancel" xml:space="preserve">
     <value>キャンセル</value>
     <comment>Button/PageSelectTarget</comment>
-  </data>
-  <data name="ButtonCheckedRemove" xml:space="preserve">
-    <value>チェックした項目の削除</value>
-    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>コマンド実行</value>
@@ -141,9 +137,17 @@
     <value>ハッシュ管理</value>
     <comment>Button/PageExplorer</comment>
   </data>
+  <data name="ButtonModify" xml:space="preserve">
+    <value>変更</value>
+    <comment>TabContent/PageSelectTarget</comment>
+  </data>
   <data name="ButtonNormalSettings" xml:space="preserve">
     <value>標準設定に戻る</value>
     <comment>Button/PageSelectTarget</comment>
+  </data>
+  <data name="ButtonRemove" xml:space="preserve">
+    <value>削除</value>
+    <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="ButtonTargetFilter" xml:space="preserve">
     <value>ハッシュ取得対象</value>
@@ -346,19 +350,19 @@
     <comment>Label/PageSelectTargetExtention</comment>
   </data>
   <data name="TabContentExpert" xml:space="preserve">
-    <value>(注意)上級者向け設定</value>
+    <value>(注意)上級者向け設定(_E)</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="TabContentRegularExpression" xml:space="preserve">
-    <value>正規表現設定</value>
+    <value>正規表現設定(_R)</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="TabContentStarndard" xml:space="preserve">
-    <value>標準設定</value>
+    <value>標準設定(_N)</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="TabContentWildCard" xml:space="preserve">
-    <value>ワイルドカード設定</value>
+    <value>ワイルドカード設定(_W)</value>
     <comment>TabContent/PageSelectTarget</comment>
   </data>
   <data name="TitleTargetFilterWindow" xml:space="preserve">

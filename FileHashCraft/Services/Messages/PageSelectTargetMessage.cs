@@ -1,5 +1,10 @@
-﻿namespace FileHashCraft.Services.Messages
+﻿using CefSharp.DevTools.Tracing;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using FileHashCraft.ViewModels.PageSelectTarget;
+
+namespace FileHashCraft.Services.Messages
 {
+    #region 拡張子チェックボックスメッセージ
     /// <summary>
     /// 拡張子チェックボックスがチェックされたら拡張子グループ変更するメッセージ
     /// </summary>
@@ -55,4 +60,50 @@
             ExtentionCollection = extentionCollection;
         }
     }
+    #endregion 拡張子チェックボックスメッセージ
+
+    #region ワイルドカードメッセージ
+    /// <summary>
+    /// 編集モード/閲覧モードの変更を通知するメッセージ
+    /// </summary>
+    public class IsEditModeChanged;
+
+    /// <summary>
+    /// ワイルドカード一覧のテキストボックスにフォーカスを移すメッセージ
+    /// </summary>
+    public class WildcardSeletedTextBoxFocus;
+
+    /// <summary>
+    /// ワイルドカード検索条件入力テキストボックスにフォーカスを戻すメッセージ
+    /// </summary>
+    public class WildcardCriteriaFocus;
+
+    /// <summary>
+    /// 選択されたアイテムの状態が変わったことを知らせるメッセージ
+    /// </summary>
+    public class IsSelectedChanged
+    {
+        public bool IsSelected { get; set; }
+        public WildcardItemViewModel SelectedItem { get; set; }
+        public IsSelectedChanged() { throw new NotSupportedException(); }
+        public IsSelectedChanged(bool isSelected, WildcardItemViewModel selectedItem)
+        {
+            IsSelected = isSelected;
+            SelectedItem = selectedItem;
+        }
+    }
+
+    /// <summary>
+    /// リストボックスのワイルドカード検索条件編集の内容通知メッセージ
+    /// </summary>
+    public class WildcardSelectedCriteria : RequestMessage<bool>
+    {
+        public string WildcardCriteria { get; set; } = string.Empty;
+        public WildcardSelectedCriteria() { throw new NotImplementedException(); }
+        public WildcardSelectedCriteria(string wildcardCriteria)
+        {
+            WildcardCriteria = wildcardCriteria;
+        }
+    }
+    #endregion ワイルドカードメッセージ
 }

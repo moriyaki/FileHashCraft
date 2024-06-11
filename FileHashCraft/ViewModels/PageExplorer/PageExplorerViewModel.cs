@@ -118,11 +118,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 // 異なるディレクトリに移動した時の処理
                 if (Directory.Exists(changedDirectory))
                 {
-                    //FolderSelectedChanged(value);
                     ToUpDirectory.NotifyCanExecuteChanged();
                     ListViewUpdater.Execute(null);
                     _fileSystemWatcherService.SetCurrentDirectoryWatcher(changedDirectory);
-                    //WeakReferenceMessenger.Default.Send(new CurrentDirectoryChanged(changedDirectory));
                     _messageServices.SendCurrentDirectoryChanged(changedDirectory);
                 }
             }
@@ -167,9 +165,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 _messageServices.SendFontSize(value);
             }
         }
-        #endregion データバインディング
 
-        #region コマンド
         /// <summary>
         /// 「上へ」コマンド
         /// </summary>
@@ -204,7 +200,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public RelayCommand HelpOpen { get; set; }
-        #endregion コマンド
+        #endregion データバインディング
 
         #region コンストラクタと初期処理
         private bool IsExecuting = false;
@@ -354,6 +350,24 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 _controDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
             }
             _treeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+
+            // 開発用自動化処理
+            foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
+            {
+                if (root.FullPath == @"H:\")
+                {
+                    root.KickChild();
+                    foreach (var child in root.Children)
+                    {
+                        if (child.FullPath == @"H:\旧D_Drive")
+                        {
+                            child.IsChecked = true;
+                        }
+                    }
+                    _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+                    _messageServices.SendToSelectTargetPage();
+                }
+            }
         }
         #endregion コンストラクタと初期処理
 

@@ -61,11 +61,11 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Add/Modify に類似しているローカライズされた文字列を検索します。
+        ///   Add に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonAddOrModify {
+        public static string ButtonAdd {
             get {
-                return ResourceManager.GetString("ButtonAddOrModify", resourceCulture);
+                return ResourceManager.GetString("ButtonAdd", resourceCulture);
             }
         }
         
@@ -75,15 +75,6 @@ namespace FileHashCraft.Properties {
         public static string ButtonCancel {
             get {
                 return ResourceManager.GetString("ButtonCancel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Remove Checked Items に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ButtonCheckedRemove {
-            get {
-                return ResourceManager.GetString("ButtonCheckedRemove", resourceCulture);
             }
         }
         
@@ -115,11 +106,29 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Modify に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonModify {
+            get {
+                return ResourceManager.GetString("ButtonModify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Return to standard settings に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ButtonNormalSettings {
             get {
                 return ResourceManager.GetString("ButtonNormalSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Remove に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonRemove {
+            get {
+                return ResourceManager.GetString("ButtonRemove", resourceCulture);
             }
         }
         
@@ -574,7 +583,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   (Caution) Advanced Settings に類似しているローカライズされた文字列を検索します。
+        ///   (Caution) Advanced Settings(_E) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TabContentExpert {
             get {
@@ -583,7 +592,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Regular Expression Settings に類似しているローカライズされた文字列を検索します。
+        ///   Regular Expression Settings(_R) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TabContentRegularExpression {
             get {
@@ -592,7 +601,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Standard Settings に類似しているローカライズされた文字列を検索します。
+        ///   Standard Settings(_N) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TabContentStarndard {
             get {
@@ -601,7 +610,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Wildcard Settings に類似しているローカライズされた文字列を検索します。
+        ///   Wildcard Settings(_W) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string TabContentWildCard {
             get {
