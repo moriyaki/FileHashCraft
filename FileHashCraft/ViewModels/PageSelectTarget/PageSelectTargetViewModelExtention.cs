@@ -82,7 +82,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly IMessageServices _messageServices;
+        private readonly IFileSystemServices _messageServices;
         private readonly ISettingsService _settingssService;
         private readonly IExtentionManager _extentionManager;
         private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
@@ -94,7 +94,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         public PageSelectTargetViewModelExtention(
             IScannedFilesManager scannedFilesManager,
-            IMessageServices messageService,
+            IFileSystemServices messageService,
             ISettingsService settingsService,
             IExtentionManager extentionManager,
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain
@@ -151,23 +151,23 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void AddFileTypes()
         {
-            var movies = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var movies = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             movies.Initialize(FileGroupType.Movies);
-            var pictures = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var pictures = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             pictures.Initialize(FileGroupType.Pictures);
-            var musics = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var musics = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             musics.Initialize(FileGroupType.Musics);
-            var documents = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var documents = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             documents.Initialize(FileGroupType.Documents);
-            var applications = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var applications = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             applications.Initialize(FileGroupType.Applications);
-            var archives = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var archives = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             archives.Initialize(FileGroupType.Archives);
-            var sources = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var sources = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             sources.Initialize(FileGroupType.SourceCodes);
-            var registrations = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var registrations = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             registrations.Initialize(FileGroupType.Registrations);
-            var others = new ExtentionGroupCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+            var others = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
             others.Initialize();
 
             App.Current?.Dispatcher.Invoke(() =>
@@ -192,7 +192,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
             if (extentionManager.GetExtentionsCount(extention) > 0)
             {
-                var item = new ExtensionCheckBoxViewModel(_messageServices, _settingssService, _extentionManager);
+                var item = new ExtensionCheckBoxViewModel(_settingssService, _extentionManager);
                 item.Initialize(extention);
                 App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
             }

@@ -28,7 +28,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
-        private readonly IMessageServices _messageServices;
         private readonly ISettingsService _settingsService;
 
         /// <summary>
@@ -37,7 +36,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public ExplorerListItemViewModel()
         {
-            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
             _CurrentFontFamily = _settingsService.CurrentFont;
@@ -242,7 +240,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 if (_CurrentFontFamily.Source == value.Source) { return; }
 
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -258,7 +256,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 if (_FontSize == value) { return; }
 
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
         #endregion データバインディング

@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileHashCraft.Services;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
-using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels
 {
@@ -97,7 +96,7 @@ namespace FileHashCraft.ViewModels
             set
             {
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -111,7 +110,7 @@ namespace FileHashCraft.ViewModels
             set
             {
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
 
@@ -145,7 +144,6 @@ namespace FileHashCraft.ViewModels
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         private readonly ITreeManager _directoryTreeManager;
-        private readonly IMessageServices _messageServices;
         private readonly ISettingsService _settingsService;
 
         /// <summary>
@@ -154,12 +152,10 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         public DebugWindowViewModel(
             ITreeManager directoryTreeManager,
-            IMessageServices messageServices,
             ISettingsService settingsService
             )
         {
             _directoryTreeManager = directoryTreeManager;
-            _messageServices = messageServices;
             _settingsService = settingsService;
 
             Top = _settingsService.Top;

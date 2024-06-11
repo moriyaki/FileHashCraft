@@ -41,7 +41,7 @@ namespace FileHashCraft.ViewModels
             set
             {
                 _SelectedLanguage = value;
-                _messageServices.SendLanguage(_SelectedLanguage);
+                _settingsService.SendLanguage(_SelectedLanguage);
                 var currentHashAlgorithms = SelectedHashAlgorithm;
                 HashAlgorithms.Clear();
                 HashAlgorithms =
@@ -78,7 +78,7 @@ namespace FileHashCraft.ViewModels
                 if (value == _SelectedHashAlgorithm) return;
 
                 SetProperty(ref _SelectedHashAlgorithm, value);
-                _messageServices.SendHashAlogrithm(value);
+                _settingsService.SendHashAlogrithm(value);
             }
         }
         /// <summary>
@@ -92,7 +92,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_IsReadOnlyFileInclude == value) return;
                 SetProperty(ref _IsReadOnlyFileInclude, value);
-                _messageServices.SendReadOnlyFileInclude(value);
+                _settingsService.SendReadOnlyFileInclude(value);
             }
         }
 
@@ -107,7 +107,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_IsHiddenFileInclude == value) return;
                 SetProperty(ref _IsHiddenFileInclude, value);
-                _messageServices.SendHiddenFileInclude(value);
+                _settingsService.SendHiddenFileInclude(value);
             }
         }
         /// <summary>
@@ -121,7 +121,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_IsZeroSizeFileDelete == value) return;
                 SetProperty(ref _IsZeroSizeFileDelete, value);
-                _messageServices.SendZeroSizeFileDelete(value);
+                _settingsService.SendZeroSizeFileDelete(value);
             }
         }
 
@@ -136,7 +136,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_IsEmptyDirectoryDelete == value) return;
                 SetProperty(ref _IsEmptyDirectoryDelete, value);
-                _messageServices.SendEmptyDirectoryDelete(value);
+                _settingsService.SendEmptyDirectoryDelete(value);
             }
         }
 
@@ -151,7 +151,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -166,7 +166,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
 
@@ -207,15 +207,15 @@ namespace FileHashCraft.ViewModels
 
         #region コンストラクタと初期化
         private readonly ISettingsService _settingsService;
-        private readonly IMessageServices _messageServices;
+        private readonly IFileSystemServices _fileSystemService;
 
         public PageSettingsViewModel(
             ISettingsService settingsService,
-            IMessageServices messageServices
+            IFileSystemServices fileSystemServices
         )
         {
             _settingsService = settingsService;
-            _messageServices = messageServices;
+            _fileSystemService = fileSystemServices;
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
@@ -243,7 +243,7 @@ namespace FileHashCraft.ViewModels
 
             // 「終了」で戻るページへのメッセージを送るコマンド
             ReturnPage = new RelayCommand(
-                () => _messageServices.SendReturnPageFromSettings());
+                () => _fileSystemService.SendReturnPageFromSettings());
 
             // 読み取り専用ファイルを利用するかどうかが変更されたメッセージ受信
             WeakReferenceMessenger.Default.Register<ReadOnlyFileIncludeChanged>(this, (_, m)

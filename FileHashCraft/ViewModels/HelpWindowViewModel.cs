@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CefSharp.Wpf;
+﻿using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Services;
 

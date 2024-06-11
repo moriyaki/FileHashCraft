@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,7 +7,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
@@ -162,7 +160,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IMessageServices _messageServices;
         private readonly ISettingsService _settingsService;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
 
@@ -172,11 +169,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         public PageSelectTargetViewModelWildcard(
-            IMessageServices messageServices,
             ISettingsService settingsService,
             IHelpWindowViewModel helpWindowViewModel)
         {
-            _messageServices = messageServices;
             _settingsService = settingsService;
             _helpWindowViewModel = helpWindowViewModel;
 
@@ -222,13 +217,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 m.Reply(IsWildcardCriteriaConditionCorrent(m.WildcardCriteria)));
 
             // 試験用にアイテムを一つ追加してます(実装後削除します)
-            var dummyWildcard = new WildcardItemViewModel(_messageServices, _settingsService)
+            var dummyWildcard = new WildcardItemViewModel(_settingsService)
             {
                 WildcardCriteria = "*.mp4",
             };
             WildcardItems.Add(dummyWildcard);
 
-            var dummyWildcard2 = new WildcardItemViewModel(_messageServices, _settingsService)
+            var dummyWildcard2 = new WildcardItemViewModel(_settingsService)
             {
                 WildcardCriteria = "*.*",
             };
@@ -241,7 +236,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void AddWildcardCriteria()
         {
-            var newWildcard = new WildcardItemViewModel(_messageServices, _settingsService)
+            var newWildcard = new WildcardItemViewModel(_settingsService)
             {
                 WildcardCriteria = WildcardSearchCriteriaText,
             };

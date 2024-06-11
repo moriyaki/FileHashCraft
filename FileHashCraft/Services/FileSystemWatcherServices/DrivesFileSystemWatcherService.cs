@@ -44,7 +44,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
             throw new NotImplementedException();
         }
 
-        private readonly IMessageServices _messageServices;
+        private readonly IFileSystemServices _fileSystemService;
         private readonly ITreeManager _directoryTreeManager;
 
         /// <summary>
@@ -52,11 +52,11 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// </summary>
         /// <param name="directoryTreeManager">IDirectoryTreeManager</param>
         public DrivesFileSystemWatcherService(
-            IMessageServices messageServices,
+            IFileSystemServices fileSystemServices,
             ITreeManager directoryTreeManager
         )
         {
-            _messageServices = messageServices;
+            _fileSystemService = fileSystemServices;
             _directoryTreeManager = directoryTreeManager;
         }
         #endregion コンストラクタ
@@ -152,7 +152,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         {
             if (IsEventNotCatch(e.FullPath)) return;
             //WeakReferenceMessenger.Default.Send(new DirectoryItemDeleted(e.FullPath));
-            _messageServices.SendDirectoryItemDeleted(e.FullPath);
+            _fileSystemService.SendDirectoryItemDeleted(e.FullPath);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         {
             if (IsEventNotCatch(e.FullPath)) return;
             //WeakReferenceMessenger.Default.Send(new DirectoryItemCreated(e.FullPath));
-            _messageServices.SendDirectoryItemCreated(e.FullPath);
+            _fileSystemService.SendDirectoryItemCreated(e.FullPath);
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         {
             if (IsEventNotCatch(e.FullPath)) return;
             //WeakReferenceMessenger.Default.Send(new DirectoryItemRenamed(e.OldFullPath, e.FullPath));
-            _messageServices.SendDirectoryItemRenamed(e.OldFullPath, e.FullPath);
+            _fileSystemService.SendDirectoryItemRenamed(e.OldFullPath, e.FullPath);
         }
         #endregion ディレクトリ変更通知処理
 
@@ -190,7 +190,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         {
             var path = driveLetter + @":\";
             //WeakReferenceMessenger.Default.Send(new OpticalDriveMediaInserted(path));
-            _messageServices.SendInsertOpticalMedia(path);
+            _fileSystemService.SendInsertOpticalMedia(path);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         {
             var path = driveLetter + @":\";
             //WeakReferenceMessenger.Default.Send(new OpticalDriveMediaEjected(path));
-            _messageServices.SendEjectOpticalMedia(path);
+            _fileSystemService.SendEjectOpticalMedia(path);
         }
         #endregion リムーバブルディスクの着脱処理
     }

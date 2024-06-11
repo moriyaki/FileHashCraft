@@ -80,7 +80,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     // カレントディレクトリを TreeView の選択状態に反映
                     FolderSelectedChanged(value);
                     // カレントディレクトリ変更のメッセージ発信
-                    _messageServices.SendCurrentDirectoryChanged(value);
+                    _fileSystemService.SendCurrentDirectoryChanged(value);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_TreeWidth == value) { return; }
                 SetProperty(ref _TreeWidth, value);
-                _messageServices.SendTreeWidth(value);
+                _settingsService.SendTreeWidth(value);
             }
         }
         /// <summary>
@@ -109,7 +109,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -124,13 +124,13 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
         #endregion バインディング
 
         #region コンストラクタと初期処理
-        private readonly IMessageServices _messageServices;
+        private readonly IFileSystemServices _fileSystemService;
         private readonly ISettingsService _settingsService;
         private readonly IFileWatcherService _fileWatcherService;
         private readonly ITreeManager _treeManager;
@@ -146,12 +146,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 
         // 通常コンストラクタ
         public ControDirectoryTreeViewModel(
-            IMessageServices messageServices,
+            IFileSystemServices fileSystemService,
             ISettingsService settingsService,
             IFileWatcherService fileWatcherService,
             ITreeManager treeManager)
         {
-            _messageServices = messageServices;
+            _fileSystemService = fileSystemService;
             _settingsService = settingsService;
             _fileWatcherService = fileWatcherService;
             _treeManager = treeManager;

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
@@ -27,7 +28,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_IsReadOnlyFileInclude == value) return;
                 SetProperty(ref _IsReadOnlyFileInclude, value);
-                _messageServices.SendReadOnlyFileInclude(value);
+                _settingsService.SendReadOnlyFileInclude(value);
                 _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
                 _pageSelectTargetViewModelExtention.ExtentionCountChanged();
             }
@@ -44,7 +45,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_IsHiddenFileInclude == value) return;
                 SetProperty(ref _IsHiddenFileInclude, value);
-                _messageServices.SendHiddenFileInclude(value);
+                _settingsService.SendHiddenFileInclude(value);
                 _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
                 _pageSelectTargetViewModelExtention.ExtentionCountChanged();
             }
@@ -60,7 +61,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_IsZeroSizeFileDelete == value) return;
                 SetProperty(ref _IsZeroSizeFileDelete, value);
-                _messageServices.SendZeroSizeFileDelete(value);
+                _settingsService.SendZeroSizeFileDelete(value);
             }
         }
         /// <summary>
@@ -74,7 +75,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_IsEmptyDirectoryDelete == value) return;
                 SetProperty(ref _IsEmptyDirectoryDelete, value);
-                _messageServices.SendEmptyDirectoryDelete(value);
+                _settingsService.SendEmptyDirectoryDelete(value);
             }
         }
         #endregion バインディング
@@ -99,7 +100,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion コマンド
 
         #region コンストラクタ
-        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
         private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
         private readonly IPageSelectTargetViewModelExtention _pageSelectTargetViewModelExtention;
         public PageSelectTargetViewModelExpert()
@@ -107,12 +108,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             throw new NotImplementedException();
         }
         public PageSelectTargetViewModelExpert(
-            IMessageServices messageService,
+            ISettingsService settingsService,
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
             IPageSelectTargetViewModelExtention pageSelectTargetViewModelExtention
         )
         {
-            _messageServices = messageService;
+            _settingsService = settingsService;
             _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
             _pageSelectTargetViewModelExtention = pageSelectTargetViewModelExtention;
 

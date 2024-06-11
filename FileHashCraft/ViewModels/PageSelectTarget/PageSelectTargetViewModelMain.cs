@@ -215,21 +215,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly IMessageServices _messageServices;
+        private readonly IFileSystemServices _fileSystemService;
         private readonly ISettingsService _settingsService;
         public PageSelectTargetViewModelMain(
             IScannedFilesManager scannedFilesManager,
-            IMessageServices messageServices,
+            IFileSystemServices fileSystemServices,
             ISettingsService settingsService
         )
         {
             _scannedFilesManager = scannedFilesManager;
-            _messageServices = messageServices;
+            _fileSystemService = fileSystemServices;
             _settingsService = settingsService;
 
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new RelayCommand(
-                () => _messageServices.SendToHashCalcingPage(),
+                () => _fileSystemService.SendToHashCalcingPage(),
                 () => CountFilteredGetHash > 0
             );
 

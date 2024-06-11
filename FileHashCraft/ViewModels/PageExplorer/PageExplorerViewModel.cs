@@ -121,7 +121,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     ToUpDirectory.NotifyCanExecuteChanged();
                     ListViewUpdater.Execute(null);
                     _fileSystemWatcherService.SetCurrentDirectoryWatcher(changedDirectory);
-                    _messageServices.SendCurrentDirectoryChanged(changedDirectory);
+                    _fileSystemService.SendCurrentDirectoryChanged(changedDirectory);
                 }
             }
         }
@@ -147,7 +147,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -162,7 +162,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
 
@@ -205,14 +205,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         #region コンストラクタと初期処理
         private bool IsExecuting = false;
 
-        private readonly IMessageServices _messageServices;
+        private readonly IFileSystemServices _fileSystemService;
         private readonly ISettingsService _settingsService;
         private readonly IFileSystemWatcherService _fileSystemWatcherService;
         private readonly ITreeManager _treeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         public PageExplorerViewModel(
-            IMessageServices messageServices,
+            IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             IFileSystemWatcherService fileSystemWatcherService,
             ITreeManager treeManager,
@@ -220,7 +220,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
             )
         {
-            _messageServices = messageServices;
+            _fileSystemService = fileSystemServices;
             _settingsService = settingsService;
             _fileSystemWatcherService = fileSystemWatcherService;
             _treeManager = treeManager;
@@ -263,7 +263,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     var newDirectory = SelectedListViewItem.FullPath;
                     if (Directory.Exists(newDirectory))
                     {
-                        _messageServices.SendCurrentDirectoryChanged(newDirectory);
+                        _fileSystemService.SendCurrentDirectoryChanged(newDirectory);
                     }
                 }
             });
@@ -272,12 +272,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             HashCalc = new RelayCommand(() =>
             {
                 _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                _messageServices.SendToSelectTargetPage();
+                _fileSystemService.SendToSelectTargetPage();
             });
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
-                _messageServices.SendToSettingsPage(ReturnPageEnum.PageExplorer));
+                _fileSystemService.SendToSettingsPage(ReturnPageEnum.PageExplorer));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -352,6 +352,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _treeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
 
             // 開発用自動化処理
+            /*
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
             {
                 if (root.FullPath == @"H:\")
@@ -365,9 +366,10 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         }
                     }
                     _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                    _messageServices.SendToSelectTargetPage();
+                    _fileSystemService.SendToSelectTargetPage();
                 }
             }
+            */
         }
         #endregion コンストラクタと初期処理
 

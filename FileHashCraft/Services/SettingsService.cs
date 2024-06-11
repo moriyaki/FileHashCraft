@@ -86,6 +86,66 @@ namespace FileHashCraft.Services
         /// 設定を読み込みます。
         /// </summary>
         void LoadSettings();
+        /// <summary>
+        /// ウィンドウの上位置を設定します。
+        /// </summary>
+        void SendWindowTop(double top);
+        /// <summary>
+        /// ウィンドウの左位置を設定します。
+        /// </summary>
+        void SendWindowLeft(double left);
+        /// <summary>
+        /// ウィンドウの幅を設定します。
+        /// </summary>
+        void SendWindowWidth(double width);
+        /// <summary>
+        /// ウィンドウの高さを設定します。
+        /// </summary>
+        void SendWindowHeight(double height);
+        /// <summary>
+        /// ツリービューの幅を設定します。
+        /// </summary>
+        void SendTreeWidth(double width);
+        /// <summary>
+        /// リストボックスの幅を設定します。
+        /// </summary>
+        void SendListWidth(double width);
+        /// <summary>
+        /// 利用言語を設定します。
+        /// </summary>
+        void SendLanguage(string language);
+        /// <summary>
+        /// ファイルのハッシュアルゴリズムを設定します。
+        /// </summary>
+        void SendHashAlogrithm(string hashAlogrithm);
+        /// <summary>
+        /// 削除対象に読み取り専用ファイルを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="readOnlyFileInclude">読み取り専用ファイルを含むかどうか</param>
+        void SendReadOnlyFileInclude(bool readOnlyFileInclude);
+        /// <summary>
+        /// 削除対象に隠しファイルを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="hiddenFileInclude">隠しファイルを含むかどうか</param>
+        void SendHiddenFileInclude(bool hiddenFileInclude);
+        /// <summary>
+        /// 削除対象に0サイズのファイルを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="zeroSizeFileDelete">0サイズファイルを含むかどうか</param>
+        void SendZeroSizeFileDelete(bool zeroSizeFileDelete);
+        /// <summary>
+        /// 削除対象に空のディレクトリを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="emptyDirectoryDelete">空のディレクトリを含むかどうか</param>
+        void SendEmptyDirectoryDelete(bool emptyDirectoryDelete);
+        /// <summary>
+        /// フォントを設定します
+        /// </summary>
+        void SendCurrentFont(FontFamily font);
+        /// <summary>
+        /// フォントサイズを設定します。
+        /// </summary>
+        void SendFontSize(double fontSize);
     }
     #endregion インターフェース
 
@@ -96,30 +156,27 @@ namespace FileHashCraft.Services
         private readonly string settingXMLFile = "settings.xml";
         private readonly string settingsFilePath;
 
-        private readonly IMessageServices _messageServices;
-        public SettingsService(IMessageServices messageServices)
+        public SettingsService()
         {
-            _messageServices = messageServices;
-
             var localAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appName);
             settingsFilePath = Path.Combine(localAppDataPath, settingXMLFile);
 
             LoadSettings();
 
-            _messageServices.SendWindowTop(Top);
-            _messageServices.SendWindowLeft(Left);
-            _messageServices.SendWindowWidth(Width);
-            _messageServices.SendWindowHeight(Height);
-            _messageServices.SendTreeWidth(TreeWidth);
-            _messageServices.SendListWidth(ListWidth);
-            _messageServices.SendLanguage(SelectedLanguage);
-            _messageServices.SendHashAlogrithm(HashAlgorithm);
-            _messageServices.SendReadOnlyFileInclude(IsReadOnlyFileInclude);
-            _messageServices.SendHiddenFileInclude(IsHiddenFileInclude);
-            _messageServices.SendZeroSizeFileDelete(IsZeroSizeFileDelete);
-            _messageServices.SendEmptyDirectoryDelete(IsEmptyDirectoryDelete);
-            _messageServices.SendCurrentFont(CurrentFont);
-            _messageServices.SendFontSize(FontSize);
+            SendWindowTop(Top);
+            SendWindowLeft(Left);
+            SendWindowWidth(Width);
+            SendWindowHeight(Height);
+            SendTreeWidth(TreeWidth);
+            SendListWidth(ListWidth);
+            SendLanguage(SelectedLanguage);
+            SendHashAlogrithm(HashAlgorithm);
+            SendReadOnlyFileInclude(IsReadOnlyFileInclude);
+            SendHiddenFileInclude(IsHiddenFileInclude);
+            SendZeroSizeFileDelete(IsZeroSizeFileDelete);
+            SendEmptyDirectoryDelete(IsEmptyDirectoryDelete);
+            SendCurrentFont(CurrentFont);
+            SendFontSize(FontSize);
 
             WeakReferenceMessenger.Default.Register<WindowTopChanged>(this, (_, m) => Top = m.Top);
             WeakReferenceMessenger.Default.Register<WindowLeftChanged>(this, (_, m) => Left = m.Left);
@@ -214,7 +271,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _TreeWidth) { return; }
                 _TreeWidth = value;
-                _messageServices.SendTreeWidth(value);
+                SendTreeWidth(value);
                 SaveSettings();
             }
         }
@@ -230,7 +287,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _ListWidth) { return; }
                 _ListWidth = value;
-                _messageServices.SendListWidth(value);
+                SendListWidth(value);
                 SaveSettings();
             }
         }
@@ -248,7 +305,7 @@ namespace FileHashCraft.Services
                 _SelectedLanguage = value;
                 ResourceService.Current.ChangeCulture(value);
                 OnPropertyChanged("Resources");
-                _messageServices.SendLanguage(value);
+                SendLanguage(value);
                 SaveSettings();
             }
         }
@@ -264,7 +321,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _HashAlgorithm) { return; }
                 _HashAlgorithm = value;
-                _messageServices.SendHashAlogrithm(value);
+                SendHashAlogrithm(value);
                 SaveSettings();
             }
         }
@@ -279,7 +336,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsReadOnlyFileInclude) return;
                 _IsReadOnlyFileInclude = value;
-                _messageServices.SendReadOnlyFileInclude(value);
+                SendReadOnlyFileInclude(value);
                 SaveSettings();
             }
         }
@@ -295,7 +352,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsHiddenFileInclude) return;
                 _IsHiddenFileInclude = value;
-                _messageServices.SendHiddenFileInclude(value);
+                SendHiddenFileInclude(value);
                 SaveSettings();
             }
         }
@@ -311,7 +368,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsZeroSizeFileDelete) return;
                 _IsZeroSizeFileDelete = value;
-                _messageServices.SendZeroSizeFileDelete(value);
+                SendZeroSizeFileDelete(value);
                 SaveSettings();
             }
         }
@@ -327,7 +384,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsEmptyDirectoryDelete) return;
                 _IsEmptyDirectoryDelete = value;
-                _messageServices.SendEmptyDirectoryDelete(value);
+                SendEmptyDirectoryDelete(value);
                 SaveSettings();
             }
         }
@@ -344,7 +401,7 @@ namespace FileHashCraft.Services
             {
                 if (value.Source == _CurrentFont.Source) { return; }
                 _CurrentFont = value;
-                _messageServices.SendCurrentFont(value);
+                SendCurrentFont(value);
                 SaveSettings();
             }
         }
@@ -360,7 +417,7 @@ namespace FileHashCraft.Services
             {
                 if (_FontSize == value) return;
                 _FontSize = value;
-                _messageServices.SendFontSize(value);
+                SendFontSize(value);
                 SaveSettings();
             }
         }
@@ -486,5 +543,121 @@ namespace FileHashCraft.Services
             }
         }
         #endregion 設定ファイルの読み書き
+
+        #region ウィンドウ設定
+        /// <summary>
+        /// ウィンドウの上位置を設定します。
+        /// </summary>
+        /// <param name="top">ウィンドウの上位置</param>
+        public void SendWindowTop(double top)
+        {
+            WeakReferenceMessenger.Default.Send(new WindowTopChanged(top));
+        }
+        /// <summary>
+        /// ウィンドウの左位置を設定します。
+        /// </summary>
+        /// <param name="left">ウィンドウの左位置</param>
+        public void SendWindowLeft(double left)
+        {
+            WeakReferenceMessenger.Default.Send(new WindowLeftChanged(left));
+        }
+        /// <summary>
+        /// ウィンドウの幅を設定します。
+        /// </summary>
+        /// <param name="width">ウィンドウの幅</param>
+        public void SendWindowWidth(double width)
+        {
+            WeakReferenceMessenger.Default.Send(new WindowWidthChanged(width));
+        }
+        /// <summary>
+        /// ウィンドウの高さを設定します。
+        /// </summary>
+        /// <param name="height">ウィンドウの高さ</param>
+        public void SendWindowHeight(double height)
+        {
+            WeakReferenceMessenger.Default.Send(new WindowHeightChanged(height));
+        }
+        /// <summary>
+        /// ツリービューの幅を設定します。
+        /// </summary>
+        /// <param name="width">ツリービューの幅</param>
+        public void SendTreeWidth(double width)
+        {
+            WeakReferenceMessenger.Default.Send(new TreeWidthChanged(width));
+        }
+        /// <summary>
+        /// リストボックスの幅を設定します。
+        /// </summary>
+        /// <param name="width">リストボックスの幅</param>
+        public void SendListWidth(double width)
+        {
+            WeakReferenceMessenger.Default.Send(new ListWidthChanged(width));
+        }
+        /// <summary>
+        /// 利用言語を設定します。
+        /// </summary>
+        /// <param name="language"></param>
+        public void SendLanguage(string language)
+        {
+            WeakReferenceMessenger.Default.Send(new SelectedLanguageChanged(language));
+        }
+        /// <summary>
+        /// ファイルのハッシュアルゴリズムを設定します。
+        /// </summary>
+        /// <param name="hashAlogrithm">ファイルのハッシュアルゴリズム</param>
+        public void SendHashAlogrithm(string hashAlogrithm)
+        {
+            WeakReferenceMessenger.Default.Send(new HashAlgorithmChanged(hashAlogrithm));
+        }
+        /// <summary>
+        /// 削除対象に読み取り専用ファイルを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="readOnlyFileInclude">読み取り専用ファイルを含むかどうか</param>
+        public void SendReadOnlyFileInclude(bool readOnlyFileInclude)
+        {
+            WeakReferenceMessenger.Default.Send(new ReadOnlyFileIncludeChanged(readOnlyFileInclude));
+        }
+        /// <summary>
+        /// 削除対象に隠しファイルを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="hiddenFileInclude">隠しファイルを含むかどうか</param>
+        public void SendHiddenFileInclude(bool hiddenFileInclude)
+        {
+            WeakReferenceMessenger.Default.Send(new HiddenFileIncludeChanged(hiddenFileInclude));
+        }
+        /// <summary>
+        /// 削除対象に0サイズのファイルを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="zeroSizeFileDelete">0サイズファイルを含むかどうか</param>
+        public void SendZeroSizeFileDelete(bool zeroSizeFileDelete)
+        {
+            WeakReferenceMessenger.Default.Send(new ZeroSizeFileDeleteChanged(zeroSizeFileDelete));
+        }
+        /// <summary>
+        /// 削除対象に空のディレクトリを含むかどうかを設定します。
+        /// </summary>
+        /// <param name="emptyDirectoryDelete">空のディレクトリを含むかどうか</param>
+        public void SendEmptyDirectoryDelete(bool emptyDirectoryDelete)
+        {
+            WeakReferenceMessenger.Default.Send(new EmptyDirectoryDeleteChanged(emptyDirectoryDelete));
+        }
+
+        /// <summary>
+        /// フォントを設定します
+        /// </summary>
+        /// <param name="currentFont">フォントファミリー</param>
+        public void SendCurrentFont(FontFamily currentFont)
+        {
+            WeakReferenceMessenger.Default.Send(new CurrentFontFamilyChanged(currentFont));
+        }
+        /// <summary>
+        /// フォントサイズを設定します。
+        /// </summary>
+        /// <param name="fontSize">フォントサイズ</param>
+        public void SendFontSize(double fontSize)
+        {
+            WeakReferenceMessenger.Default.Send(new FontSizeChanged(fontSize));
+        }
+        #endregion ウィンドウ設定
     }
 }

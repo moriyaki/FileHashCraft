@@ -100,7 +100,7 @@ namespace FileHashCraft
             var services = new ServiceCollection();
 
             // Services
-            services.AddSingleton<IMessageServices, MessageServices>();
+            services.AddSingleton<IFileSystemServices, FileSystemServices>();
             services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IFileSystemWatcherService, FileSystemWatcherService>();
             services.AddSingleton<ITreeCheckedManager, TreeCheckedManager>();

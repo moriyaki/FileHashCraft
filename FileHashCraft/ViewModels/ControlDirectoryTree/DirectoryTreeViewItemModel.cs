@@ -61,14 +61,14 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     public partial class DirectoryTreeViewItemModel : ObservableObject, IComparable<DirectoryTreeViewItemModel>, IDirectoryTreeViewItemModel
     {
         #region コンストラクタ
-        private readonly IMessageServices _messageServices;
+        private readonly ISettingsService _settingsService;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public DirectoryTreeViewItemModel()
         {
-            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
+            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
@@ -391,7 +391,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -406,7 +406,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
         #endregion データバインディング

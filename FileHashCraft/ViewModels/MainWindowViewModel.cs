@@ -17,17 +17,14 @@ namespace FileHashCraft.ViewModels
     public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
     {
         #region 初期設定
-        private readonly IMessageServices _messageServices;
         private readonly ISettingsService _settingsService;
 
         public MainWindowViewModel() { throw new NotImplementedException(); }
 
         public MainWindowViewModel(
-            ISettingsService settingsService,
-            IMessageServices messageServices)
+            ISettingsService settingsService)
         {
             _settingsService = settingsService;
-            _messageServices = messageServices;
 
             // 設定を読み込む
             _settingsService.LoadSettings();
@@ -57,7 +54,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _Top) { return; }
                 SetProperty(ref _Top, value);
-                _messageServices.SendWindowTop(value);
+                _settingsService.SendWindowTop(value);
             }
         }
         /// <summary>
@@ -71,7 +68,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _Left) { return; }
                 SetProperty(ref _Left, value);
-                _messageServices.SendWindowLeft(value);
+                _settingsService.SendWindowLeft(value);
             }
         }
         /// <summary>
@@ -85,7 +82,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _Width) { return; }
                 SetProperty(ref _Width, value);
-                _messageServices.SendWindowWidth(value);
+                _settingsService.SendWindowWidth(value);
             }
         }
         /// <summary>
@@ -99,7 +96,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _Height) { return; }
                 SetProperty(ref _Height, value);
-                _messageServices.SendWindowHeight(value);
+                _settingsService.SendWindowHeight(value);
             }
         }
         /// <summary>
@@ -113,7 +110,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _CurrentFontFamily) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
         /// <summary>
@@ -127,7 +124,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _FontSize) { return; }
                 SetProperty(ref _FontSize, value, nameof(FontSize));
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
         #endregion データバインディング

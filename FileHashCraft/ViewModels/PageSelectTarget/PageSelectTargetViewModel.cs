@@ -111,7 +111,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (value == _TreeWidth) { return; }
                 SetProperty(ref _TreeWidth, value);
-                _messageServices.SendTreeWidth(value);
+                _settingsService.SendTreeWidth(value);
             }
         }
         /// <summary>
@@ -125,7 +125,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (value == _ListWidth) { return; }
                 SetProperty(ref _ListWidth, value);
-                _messageServices.SendListWidth(value);
+                _settingsService.SendListWidth(value);
             }
         }
         /// <summary>
@@ -139,7 +139,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
         /// <summary>
@@ -153,7 +153,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
         /// <summary>
@@ -176,7 +176,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (value == _SelectedHashAlgorithm) return;
                 SetProperty(ref _SelectedHashAlgorithm, value);
-                _messageServices.SendHashAlogrithm(value);
+                _settingsService.SendHashAlogrithm(value);
             }
         }
         /// <summary>
@@ -202,7 +202,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IMessageServices _messageServices;
+        private readonly IFileSystemServices _fileSystemService;
         private readonly ISettingsService _settingsService;
         private readonly ITreeManager _directoryTreeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
@@ -215,7 +215,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IPageSelectTargetViewModelWildcard pageSelectTargetViewModelWildcard,
             IPageSelectTargetViewModelRegex pageSelectTargetViewModelRegEx,
             IPageSelectTargetViewModelExpert pageSelectTargetViewModelExpert,
-            IMessageServices messageServices,
+            IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             ITreeManager directoryTreeManager,
             IHelpWindowViewModel helpWindowViewModel,
@@ -227,7 +227,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelWildcard = pageSelectTargetViewModelWildcard;
             ViewModelRegEx = pageSelectTargetViewModelRegEx;
             ViewModelExpert = pageSelectTargetViewModelExpert;
-            _messageServices = messageServices;
+            _fileSystemService = fileSystemServices;
             _settingsService = settingsService;
             _directoryTreeManager = directoryTreeManager;
             _helpWindowViewModel = helpWindowViewModel;
@@ -240,7 +240,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             SettingsOpen = new RelayCommand(() =>
             {
                 IsExecuting = true;
-                _messageServices.SendToSettingsPage(ReturnPageEnum.PageTargetSelect);
+                _fileSystemService.SendToSettingsPage(ReturnPageEnum.PageTargetSelect);
             });
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -259,7 +259,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ToPageExplorer = new RelayCommand(() =>
             {
                 CTS?.Cancel();
-                _messageServices.SendToExplorerPage();
+                _fileSystemService.SendToExplorerPage();
             });
 
             // ツリービュー幅変更メッセージ受信

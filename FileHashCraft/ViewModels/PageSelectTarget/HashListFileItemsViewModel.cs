@@ -16,11 +16,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     public class HashListFileItems : ObservableObject
     {
-        private readonly IMessageServices _messageServices;
         private readonly ISettingsService _settingsService;
         public HashListFileItems()
         {
-            _messageServices = Ioc.Default.GetService<IMessageServices>() ?? throw new InvalidOperationException($"{nameof(IMessageServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
             _CurrentFontFamily = _settingsService.CurrentFont;
@@ -98,7 +96,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_CurrentFontFamily.Source == value.Source) { return; }
 
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -114,7 +112,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_FontSize == value) { return; }
 
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
         #endregion バインディング

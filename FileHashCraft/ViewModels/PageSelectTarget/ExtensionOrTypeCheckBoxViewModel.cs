@@ -38,7 +38,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
-        protected readonly IMessageServices _messageServices;
         protected readonly ISettingsService _settingsService;
         protected readonly IExtentionManager _extentionManager;
         /// <summary>
@@ -46,11 +45,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase(
-            IMessageServices messageService,
             ISettingsService settingsService,
             IExtentionManager extentionManager)
         {
-            _messageServices = messageService;
             _settingsService = settingsService;
             _extentionManager = extentionManager;
 
@@ -103,7 +100,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_CurrentFontFamily.Source == value.Source) { return; }
 
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -119,7 +116,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_FontSize == value) { return; }
 
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
         /// <summary>
@@ -136,10 +133,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// ファイル拡張子のチェックボックスを扱うクラス
     /// </summary>
     public class ExtensionCheckBoxViewModel(
-        IMessageServices messageService,
         ISettingsService settingsService,
         IExtentionManager extentionManager
-        ) : ExtensionOrTypeCheckBoxBase(messageService, settingsService, extentionManager)
+        ) : ExtensionOrTypeCheckBoxBase(settingsService, extentionManager)
     {
         #region コンストラクタと初期化
 
@@ -188,10 +184,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// 拡張子グループのチェックボックスを扱うクラス
     /// </summary>
     public class ExtentionGroupCheckBoxViewModel(
-        IMessageServices messageService,
         ISettingsService settingsService,
         IExtentionManager extentionManager
-        ) : ExtensionOrTypeCheckBoxBase(messageService, settingsService, extentionManager)
+        ) : ExtensionOrTypeCheckBoxBase(settingsService, extentionManager)
     {
         #region 初期化
 

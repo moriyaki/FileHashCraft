@@ -1,8 +1,4 @@
-﻿using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -33,7 +29,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _messageServices.SendCurrentFont(value);
+                _settingsService.SendCurrentFont(value);
             }
         }
 
@@ -48,7 +44,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _messageServices.SendFontSize(value);
+                _settingsService.SendFontSize(value);
             }
         }
 
@@ -130,15 +126,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IMessageServices _messageServices;
         private readonly ISettingsService _settingsService;
 
         public WildcardItemViewModel(
-            IMessageServices messageServices,
             ISettingsService settingsService
         )
         {
-            _messageServices = messageServices;
             _settingsService = settingsService;
 
             // フォント変更メッセージ受信
