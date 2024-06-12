@@ -1,5 +1,4 @@
 ﻿using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
@@ -15,39 +14,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         string WildcardCriteria { get; set; }
     }
 
-    public class WildcardItemViewModel : ObservableObject, IWildcardItemViewModel
+    public class WildcardItemViewModel : BaseViewModel, IWildcardItemViewModel
     {
         #region バインディング
-        /// <summary>
-        /// フォントの設定
-        /// </summary>
-        private FontFamily _CurrentFontFamily;
-        public FontFamily CurrentFontFamily
-        {
-            get => _CurrentFontFamily;
-            set
-            {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの設定
-        /// </summary>
-        private double _FontSize;
-        public double FontSize
-        {
-            get => _FontSize;
-            set
-            {
-                if (_FontSize == value) { return; }
-                SetProperty(ref _FontSize, value);
-                _settingsService.SendFontSize(value);
-            }
-        }
-
         /// <summary>
         /// ワイルドカード検索条件
         /// </summary>
@@ -126,23 +95,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly ISettingsService _settingsService;
-
         public WildcardItemViewModel(
             ISettingsService settingsService
-        )
+        ) : base(settingsService)
         {
-            _settingsService = settingsService;
-
-            // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
-
-            // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
-
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
-
             ListBoxTextWildcardCriteriaClicked = new RelayCommand(() =>
             {
                 if (IsSelected)

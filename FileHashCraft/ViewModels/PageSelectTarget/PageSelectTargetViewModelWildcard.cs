@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Properties;
@@ -44,7 +43,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         NotAllowedCharacter,
     }
 
-    public class PageSelectTargetViewModelWildcard : ObservableObject, IPageSelectTargetViewModelWildcard
+    public class PageSelectTargetViewModelWildcard : BaseViewModel, IPageSelectTargetViewModelWildcard
     {
         #region バインディング
         /// <summary>
@@ -160,7 +159,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly ISettingsService _settingsService;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
 
         public PageSelectTargetViewModelWildcard()
@@ -170,7 +168,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         public PageSelectTargetViewModelWildcard(
             ISettingsService settingsService,
-            IHelpWindowViewModel helpWindowViewModel)
+            IHelpWindowViewModel helpWindowViewModel
+        ) : base(settingsService)
         {
             _settingsService = settingsService;
             _helpWindowViewModel = helpWindowViewModel;

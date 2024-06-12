@@ -2,9 +2,6 @@
 
     メインウィンドウの ViewModel を提供します。
  */
-using System.Windows;
-using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -14,26 +11,20 @@ namespace FileHashCraft.ViewModels
     #region インターフェース
     public interface IMainWindowViewModel;
     #endregion インターフェース
-    public class MainWindowViewModel : ObservableObject, IMainWindowViewModel
+    public class MainWindowViewModel : BaseViewModel, IMainWindowViewModel
     {
         #region 初期設定
-        private readonly ISettingsService _settingsService;
-
-        public MainWindowViewModel() { throw new NotImplementedException(); }
+        public MainWindowViewModel() :base() { }
 
         public MainWindowViewModel(
-            ISettingsService settingsService)
+            ISettingsService settingsService) : base(settingsService)
         {
-            _settingsService = settingsService;
-
             // 設定を読み込む
             _settingsService.LoadSettings();
             Top = _settingsService.Top;
             Left = _settingsService.Left;
             Width = _settingsService.Width;
             Height = _settingsService.Height;
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
 
             WeakReferenceMessenger.Default.Register<WindowTopChanged>(this, (_, m) => Top = m.Top);
             WeakReferenceMessenger.Default.Register<WindowLeftChanged>(this, (_, m) => Left = m.Left);
@@ -97,34 +88,6 @@ namespace FileHashCraft.ViewModels
                 if (value == _Height) { return; }
                 SetProperty(ref _Height, value);
                 _settingsService.SendWindowHeight(value);
-            }
-        }
-        /// <summary>
-        /// フォントの変更
-        /// </summary>
-        private FontFamily _CurrentFontFamily;
-        public FontFamily CurrentFontFamily
-        {
-            get => _CurrentFontFamily;
-            set
-            {
-                if (value == _CurrentFontFamily) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
-            }
-        }
-        /// <summary>
-        /// フォントサイズの変更
-        /// </summary>
-        private double _FontSize = SystemFonts.MessageFontSize;
-        public double FontSize
-        {
-            get => _FontSize;
-            set
-            {
-                if (value == _FontSize) { return; }
-                SetProperty(ref _FontSize, value, nameof(FontSize));
-                _settingsService.SendFontSize(value);
             }
         }
         #endregion データバインディング

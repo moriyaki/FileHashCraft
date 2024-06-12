@@ -5,7 +5,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.Helpers;
@@ -19,7 +18,7 @@ namespace FileHashCraft.ViewModels
     public interface IPageSettingsViewModel;
     #endregion インターフェース
 
-    public class PageSettingsViewModel : ObservableObject, IPageSettingsViewModel
+    public class PageSettingsViewModel : BaseViewModel, IPageSettingsViewModel
     {
         #region バインディング
         /// <summary>
@@ -141,36 +140,6 @@ namespace FileHashCraft.ViewModels
         }
 
         /// <summary>
-        /// フォントの設定
-        /// </summary>
-        private FontFamily _CurrentFontFamily;
-        public FontFamily CurrentFontFamily
-        {
-            get => _CurrentFontFamily;
-            set
-            {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの設定
-        /// </summary>
-        private double _FontSize;
-        public double FontSize
-        {
-            get => _FontSize;
-            set
-            {
-                if (_FontSize == value) { return; }
-                SetProperty(ref _FontSize, value);
-                _settingsService.SendFontSize(value);
-            }
-        }
-
-        /// <summary>
         /// フォントファミリーの一覧
         /// </summary>
         public ObservableCollection<FontFamily> FontFamilies { get; }
@@ -206,15 +175,13 @@ namespace FileHashCraft.ViewModels
         #endregion コマンド
 
         #region コンストラクタと初期化
-        private readonly ISettingsService _settingsService;
         private readonly IFileSystemServices _fileSystemService;
 
         public PageSettingsViewModel(
             ISettingsService settingsService,
             IFileSystemServices fileSystemServices
-        )
+        ) : base(settingsService)
         {
-            _settingsService = settingsService;
             _fileSystemService = fileSystemServices;
 
             // フォントの一覧取得とバインド
@@ -257,14 +224,6 @@ namespace FileHashCraft.ViewModels
             WeakReferenceMessenger.Default.Register<ZeroSizeFileDeleteChanged>(this, (_, m)
                 => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
 
-            //空ディレクトリを削除するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<EmptyDirectoryDeleteChanged>(this, (_, m)
-                => IsEmptyDirectoryDelete = m.EmptyDirectoryDelete);
-
-            // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)
-                => CurrentFontFamily = m.CurrentFontFamily );
-
             // フォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
                 => FontSize = m.FontSize);
@@ -275,9 +234,6 @@ namespace FileHashCraft.ViewModels
             _IsHiddenFileInclude = _settingsService.IsHiddenFileInclude;
             _IsZeroSizeFileDelete = _settingsService.IsZeroSizeFileDelete;
             _IsEmptyDirectoryDelete = _settingsService.IsEmptyDirectoryDelete;
-
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
         }
 
         /// <summary>

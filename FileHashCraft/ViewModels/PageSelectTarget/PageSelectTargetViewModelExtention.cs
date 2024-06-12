@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -59,7 +58,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class PageSelectTargetViewModelExtention : ObservableObject, IPageSelectTargetViewModelExtention
+    public class PageSelectTargetViewModelExtention : BaseViewModel, IPageSelectTargetViewModelExtention
     {
         #region バインディング
         /// <summary>
@@ -82,27 +81,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly IFileSystemServices _messageServices;
-        private readonly ISettingsService _settingssService;
         private readonly IExtentionManager _extentionManager;
         private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
 
-        public PageSelectTargetViewModelExtention()
-        {
-            throw new NotImplementedException();
-        }
-
         public PageSelectTargetViewModelExtention(
-            IScannedFilesManager scannedFilesManager,
-            IFileSystemServices messageService,
             ISettingsService settingsService,
+            IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain
-        )
+        ) : base(settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
-            _messageServices = messageService;
-            _settingssService = settingsService;
             _extentionManager = extentionManager;
             _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
 
@@ -151,23 +140,23 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void AddFileTypes()
         {
-            var movies = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var movies = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             movies.Initialize(FileGroupType.Movies);
-            var pictures = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var pictures = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             pictures.Initialize(FileGroupType.Pictures);
-            var musics = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var musics = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             musics.Initialize(FileGroupType.Musics);
-            var documents = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var documents = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             documents.Initialize(FileGroupType.Documents);
-            var applications = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var applications = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             applications.Initialize(FileGroupType.Applications);
-            var archives = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var archives = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             archives.Initialize(FileGroupType.Archives);
-            var sources = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var sources = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             sources.Initialize(FileGroupType.SourceCodes);
-            var registrations = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var registrations = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             registrations.Initialize(FileGroupType.Registrations);
-            var others = new ExtentionGroupCheckBoxViewModel(_settingssService, _extentionManager);
+            var others = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
             others.Initialize();
 
             App.Current?.Dispatcher.Invoke(() =>
@@ -192,7 +181,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
             if (extentionManager.GetExtentionsCount(extention) > 0)
             {
-                var item = new ExtensionCheckBoxViewModel(_settingssService, _extentionManager);
+                var item = new ExtensionCheckBoxViewModel(_settingsService, _extentionManager);
                 item.Initialize(extention);
                 App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
             }
@@ -256,7 +245,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public void ExtentionCountChanged()
         {
             App.Current.Dispatcher.Invoke(() =>
-            _pageSelectTargetViewModelMain.CountFilteredGetHash = _scannedFilesManager.GetAllCriteriaFilesCount(_settingssService.IsHiddenFileInclude, _settingssService.IsReadOnlyFileInclude));
+            _pageSelectTargetViewModelMain.CountFilteredGetHash = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
         }
 
         /// <summary>

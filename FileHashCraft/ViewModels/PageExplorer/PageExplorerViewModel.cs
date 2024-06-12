@@ -7,17 +7,15 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
+using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
-using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
@@ -51,7 +49,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class PageExplorerViewModel : ObservableObject, IPageExplorerViewModel
+    public partial class PageExplorerViewModel : BaseViewModel, IPageExplorerViewModel
     {
         #region データバインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
@@ -137,36 +135,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
 
         /// <summary>
-        /// フォントの設定
-        /// </summary>
-        private FontFamily _CurrentFontFamily;
-        public FontFamily CurrentFontFamily
-        {
-            get => _CurrentFontFamily;
-            set
-            {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの設定
-        /// </summary>
-        private double _FontSize;
-        public double FontSize
-        {
-            get => _FontSize;
-            set
-            {
-                if (_FontSize == value) { return; }
-                SetProperty(ref _FontSize, value);
-                _settingsService.SendFontSize(value);
-            }
-        }
-
-        /// <summary>
         /// 「上へ」コマンド
         /// </summary>
         public RelayCommand ToUpDirectory { get; set; }
@@ -206,7 +174,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private bool IsExecuting = false;
 
         private readonly IFileSystemServices _fileSystemService;
-        private readonly ISettingsService _settingsService;
         private readonly IFileSystemWatcherService _fileSystemWatcherService;
         private readonly ITreeManager _treeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
@@ -218,10 +185,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             ITreeManager treeManager,
             IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
-            )
+        ) : base(settingsService)
         {
             _fileSystemService = fileSystemServices;
-            _settingsService = settingsService;
             _fileSystemWatcherService = fileSystemWatcherService;
             _treeManager = treeManager;
             _helpWindowViewModel = helpWindowViewModel;
@@ -298,14 +264,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, m)
                 => CurrentFullPath = m.CurrentFullPath);
 
-            // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)
-                => CurrentFontFamily = m.CurrentFontFamily);
-
-            // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
-                => FontSize = m.FontSize);
-
             // カレントディレクトリのアイテム作成のメッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentDirectoryItemCreated>(this, (_, m)
                 => CurrentDirectoryItemCreated(m.CreatedFullPath));
@@ -317,9 +275,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             // カレントディレクトリのアイテム削除のメッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentDirectoryItemDeleted>(this, (_, m)
                 => CurrentDirectoryItemDeleted(m.DeletedFullPath));
-
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
 
             Initialize();
         }

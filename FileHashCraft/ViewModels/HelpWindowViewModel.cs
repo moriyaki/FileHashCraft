@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels
@@ -28,7 +27,7 @@ namespace FileHashCraft.ViewModels
     }
     #endregion インターフェース
 
-    public class HelpWindowViewModel : ObservableObject, IHelpWindowViewModel
+    public class HelpWindowViewModel : BaseViewModel, IHelpWindowViewModel
     {
         #region バインディング
         /// <summary>
@@ -82,16 +81,9 @@ namespace FileHashCraft.ViewModels
         }
         #endregion バインディング
 
-        private readonly ISettingsService _settingsService;
-        public HelpWindowViewModel()
-        {
-            throw new NotImplementedException("HelpWindowViewModel");
-        }
+        public HelpWindowViewModel() : base() { }
 
-        public HelpWindowViewModel(ISettingsService settingsService)
-        {
-            _settingsService = settingsService;
-        }
+        public HelpWindowViewModel(ISettingsService settingsService) : base(settingsService) { }
 
         /// <summary>
         /// ウィンドウ位置の初期化

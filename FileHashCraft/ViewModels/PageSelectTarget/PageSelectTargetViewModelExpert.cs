@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -14,7 +13,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         bool IsEmptyDirectoryDelete { get; set; }
     }
 
-    public class PageSelectTargetViewModelExpert : ObservableObject, IPageSelectTargetViewModelExpert
+    public class PageSelectTargetViewModelExpert : BaseViewModel, IPageSelectTargetViewModelExpert
     {
         #region バインディング
         /// <summary>
@@ -100,20 +99,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion コマンド
 
         #region コンストラクタ
-        private readonly ISettingsService _settingsService;
+        //private readonly ISettingsService _settingsService;
         private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
         private readonly IPageSelectTargetViewModelExtention _pageSelectTargetViewModelExtention;
-        public PageSelectTargetViewModelExpert()
-        {
-            throw new NotImplementedException();
-        }
         public PageSelectTargetViewModelExpert(
             ISettingsService settingsService,
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
             IPageSelectTargetViewModelExtention pageSelectTargetViewModelExtention
-        )
+        ) : base(settingsService)
         {
-            _settingsService = settingsService;
+            //_settingsService = settingsService;
             _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
             _pageSelectTargetViewModelExtention = pageSelectTargetViewModelExtention;
 

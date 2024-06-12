@@ -4,8 +4,6 @@
  */
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
@@ -47,7 +45,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         double TreeWidth { get; set; }
     }
     #endregion インターフェース
-    public partial class ControDirectoryTreeViewModel : ObservableObject, IControDirectoryTreeViewlModel
+    public partial class ControDirectoryTreeViewModel : BaseViewModel, IControDirectoryTreeViewlModel
     {
         #region バインディング
         /// <summary>
@@ -98,40 +96,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 _settingsService.SendTreeWidth(value);
             }
         }
-        /// <summary>
-        /// フォントの設定
-        /// </summary>
-        private FontFamily _CurrentFontFamily;
-        public FontFamily CurrentFontFamily
-        {
-            get => _CurrentFontFamily;
-            set
-            {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの設定
-        /// </summary>
-        private double _FontSize;
-        public double FontSize
-        {
-            get => _FontSize;
-            set
-            {
-                if (_FontSize == value) { return; }
-                SetProperty(ref _FontSize, value);
-                _settingsService.SendFontSize(value);
-            }
-        }
         #endregion バインディング
 
         #region コンストラクタと初期処理
         private readonly IFileSystemServices _fileSystemService;
-        private readonly ISettingsService _settingsService;
         private readonly IFileWatcherService _fileWatcherService;
         private readonly ITreeManager _treeManager;
 
@@ -149,10 +117,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             IFileSystemServices fileSystemService,
             ISettingsService settingsService,
             IFileWatcherService fileWatcherService,
-            ITreeManager treeManager)
+            ITreeManager treeManager
+        ) : base(settingsService)
         {
             _fileSystemService = fileSystemService;
-            _settingsService = settingsService;
             _fileWatcherService = fileWatcherService;
             _treeManager = treeManager;
 
@@ -202,8 +170,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 => m.Reply(IsCheckBoxVisible));
 
             _TreeWidth = _settingsService.TreeWidth;
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
         }
 
         /// <summary>

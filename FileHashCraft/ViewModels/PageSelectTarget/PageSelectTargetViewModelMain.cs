@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
@@ -88,7 +87,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class PageSelectTargetViewModelMain : ObservableObject, IPageSelectTargetViewModelMain
+    public class PageSelectTargetViewModelMain : BaseViewModel, IPageSelectTargetViewModelMain
     {
         #region バインディング
         /// <summary>
@@ -216,16 +215,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IFileSystemServices _fileSystemService;
-        private readonly ISettingsService _settingsService;
         public PageSelectTargetViewModelMain(
+            ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
-            IFileSystemServices fileSystemServices,
-            ISettingsService settingsService
-        )
+            IFileSystemServices fileSystemServices
+        ) : base(settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
             _fileSystemService = fileSystemServices;
-            _settingsService = settingsService;
 
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new RelayCommand(

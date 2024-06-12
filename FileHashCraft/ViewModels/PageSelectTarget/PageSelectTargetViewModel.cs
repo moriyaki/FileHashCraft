@@ -4,9 +4,6 @@
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
 using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -63,7 +60,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class PageSelectTargetViewModel : ObservableObject, IPageSelectTargetViewModel
+    public class PageSelectTargetViewModel : BaseViewModel, IPageSelectTargetViewModel
     {
         #region バインディング
         /// <summary>
@@ -129,34 +126,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
         }
         /// <summary>
-        /// フォントの設定
-        /// </summary>
-        private FontFamily _CurrentFontFamily;
-        public FontFamily CurrentFontFamily
-        {
-            get => _CurrentFontFamily;
-            set
-            {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
-            }
-        }
-        /// <summary>
-        /// フォントサイズの設定
-        /// </summary>
-        private double _FontSize;
-        public double FontSize
-        {
-            get => _FontSize;
-            set
-            {
-                if (_FontSize == value) { return; }
-                SetProperty(ref _FontSize, value);
-                _settingsService.SendFontSize(value);
-            }
-        }
-        /// <summary>
         /// ハッシュ計算アルゴリズムの一覧
         /// </summary>
         public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
@@ -203,7 +172,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         #region コンストラクタ
         private readonly IFileSystemServices _fileSystemService;
-        private readonly ISettingsService _settingsService;
         private readonly ITreeManager _directoryTreeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
@@ -220,7 +188,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ITreeManager directoryTreeManager,
             IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlViewModel
-        )
+        ) : base(settingsService)
         {
             ViewModelMain = pageSelectTargetViewModelMain;
             ViewModelExtention = pageSelectTargetViewModelExtention;
@@ -228,7 +196,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelRegEx = pageSelectTargetViewModelRegEx;
             ViewModelExpert = pageSelectTargetViewModelExpert;
             _fileSystemService = fileSystemServices;
-            _settingsService = settingsService;
             _directoryTreeManager = directoryTreeManager;
             _helpWindowViewModel = helpWindowViewModel;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
@@ -270,22 +237,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             WeakReferenceMessenger.Default.Register<ListWidthChanged>(this, (_, m)
                 => ListWidth = m.ListWidth);
 
-            // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)
-                => CurrentFontFamily = m.CurrentFontFamily);
-
-            // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
-                => FontSize = m.FontSize);
-
             _TreeWidth = _settingsService.TreeWidth;
             _ListWidth = _settingsService.ListWidth;
             _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
-
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
         }
-
         #endregion コンストラクタ
 
         #region 初期処理

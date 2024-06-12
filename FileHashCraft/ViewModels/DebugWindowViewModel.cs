@@ -3,9 +3,7 @@
     デバッグウィンドウの ViewModel を提供します。
  */
 using System.Text;
-using System.Windows.Media;
 using System.Windows.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileHashCraft.Services;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
@@ -19,7 +17,7 @@ namespace FileHashCraft.ViewModels
         double Left { get; set; }
     }
     #endregion インターフェース
-    public class DebugWindowViewModel : ObservableObject, IDebugWindowViewModel
+    public class DebugWindowViewModel : BaseViewModel, IDebugWindowViewModel
     {
         enum PollingTarget
         {
@@ -86,33 +84,6 @@ namespace FileHashCraft.ViewModels
                 OnPropertyChanged(nameof(PollingStatus));
             }
         }
-        /// <summary>
-        /// フォントの取得と設定
-        /// </summary>
-        private FontFamily _CurrentFontFamily;
-        public FontFamily CurrentFontFamily
-        {
-            get => _CurrentFontFamily;
-            set
-            {
-                SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
-            }
-        }
-
-        /// <summary>
-        /// フォントサイズの取得と設定
-        /// </summary>
-        private double _FontSize;
-        public double FontSize
-        {
-            get => _FontSize;
-            set
-            {
-                SetProperty(ref _FontSize, value);
-                _settingsService.SendFontSize(value);
-            }
-        }
 
         /// <summary>
         /// ポーリング開始/終了のボタン文字列
@@ -144,27 +115,22 @@ namespace FileHashCraft.ViewModels
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         private readonly ITreeManager _directoryTreeManager;
-        private readonly ISettingsService _settingsService;
 
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         public DebugWindowViewModel(
-            ITreeManager directoryTreeManager,
-            ISettingsService settingsService
-            )
+            ISettingsService settingsService,
+            ITreeManager directoryTreeManager
+        ) : base(settingsService)
         {
             _directoryTreeManager = directoryTreeManager;
-            _settingsService = settingsService;
 
             Top = _settingsService.Top;
             Left = _settingsService.Left + _settingsService.Width;
             Width = _settingsService.Width / 2;
             Height = _settingsService.Height;
-
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
 
             timer = new DispatcherTimer();
             timer.Tick += Polling;
