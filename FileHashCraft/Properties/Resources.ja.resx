@@ -297,6 +297,10 @@
     <value>見つかったファイルの内部ファイル書き込み等の処理中</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
+  <data name="LabelWildcardError_AlreadyRegistered" xml:space="preserve">
+    <value>既に登録されているワイルドカード条件です。</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
+  </data>
   <data name="LabelWildcardError_Empty" xml:space="preserve">
     <value>ワイルドカード検索条件が入力されていません</value>
     <comment>Label/PageSelectTargetWildcard</comment>

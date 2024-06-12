@@ -297,6 +297,10 @@
     <value>During internal file writing or other processing of found files.</value>
     <comment>Label/PageSettings/PageSelectTarget</comment>
   </data>
+  <data name="LabelWildcardError_AlreadyRegistered" xml:space="preserve">
+    <value>Wildcard conditions that have already been registered.</value>
+    <comment>Label/PageSelectTargetWildcard</comment>
+  </data>
   <data name="LabelWildcardError_Empty" xml:space="preserve">
     <value>Wildcard search criteria not entered</value>
     <comment>Label/PageSelectTargetWildcard</comment>
