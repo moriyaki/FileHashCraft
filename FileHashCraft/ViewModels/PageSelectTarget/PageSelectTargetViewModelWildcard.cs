@@ -171,7 +171,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IHelpWindowViewModel helpWindowViewModel
         ) : base(settingsService)
         {
-            _settingsService = settingsService;
             _helpWindowViewModel = helpWindowViewModel;
 
             // ヘルプ画面を開きます
