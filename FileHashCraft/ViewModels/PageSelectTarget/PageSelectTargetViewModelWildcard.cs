@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -39,6 +40,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     {
         None,
         Empty,
+        AlreadyRegistered,
         TooManyAsterisk,
         NotAllowedCharacter,
     }
@@ -76,6 +78,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                         WildcardBackground = Brushes.Red;
                         WildcardErrorOutput = $"{Resources.LabelWildcardError_Empty}";
                         break;
+                    case WildcardSearchErrorStatus.AlreadyRegistered:
+                        WildcardBackground = Brushes.Red;
+                        WildcardErrorOutput = $"{Resources.LabelWildcardError_AlreadyRegistered}";
+                        break;
                     case WildcardSearchErrorStatus.TooManyAsterisk:
                         WildcardBackground = Brushes.Red;
                         WildcardErrorOutput = $"{Resources.LabelWildcardError_TooManyAsterisk}";
@@ -89,7 +95,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// リストボックスで編集中の時は入力不可にする
+        /// リストボックスで編集中の時は入力不可の色にする
         /// </summary>
         public Brush WildcardCiriteriaBackgroudColor
         {
@@ -153,9 +159,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public RelayCommand WildcardAddCommand { get; set; }
 
         /// <summary>
-        /// 登録したワイルドカード検索条件を編集する
+        /// 登録したワイルドカード検索条件を編集します。
         /// </summary>
         public RelayCommand ModifyCommand { get; set; }
+
+        /// <summary>
+        /// 登録したワイルドカード検索条件を削除します。
+        /// </summary>
+        public RelayCommand RemoveCommand { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
@@ -171,7 +182,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IHelpWindowViewModel helpWindowViewModel
         ) : base(settingsService)
         {
-            _settingsService = settingsService;
             _helpWindowViewModel = helpWindowViewModel;
 
             // ヘルプ画面を開きます
@@ -188,10 +198,24 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 () => IsWildcardCriteriaConditionCorrent(WildcardSearchCriteriaText)
             );
 
-            // 編集モードにします。
+            // ワイルドカード条件一覧から編集モードにします。
             ModifyCommand = new RelayCommand(
                 () => SelectedItems[0].IsEditMode = true,
                 () => SelectedItems.Count == 1
+            );
+
+            // ワイルドカード条件一覧削除します。
+            RemoveCommand = new RelayCommand(
+                () =>
+                {
+                    foreach (var item in SelectedItems)
+                    {
+                        WildcardItems.Remove(item);
+                    }
+                    SelectedItems.Clear();
+                    ModifyCommand.NotifyCanExecuteChanged();
+                },
+                () => SelectedItems.Count > 0
             );
 
             // リストボックスアイテムの編集状態から抜けた時の処理
@@ -210,6 +234,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     SelectedItems.Remove(m.SelectedItem);
                 }
                 ModifyCommand.NotifyCanExecuteChanged();
+                RemoveCommand.NotifyCanExecuteChanged();
             });
 
             WeakReferenceMessenger.Default.Register<WildcardSelectedCriteria>(this, (_, m) =>
@@ -254,6 +279,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 WildcardSearchErrorStatus = WildcardSearchErrorStatus.Empty;
                 return false;
+            }
+
+            // 既に登録されているかをチェックする
+            foreach (var item in WildcardItems)
+            {
+                if (item.WildcardCriteria == pattern)
+                {
+                    WildcardSearchErrorStatus = WildcardSearchErrorStatus.AlreadyRegistered;
+                    return false;
+                }
             }
 
             // アスタリスクの数をチェックする

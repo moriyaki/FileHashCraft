@@ -136,10 +136,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, m)
                 => TreeWidth = m.TreeWidth);
 
-            // フォントサイズの変更
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
-                => FontSize = m.FontSize);
-
             foreach (var root in SpecialFolderAndRootDrives.ScanDrives())
             {
                 _fileWatcherService.SetRootDirectoryWatcher(root);

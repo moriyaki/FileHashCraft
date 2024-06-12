@@ -229,10 +229,10 @@
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Command="{Binding ViewModelWildcard.ModifyCommand}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonModify, Mode=OneWay}"/>
-
                     <!-- Remove button -->
                     <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="WildcardRemove" 
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Command="{Binding ViewModelWildcard.RemoveCommand}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
                     <!-- Add button -->
                     <Button Grid.Row="3" Grid.Column="2" Margin="3" x:Name="WildcardAdd"

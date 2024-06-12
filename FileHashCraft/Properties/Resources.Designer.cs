@@ -484,6 +484,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Wildcard conditions that have already been registered. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelWildcardError_AlreadyRegistered {
+            get {
+                return ResourceManager.GetString("LabelWildcardError_AlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Wildcard search criteria not entered に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelWildcardError_Empty {
