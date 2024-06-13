@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models.FileScan;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -236,7 +236,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // リストボックスアイテムが編集された時のエラーチェック
             WeakReferenceMessenger.Default.Register<WildcardSelectedChangedCriteria>(this, (_, m) =>
-                m.Reply(IsWildcardCriteriaConditionCorrent(m.WildcardCriteria, m.OldWildcardCriteria)));
+                m.Reply(IsWildcardCriteriaConditionCorrent(m.WildcardCriteria, m.OriginalWildcardCriteria)));
         }
         #endregion コンストラクタ
 
@@ -250,6 +250,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 WildcardCriteria = WildcardSearchCriteriaText,
             };
             WildcardItems.Add(newWildcard);
+            FileSearchCriteriaManager.AddCriteria(WildcardSearchCriteriaText, FileSearchOption.Wildcard);
+            _pageSelectTargetViewModelMain.SetTargetCountChanged();
+            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
             WildcardSearchCriteriaText = string.Empty;
         }
 
@@ -260,6 +263,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             foreach (var item in SelectedItems)
             {
+                FileSearchCriteriaManager.RemoveCriteria(item.WildcardCriteria, FileSearchOption.Wildcard);
+                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
+                _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
+                _pageSelectTargetViewModelMain.SetTargetCountChanged();
                 WildcardItems.Remove(item);
             }
             SelectedItems.Clear();
@@ -270,18 +277,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ワイルドカード検索条件を変更します。
         /// </summary>
         /// <param name="modifiedItem">変更されたワイルドカード検索条件</param>
-        public static void ModefyWildcardCriteria(WildcardItemViewModel modifiedItem)
+        public void ModefyWildcardCriteria(WildcardItemViewModel modifiedItem)
         {
-            MessageBox.Show("変更されたよ！" + modifiedItem.WildcardCriteriaBackup + "→" + modifiedItem.WildcardCriteria);
+            FileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalWildcardCriteria, FileSearchOption.Wildcard);
+            FileSearchCriteriaManager.AddCriteria(modifiedItem.WildcardCriteria, FileSearchOption.Wildcard);
+            _pageSelectTargetViewModelMain.SetTargetCountChanged();
+            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
         }
 
         /// <summary>
         /// ワイルドカード文字列が正しいかを検査します。
         /// </summary>
         /// <param name="pattern">チェックするワイルドカード文字列</param>
-        /// <param name="oldPattern">(必要ならば)元のワイルドカード文字列</param>
+        /// <param name="originalPattern">(必要ならば)元のワイルドカード文字列</param>
         /// <returns>ワイルドカード文字列が正当かどうか</returns>
-        public bool IsWildcardCriteriaConditionCorrent(string pattern, string oldPattern = "")
+        public bool IsWildcardCriteriaConditionCorrent(string pattern, string originalPattern = "")
         {
             // 空欄かチェックする
             if (string.IsNullOrEmpty(pattern))
@@ -291,7 +301,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
 
             // 既に登録されているかをチェックする
-            if (pattern != oldPattern)
+            if (pattern != originalPattern)
             {
                 foreach (var item in WildcardItems)
                 {

@@ -26,7 +26,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             get => _WildcardCriteria;
             set
             {
-                _WildcardCriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new WildcardSelectedChangedCriteria(value, _WildcardCriteriaBackup));
+                _WildcardCriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new WildcardSelectedChangedCriteria(value, _OriginalWildcardCriteria));
                 SetProperty(ref _WildcardCriteria, value);
             }
         }
@@ -34,10 +34,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 元のワイルドカード検索条件
         /// </summary>
-        private string _WildcardCriteriaBackup = string.Empty;
-        public string WildcardCriteriaBackup
+        private string _OriginalWildcardCriteria = string.Empty;
+        public string OriginalWildcardCriteria
         {
-            get => _WildcardCriteriaBackup;
+            get => _OriginalWildcardCriteria;
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsEditMode, value);
                 if (value)
                 {
-                    _WildcardCriteriaBackup = WildcardCriteria;
+                    _OriginalWildcardCriteria = WildcardCriteria;
                     WeakReferenceMessenger.Default.Send(new WildcardSeletedTextBoxFocus());
                 }
                 else
@@ -84,7 +84,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 OnPropertyChanged(nameof(ItemBackgroudColor));
                 OnPropertyChanged(nameof(BorderTickness));
                 WeakReferenceMessenger.Default.Send(new IsEditModeChanged());
-                WeakReferenceMessenger.Default.Send(new WildcardSelectedChangedCriteria(WildcardCriteria,_WildcardCriteriaBackup));
+                WeakReferenceMessenger.Default.Send(new WildcardSelectedChangedCriteria(WildcardCriteria,_OriginalWildcardCriteria));
             }
         }
 
@@ -131,7 +131,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // 間違っているワイルドカード検索条件は元に戻す
             if (!_WildcardCriteriaConditionCorrent)
             {
-                WildcardCriteria = _WildcardCriteriaBackup;
+                WildcardCriteria = _OriginalWildcardCriteria;
             }
             WeakReferenceMessenger.Default.Send(new WildcardNewCriteriaFocus());
         }

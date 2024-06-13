@@ -4,7 +4,6 @@
     ScanFiles だけを利用します。
 
  */
-using System.Diagnostics;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.ViewModels.ControlDirectoryTree;

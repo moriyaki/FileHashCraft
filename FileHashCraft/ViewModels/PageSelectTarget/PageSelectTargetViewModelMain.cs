@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -77,13 +76,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         void SetAllTargetfilesCount();
         /// <summary>
+        /// スキャンするファイル数が増減した時の処理をします。
+        /// </summary>
+        void SetTargetCountChanged();
+        /// <summary>
         /// ツリービューの選択ディレクトリが変更された時の処理です。
         /// </summary>
         void ChangeCurrentPath(string currentFullPath);
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
-        void ChangeExtensionToListBox(string extention, bool IsTarget);
+        void ChangeSelectedToListBox();
     }
     #endregion インターフェース
 
@@ -236,8 +239,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 => ChangeCurrentPath(m.CurrentFullPath));
 
             // 拡張子チェックボックスのチェック状態が変更されたら、カレントディレクトリリストボックス変更
-            WeakReferenceMessenger.Default.Register<ExtentionCheckChangedToListBox>(this, (_, m)
-                => ChangeExtensionToListBox(m.Name, m.IsChecked));
+            WeakReferenceMessenger.Default.Register<ExtentionCheckChangedToListBox>(this, (_, _)
+                => ChangeSelectedToListBox());
         }
         #endregion コンストラクタ
 
@@ -275,6 +278,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             App.Current?.Dispatcher?.Invoke(() =>
             CountAllTargetFilesGetHash = _scannedFilesManager.GetAllFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
         }
+
+        /// <summary>
+        /// スキャンするファイル数が増減した時の処理をします。
+        /// </summary>
+        public void SetTargetCountChanged()
+        {
+            App.Current.Dispatcher.Invoke(() =>
+            CountFilteredGetHash = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
+        }
         #endregion ファイル数の管理処理
 
         #region ツリービューのカレントディレクトリ、リストビューの色変え処理
@@ -301,20 +313,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
-        /// <param name="extention">拡張子</param>
-        /// <param name="IsTarget">対象ファイルかどうか</param>
-        public void ChangeExtensionToListBox(string extention, bool IsTarget)
+        //public void ChangeExtensionToListBox(string extention, bool IsTarget)
+        public void ChangeSelectedToListBox()
         {
             foreach (var item in HashFileListItems)
             {
-                var fileExtention = Path.GetExtension(item.FileFullPath);
-                if (string.Equals(fileExtention, extention, StringComparison.OrdinalIgnoreCase))
-                {
-                    App.Current.Dispatcher.Invoke(() => item.IsHashTarget = IsTarget);
-                }
+                App.Current?.Dispatcher?.Invoke(() =>
+                    item.IsHashTarget = _scannedFilesManager.IsCriteriaFile(item.FileFullPath, _settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
             }
         }
-
         #endregion ツリービューのカレントディレクトリ、リストビューの色変え処理
     }
 }

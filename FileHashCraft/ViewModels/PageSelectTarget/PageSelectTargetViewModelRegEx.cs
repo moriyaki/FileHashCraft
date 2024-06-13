@@ -1,16 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
-using FileHashCraft.Models.FileScan;
-using FileHashCraft.Models.Helpers;
-using FileHashCraft.Services;
-using FileHashCraft.Services.Messages;
-
-namespace FileHashCraft.ViewModels.PageSelectTarget
+﻿namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     public interface IPageSelectTargetViewModelRegex;
     public class PageSelectTargetViewModelRegex : IPageSelectTargetViewModelRegex;

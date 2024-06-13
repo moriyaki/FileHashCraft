@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using FileHashCraft.ViewModels.PageSelectTarget;
+﻿using System.Text.RegularExpressions;
 using FileHashCraft.Models.FileScan;
 
 namespace FileHashCraft.Tests

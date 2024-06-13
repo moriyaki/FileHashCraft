@@ -1,22 +1,5 @@
 # 開発メモ
 
-## メッセージ送受信サンプル
-
-- メッセージ送信サンプル
-
-```cs
-    WeakReferenceMessenger.Default.Send(new FontChanged(value));
-```
-
-- メッセージ受信サンプル
-
-```cs
-    WeakReferenceMessenger.Default.Register<FontChanged>(this, (recipient, message) =>
-    {
-        FontSize = message.FontSize;
-    });
-```
-
 ## ファイルハッシュ取得についてのメモ
 
 ハッシュ絞り込み画面→計算画面→削除支援画面

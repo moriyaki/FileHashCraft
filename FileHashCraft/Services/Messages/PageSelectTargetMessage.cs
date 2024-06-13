@@ -1,5 +1,4 @@
-﻿using CefSharp.DevTools.Tracing;
-using CommunityToolkit.Mvvm.Messaging.Messages;
+﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using FileHashCraft.ViewModels.PageSelectTarget;
 
 namespace FileHashCraft.Services.Messages
@@ -36,17 +35,7 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// チェック状態をカレントディレクトリリストボックスに反映するメッセージ
     /// </summary>
-    public class ExtentionCheckChangedToListBox
-    {
-        public string Name { get; set; } = string.Empty;
-        public bool IsChecked;
-        public ExtentionCheckChangedToListBox() { throw new NotImplementedException(); }
-        public ExtentionCheckChangedToListBox(string name, bool isChecked)
-        {
-            Name = name;
-            IsChecked = isChecked;
-        }
-    }
+    public class ExtentionCheckChangedToListBox;
 
     /// <summary>
     /// 拡張子グループのチェック状態に連動して拡張子のチェック状態を変更するメッセージ
@@ -101,7 +90,7 @@ namespace FileHashCraft.Services.Messages
     public class WildcardSelectedChangedCriteria : RequestMessage<bool>
     {
         public string WildcardCriteria { get; set; } = string.Empty;
-        public string OldWildcardCriteria { get; set; } = string.Empty;
+        public string OriginalWildcardCriteria { get; set; } = string.Empty;
         public WildcardSelectedChangedCriteria() { throw new NotImplementedException(); }
         public WildcardSelectedChangedCriteria(string wildcardCriteria)
         {
@@ -110,7 +99,7 @@ namespace FileHashCraft.Services.Messages
         public WildcardSelectedChangedCriteria(string wildcardCriteria, string oldWildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
-            OldWildcardCriteria = oldWildcardCriteria;
+            OriginalWildcardCriteria = oldWildcardCriteria;
         }
     }
     #endregion ワイルドカードメッセージ

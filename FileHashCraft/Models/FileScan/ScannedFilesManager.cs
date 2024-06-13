@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Text.RegularExpressions;
 
 namespace FileHashCraft.Models.FileScan
@@ -136,32 +135,7 @@ namespace FileHashCraft.Models.FileScan
         {
             lock (lockObject)
             {
-                var count = 0;
-                foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
-                {
-                    switch (criteria.SearchOption)
-                    {
-                        case FileSearchOption.Extention:
-                            count += AllFiles.Count(f =>
-                            {
-                                return String.Equals(
-                                    criteria.SearchPattern,
-                                    Path.GetExtension(f.FileFullPath),
-                                    StringComparison.CurrentCultureIgnoreCase)
-                                && MatchFileAttributesCriteria(f, includeHidden, includeReadOnly);
-                            });
-                            break;
-                        case FileSearchOption.Wildcard:
-                            var wildcardRegex = WildcardToRegexPattern(criteria.SearchPattern);
-                            count += AllFiles.Count(f => wildcardRegex.IsMatch(Path.GetFileName(f.FileFullPath)));
-                            break;
-                        case FileSearchOption.Regex:
-                            break;
-                        default:
-                            throw new NotFiniteNumberException("GetAllCriteriaFilesCount");
-                    }
-                }
-                return count;
+                return GetAllCriteriaFileName(includeHidden, includeReadOnly).Count;
             }
         }
 
@@ -177,17 +151,21 @@ namespace FileHashCraft.Models.FileScan
                 switch (criteria.SearchOption)
                 {
                     case FileSearchOption.Extention:
-                        files.UnionWith(AllFiles.Where(f =>
+                        var extentionFiles = AllFiles.Where(f =>
                             String.Equals(criteria.SearchPattern,
                             Path.GetExtension(f.FileFullPath),
                             StringComparison.CurrentCultureIgnoreCase)
                         && MatchFileAttributesCriteria(f, includeHidden, includeReadOnly))
-                        .Select(f => f));
+                        .Select(f => f);
+                        files.UnionWith(extentionFiles);
                         break;
                     case FileSearchOption.Wildcard:
                         var wildcardRegex = WildcardToRegexPattern(criteria.SearchPattern);
-                        files.UnionWith(AllFiles.Where(f =>
-                            wildcardRegex.IsMatch(Path.GetFileName(f.FileFullPath))).Select(f => f));
+                        var wildcardFiles = AllFiles.Where(f =>
+                            wildcardRegex.IsMatch(f.FileFullPath)
+                        && MatchFileAttributesCriteria(f, includeHidden, includeReadOnly))
+                        .Select(f => f);
+                        files.UnionWith(wildcardFiles);
                         break;
                     case FileSearchOption.Regex:
                         break;
@@ -205,6 +183,7 @@ namespace FileHashCraft.Models.FileScan
         /// <returns>検索条件に合致してるかどうか</returns>
         public bool IsCriteriaFile(string fileFullPath, bool includeHidden, bool includeReadOnly)
         {
+            int count = 0;
             var file = AllFiles.FirstOrDefault(c => c.FileFullPath == fileFullPath);
             if (file == null) { return false; }
             foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
@@ -212,7 +191,7 @@ namespace FileHashCraft.Models.FileScan
                 switch (criteria.SearchOption)
                 {
                     case FileSearchOption.Extention:
-                        var count = AllFiles.Count(c =>
+                        count = AllFiles.Count(c =>
                         {
                             return String.Equals(
                                 criteria.SearchPattern,
@@ -220,9 +199,12 @@ namespace FileHashCraft.Models.FileScan
                                 StringComparison.CurrentCultureIgnoreCase)
                             && MatchFileAttributesCriteria(c, includeHidden, includeReadOnly);
                         });
-                        if (count > 0) { return true; }
+                        if (count > 0) { return true; } else { count = 0; }
                         break;
                     case FileSearchOption.Wildcard:
+                        var wildcardRegex = WildcardToRegexPattern(criteria.SearchPattern);
+                        if (wildcardRegex.IsMatch(file.FileFullPath) && MatchFileAttributesCriteria(file, includeHidden, includeReadOnly))
+                        { return true; }
                         break;
                     case FileSearchOption.Regex:
                         break;

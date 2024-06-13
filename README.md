@@ -2,15 +2,25 @@
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Third-Party Libraries
+
+This project uses the following third-party libraries:
+
+- [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) under the [MIT License](https://github.com/CommunityToolkit/dotnet/blob/main/LICENSE).
+- [Microsoft.Extensions.DependencyInjection](https://github.com/dotnet/extensions) under the [MIT License](https://github.com/dotnet/extensions/blob/main/LICENSE).
+- [Microsoft.Xaml.Behaviors.Wpf](https://github.com/microsoft/XamlBehaviors) under the [MIT License](https://github.com/microsoft/XamlBehaviors/blob/main/LICENSE).
 
 ## このソフトについて
 
-ChatGPT 3.5 さんの命名です、今の所検索に引っかかってないので頂きました。
+FileHashCraft は ChatGPT 3.5 さんの命名です、今の所検索に引っかかってないので頂きました。
 (GPT と GTP が混同してしまう人は、GTP = Go Text Protocol = 碁のテキストプロトコル、と覚えておきましょう)
 
-一応、アプリケーションは日本語と同時に英語にも対応しています。
+一応、アプリケーションは日本語と英語に対応しています。
 しかし、ドキュメントは作っていません、ドキュメントを書く所まで作れていません。
+
+README 英語版もアプリケーション完成時にドキュメントと同時に作りたいと思っています。
 
 ## 考えている事
 
@@ -31,16 +41,18 @@ FileHashCraft とは、このファイルをハッシュで「芸術的に」処
 Windows only です。それも Windows 7 での動作確認でさえ、できていない状況です。Windows 11 はまだ入れていません。
 なので実質 Windows 10 only ですね。
 
-## ライセンスの補足
+## ライセンスについての補足
 
 みんな大好きGPLじゃなくて、MITライセンスを適用します。
 理由は簡単で「使ったソースコードの公開義務はない」のが気に入っています。
 
-流用して使う分には
+ソースコードを流用して公開(後悔とも言う)する分には
 
-> Copyright (c) 2023 moriyaki
+> Powered by FileHashCraft Licensed under the MIT License.
 
-と明記して、MITライセンス全文にアクセスできるようにしておけば、ライセンスに引っかかることもないでしょう。
-ライセンス的にこの表記は必要でしょうが、ブログ記事に利用するのもいいでしょう。広告記事で稼がれるのは業腹ですが。
+とか明記して、本プロジェクトのMITライセンス全文にアクセスできるようにしておけば、ライセンスに引っかかることもないでしょう。
 
-「moriyaki is 誰」状態ですけど、moriyaki は日本語表記だと「もりゃき」です、Mastodonやってます。
+ライセンス的にこの表記は必要らしいです、ブログ記事に利用するのもいいでしょう。広告記事で稼がれるのは業腹ですが。
+できればプロジェクト自体へのリンクも貼っておいてくださいね。
+
+「moriyaki is 誰」状態ですけど、moriyaki は日本語表記だと「もりゃき」です、[Mastodon](https://fedibird.com/@moriyaki) やってます。

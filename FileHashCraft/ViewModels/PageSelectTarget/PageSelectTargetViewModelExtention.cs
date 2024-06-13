@@ -35,11 +35,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         void ClearExtentions();
         /// <summary>
-        /// スキャンするファイル数が増減した時の処理をします。
-        /// </summary>
-        void ExtentionCountChanged();
-
-        /// <summary>
         /// 拡張子グループチェックボックスに連動して拡張子チェックボックスをチェックします。
         /// </summary>
         void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
@@ -118,14 +113,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             WeakReferenceMessenger.Default.Register<ExtentionChechReflectToGroup>(this, (_, m) =>
             {
                 CheckExtentionReflectToGroup(m.Name);
-                ExtentionCountChanged();
+                _pageSelectTargetViewModelMain.SetTargetCountChanged();
             });
 
             // 拡張子がチェック解除されたらグループも変更する
             WeakReferenceMessenger.Default.Register<ExtentionUnchechReflectToGroup>(this, (_, m) =>
             {
                 UncheckExtentionReflectToGroup(m.Name);
-                ExtentionCountChanged();
+                _pageSelectTargetViewModelMain.SetTargetCountChanged();
             });
 
             // 拡張子グループのチェック変更に連動して拡張子チェックボックス変更
@@ -206,7 +201,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionSet = new HashSet<string>(extensionCollection);
 
             // 更新対象の拡張子をまとめて変更
-            var extensionsToUpdate = ExtentionCollection.Where(e => extentionSet.Contains(e.Name)).ToList();
+            var extensionsToUpdate = ExtentionCollection.Where(e => extentionSet.Contains(e.Name)).ToHashSet();
 
             // UIスレッドでの更新を一回のInvokeでまとめて行う
             App.Current.Dispatcher.Invoke(() =>
@@ -230,22 +225,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
             }
 
-            foreach (var extension in extensionsToUpdate)
-            {
-                _pageSelectTargetViewModelMain.ChangeExtensionToListBox(extension.Name, changedCheck);
-            }
-
             // 拡張子数の変更通知
-            ExtentionCountChanged();
-        }
-
-        /// <summary>
-        /// スキャンするファイル数が増減した時の処理をします。
-        /// </summary>
-        public void ExtentionCountChanged()
-        {
-            App.Current.Dispatcher.Invoke(() =>
-            _pageSelectTargetViewModelMain.CountFilteredGetHash = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
+            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
+            _pageSelectTargetViewModelMain.SetTargetCountChanged();
         }
 
         /// <summary>
