@@ -4,6 +4,8 @@ using FileHashCraft.ViewModels.PageSelectTarget;
 
 namespace FileHashCraft.Services.Messages
 {
+    public class FileScanFinished;
+
     #region 拡張子チェックボックスメッセージ
     /// <summary>
     /// 拡張子チェックボックスがチェックされたら拡張子グループ変更するメッセージ

@@ -116,6 +116,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     case FileScanStatus.Finished:
                         StatusColor = Brushes.LightGreen;
                         StatusMessage = Resources.LabelFinished;
+                        WeakReferenceMessenger.Default.Send(new FileScanFinished());
                         break;
                     default: // 異常
                         StatusColor = Brushes.Red;

@@ -309,12 +309,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             // 開発用自動化処理
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
             {
-                if (root.FullPath == @"H:\")
+                if (root.FullPath == @"G:\")
                 {
                     root.KickChild();
                     foreach (var child in root.Children)
                     {
-                        if (child.FullPath == @"H:\旧D_Drive")
+                        if (child.FullPath == @"G:\Anime_Season")
                         {
                             child.IsChecked = true;
                         }

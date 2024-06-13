@@ -114,9 +114,13 @@ namespace FileHashCraft.Views
             if (e.Key == Key.Enter)
             {
                 var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<IPageSelectTargetViewModelWildcard>() ?? throw new NullReferenceException(nameof(IPageSelectTargetViewModelWildcard));
+                var _PageSelectTargetViewModelMain = Ioc.Default.GetService<IPageSelectTargetViewModelMain>() ?? throw new NullReferenceException(nameof(IPageSelectTargetViewModelMain));
                 if (_PageSelectTargetViewModelWildcard.WildcardSearchErrorStatus == WildcardSearchErrorStatus.None)
                 {
-                    _PageSelectTargetViewModelWildcard.AddWildcardCriteria();
+                    if (_PageSelectTargetViewModelMain.Status == FileScanStatus.Finished)
+                    {
+                        _PageSelectTargetViewModelWildcard.AddWildcardCriteria();
+                    }
                 }
             }
         }

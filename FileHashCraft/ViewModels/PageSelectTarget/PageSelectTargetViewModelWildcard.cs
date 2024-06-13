@@ -171,6 +171,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         #region コンストラクタ
         private readonly IHelpWindowViewModel _helpWindowViewModel;
+        private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
 
         public PageSelectTargetViewModelWildcard()
         {
@@ -179,10 +180,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         public PageSelectTargetViewModelWildcard(
             ISettingsService settingsService,
-            IHelpWindowViewModel helpWindowViewModel
+            IHelpWindowViewModel helpWindowViewModel,
+            IPageSelectTargetViewModelMain pageSelectTargetViewModelMain
         ) : base(settingsService)
         {
             _helpWindowViewModel = helpWindowViewModel;
+            _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
 
             // ヘルプ画面を開きます
             WildcardHelpOpen = new RelayCommand(() =>
@@ -195,7 +198,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // ワイルドカード追加コマンド
             AddWildcardCommand = new RelayCommand(
                 () => AddWildcardCriteria(),
-                () => IsWildcardCriteriaConditionCorrent(WildcardSearchCriteriaText)
+                () => IsWildcardCriteriaConditionCorrent(WildcardSearchCriteriaText) && _pageSelectTargetViewModelMain.Status == FileScanStatus.Finished
             );
 
             // ワイルドカード条件一覧から編集モードにします。
@@ -209,6 +212,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 () => RemoveWildcardCriteria(),
                 () => SelectedItems.Count > 0
             );
+
+            WeakReferenceMessenger.Default.Register<FileScanFinished>(this, (_, _) =>
+                AddWildcardCommand.NotifyCanExecuteChanged());
 
             // リストボックスアイテムの編集状態から抜けた時の処理
             WeakReferenceMessenger.Default.Register<IsEditModeChanged>(this, (_, _) =>
@@ -264,7 +270,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ワイルドカード検索条件を変更します。
         /// </summary>
         /// <param name="modifiedItem">変更されたワイルドカード検索条件</param>
-        public void ModefyWildcardCriteria(WildcardItemViewModel modifiedItem)
+        public static void ModefyWildcardCriteria(WildcardItemViewModel modifiedItem)
         {
             MessageBox.Show("変更されたよ！" + modifiedItem.WildcardCriteriaBackup + "→" + modifiedItem.WildcardCriteria);
         }

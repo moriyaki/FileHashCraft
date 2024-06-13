@@ -4,6 +4,7 @@
     ScanFiles だけを利用します。
 
  */
+using System.Diagnostics;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
@@ -62,7 +63,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 return;
             }
-
             ScanExtention(cancellation);
 
             // スキャン終了の表示に切り替える
@@ -142,17 +142,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             var directoriesList = new List<string>();
 
-            await Task.Run(() =>
+            foreach (var rootDirectory in rootDirectories)
             {
-                foreach (var rootDirectory in rootDirectories)
+                await Task.Run(() =>
                 {
-                    foreach (var dir in GetDirectories(rootDirectory, cancellation))
-                    {
-                        _directoriesHashSet.Add(dir);
-                        if (cancellation.IsCancellationRequested) { return; }
-                    }
-                }
-            }, cancellation);
+                    _directoriesHashSet.UnionWith(GetDirectories(rootDirectory, cancellation));
+                    if (cancellation.IsCancellationRequested) { return; }
+                }, cancellation);
+            }
         }
 
         /// <summary>
@@ -161,9 +158,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="rootDirectory">検索するディレクトリのルート</param>
         /// <param name="cancellation">キャンセリングトークン</param>
         /// <returns></returns>
-        private List<string> GetDirectories(string rootDirectory, CancellationToken cancellation)
+        private HashSet<string> GetDirectories(string rootDirectory, CancellationToken cancellation)
         {
-            List<string> result = [];
+            HashSet<string> result = [];
             Stack<string> paths = [];
 
             paths.Push(rootDirectory);
