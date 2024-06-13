@@ -50,27 +50,27 @@
         }
 
         /// <summary>
-        /// 拡張子の条件追加
+        /// 検索条件の追加
         /// </summary>
-        /// <param name="extention"></param>
-        public static void AddCriteriaExtention(string extention)
+        /// <param name="pattern">検索条件</param>
+        public static void AddCriteria(string pattern, FileSearchOption criteriaType)
         {
             var foundCriteria = AllCriteria.Find(
-                e => e.SearchPattern == extention && e.SearchOption == FileSearchOption.Extention);
+                e => e.SearchPattern == pattern && e.SearchOption == criteriaType);
 
             if (foundCriteria != null) { return; }
 
-            AllCriteria.Add(new FileSearchCriteria(FileSearchOption.Extention, extention));
+            AllCriteria.Add(new FileSearchCriteria(criteriaType, pattern));
         }
 
         /// <summary>
-        /// 拡張子の条件削除
+        /// 検索条件の削除
         /// </summary>
-        /// <param name="extention"></param>
-        public static void RemoveCriteriaExtention(string extention)
+        /// <param name="pattern">検索条件</param>
+        public static void RemoveCriteria(string pattern, FileSearchOption criteriaType)
         {
             var foundCriteria = AllCriteria.Find(
-                e => e.SearchPattern == extention && e.SearchOption == FileSearchOption.Extention);
+                e => e.SearchPattern == pattern && e.SearchOption == criteriaType);
 
             if (foundCriteria == null) { return; }
 

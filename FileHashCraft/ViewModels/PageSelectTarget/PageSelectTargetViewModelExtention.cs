@@ -222,11 +222,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (changedCheck)
                 {
-                    FileSearchCriteriaManager.AddCriteriaExtention(extension);
+                    FileSearchCriteriaManager.AddCriteria(extension, FileSearchOption.Extention);
                 }
                 else
                 {
-                    FileSearchCriteriaManager.RemoveCriteriaExtention(extension);
+                    FileSearchCriteriaManager.RemoveCriteria(extension, FileSearchOption.Extention);
                 }
             }
 

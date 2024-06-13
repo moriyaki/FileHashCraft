@@ -76,7 +76,7 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// ワイルドカード検索条件入力テキストボックスにフォーカスを戻すメッセージ
     /// </summary>
-    public class WildcardCriteriaFocus;
+    public class WildcardNewCriteriaFocus;
 
     /// <summary>
     /// 選択されたアイテムの状態が変わったことを知らせるメッセージ
@@ -96,13 +96,19 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// リストボックスのワイルドカード検索条件編集の内容通知メッセージ
     /// </summary>
-    public class WildcardSelectedCriteria : RequestMessage<bool>
+    public class WildcardSelectedChangedCriteria : RequestMessage<bool>
     {
         public string WildcardCriteria { get; set; } = string.Empty;
-        public WildcardSelectedCriteria() { throw new NotImplementedException(); }
-        public WildcardSelectedCriteria(string wildcardCriteria)
+        public string OldWildcardCriteria { get; set; } = string.Empty;
+        public WildcardSelectedChangedCriteria() { throw new NotImplementedException(); }
+        public WildcardSelectedChangedCriteria(string wildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
+        }
+        public WildcardSelectedChangedCriteria(string wildcardCriteria, string oldWildcardCriteria)
+        {
+            WildcardCriteria = wildcardCriteria;
+            OldWildcardCriteria = oldWildcardCriteria;
         }
     }
     #endregion ワイルドカードメッセージ

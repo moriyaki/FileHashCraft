@@ -33,7 +33,7 @@ namespace FileHashCraft.Views
                 }
             });
 
-            WeakReferenceMessenger.Default.Register<WildcardCriteriaFocus>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<WildcardNewCriteriaFocus>(this, (_, _) =>
                 WildcardCriteria.Focus());
         }
 

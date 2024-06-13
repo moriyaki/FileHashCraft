@@ -238,7 +238,7 @@
                     <Button Grid.Row="3" Grid.Column="2" Margin="3" x:Name="WildcardAdd"
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"
-                            Command="{Binding ViewModelWildcard.WildcardAddCommand}"/>
+                            Command="{Binding ViewModelWildcard.AddWildcardCommand}"/>
                     <!-- Help button -->
                     <Button Grid.Row="3" Grid.Column="3" Margin="3" x:Name="WildcardHelp" 
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"

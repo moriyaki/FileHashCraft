@@ -21,17 +21,29 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ワイルドカード検索条件
         /// </summary>
         private string _WildcardCriteria = string.Empty;
-        private string _WildcardCriteriaBackup = string.Empty;
-        private bool _WildcardCriteriaConditionCorrent;
         public string WildcardCriteria
         {
             get => _WildcardCriteria;
             set
             {
+                _WildcardCriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new WildcardSelectedChangedCriteria(value, _WildcardCriteriaBackup));
                 SetProperty(ref _WildcardCriteria, value);
-                _WildcardCriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new WildcardSelectedCriteria(value));
             }
         }
+
+        /// <summary>
+        /// 元のワイルドカード検索条件
+        /// </summary>
+        private string _WildcardCriteriaBackup = string.Empty;
+        public string WildcardCriteriaBackup
+        {
+            get => _WildcardCriteriaBackup;
+        }
+
+        /// <summary>
+        /// ワイルドカード検索条件が正当かどうか
+        /// </summary>
+        private bool _WildcardCriteriaConditionCorrent;
 
         /// <summary>
         /// アイテムの背景色
@@ -62,17 +74,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsEditMode, value);
                 if (value)
                 {
+                    _WildcardCriteriaBackup = WildcardCriteria;
                     WeakReferenceMessenger.Default.Send(new WildcardSeletedTextBoxFocus());
                 }
                 else
                 {
                     RestoreWildcardCriteria();
                 }
-                _WildcardCriteriaBackup = WildcardCriteria;
                 OnPropertyChanged(nameof(ItemBackgroudColor));
                 OnPropertyChanged(nameof(BorderTickness));
                 WeakReferenceMessenger.Default.Send(new IsEditModeChanged());
-                WeakReferenceMessenger.Default.Send(new WildcardSelectedCriteria(WildcardCriteria));
+                WeakReferenceMessenger.Default.Send(new WildcardSelectedChangedCriteria(WildcardCriteria,_WildcardCriteriaBackup));
             }
         }
 
@@ -107,7 +119,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
                 else
                 {
-                    WeakReferenceMessenger.Default.Send(new WildcardCriteriaFocus());
+                    WeakReferenceMessenger.Default.Send(new WildcardNewCriteriaFocus());
                     IsSelected = true;
                 }
             });
@@ -121,7 +133,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 WildcardCriteria = _WildcardCriteriaBackup;
             }
-            WeakReferenceMessenger.Default.Send(new WildcardCriteriaFocus());
+            WeakReferenceMessenger.Default.Send(new WildcardNewCriteriaFocus());
         }
     }
 }

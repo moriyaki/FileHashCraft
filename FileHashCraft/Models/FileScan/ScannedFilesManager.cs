@@ -25,7 +25,7 @@ namespace FileHashCraft.Models.FileScan
         /// <summary>
         /// 検索条件に合致するファイルを取得する
         /// </summary>
-        HashSet<HashFile> GetAllCriteriaFileName();
+        HashSet<HashFile> GetAllCriteriaFileName(bool includeHidden, bool includeReadOnly);
         /// <summary>
         /// ファイルが検索条件に合致しているかを取得します。
         /// </summary>
@@ -142,16 +142,18 @@ namespace FileHashCraft.Models.FileScan
                     switch (criteria.SearchOption)
                     {
                         case FileSearchOption.Extention:
-                            count += AllFiles.Count(c =>
+                            count += AllFiles.Count(f =>
                             {
                                 return String.Equals(
                                     criteria.SearchPattern,
-                                    Path.GetExtension(c.FileFullPath),
+                                    Path.GetExtension(f.FileFullPath),
                                     StringComparison.CurrentCultureIgnoreCase)
-                                && MatchFileAttributesCriteria(c, includeHidden, includeReadOnly);
+                                && MatchFileAttributesCriteria(f, includeHidden, includeReadOnly);
                             });
                             break;
                         case FileSearchOption.Wildcard:
+                            var wildcardRegex = WildcardToRegexPattern(criteria.SearchPattern);
+                            count += AllFiles.Count(f => wildcardRegex.IsMatch(Path.GetFileName(f.FileFullPath)));
                             break;
                         case FileSearchOption.Regex:
                             break;
@@ -167,7 +169,7 @@ namespace FileHashCraft.Models.FileScan
         /// 検索条件に合致するファイルを取得します。
         /// </summary>
         /// <returns>検索条件合致ファイル</returns>
-        public HashSet<HashFile> GetAllCriteriaFileName()
+        public HashSet<HashFile> GetAllCriteriaFileName(bool includeHidden, bool includeReadOnly)
         {
             var files = new HashSet<HashFile>();
             foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
@@ -175,10 +177,17 @@ namespace FileHashCraft.Models.FileScan
                 switch (criteria.SearchOption)
                 {
                     case FileSearchOption.Extention:
-                        files.UnionWith(AllFiles.Where(
-                        f => String.Equals(criteria.SearchPattern, Path.GetExtension(f.FileFullPath), StringComparison.CurrentCultureIgnoreCase)));
+                        files.UnionWith(AllFiles.Where(f =>
+                            String.Equals(criteria.SearchPattern,
+                            Path.GetExtension(f.FileFullPath),
+                            StringComparison.CurrentCultureIgnoreCase)
+                        && MatchFileAttributesCriteria(f, includeHidden, includeReadOnly))
+                        .Select(f => f));
                         break;
                     case FileSearchOption.Wildcard:
+                        var wildcardRegex = WildcardToRegexPattern(criteria.SearchPattern);
+                        files.UnionWith(AllFiles.Where(f =>
+                            wildcardRegex.IsMatch(Path.GetFileName(f.FileFullPath))).Select(f => f));
                         break;
                     case FileSearchOption.Regex:
                         break;

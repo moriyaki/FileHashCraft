@@ -159,13 +159,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsChecked, value);
                 if (value == true)
                 {
-                    FileSearchCriteriaManager.AddCriteriaExtention(Name);
+                    FileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
                     WeakReferenceMessenger.Default.Send(new ExtentionChechReflectToGroup(Name));
                     WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBox(Name, true));
                 }
                 else
                 {
-                    FileSearchCriteriaManager.RemoveCriteriaExtention(Name);
+                    FileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
                     WeakReferenceMessenger.Default.Send(new ExtentionUnchechReflectToGroup(Name));
                     WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBox(Name, false));
                 }

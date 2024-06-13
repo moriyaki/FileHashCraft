@@ -125,7 +125,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 SetProperty(ref _WildcardSearchCriteriaText, value);
-                WildcardAddCommand.NotifyCanExecuteChanged();
+                AddWildcardCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -156,7 +156,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ワイルドカード検索条件を追加します。
         /// </summary>
-        public RelayCommand WildcardAddCommand { get; set; }
+        public RelayCommand AddWildcardCommand { get; set; }
 
         /// <summary>
         /// 登録したワイルドカード検索条件を編集します。
@@ -193,7 +193,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // ワイルドカード追加コマンド
-            WildcardAddCommand = new RelayCommand(
+            AddWildcardCommand = new RelayCommand(
                 () => AddWildcardCriteria(),
                 () => IsWildcardCriteriaConditionCorrent(WildcardSearchCriteriaText)
             );
@@ -206,22 +206,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // ワイルドカード条件一覧削除します。
             RemoveCommand = new RelayCommand(
-                () =>
-                {
-                    foreach (var item in SelectedItems)
-                    {
-                        WildcardItems.Remove(item);
-                    }
-                    SelectedItems.Clear();
-                    ModifyCommand.NotifyCanExecuteChanged();
-                },
+                () => RemoveWildcardCriteria(),
                 () => SelectedItems.Count > 0
             );
 
             // リストボックスアイテムの編集状態から抜けた時の処理
             WeakReferenceMessenger.Default.Register<IsEditModeChanged>(this, (_, _) =>
                 OnPropertyChanged(nameof(WildcardCiriteriaBackgroudColor)));
-
             // リストボックスの選択状態が変わった時の処理
             WeakReferenceMessenger.Default.Register<IsSelectedChanged>(this, (_, m) =>
             {
@@ -237,26 +228,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 RemoveCommand.NotifyCanExecuteChanged();
             });
 
-            WeakReferenceMessenger.Default.Register<WildcardSelectedCriteria>(this, (_, m) =>
-                m.Reply(IsWildcardCriteriaConditionCorrent(m.WildcardCriteria)));
-
-            // 試験用にアイテムを一つ追加してます(実装後削除します)
-            var dummyWildcard = new WildcardItemViewModel(_settingsService)
-            {
-                WildcardCriteria = "*.mp4",
-            };
-            WildcardItems.Add(dummyWildcard);
-
-            var dummyWildcard2 = new WildcardItemViewModel(_settingsService)
-            {
-                WildcardCriteria = "*.*",
-            };
-            WildcardItems.Add(dummyWildcard2);
+            // リストボックスアイテムが編集された時のエラーチェック
+            WeakReferenceMessenger.Default.Register<WildcardSelectedChangedCriteria>(this, (_, m) =>
+                m.Reply(IsWildcardCriteriaConditionCorrent(m.WildcardCriteria, m.OldWildcardCriteria)));
         }
         #endregion コンストラクタ
 
         /// <summary>
-        /// ワイルドカード検索条件を追加します
+        /// ワイルドカード検索条件を追加します。
         /// </summary>
         public void AddWildcardCriteria()
         {
@@ -269,10 +248,34 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
+        /// ワイルドカード検索条件を削除します。
+        /// </summary>
+        public void RemoveWildcardCriteria()
+        {
+            foreach (var item in SelectedItems)
+            {
+                WildcardItems.Remove(item);
+            }
+            SelectedItems.Clear();
+            ModifyCommand.NotifyCanExecuteChanged();
+        }
+
+        /// <summary>
+        /// ワイルドカード検索条件を変更します。
+        /// </summary>
+        /// <param name="modifiedItem">変更されたワイルドカード検索条件</param>
+        public void ModefyWildcardCriteria(WildcardItemViewModel modifiedItem)
+        {
+            MessageBox.Show("変更されたよ！" + modifiedItem.WildcardCriteriaBackup + "→" + modifiedItem.WildcardCriteria);
+        }
+
+        /// <summary>
         /// ワイルドカード文字列が正しいかを検査します。
         /// </summary>
+        /// <param name="pattern">チェックするワイルドカード文字列</param>
+        /// <param name="oldPattern">(必要ならば)元のワイルドカード文字列</param>
         /// <returns>ワイルドカード文字列が正当かどうか</returns>
-        public bool IsWildcardCriteriaConditionCorrent(string pattern)
+        public bool IsWildcardCriteriaConditionCorrent(string pattern, string oldPattern = "")
         {
             // 空欄かチェックする
             if (string.IsNullOrEmpty(pattern))
@@ -282,12 +285,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
 
             // 既に登録されているかをチェックする
-            foreach (var item in WildcardItems)
+            if (pattern != oldPattern)
             {
-                if (item.WildcardCriteria == pattern)
+                foreach (var item in WildcardItems)
                 {
-                    WildcardSearchErrorStatus = WildcardSearchErrorStatus.AlreadyRegistered;
-                    return false;
+                    if (item.WildcardCriteria == pattern)
+                    {
+                        WildcardSearchErrorStatus = WildcardSearchErrorStatus.AlreadyRegistered;
+                        return false;
+                    }
                 }
             }
 
@@ -325,6 +331,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             if (listItem != null)
             {
                 listItem.IsEditMode = false;
+                ModefyWildcardCriteria(listItem);
             }
         }
     }
