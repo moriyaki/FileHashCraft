@@ -37,6 +37,12 @@ namespace FileHashCraft.Views
                 WildcardCriteria.Focus());
         }
 
+        /// <summary>
+        /// 親オブジェクトに属する T 型のオブジェクトを取得する
+        /// </summary>
+        /// <typeparam name="T">取得するオブジェクト型</typeparam>
+        /// <param name="parent">親オブジェクト</param>
+        /// <returns>子オブジェクト</returns>
         public static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
@@ -62,7 +68,7 @@ namespace FileHashCraft.Views
         }
 
         /// <summary>
-        /// Ctrl + マウスホイールで拡大縮小を行う
+        /// Ctrl + マウスホイールで拡大縮小を行います。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -84,7 +90,7 @@ namespace FileHashCraft.Views
             }
         }
         /// <summary>
-        /// ツリービューのスプリッタが移動された時、TreeViewの横幅を設定する
+        /// ツリービューのスプリッタが移動された時、TreeViewの横幅を設定します。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
@@ -94,7 +100,7 @@ namespace FileHashCraft.Views
             explorerTree.TreeWidth = HashTargetTreeView.ActualWidth;
         }
         /// <summary>
-        /// リストボックスのスプリッタが移動された時、ListBoxの横幅を設定する
+        /// リストボックスのスプリッタが移動された時、ListBoxの横幅を設定します。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
@@ -173,6 +179,23 @@ namespace FileHashCraft.Views
             {
                 var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<IPageSelectTargetViewModelWildcard>() ?? throw new NullReferenceException(nameof(IPageSelectTargetViewModelWildcard));
                 _PageSelectTargetViewModelWildcard.LeaveListBoxWildcardCriteria();
+            }
+        }
+
+        /// <summary>
+        /// ワイルドカード検索条件一覧でF2キーが推されたら、編集モードに移行します。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WildcardSearchListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F2)
+            {
+                var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<IPageSelectTargetViewModelWildcard>() ?? throw new NullReferenceException(nameof(IPageSelectTargetViewModelWildcard));
+                if (_PageSelectTargetViewModelWildcard.SelectedItems.Count > 0)
+                {
+                    _PageSelectTargetViewModelWildcard.SelectedItems[0].IsEditMode = true;
+                }
             }
         }
     }

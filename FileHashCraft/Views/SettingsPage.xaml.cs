@@ -18,7 +18,7 @@ namespace FileHashCraft.Views
         }
 
         /// <summary>
-        /// Ctrl + マウスホイールで拡大縮小を行う
+        /// Ctrl + マウスホイールで拡大縮小を行います。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

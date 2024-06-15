@@ -249,7 +249,7 @@
                     <ListBox x:Name="WildcardSearchListBox"
                              ItemsSource="{Binding ViewModelWildcard.WildcardItems}"
                              SelectionMode="Extended"
-                             
+                             KeyDown="WildcardSearchListBox_KeyDown"
                              MouseDown="WildcardSearchListBox_MouseDown"
                              Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="3">
                         <ListBox.ItemTemplate>

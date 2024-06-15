@@ -305,7 +305,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 _controDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
             }
             _treeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-            /*
+
             // 開発用自動化処理
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
             {
@@ -323,7 +323,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     _fileSystemService.SendToSelectTargetPage();
                 }
             }
-            */
         }
         #endregion コンストラクタと初期処理
 

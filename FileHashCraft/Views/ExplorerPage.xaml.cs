@@ -23,7 +23,7 @@ namespace FileHashCraft.Views
         }
 
         /// <summary>
-        /// Ctrl + マウスホイールで拡大縮小を行う
+        /// Ctrl + マウスホイールで拡大縮小を行います。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -46,7 +46,7 @@ namespace FileHashCraft.Views
         }
 
         /// <summary>
-        /// ウィンドウプロシージャをオーバーライド
+        /// ウィンドウプロシージャをオーバーライドします。
         /// </summary>
         /// <param name="e">EventArgs</param>
         protected override void OnInitialized(EventArgs e)
@@ -56,7 +56,7 @@ namespace FileHashCraft.Views
         }
 
         /// <summary>
-        /// ウィンドウがロードされた時のイベント、カスタムのウィンドウプロシージャをフックする
+        /// ウィンドウがロードされた時のイベント、カスタムのウィンドウプロシージャをフックします。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">RoutedEventArgs</param>
@@ -72,7 +72,7 @@ namespace FileHashCraft.Views
         }
 
         /// <summary>
-        /// スプリッタが移動された時、TreeViewの横幅を設定する
+        /// スプリッタが移動された時、TreeViewの横幅を設定します。
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
