@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace FileHashCraft.Models.FileScan
 {
@@ -183,7 +184,6 @@ namespace FileHashCraft.Models.FileScan
         /// <returns>検索条件に合致してるかどうか</returns>
         public bool IsCriteriaFile(string fileFullPath, bool includeHidden, bool includeReadOnly)
         {
-            int count = 0;
             var file = AllFiles.FirstOrDefault(c => c.FileFullPath == fileFullPath);
             if (file == null) { return false; }
             foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
@@ -191,15 +191,14 @@ namespace FileHashCraft.Models.FileScan
                 switch (criteria.SearchOption)
                 {
                     case FileSearchOption.Extention:
-                        count = AllFiles.Count(c =>
+                        if (String.Equals(
+                            criteria.SearchPattern,
+                            Path.GetExtension(fileFullPath),
+                            StringComparison.OrdinalIgnoreCase)
+                         && MatchFileAttributesCriteria(file, includeHidden, includeReadOnly))
                         {
-                            return String.Equals(
-                                criteria.SearchPattern,
-                                Path.GetExtension(c.FileFullPath),
-                                StringComparison.CurrentCultureIgnoreCase)
-                            && MatchFileAttributesCriteria(c, includeHidden, includeReadOnly);
-                        });
-                        if (count > 0) { return true; } else { count = 0; }
+                            return true;
+                        }
                         break;
                     case FileSearchOption.Wildcard:
                         var wildcardRegex = WildcardToRegexPattern(criteria.SearchPattern);
