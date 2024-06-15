@@ -90,7 +90,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class PageSelectTargetViewModelMain : BaseViewModel, IPageSelectTargetViewModelMain
+    public class SelectTargetMainPageViewModel : BaseViewModel, IPageSelectTargetViewModelMain
     {
         #region バインディング
         /// <summary>
@@ -219,7 +219,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IFileSystemServices _fileSystemService;
-        public PageSelectTargetViewModelMain(
+        public SelectTargetMainPageViewModel(
             ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
             IFileSystemServices fileSystemServices

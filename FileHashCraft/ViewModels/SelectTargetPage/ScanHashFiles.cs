@@ -20,13 +20,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタと初期化
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IExtentionManager _extentionManager;
-        private readonly IPageSelectTargetViewModel _pageSelectTargetViewModel;
+        private readonly ISelectTargetPageViewModel _pageSelectTargetViewModel;
         private readonly ITreeManager _treeManager;
         public ScanHashFiles() { throw new NotImplementedException(); }
         public ScanHashFiles(
             IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,
-            IPageSelectTargetViewModel pageSelectTargetViewModel,
+            ISelectTargetPageViewModel pageSelectTargetViewModel,
             ITreeManager treeManager)
         {
             _scannedFilesManager = scannedFilesManager;

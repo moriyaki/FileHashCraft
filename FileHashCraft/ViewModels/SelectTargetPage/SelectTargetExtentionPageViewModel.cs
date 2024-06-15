@@ -11,7 +11,7 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     #region インターフェース
-    public interface IPageSelectTargetViewModelExtention
+    public interface ISelectTargetPageExtentionViewModel
     {
         /// <summary>
         /// ファイルの拡張子グループによる絞り込みチェックボックスを持つリストボックス
@@ -53,7 +53,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class PageSelectTargetViewModelExtention : BaseViewModel, IPageSelectTargetViewModelExtention
+    public class SelectTargetExtentionPageViewModel : BaseViewModel, ISelectTargetPageExtentionViewModel
     {
         #region バインディング
         /// <summary>
@@ -79,7 +79,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IExtentionManager _extentionManager;
         private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
 
-        public PageSelectTargetViewModelExtention(
+        public SelectTargetExtentionPageViewModel(
             ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,

@@ -20,7 +20,7 @@ using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
     #region インターフェース
-    public interface IPageExplorerViewModel
+    public interface IExplorerPageViewModel
     {
         /// <summary>
         /// リストビューのアイテムコレクション
@@ -49,7 +49,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class PageExplorerViewModel : BaseViewModel, IPageExplorerViewModel
+    public partial class ExplorerPageViewModel : BaseViewModel, IExplorerPageViewModel
     {
         #region データバインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
@@ -178,7 +178,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly ITreeManager _treeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
-        public PageExplorerViewModel(
+        public ExplorerPageViewModel(
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             IFileSystemWatcherService fileSystemWatcherService,
@@ -305,7 +305,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 _controDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
             }
             _treeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-
+            /*
             // 開発用自動化処理
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
             {
@@ -323,6 +323,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     _fileSystemService.SendToSelectTargetPage();
                 }
             }
+            */
         }
         #endregion コンストラクタと初期処理
 

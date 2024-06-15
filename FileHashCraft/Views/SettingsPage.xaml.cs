@@ -14,7 +14,7 @@ namespace FileHashCraft.Views
         public PageSettings()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IPageSettingsViewModel>();
+            DataContext = Ioc.Default.GetService<ISettingsPageViewModel>();
         }
 
         /// <summary>

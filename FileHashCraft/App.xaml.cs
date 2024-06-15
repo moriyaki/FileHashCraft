@@ -103,13 +103,13 @@ namespace FileHashCraft
             services.AddSingleton<IFileSystemServices, FileSystemServices>();
             services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IFileSystemWatcherService, FileSystemWatcherService>();
-            services.AddSingleton<ITreeCheckedManager, TreeCheckedManager>();
-            services.AddSingleton<ITreeExpandedManager, TreeExpandedManager>();
+            services.AddSingleton<ICheckedTreeItemsManager, CheckedTreeItemsManager>();
+            services.AddSingleton<ITreeExpandedManager, ExpandedTreeManager>();
 
             // ViewModel
             services.AddSingleton<IMainWindowViewModel, MainWindowViewModel>();
             services.AddSingleton<IDebugWindowViewModel, DebugWindowViewModel>();
-            services.AddSingleton<IPageSettingsViewModel, PageSettingsViewModel>();
+            services.AddSingleton<ISettingsPageViewModel, SettingsPageViewModel>();
             services.AddSingleton<IHelpWindowViewModel, HelpWindowViewModel>();
 
             services.AddSingleton<IControDirectoryTreeViewlModel, ControDirectoryTreeViewModel>();
@@ -118,16 +118,16 @@ namespace FileHashCraft
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IFileWatcherService, DrivesFileSystemWatcherService>();
 
-            services.AddSingleton<IPageExplorerViewModel, PageExplorerViewModel>();
+            services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddTransient<IExplorerListItemViewModel, ExplorerListItemViewModel>();
 
-            services.AddSingleton<IPageSelectTargetViewModel, PageSelectTargetViewModel>();
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
-            services.AddSingleton<IPageSelectTargetViewModelMain, PageSelectTargetViewModelMain>();
-            services.AddSingleton<IPageSelectTargetViewModelExtention, PageSelectTargetViewModelExtention>();
-            services.AddSingleton<IPageSelectTargetViewModelWildcard, PageSelectTargetViewModelWildcard>();
-            services.AddSingleton<IPageSelectTargetViewModelRegex, PageSelectTargetViewModelRegex>();
-            services.AddSingleton<IPageSelectTargetViewModelExpert, PageSelectTargetViewModelExpert>();
+            services.AddSingleton<IPageSelectTargetViewModelMain, SelectTargetMainPageViewModel>();
+            services.AddSingleton<ISelectTargetPageViewModel, SelectTargetPageViewModel>();
+            services.AddSingleton<ISelectTargetPageExtentionViewModel, SelectTargetExtentionPageViewModel>();
+            services.AddSingleton<IPageSelectTargetViewModelWildcard, SelectTargetWildcardPageViewModel>();
+            services.AddSingleton<IPageSelectTargetViewModelRegex, SelectTargetRegexPageViewModel>();
+            services.AddSingleton<ISelectTargetPageViewModelExpert, SelectTargetExpertPageViewModel>();
 
             // Model
             services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();

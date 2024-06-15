@@ -14,7 +14,7 @@ using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 
 namespace FileHashCraft.ViewModels.Modules
 {
-    public interface ITreeCheckedManager
+    public interface ICheckedTreeItemsManager
     {
         /// <summary>
         /// 子ディレクトリを含む、ファイルハッシュ取得対象のディレクトリを保持します。
@@ -41,7 +41,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// </summary>
         void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
     }
-    public class TreeCheckedManager : ITreeCheckedManager
+    public class CheckedTreeItemsManager : ICheckedTreeItemsManager
     {
         #region リスト
         /// <summary>

@@ -19,7 +19,7 @@ namespace FileHashCraft.Views
         public PageExplorer()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IPageExplorerViewModel>();
+            DataContext = Ioc.Default.GetService<IExplorerPageViewModel>();
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace FileHashCraft.Views
         /// <param name="e">RoutedEventArgs</param>
         private void ExplorerPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var explorerVM = Ioc.Default.GetService<IPageExplorerViewModel>() ?? throw new NullReferenceException(nameof(IPageExplorerViewModel));
+            var explorerVM = Ioc.Default.GetService<IExplorerPageViewModel>() ?? throw new NullReferenceException(nameof(IExplorerPageViewModel));
             var fileWatcherService = Ioc.Default.GetService<IFileWatcherService>() ?? throw new NullReferenceException(nameof(IFileWatcherService));
             explorerVM.CurrentFullPath = WindowsAPI.GetPath(KnownFolder.User);
 

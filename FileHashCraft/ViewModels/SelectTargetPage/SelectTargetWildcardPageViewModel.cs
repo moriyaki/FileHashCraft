@@ -45,7 +45,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         NotAllowedCharacter,
     }
 
-    public class PageSelectTargetViewModelWildcard : BaseViewModel, IPageSelectTargetViewModelWildcard
+    public class SelectTargetWildcardPageViewModel : BaseViewModel, IPageSelectTargetViewModelWildcard
     {
         #region バインディング
         /// <summary>
@@ -173,12 +173,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
 
-        public PageSelectTargetViewModelWildcard()
+        public SelectTargetWildcardPageViewModel()
         {
             throw new NotImplementedException("PageSelectTargetViewModelWildcard");
         }
 
-        public PageSelectTargetViewModelWildcard(
+        public SelectTargetWildcardPageViewModel(
             ISettingsService settingsService,
             IHelpWindowViewModel helpWindowViewModel,
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain

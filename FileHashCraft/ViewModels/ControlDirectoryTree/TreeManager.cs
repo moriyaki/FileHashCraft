@@ -74,10 +74,10 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
     {
         public TreeManager() { throw new NotImplementedException(); }
 
-        private readonly ITreeCheckedManager _treeCheckedManager;
+        private readonly ICheckedTreeItemsManager _treeCheckedManager;
         private readonly ITreeExpandedManager _treeExpandedManager;
         public TreeManager(
-            ITreeCheckedManager treeCheckedManager,
+            ICheckedTreeItemsManager treeCheckedManager,
             ITreeExpandedManager treeExpandedManager
             )
         {

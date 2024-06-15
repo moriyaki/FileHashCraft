@@ -15,10 +15,10 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.ViewModels
 {
     #region インターフェース
-    public interface IPageSettingsViewModel;
+    public interface ISettingsPageViewModel;
     #endregion インターフェース
 
-    public class PageSettingsViewModel : BaseViewModel, IPageSettingsViewModel
+    public class SettingsPageViewModel : BaseViewModel, ISettingsPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -177,7 +177,7 @@ namespace FileHashCraft.ViewModels
         #region コンストラクタと初期化
         private readonly IFileSystemServices _fileSystemService;
 
-        public PageSettingsViewModel(
+        public SettingsPageViewModel(
             ISettingsService settingsService,
             IFileSystemServices fileSystemServices
         ) : base(settingsService)
@@ -223,10 +223,6 @@ namespace FileHashCraft.ViewModels
             // 0サイズファイルを削除するかどうかが変更されたメッセージ受信
             WeakReferenceMessenger.Default.Register<ZeroSizeFileDeleteChanged>(this, (_, m)
                 => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
-
-            // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
-                => FontSize = m.FontSize);
 
             _SelectedLanguage = _settingsService.SelectedLanguage;
             _SelectedHashAlgorithm = _settingsService.HashAlgorithm;

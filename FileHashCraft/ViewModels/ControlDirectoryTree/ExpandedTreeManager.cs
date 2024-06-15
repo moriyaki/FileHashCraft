@@ -45,9 +45,9 @@ namespace FileHashCraft.ViewModels.Modules
     }
 
     // TODO : 削除するパスの特殊フォルダは除外
-    public class TreeExpandedManager : ITreeExpandedManager
+    public class ExpandedTreeManager : ITreeExpandedManager
     {
-        public TreeExpandedManager()
+        public ExpandedTreeManager()
         {
             foreach (var rootInfo in SpecialFolderAndRootDrives.ScanSpecialFolders())
             {

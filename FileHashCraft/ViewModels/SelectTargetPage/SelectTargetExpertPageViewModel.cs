@@ -5,7 +5,7 @@ using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
-    public interface IPageSelectTargetViewModelExpert
+    public interface ISelectTargetPageViewModelExpert
     {
         bool IsReadOnlyFileInclude { get; set; }
         bool IsHiddenFileInclude { get; set; }
@@ -13,7 +13,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         bool IsEmptyDirectoryDelete { get; set; }
     }
 
-    public class PageSelectTargetViewModelExpert : BaseViewModel, IPageSelectTargetViewModelExpert
+    public class SelectTargetExpertPageViewModel : BaseViewModel, ISelectTargetPageViewModelExpert
     {
         #region バインディング
         /// <summary>
@@ -101,7 +101,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタ
         //private readonly ISettingsService _settingsService;
         private readonly IPageSelectTargetViewModelMain _pageSelectTargetViewModelMain;
-        public PageSelectTargetViewModelExpert(
+        public SelectTargetExpertPageViewModel(
             ISettingsService settingsService,
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain
         ) : base(settingsService)

@@ -68,12 +68,12 @@ namespace FileHashCraft
         {
             if (e.Content is PageExplorer)
             {
-                var pageExplorer = Ioc.Default.GetService<IPageExplorerViewModel>();
+                var pageExplorer = Ioc.Default.GetService<IExplorerPageViewModel>();
                 pageExplorer?.Initialize();
             }
             if (e.Content is PageSelectTarget)
             {
-                var targetFileSetting = Ioc.Default.GetService<IPageSelectTargetViewModel>();
+                var targetFileSetting = Ioc.Default.GetService<ISelectTargetPageViewModel>();
                 targetFileSetting?.Initialize();
             }
         }
@@ -85,7 +85,7 @@ namespace FileHashCraft
         /// <param name="e">EventArgs</param>
         private void Window_Closed(object? sender, EventArgs e)
         {
-            var explorerPageViewModel = Ioc.Default.GetService<PageExplorerViewModel>();
+            var explorerPageViewModel = Ioc.Default.GetService<ExplorerPageViewModel>();
             explorerPageViewModel?.HwndRemoveHook();
 
             Application.Current.Shutdown();

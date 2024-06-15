@@ -17,7 +17,7 @@ using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     #region インターフェース
-    public interface IPageSelectTargetViewModel
+    public interface ISelectTargetPageViewModel
     {
         /// <summary>
         /// PageSelectTargetViewModelのメインViewModel
@@ -26,7 +26,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
-        IPageSelectTargetViewModelExtention ViewModelExtention { get; }
+        ISelectTargetPageExtentionViewModel ViewModelExtention { get; }
         /// <summary>
         /// PageSelectTargetViewModelのワイルドカードViewModel
         /// </summary>
@@ -40,7 +40,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
         /// </summary>
-        IPageSelectTargetViewModelExpert ViewModelExpert { get; }
+        ISelectTargetPageViewModelExpert ViewModelExpert { get; }
         /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
@@ -60,7 +60,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class PageSelectTargetViewModel : BaseViewModel, IPageSelectTargetViewModel
+    public class SelectTargetPageViewModel : BaseViewModel, ISelectTargetPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -71,7 +71,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
-        public IPageSelectTargetViewModelExtention ViewModelExtention { get; }
+        public ISelectTargetPageExtentionViewModel ViewModelExtention { get; }
 
         /// <summary>
         ///  PageSelectTargetViewModelのワイルドカードViewModel
@@ -86,7 +86,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
         /// </summary>
-        public IPageSelectTargetViewModelExpert ViewModelExpert { get; }
+        public ISelectTargetPageViewModelExpert ViewModelExpert { get; }
 
         /// <summary>
         /// フィルタするファイル
@@ -177,12 +177,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         private bool IsExecuting = false;
 
-        public PageSelectTargetViewModel(
+        public SelectTargetPageViewModel(
             IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
-            IPageSelectTargetViewModelExtention pageSelectTargetViewModelExtention,
+            ISelectTargetPageExtentionViewModel pageSelectTargetViewModelExtention,
             IPageSelectTargetViewModelWildcard pageSelectTargetViewModelWildcard,
             IPageSelectTargetViewModelRegex pageSelectTargetViewModelRegEx,
-            IPageSelectTargetViewModelExpert pageSelectTargetViewModelExpert,
+            ISelectTargetPageViewModelExpert pageSelectTargetViewModelExpert,
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             ITreeManager directoryTreeManager,
