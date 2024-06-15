@@ -267,7 +267,7 @@
                                              >
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="PreviewMouseDown">
-                                                <i:InvokeCommandAction Command="{Binding ListBoxTextWildcardCriteriaClicked}"/>
+                                                <i:InvokeCommandAction Command="{Binding ListBoxItemTextBoxWildcardCriteriaClicked}"/>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </TextBox>

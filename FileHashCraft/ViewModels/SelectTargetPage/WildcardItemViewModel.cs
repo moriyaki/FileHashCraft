@@ -32,7 +32,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// 元のワイルドカード検索条件
+        /// オリジナルのワイルドカード検索条件
         /// </summary>
         private string _OriginalWildcardCriteria = string.Empty;
         public string OriginalWildcardCriteria
@@ -62,7 +62,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// 表示モードかどうか
+        /// 編集モードかどうか
         /// </summary>
         private bool _IsEditMode = false;
         public bool IsEditMode
@@ -74,11 +74,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsEditMode, value);
                 if (value)
                 {
+                    // 表示モードになったら、オリジナルを保存して編集モードに入ります。
                     _OriginalWildcardCriteria = WildcardCriteria;
                     WeakReferenceMessenger.Default.Send(new WildcardSeletedTextBoxFocus());
                 }
                 else
                 {
+                    // エラーが出ているなら、オリジナルの検索条件に戻します。
                     RestoreWildcardCriteria();
                 }
                 OnPropertyChanged(nameof(ItemBackgroudColor));
@@ -88,6 +90,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
         }
 
+        /// <summary>
+        /// 該当アイテムが選択されているかのプロパティです。
+        /// </summary>
         private bool _IsSelected = false;
         public bool IsSelected
         {
@@ -103,24 +108,28 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
         }
 
-        public RelayCommand ListBoxTextWildcardCriteriaClicked { get; set; }
+        /// <summary>
+        /// リストボックスアイテムのテキストボックスがクリックされた時の処理です。
+        /// </summary>
+        public RelayCommand ListBoxItemTextBoxWildcardCriteriaClicked { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
+        /// <summary>
+        /// コンストラクタ：リストボックスでアイテムがクリックされたかのイベント処理をします。
+        /// </summary>
+        /// <param name="settingsService"></param>
         public WildcardItemViewModel(
             ISettingsService settingsService
         ) : base(settingsService)
         {
-            ListBoxTextWildcardCriteriaClicked = new RelayCommand(() =>
+            ListBoxItemTextBoxWildcardCriteriaClicked = new RelayCommand(() =>
             {
-                if (IsSelected)
+                IsEditMode = true;
+                if (!IsSelected)
                 {
-                    IsEditMode = true;
-                }
-                else
-                {
+                    // 選択状態が外れたら、新規入力画面にキャレットを当てます。
                     WeakReferenceMessenger.Default.Send(new WildcardNewCriteriaFocus());
-                    IsSelected = true;
                 }
             });
         }
@@ -128,7 +137,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         private void RestoreWildcardCriteria()
         {
-            // 間違っているワイルドカード検索条件は元に戻す
+            // 間違っているワイルドカード検索条件は元に戻します。
             if (!_WildcardCriteriaConditionCorrent)
             {
                 WildcardCriteria = _OriginalWildcardCriteria;

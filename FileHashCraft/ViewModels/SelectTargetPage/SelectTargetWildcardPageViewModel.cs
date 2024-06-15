@@ -26,13 +26,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         WildcardSearchErrorStatus WildcardSearchErrorStatus { get; }
         /// <summary>
-        /// ワイルドカード検索条件を追加します
+        /// ワイルドカード検索条件を追加します。
         /// </summary>
         void AddWildcardCriteria();
         /// <summary>
-        /// リストボックスのワイルドカード検索条件から離れる
+        /// リストボックスのワイルドカード検索条件から離れます。
         /// </summary>
         void LeaveListBoxWildcardCriteria();
+        /// <summary>
+        /// ワイルドカード文字列が正しいかを検査します。
+        /// </summary>
+        bool IsWildcardCriteriaConditionCorrent(string pattern, string originalPattern = "");
     }
     #endregion インターフェース
 
@@ -195,7 +199,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 _helpWindowViewModel.Initialize(HelpPage.Wildcard);
             });
 
-            // ワイルドカード追加コマンド
+            // ワイルドカードを追加します。
             AddWildcardCommand = new RelayCommand(
                 () => AddWildcardCriteria(),
                 () => IsWildcardCriteriaConditionCorrent(WildcardSearchCriteriaText) && _pageSelectTargetViewModelMain.Status == FileScanStatus.Finished
@@ -216,10 +220,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             WeakReferenceMessenger.Default.Register<FileScanFinished>(this, (_, _) =>
                 AddWildcardCommand.NotifyCanExecuteChanged());
 
-            // リストボックスアイテムの編集状態から抜けた時の処理
+            // リストボックスアイテムの編集状態から抜けた時の処理をします。
             WeakReferenceMessenger.Default.Register<IsEditModeChanged>(this, (_, _) =>
                 OnPropertyChanged(nameof(WildcardCiriteriaBackgroudColor)));
-            // リストボックスの選択状態が変わった時の処理
+            // リストボックスの選択状態が変わった時の処理をします。
             WeakReferenceMessenger.Default.Register<IsSelectedChanged>(this, (_, m) =>
             {
                 if (m.IsSelected)
@@ -234,7 +238,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 RemoveCommand.NotifyCanExecuteChanged();
             });
 
-            // リストボックスアイテムが編集された時のエラーチェック
+            // リストボックスアイテムが編集された時のエラーチェックをします。
             WeakReferenceMessenger.Default.Register<WildcardSelectedChangedCriteria>(this, (_, m) =>
                 m.Reply(IsWildcardCriteriaConditionCorrent(m.WildcardCriteria, m.OriginalWildcardCriteria)));
         }
@@ -339,7 +343,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// リストボックスのワイルドカード検索条件から離れる
+        /// リストボックスのワイルドカード検索条件から離れます。
         /// </summary>
         public void LeaveListBoxWildcardCriteria()
         {
@@ -348,6 +352,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 listItem.IsEditMode = false;
                 ModefyWildcardCriteria(listItem);
+                // ワイルドカード検索条件の新規欄を反映する
+                IsWildcardCriteriaConditionCorrent(WildcardSearchCriteriaText);
             }
         }
     }
