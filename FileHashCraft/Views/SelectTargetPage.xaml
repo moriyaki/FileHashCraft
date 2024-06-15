@@ -14,9 +14,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -24,20 +21,26 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="9" Grid.RowSpan="7" Background="Transparent"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="6" Background="White"/>
 
+        <!-- Menu -->
+        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="5">
+            <MenuItem Command="{Binding SettingsOpen}"
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
+            <MenuItem Command="{Binding DebugOpen}"
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
+            <MenuItem Command="{Binding HelpOpen}"
+                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
+        </Menu>
         <!-- TreeView -->
-        <local:ControlDirectoryTreeViewModel x:Name="HashTargetTreeView"
-                                        Grid.Row="1" Grid.Column="0" Grid.RowSpan="6" Margin="3"/>
+        <local:DirectoryTreeControl x:Name="HashTargetTreeView"
+                                    Grid.Row="1" Grid.Column="0" Grid.RowSpan="4" Margin="3"/>
 
         <GridSplitter Grid.Row="1" Grid.Column="1" Grid.RowSpan="6" Width="3"
                       HorizontalAlignment="Stretch" 
@@ -72,336 +75,34 @@
                       HorizontalAlignment="Left"
                       DragDelta="GridSplitter_ListDragDelta"/>
 
-        <!-- Menu -->
-        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="9">
-            <MenuItem Command="{Binding SettingsOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
-            <MenuItem Command="{Binding DebugOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
-            <MenuItem Command="{Binding HelpOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
-        </Menu>
-
         <!-- Buttons -->
-        <Button Grid.Row="6" Grid.Column="7" Margin="3"
+        <Button Grid.Row="3" Grid.Column="4" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
                 Command="{Binding ToPageExplorer}"/>
-        <Button Grid.Row="6" Grid.Column="9" Margin="3"
+        <Button Grid.Row="3" Grid.Column="5" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
                 Command="{Binding ViewModelMain.ToPageHashCalcing}"/>
 
-        <!-- ハッシュ取得中かのメッセージ -->
-        <Border Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="6" Margin="3,3,3,3" Background="{Binding ViewModelMain.StatusColor}">
-            <TextBlock 
-                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Text="{Binding ViewModelMain.StatusMessage}"/>
-        </Border>
+        <local:ShowTargetInfoUserControl Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" />
 
-        <!-- Hash Algorithm Select -->
-        <Label Grid.Row="2" Grid.Column="4"  HorizontalAlignment="Right"
-                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}" Grid.RowSpan="2" Width="231"/>
-
-        <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="2" Grid.Column="5" Grid.ColumnSpan="5" Margin="3"
-                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        ItemsSource="{Binding HashAlgorithms}"
-                        SelectedValue="{Binding SelectedHashAlgorithm}"
-                        SelectedValuePath="Algorithm"
-                        DisplayMemberPath="Name"/>
-
-        <!-- 総ファイル数 -->
-        <Label Grid.Row="3" Grid.Column="4" HorizontalAlignment="Right"
-                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}" Grid.RowSpan="2"/>
-
-        <Label Grid.Row="3" Grid.Column="5" Grid.ColumnSpan="4" HorizontalAlignment="Left"
-                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding ViewModelMain.CountAllTargetFilesGetHash}"/>
-
-        <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
-        <Label Grid.Row="4" Grid.Column="4" HorizontalAlignment="Right"
-                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}" Grid.RowSpan="3"/>
-
-        <Label Grid.Row="4" Grid.Column="5" Grid.ColumnSpan="4" HorizontalAlignment="Left"
-                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding ViewModelMain.CountFilteredGetHash}"/>
-
-        <TabControl  Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="5" Margin="3">
+        <TabControl  Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" Margin="3">
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
-                <!-- others -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="0.5*"/>
-                            <ColumnDefinition Width="0.5*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <!-- 拡張子種別検索フィルタ -->
-                        <Label Grid.Row="0" Grid.Column="0" Margin="3"
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtention_GroupFilterSetting, Mode=OneWay}"/>
-
-                        <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding ViewModelExtention.ExtentionsGroupCollection}"
-                                Grid.Row="1" Grid.Column="0" Margin="3">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
-                                        <Label VerticalAlignment="Center" Padding="0"
-                                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                                   Content="{Binding ExtentionOrFileTypeView, Mode=OneWay}">
-                                            <Label.InputBindings>
-                                                <MouseBinding 
-                                                    Command="{Binding DataContext.ViewModelExtention.ExtentionGroupCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
-                                                    CommandParameter="{Binding}" MouseAction="LeftClick"/>
-                                            </Label.InputBindings>
-                                        </Label>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-
-                        <!-- 拡張子検索フィルタ -->
-                        <Label Grid.Row="0" Grid.Column="1" Margin="3"
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtention_FilterSetting, Mode=OneWay}"/>
-
-                        <ListBox x:Name="checkBoxExtentionListBox" ItemsSource="{Binding ViewModelExtention.ExtentionCollection}"
-                                Grid.Row="1" Grid.Column="1" Margin="3">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
-                                        <Label VerticalAlignment="Center" Padding="0"
-                                                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                                Content="{Binding ExtentionOrFileTypeView, Mode=OneWay}">
-                                            <Label.InputBindings>
-                                                <MouseBinding 
-                                                    Command="{Binding DataContext.ViewModelExtention.ExtentionCheckBoxClickedCommand, ElementName=checkBoxTypeListBox}"
-                                                    CommandParameter="{Binding}" MouseAction="LeftClick"/>
-                                            </Label.InputBindings>
-                                        </Label>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                </Grid>
+                <local:SeteExtentionUserControl/>
             </TabItem>
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentWildCard, Mode=OneWay}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto" MinWidth="100"/>
-                        <ColumnDefinition Width="Auto" MinWidth="30"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- modify button -->
-                    <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="WildcardModify" 
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Command="{Binding ViewModelWildcard.ModifyCommand}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonModify, Mode=OneWay}"/>
-                    <!-- Remove button -->
-                    <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="WildcardRemove" 
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Command="{Binding ViewModelWildcard.RemoveCommand}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
-                    <!-- Add button -->
-                    <Button Grid.Row="3" Grid.Column="2" Margin="3" x:Name="WildcardAdd"
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"
-                            Command="{Binding ViewModelWildcard.AddWildcardCommand}"/>
-                    <!-- Help button -->
-                    <Button Grid.Row="3" Grid.Column="3" Margin="3" x:Name="WildcardHelp" 
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="?"
-                            Command="{Binding ViewModelWildcard.WildcardHelpOpen}"/>
-
-                    <!-- Wildcard Search Criteria ListBox -->
-                    <ListBox x:Name="WildcardSearchListBox"
-                             ItemsSource="{Binding ViewModelWildcard.WildcardItems}"
-                             SelectionMode="Extended"
-                             KeyDown="WildcardSearchListBox_KeyDown"
-                             MouseDown="WildcardSearchListBox_MouseDown"
-                             Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="3">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBox x:Name="ListBoxTextWildcardCriteria"
-                                             VerticalAlignment="Center" Padding="0"
-                                             LostFocus="WildcardCollectionTextBox_LostFocus"
-                                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                             Focusable="{Binding IsEditMode}"
-                                             Background="{Binding ItemBackgroudColor}"
-                                             BorderThickness="{Binding BorderTickness}"
-                                             Text="{Binding WildcardCriteria,UpdateSourceTrigger=PropertyChanged}"
-                                             KeyDown="ListBoxTextWildcardCriteria_KeyDown"
-                                             >
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="PreviewMouseDown">
-                                                <i:InvokeCommandAction Command="{Binding ListBoxItemTextBoxWildcardCriteriaClicked}"/>
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                    </TextBox>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListBoxItem}">
-                                <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"/>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
-                    </ListBox>
-
-                    <!-- Wildcard Search Criteria -->
-                    <Label Grid.Row="3" Grid.Column="0" x:Name="LabelWildcardSearch"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Criteria, Mode=OneWay}"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="WildcardCriteria"
-                             KeyDown="WildcardCriteria_KeyDown"
-                             Background="{Binding ViewModelWildcard.WildcardCiriteriaBackgroudColor}"
-                             Text="{Binding ViewModelWildcard.WildcardSearchCriteriaText,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <!-- Wildcard Search Criteria Error -->
-                    <Label Grid.Row="4" Grid.Column="0" x:Name="LabelWildcardError"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="3" VerticalAlignment="Center"
-                               x:Name="WildcardError"
-                               Background="{Binding ViewModelWildcard.WildcardBackground}" 
-                               Text="{Binding ViewModelWildcard.WildcardErrorOutput}" />
-                </Grid>
+                <local:SetWildcardUserControl/>
             </TabItem>
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentRegularExpression, Mode=OneWay}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto" MinWidth="100"/>
-                        <ColumnDefinition Width="Auto" MinWidth="30"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <!-- modify button -->
-                    <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="RegexModify" 
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonModify, Mode=OneWay}"/>
-                    <!-- Remove button -->
-                    <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="ReexRemove" 
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
-                    <!-- Add button -->
-                    <Button Grid.Row="3" Grid.Column="2"  Margin="3" x:Name="RegularExpressionAdd"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
-                    <!-- Help button -->
-                    <Button Grid.Row="3" Grid.Column="3" Margin="3" x:Name="RegexHelp" 
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="?"
-                            />
-                    <!-- Regular Expression Search Criteria ListBox -->
-                    <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
-                    <!-- Regular Expression Search Criteria -->
-                    <Label Grid.Row="3" Grid.Column="0" x:Name="LabelRegularExpression"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Criteria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="RegularExpressionCriteria"
-                             Text="{}"/>
-                    <!-- Regular Expression Search Criteria Error -->
-                    <Label Grid.Row="4" Grid.Column="0" x:Name="LabelRegularExpressionError"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
-                    <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegularExpressionError"
-                               Background="Red" Text="" Margin="3" Grid.RowSpan="2"/>
-
-                </Grid>
+                <local:SetRegexUserControl/>
             </TabItem>
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentExpert, Mode=OneWay}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
-                        <RowDefinition Height="Auto" MinHeight="30"/>
-                    </Grid.RowDefinitions>
-                    <!-- 読み取り専用ファイルを対象とするか -->
-                    <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsReadOnlyFileInclude}"/>
-                        <Label VerticalAlignment="Center"
-                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
-                            <Label.InputBindings>
-                                <MouseBinding Command="{Binding ViewModelExpert.IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick"/>
-                            </Label.InputBindings>
-                        </Label>
-                    </StackPanel>
-
-                    <!-- 隠しファイルを対象とするか -->
-                    <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsHiddenFileInclude}"/>
-                        <Label VerticalAlignment="Center"
-                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
-                            <Label.InputBindings>
-                                <MouseBinding Command="{Binding ViewModelExpert.IsHiddenFileIncludeClicked}" MouseAction="LeftClick"/>
-                            </Label.InputBindings>
-                        </Label>
-                    </StackPanel>
-
-                    <!-- 0サイズのファイルを削除するか -->
-                    <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsZeroSizeFileDelete}"/>
-                        <Label VerticalAlignment="Center"
-                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
-                            <Label.InputBindings>
-                                <MouseBinding Command="{Binding ViewModelExpert.IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
-                            </Label.InputBindings>
-                        </Label>
-                    </StackPanel>
-
-                    <!-- からのディレクトリを削除するか -->
-                    <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding ViewModelExpert.IsEmptyDirectoryDelete}"/>
-                        <Label VerticalAlignment="Center"
-                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
-                            <Label.InputBindings>
-                                <MouseBinding Command="{Binding ViewModelExpert.IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
-                            </Label.InputBindings>
-                        </Label>
-                    </StackPanel>
-                </Grid>
+                <local:SetExpertUserControl/>
             </TabItem>
         </TabControl>
     </Grid>

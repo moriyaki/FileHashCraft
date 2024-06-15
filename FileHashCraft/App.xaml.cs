@@ -122,12 +122,12 @@ namespace FileHashCraft
             services.AddTransient<IExplorerListItemViewModel, ExplorerListItemViewModel>();
 
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
-            services.AddSingleton<IPageSelectTargetViewModelMain, SelectTargetMainPageViewModel>();
+            services.AddSingleton<IShowTargetInfoUserControlViewModel, ShowTargetInfoUserControlViewModel>();
             services.AddSingleton<ISelectTargetPageViewModel, SelectTargetPageViewModel>();
-            services.AddSingleton<ISelectTargetPageExtentionViewModel, SelectTargetExtentionPageViewModel>();
-            services.AddSingleton<IPageSelectTargetViewModelWildcard, SelectTargetWildcardPageViewModel>();
-            services.AddSingleton<IPageSelectTargetViewModelRegex, SelectTargetRegexPageViewModel>();
-            services.AddSingleton<ISelectTargetPageViewModelExpert, SelectTargetExpertPageViewModel>();
+            services.AddSingleton<ISetExtentionControlViewModel, SetExtentionControlViewModel>();
+            services.AddSingleton<ISetWildcardControlViewModel, SetWildcardControlViewModel>();
+            services.AddSingleton<ISetRegExControlViewModel, SetRegExControlViewModel>();
+            services.AddSingleton<ISetExpertControlViewModel, SetExpertControlViewModel>();
 
             // Model
             services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();

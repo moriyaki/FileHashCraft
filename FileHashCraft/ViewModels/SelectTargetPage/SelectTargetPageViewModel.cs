@@ -22,25 +22,25 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// PageSelectTargetViewModelのメインViewModel
         /// </summary>
-        IPageSelectTargetViewModelMain ViewModelMain { get; }
+        IShowTargetInfoUserControlViewModel ViewModelMain { get; }
         /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
-        ISelectTargetPageExtentionViewModel ViewModelExtention { get; }
+        ISetExtentionControlViewModel ViewModelExtention { get; }
         /// <summary>
         /// PageSelectTargetViewModelのワイルドカードViewModel
         /// </summary>
-        IPageSelectTargetViewModelWildcard ViewModelWildcard { get; }
+        ISetWildcardControlViewModel ViewModelWildcard { get; }
 
         /// <summary>
         ///  PageSelectTargetViewModelの正規表現ViewModel
         /// </summary>
-        IPageSelectTargetViewModelRegex ViewModelRegEx { get; }
+        ISetRegExControlViewModel ViewModelRegEx { get; }
 
         /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
         /// </summary>
-        ISelectTargetPageViewModelExpert ViewModelExpert { get; }
+        ISetExpertControlViewModel ViewModelExpert { get; }
         /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
@@ -49,10 +49,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// リストボックスの幅
         /// </summary>
         double ListWidth { get; set; }
-        /// <summary>
-        /// ハッシュアルゴリズム
-        /// </summary>
-        string SelectedHashAlgorithm { get; set; }
         /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
@@ -66,27 +62,27 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// PageSelectTargetViewModelのメインViewModel
         /// </summary>
-        public IPageSelectTargetViewModelMain ViewModelMain { get; }
+        public IShowTargetInfoUserControlViewModel ViewModelMain { get; }
 
         /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
-        public ISelectTargetPageExtentionViewModel ViewModelExtention { get; }
+        public ISetExtentionControlViewModel ViewModelExtention { get; }
 
         /// <summary>
         ///  PageSelectTargetViewModelのワイルドカードViewModel
         /// </summary>
-        public IPageSelectTargetViewModelWildcard ViewModelWildcard { get; }
+        public ISetWildcardControlViewModel ViewModelWildcard { get; }
 
         /// <summary>
         ///  PageSelectTargetViewModelの正規表現ViewModel
         /// </summary>
-        public IPageSelectTargetViewModelRegex ViewModelRegEx { get; }
+        public ISetRegExControlViewModel ViewModelRegEx { get; }
 
         /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
         /// </summary>
-        public ISelectTargetPageViewModelExpert ViewModelExpert { get; }
+        public ISetExpertControlViewModel ViewModelExpert { get; }
 
         /// <summary>
         /// フィルタするファイル
@@ -126,29 +122,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
         }
         /// <summary>
-        /// ハッシュ計算アルゴリズムの一覧
-        /// </summary>
-        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
-        [
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
-        ];
-        /// <summary>
-        /// ハッシュ計算アルゴリズムの取得と設定
-        /// </summary>
-        private string _SelectedHashAlgorithm;
-        public string SelectedHashAlgorithm
-        {
-            get => _SelectedHashAlgorithm;
-            set
-            {
-                if (value == _SelectedHashAlgorithm) return;
-                SetProperty(ref _SelectedHashAlgorithm, value);
-                _settingsService.SendHashAlogrithm(value);
-            }
-        }
-        /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
         public int CountFilteredGetHash { get => ViewModelMain.CountFilteredGetHash; }
@@ -178,11 +151,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private bool IsExecuting = false;
 
         public SelectTargetPageViewModel(
-            IPageSelectTargetViewModelMain pageSelectTargetViewModelMain,
-            ISelectTargetPageExtentionViewModel pageSelectTargetViewModelExtention,
-            IPageSelectTargetViewModelWildcard pageSelectTargetViewModelWildcard,
-            IPageSelectTargetViewModelRegex pageSelectTargetViewModelRegEx,
-            ISelectTargetPageViewModelExpert pageSelectTargetViewModelExpert,
+            IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain,
+            ISetExtentionControlViewModel pageSelectTargetViewModelExtention,
+            ISetWildcardControlViewModel pageSelectTargetViewModelWildcard,
+            ISetRegExControlViewModel pageSelectTargetViewModelRegEx,
+            ISetExpertControlViewModel pageSelectTargetViewModelExpert,
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             ITreeManager directoryTreeManager,
@@ -201,7 +174,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
 
             // カレントハッシュ計算アルゴリズムを保存
-            SelectedHashAlgorithm = _settingsService.HashAlgorithm;
+            ViewModelMain.SelectedHashAlgorithm = _settingsService.HashAlgorithm;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
@@ -239,7 +212,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             _TreeWidth = _settingsService.TreeWidth;
             _ListWidth = _settingsService.ListWidth;
-            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
+            ViewModelMain.SelectedHashAlgorithm= _settingsService.HashAlgorithm;
         }
         #endregion コンストラクタ
 
@@ -256,7 +229,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public void Initialize()
         {
             // 言語変更に伴う対策
-            LanguageChangedMeasures();
+            ViewModelMain.LanguageChangedMeasures();
+
+            // 言語が変わった場合に備えて、拡張子グループを再設定
+            App.Current?.Dispatcher?.InvokeAsync(() => {
+                ViewModelExtention.ExtentionsGroupCollection.Clear();
+                ViewModelExtention.AddFileTypes();
+            });
 
             // 設定画面から戻ってきた場合、処理を終了する
             if (IsExecuting)
@@ -292,33 +271,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // ファイルスキャンの開始
             StartFileScan();
-        }
-
-        /// <summary>
-        /// 表示言語の変更に伴う対策をします。
-        /// </summary>
-        private void LanguageChangedMeasures()
-        {
-            var currentAlgorithm = _settingsService.HashAlgorithm;
-
-            HashAlgorithms.Clear();
-            HashAlgorithms =
-            [
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
-            ];
-
-            // ハッシュ計算アルゴリズムを再設定
-            SelectedHashAlgorithm = currentAlgorithm;
-            OnPropertyChanged(nameof(HashAlgorithms));
-            //Status = _Status;
-
-            // 言語が変わった場合に備えて、拡張子グループを再設定
-            App.Current?.Dispatcher?.InvokeAsync(() => {
-                ViewModelExtention.ExtentionsGroupCollection.Clear();
-                ViewModelExtention.AddFileTypes();
-            });
         }
 
         /// <summary>

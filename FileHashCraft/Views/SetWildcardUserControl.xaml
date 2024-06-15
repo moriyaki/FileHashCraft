@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="FileHashCraft.Views.SetWildcardUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:FileHashCraft.Views"
+             xmlns:rs="clr-namespace:FileHashCraft.Services"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" MinWidth="100"/>
+            <ColumnDefinition Width="Auto" MinWidth="30"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- modify button -->
+        <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="WildcardModify" 
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Command="{Binding ModifyCriteriaCommand}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonModify, Mode=OneWay}"/>
+        <!-- Remove button -->
+        <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="WildcardRemove" 
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Command="{Binding RemoveCriteriaCommand}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
+        <!-- Add button -->
+        <Button Grid.Row="3" Grid.Column="2" Margin="3" x:Name="WildcardAdd"
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"
+                            Command="{Binding AddCriteriaCommand}"/>
+        <!-- Help button -->
+        <Button Grid.Row="3" Grid.Column="3" Margin="3" x:Name="WildcardHelp" 
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Content="?"
+                            Command="{Binding HelpOpenCommand}"/>
+
+        <!-- Search Criteria ListBox -->
+        <ListBox x:Name="WildcardSearchListBox"
+                             ItemsSource="{Binding WildcardItems}"
+                             SelectionMode="Extended"
+                             KeyDown="ListBoxItemCriteria_KeyDown"
+                             MouseDown="ListBoxCriteria_MouseDown"
+                             Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="3">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="ListBoxCriterias"
+                                             VerticalAlignment="Center" Padding="0"
+                                             LostFocus="ListBoxCriterias_LostFocus"
+                                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                                             Focusable="{Binding IsEditMode}"
+                                             Background="{Binding ItemBackgroudColor}"
+                                             BorderThickness="{Binding BorderTickness}"
+                                             Text="{Binding Criteria,UpdateSourceTrigger=PropertyChanged}"
+                                             KeyDown="ListBoxCriterias_KeyDown"
+                                             >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseDown">
+                                    <i:InvokeCommandAction Command="{Binding ListBoxItemTextBoxWildcardCriteriaClicked}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+        <!-- Criteria Input -->
+        <Label Grid.Row="3" Grid.Column="0" x:Name="LabeldSearch"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Criteria, Mode=OneWay}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="NewCriteria"
+                             KeyDown="NewCriteria_KeyDown"
+                             Background="{Binding CiriteriaAddTextBoxBackgroudColor}"
+                             Text="{Binding SearchCriteriaText,UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Criteria Syntax Error -->
+        <Label Grid.Row="4" Grid.Column="0" x:Name="LabelCriteriaError"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="3" VerticalAlignment="Center"
+                               x:Name="CriteriaErrorTextBlock"
+                               Background="{Binding SearchErrorBackground}" 
+                               Text="{Binding SearchCriteriaErrorOutput}" />
+    </Grid>
+</UserControl>

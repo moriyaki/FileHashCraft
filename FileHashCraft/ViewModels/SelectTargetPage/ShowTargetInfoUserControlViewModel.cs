@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -21,7 +22,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     #endregion ハッシュ計算するファイルの取得状況
 
     #region インターフェース
-    public interface IPageSelectTargetViewModelMain
+    public interface IShowTargetInfoUserControlViewModel
     {
         /// <summary>
         /// ハッシュ取得対象のファイルリストアイテムのリストボックスコレクションです。
@@ -39,6 +40,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
         string StatusMessage { get; set; }
+        /// <summary>
+        /// ハッシュアルゴリズム
+        /// </summary>
+        string SelectedHashAlgorithm { get; set; }
+        /// <summary>
+        /// 表示言語の変更に伴う対策をします。
+        /// </summary>
+        void LanguageChangedMeasures();
         /// <summary>
         /// 全ディレクトリ数(StatusBar用)
         /// </summary>
@@ -90,7 +99,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class SelectTargetMainPageViewModel : BaseViewModel, IPageSelectTargetViewModelMain
+    public class ShowTargetInfoUserControlViewModel : BaseViewModel, IShowTargetInfoUserControlViewModel
     {
         #region バインディング
         /// <summary>
@@ -146,6 +155,29 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             get => _StatusMessage;
             set => SetProperty(ref _StatusMessage, value);
+        }
+        /// <summary>
+        /// ハッシュ計算アルゴリズムの一覧
+        /// </summary>
+        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
+        [
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+        ];
+        /// <summary>
+        /// ハッシュ計算アルゴリズムの取得と設定
+        /// </summary>
+        private string _SelectedHashAlgorithm;
+        public string SelectedHashAlgorithm
+        {
+            get => _SelectedHashAlgorithm;
+            set
+            {
+                if (value == _SelectedHashAlgorithm) return;
+                SetProperty(ref _SelectedHashAlgorithm, value);
+                _settingsService.SendHashAlogrithm(value);
+            }
         }
 
         /// <summary>
@@ -219,7 +251,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IFileSystemServices _fileSystemService;
-        public SelectTargetMainPageViewModel(
+        public ShowTargetInfoUserControlViewModel(
             ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
             IFileSystemServices fileSystemServices
@@ -227,6 +259,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             _scannedFilesManager = scannedFilesManager;
             _fileSystemService = fileSystemServices;
+            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
 
             // ハッシュ計算画面に移動するコマンド
             ToPageHashCalcing = new RelayCommand(
@@ -243,6 +276,26 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 => ChangeSelectedToListBox());
         }
         #endregion コンストラクタ
+
+        /// <summary>
+        /// 表示言語の変更に伴う対策をします。
+        /// </summary>
+        public void LanguageChangedMeasures()
+        {
+            var currentAlgorithm = _settingsService.HashAlgorithm;
+
+            HashAlgorithms.Clear();
+            HashAlgorithms =
+            [
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+            ];
+
+            // ハッシュ計算アルゴリズムを再設定
+            SelectedHashAlgorithm = currentAlgorithm;
+            OnPropertyChanged(nameof(HashAlgorithms));
+        }
 
         #region ファイル数の管理処理
         /// <summary>
