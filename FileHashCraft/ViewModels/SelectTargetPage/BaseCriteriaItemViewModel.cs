@@ -53,7 +53,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         public abstract bool IsSelected { get; set; }
         #endregion バインディング
 
-        private BaseCriteriaItemViewModel() { throw new NotImplementedException("BaseCriteriaItemViewModel"); }
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        private BaseCriteriaItemViewModel() { throw new NotImplementedException(nameof(BaseCriteriaItemViewModel)); }
         protected BaseCriteriaItemViewModel(
              ISettingsService settingsService
         ) : base(settingsService)

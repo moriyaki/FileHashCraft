@@ -41,7 +41,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         public DrivesFileSystemWatcherService()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(nameof(DrivesFileSystemWatcherService));
         }
 
         private readonly IFileSystemServices _fileSystemService;
@@ -151,7 +151,6 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryChanged(object? sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            //WeakReferenceMessenger.Default.Send(new DirectoryItemDeleted(e.FullPath));
             _fileSystemService.SendDirectoryItemDeleted(e.FullPath);
         }
 
@@ -160,11 +159,9 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">FileSystemEventArgs</param>
-        /// <exception cref="NotImplementedException"></exception>
         private void OnDirectoryCreated(object sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            //WeakReferenceMessenger.Default.Send(new DirectoryItemCreated(e.FullPath));
             _fileSystemService.SendDirectoryItemCreated(e.FullPath);
         }
 
@@ -176,7 +173,6 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryRenamed(object sender, RenamedEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            //WeakReferenceMessenger.Default.Send(new DirectoryItemRenamed(e.OldFullPath, e.FullPath));
             _fileSystemService.SendDirectoryItemRenamed(e.OldFullPath, e.FullPath);
         }
         #endregion ディレクトリ変更通知処理
@@ -189,7 +185,6 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void InsertOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            //WeakReferenceMessenger.Default.Send(new OpticalDriveMediaInserted(path));
             _fileSystemService.SendInsertOpticalMedia(path);
         }
 
@@ -200,7 +195,6 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void EjectOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            //WeakReferenceMessenger.Default.Send(new OpticalDriveMediaEjected(path));
             _fileSystemService.SendEjectOpticalMedia(path);
         }
         #endregion リムーバブルディスクの着脱処理

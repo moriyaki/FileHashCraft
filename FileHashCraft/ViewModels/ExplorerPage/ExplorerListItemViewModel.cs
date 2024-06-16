@@ -72,7 +72,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// </summary>
         /// <param name="other">ExplorerListItemViewModel?</param>
         /// <returns><bool/returns>
-        /// <exception cref="NotImplementedException"></exception>
         public int CompareTo(ExplorerListItemViewModel? other)
         {
             return FullPath.CompareTo(other?.FullPath);

@@ -278,7 +278,7 @@ namespace FileHashCraft.ViewModels
     {
         public string Lang { get; }
         public string Name { get; }
-        public Language() { throw new NotImplementedException(); }
+        public Language() { throw new NotImplementedException(nameof(Language)); }
 
         public Language(string lang, string name)
         {
@@ -307,7 +307,7 @@ namespace FileHashCraft.ViewModels
                 }
             }
         }
-        public FontSize() { throw new NotImplementedException(); }
+        public FontSize() { throw new NotImplementedException(nameof(FontSize)); }
         public FontSize(double size)
         {
             Size = size;
@@ -321,7 +321,7 @@ namespace FileHashCraft.ViewModels
     {
         public string Algorithm { get; }
         public string Name { get; }
-        public HashAlgorithm() { throw new NotImplementedException(); }
+        public HashAlgorithm() { throw new NotImplementedException(nameof(HashAlgorithm)); }
         public HashAlgorithm(string algorithm, string algorithmCaption)
         {
             Algorithm = algorithm;

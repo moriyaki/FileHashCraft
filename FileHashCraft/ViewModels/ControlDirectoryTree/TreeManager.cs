@@ -72,7 +72,11 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
 
     public class TreeManager : ITreeManager
     {
-        public TreeManager() { throw new NotImplementedException(); }
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        public TreeManager() { throw new NotImplementedException(nameof(TreeManager)); }
 
         private readonly ICheckedTreeItemsManager _treeCheckedManager;
         private readonly ITreeExpandedManager _treeExpandedManager;

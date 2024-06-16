@@ -7,7 +7,7 @@
     public class CurrentDirectoryItemCreated
     {
         public string CreatedFullPath { get; set; } = string.Empty;
-        public CurrentDirectoryItemCreated() { throw new NotImplementedException(); }
+        public CurrentDirectoryItemCreated() { throw new NotImplementedException(nameof(CurrentDirectoryItemCreated)); }
         public CurrentDirectoryItemCreated(string createdFullPath) => CreatedFullPath = createdFullPath;
     }
 
@@ -17,7 +17,7 @@
     public class CurrentDirectoryItemDeleted
     {
         public string DeletedFullPath { get; set; } = string.Empty;
-        public CurrentDirectoryItemDeleted() { throw new NotImplementedException(); }
+        public CurrentDirectoryItemDeleted() { throw new NotImplementedException(nameof(CurrentDirectoryItemDeleted)); }
         public CurrentDirectoryItemDeleted(string deletedFullPath) => DeletedFullPath = deletedFullPath;
     }
 
@@ -28,7 +28,7 @@
     {
         public string OldFullPath { get; set; } = string.Empty;
         public string NewFullPath { get; set; } = string.Empty;
-        public CurrentDirectoryItemRenamed() { throw new NotImplementedException(); }
+        public CurrentDirectoryItemRenamed() { throw new NotImplementedException(nameof(CurrentDirectoryItemRenamed)); }
         public CurrentDirectoryItemRenamed(string oldFullPath, string newFullPath)
         {
             OldFullPath = oldFullPath;
@@ -44,7 +44,7 @@
     public class DirectoryItemCreated
     {
         public string CreatedFullPath { get; set; } = string.Empty;
-        public DirectoryItemCreated() { throw new NotImplementedException(); }
+        public DirectoryItemCreated() { throw new NotImplementedException(nameof(DirectoryItemCreated)); }
         public DirectoryItemCreated(string createdFullPath) => CreatedFullPath = createdFullPath;
     }
 
@@ -54,7 +54,7 @@
     public class DirectoryItemDeleted
     {
         public string DeletedFullPath { get; set; } = string.Empty;
-        public DirectoryItemDeleted() { throw new NotImplementedException(); }
+        public DirectoryItemDeleted() { throw new NotImplementedException(nameof(DirectoryItemDeleted)); }
         public DirectoryItemDeleted(string deletedFullPath) => DeletedFullPath = deletedFullPath;
     }
 
@@ -65,7 +65,7 @@
     {
         public string OldFullPath { get; set; } = string.Empty;
         public string NewFullPath { get; set; } = string.Empty;
-        public DirectoryItemRenamed() { throw new NotImplementedException(); }
+        public DirectoryItemRenamed() { throw new NotImplementedException(nameof(DirectoryItemRenamed)); }
         public DirectoryItemRenamed(string oldFullPath, string newFullPath)
         {
             OldFullPath = oldFullPath;
@@ -79,7 +79,7 @@
     public class OpticalDriveMediaInserted
     {
         public string InsertedPath { get; set; } = string.Empty;
-        public OpticalDriveMediaInserted() { throw new NotImplementedException(); }
+        public OpticalDriveMediaInserted() { throw new NotImplementedException(nameof(OpticalDriveMediaInserted)); }
         public OpticalDriveMediaInserted(string insertedPath) => InsertedPath = insertedPath;
     }
 
@@ -89,7 +89,7 @@
     public class OpticalDriveMediaEjected
     {
         public string EjectedPath { get; set; } = string.Empty;
-        public OpticalDriveMediaEjected() { throw new NotImplementedException(); }
+        public OpticalDriveMediaEjected() { throw new NotImplementedException(nameof(OpticalDriveMediaEjected)); }
         public OpticalDriveMediaEjected(string ejectedPath) => EjectedPath = ejectedPath;
     }
     #endregion ディレクトリ変更メッセージ

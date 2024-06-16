@@ -22,7 +22,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IExtentionManager _extentionManager;
         private readonly ISelectTargetPageViewModel _pageSelectTargetViewModel;
         private readonly ITreeManager _treeManager;
-        public ScanHashFiles() { throw new NotImplementedException(); }
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        public ScanHashFiles() { throw new NotImplementedException(nameof(ScanHashFiles)); }
         public ScanHashFiles(
             IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,

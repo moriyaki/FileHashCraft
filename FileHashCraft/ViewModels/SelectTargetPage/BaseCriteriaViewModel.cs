@@ -102,7 +102,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #region コンストラクタ
         protected readonly IHelpWindowViewModel _helpWindowViewModel;
         protected readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
-        protected BaseCriteriaViewModel() { throw new NotImplementedException("BaseCriteriaViewModel"); }
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        protected BaseCriteriaViewModel() { throw new NotImplementedException(nameof(BaseCriteriaViewModel)); }
 
         protected BaseCriteriaViewModel(
             ISettingsService settingsService,

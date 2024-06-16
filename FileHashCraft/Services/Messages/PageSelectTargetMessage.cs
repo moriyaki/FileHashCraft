@@ -13,7 +13,7 @@ namespace FileHashCraft.Services.Messages
     public class ExtentionChechReflectToGroup
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionChechReflectToGroup() { throw new NotImplementedException(); }
+        public ExtentionChechReflectToGroup() { throw new NotImplementedException(nameof(ExtentionChechReflectToGroup)); }
         public ExtentionChechReflectToGroup(string name)
         {
             Name = name;
@@ -26,7 +26,7 @@ namespace FileHashCraft.Services.Messages
     public class ExtentionUnchechReflectToGroup
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionUnchechReflectToGroup() { throw new NotImplementedException(); }
+        public ExtentionUnchechReflectToGroup() { throw new NotImplementedException(nameof(ExtentionUnchechReflectToGroup)); }
         public ExtentionUnchechReflectToGroup(string name)
         {
             Name = name;
@@ -45,7 +45,7 @@ namespace FileHashCraft.Services.Messages
     {
         public bool IsChecked { get; set; }
         public IEnumerable<string> ExtentionCollection;
-        public ExtentionGroupChecked() { throw new NotImplementedException(); }
+        public ExtentionGroupChecked() { throw new NotImplementedException(nameof(ExtentionGroupChecked)); }
         public ExtentionGroupChecked(bool isChecked, IEnumerable<string> extentionCollection)
         {
             IsChecked = isChecked;
@@ -79,7 +79,7 @@ namespace FileHashCraft.Services.Messages
     {
         public bool IsSelected { get; set; }
         public WildcardCriteriaItemViewModel SelectedItem { get; set; }
-        public IsSelectedWildcardChanged() { throw new NotSupportedException(); }
+        public IsSelectedWildcardChanged() { throw new NotSupportedException(nameof(IsSelectedWildcardChanged)); }
         public IsSelectedWildcardChanged(bool isSelected, WildcardCriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
@@ -94,7 +94,7 @@ namespace FileHashCraft.Services.Messages
     {
         public string WildcardCriteria { get; set; } = string.Empty;
         public string OriginalWildcardCriteria { get; set; } = string.Empty;
-        public SelectedChangedWildcardCriteria() { throw new NotImplementedException(); }
+        public SelectedChangedWildcardCriteria() { throw new NotImplementedException(nameof(SelectedChangedWildcardCriteria)); }
         public SelectedChangedWildcardCriteria(string wildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
@@ -109,12 +109,12 @@ namespace FileHashCraft.Services.Messages
 
     #region 正規表現メッセージ
     /// <summary>
-    /// ワイルドカード一覧のテキストボックスにフォーカスを移すメッセージ
+    /// 正規表現一覧のテキストボックスにフォーカスを移すメッセージ
     /// </summary>
     public class ListBoxSeletedRegexTextBoxFocus;
 
     /// <summary>
-    /// ワイルドカード検索条件入力テキストボックスにフォーカスを戻すメッセージ
+    /// 正規表現検索条件入力テキストボックスにフォーカスを戻すメッセージ
     /// </summary>
     public class NewRegexCriteriaFocus;
 
@@ -125,7 +125,7 @@ namespace FileHashCraft.Services.Messages
     {
         public bool IsSelected { get; set; }
         public RegexCriteriaItemViewModel SelectedItem { get; set; }
-        public IsSelectedRegexChanged() { throw new NotSupportedException(); }
+        public IsSelectedRegexChanged() { throw new NotSupportedException(nameof(IsSelectedRegexChanged)); }
         public IsSelectedRegexChanged(bool isSelected, RegexCriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
@@ -140,7 +140,7 @@ namespace FileHashCraft.Services.Messages
     {
         public string RegexCriteria { get; set; } = string.Empty;
         public string OriginalRegexCriteria { get; set; } = string.Empty;
-        public SelectedChangedRegexCriteria() { throw new NotImplementedException(); }
+        public SelectedChangedRegexCriteria() { throw new NotImplementedException(nameof(SelectedChangedRegexCriteria)); }
         public SelectedChangedRegexCriteria(string wildcardCriteria)
         {
             RegexCriteria = wildcardCriteria;

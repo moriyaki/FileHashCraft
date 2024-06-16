@@ -9,8 +9,11 @@ namespace FileHashCraft.ViewModels
     public class BaseViewModel : ObservableObject
     {
         protected readonly ISettingsService _settingsService;
-
-        public BaseViewModel() { throw new NotImplementedException("BaseViewModel"); }
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        public BaseViewModel() { throw new NotImplementedException(nameof(BaseViewModel)); }
 
         public BaseViewModel(ISettingsService settingsService)
         {

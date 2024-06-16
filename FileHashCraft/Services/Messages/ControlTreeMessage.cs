@@ -12,7 +12,7 @@ namespace FileHashCraft.Services.Messages
     public class AddToExpandDirectoryManager
     {
         public DirectoryTreeViewItemModel Child { get; set; }
-        public AddToExpandDirectoryManager() { throw new NotImplementedException(); }
+        public AddToExpandDirectoryManager() { throw new NotImplementedException(nameof(AddToExpandDirectoryManager)); }
         public AddToExpandDirectoryManager(DirectoryTreeViewItemModel child)
         {
             Child = child;
@@ -25,7 +25,7 @@ namespace FileHashCraft.Services.Messages
     public class RemoveFromExpandDirectoryManager
     {
         public DirectoryTreeViewItemModel Child { get; set; }
-        public RemoveFromExpandDirectoryManager() { throw new NotImplementedException(); }
+        public RemoveFromExpandDirectoryManager() { throw new NotImplementedException(nameof(RemoveFromExpandDirectoryManager)); }
         public RemoveFromExpandDirectoryManager(DirectoryTreeViewItemModel child)
         {
             Child = child;

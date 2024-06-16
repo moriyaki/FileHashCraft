@@ -104,13 +104,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         private readonly ITreeManager _treeManager;
 
         /// <summary>
-        /// 引数なしで生成はさせない
+        /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
-        /// <exception cref="NotImplementedException">DIコンテナを利用するように</exception>
-        public ControDirectoryTreeViewModel()
-        {
-            throw new NotImplementedException();
-        }
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        public ControDirectoryTreeViewModel() { throw new NotImplementedException(nameof(ControDirectoryTreeViewModel)); }
 
         // 通常コンストラクタ
         public ControDirectoryTreeViewModel(

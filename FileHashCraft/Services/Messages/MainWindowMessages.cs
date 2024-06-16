@@ -13,7 +13,7 @@ namespace FileHashCraft.Services.Messages
     public class WindowTopChanged
     {
         public double Top { get; }
-        public WindowTopChanged() { throw new NotImplementedException(); }
+        public WindowTopChanged() { throw new NotImplementedException(nameof(WindowTopChanged)); }
         public WindowTopChanged(double top) => Top = top;
     }
     /// <summary>
@@ -22,7 +22,7 @@ namespace FileHashCraft.Services.Messages
     public class WindowLeftChanged
     {
         public double Left { get; }
-        public WindowLeftChanged() { throw new NotImplementedException(); }
+        public WindowLeftChanged() { throw new NotImplementedException(nameof(WindowLeftChanged)); }
         public WindowLeftChanged(double left) => Left = left;
     }
     /// <summary>
@@ -30,7 +30,7 @@ namespace FileHashCraft.Services.Messages
     public class WindowWidthChanged
     {
         public double Width { get; }
-        public WindowWidthChanged() { throw new NotImplementedException(); }
+        public WindowWidthChanged() { throw new NotImplementedException(nameof(WindowWidthChanged)); }
         public WindowWidthChanged(double width) => Width = width;
     }
     /// <summary>
@@ -39,7 +39,7 @@ namespace FileHashCraft.Services.Messages
     public class WindowHeightChanged
     {
         public double Height { get; }
-        public WindowHeightChanged() { throw new NotImplementedException(); }
+        public WindowHeightChanged() { throw new NotImplementedException(nameof(WindowHeightChanged)); }
         public WindowHeightChanged(double height) => Height = height;
     }
     /// <summary>
@@ -49,7 +49,7 @@ namespace FileHashCraft.Services.Messages
     {
         public double TreeWidth { get; }
 
-        public TreeWidthChanged() { throw new NotImplementedException(); }
+        public TreeWidthChanged() { throw new NotImplementedException(nameof(TreeWidthChanged)); }
 
         public TreeWidthChanged(double treeWidth) => TreeWidth = treeWidth;
     }
@@ -60,7 +60,7 @@ namespace FileHashCraft.Services.Messages
     {
         public double ListWidth { get; }
 
-        public ListWidthChanged() { throw new NotImplementedException(); }
+        public ListWidthChanged() { throw new NotImplementedException(nameof(ListWidthChanged)); }
 
         public ListWidthChanged(double listWidth) => ListWidth = listWidth;
     }
@@ -70,7 +70,7 @@ namespace FileHashCraft.Services.Messages
     public class SelectedLanguageChanged
     {
         public string SelectedLanguage { get; }
-        public SelectedLanguageChanged() { throw new NotImplementedException(); }
+        public SelectedLanguageChanged() { throw new NotImplementedException(nameof(SelectedLanguageChanged)); }
         public SelectedLanguageChanged(string selectedLanguage) => SelectedLanguage = selectedLanguage;
     }
 
@@ -80,7 +80,7 @@ namespace FileHashCraft.Services.Messages
     public class HashAlgorithmChanged
     {
         public string HashAlgorithm { get; }
-        public HashAlgorithmChanged() { throw new NotImplementedException(); }
+        public HashAlgorithmChanged() { throw new NotImplementedException(nameof(HashAlgorithmChanged)); }
         public HashAlgorithmChanged(string hashAlgorithm) => HashAlgorithm = hashAlgorithm;
     }
     /// <summary>
@@ -89,7 +89,7 @@ namespace FileHashCraft.Services.Messages
     public class ReadOnlyFileIncludeChanged
     {
         public bool ReadOnlyFileInclude { get; }
-        public ReadOnlyFileIncludeChanged() { throw new NotImplementedException(); }
+        public ReadOnlyFileIncludeChanged() { throw new NotImplementedException(nameof(ReadOnlyFileIncludeChanged)); }
         public ReadOnlyFileIncludeChanged(bool readOnlyFileInclude) => ReadOnlyFileInclude = readOnlyFileInclude;
     }
     /// <summary>
@@ -98,7 +98,7 @@ namespace FileHashCraft.Services.Messages
     public class HiddenFileIncludeChanged
     {
         public bool HiddenFileInclude { get; }
-        public HiddenFileIncludeChanged() { throw new NotImplementedException(); }
+        public HiddenFileIncludeChanged() { throw new NotImplementedException(nameof(HiddenFileIncludeChanged)); }
         public HiddenFileIncludeChanged(bool hiddenFileInclude) => HiddenFileInclude = hiddenFileInclude;
     }
 
@@ -108,7 +108,7 @@ namespace FileHashCraft.Services.Messages
     public class ZeroSizeFileDeleteChanged
     {
         public bool ZeroSizeFileDelete { get; }
-        public ZeroSizeFileDeleteChanged() { throw new NotImplementedException(); }
+        public ZeroSizeFileDeleteChanged() { throw new NotImplementedException(nameof(ZeroSizeFileDeleteChanged)); }
         public ZeroSizeFileDeleteChanged(bool zeroSizeFileDelete) => ZeroSizeFileDelete = zeroSizeFileDelete;
     }
 
@@ -118,7 +118,7 @@ namespace FileHashCraft.Services.Messages
     public class EmptyDirectoryDeleteChanged
     {
         public bool EmptyDirectoryDelete { get; }
-        public EmptyDirectoryDeleteChanged() { throw new NotImplementedException(); }
+        public EmptyDirectoryDeleteChanged() { throw new NotImplementedException(nameof(EmptyDirectoryDeleteChanged)); }
         public EmptyDirectoryDeleteChanged(bool emptyDirectoryDelete) => EmptyDirectoryDelete = emptyDirectoryDelete;
     }
 
@@ -128,7 +128,7 @@ namespace FileHashCraft.Services.Messages
     public class CurrentFontFamilyChanged
     {
         public FontFamily CurrentFontFamily { get; }
-        public CurrentFontFamilyChanged() { throw new NotImplementedException(); }
+        public CurrentFontFamilyChanged() { throw new NotImplementedException(nameof(CurrentFontFamilyChanged)); }
         public CurrentFontFamilyChanged(FontFamily currentFontFamily) => CurrentFontFamily = currentFontFamily;
     }
 
@@ -138,7 +138,7 @@ namespace FileHashCraft.Services.Messages
     public class FontSizeChanged
     {
         public double FontSize { get; }
-        public FontSizeChanged() { throw new NotImplementedException(); }
+        public FontSizeChanged() { throw new NotImplementedException(nameof(FontSizeChanged)); }
         public FontSizeChanged(double fontSize) => FontSize = fontSize;
     }
     #endregion MainView用メッセージ
@@ -150,7 +150,7 @@ namespace FileHashCraft.Services.Messages
     public class CurrentDirectoryChanged
     {
         public string CurrentFullPath { get; } = string.Empty;
-        public CurrentDirectoryChanged() { throw new NotImplementedException(); }
+        public CurrentDirectoryChanged() { throw new NotImplementedException(nameof(CurrentDirectoryChanged)); }
         public CurrentDirectoryChanged(string currentFullPath) => CurrentFullPath = currentFullPath;
     }
     #endregion カレントディレクトリの移動
@@ -187,7 +187,7 @@ namespace FileHashCraft.Services.Messages
     public class ToSettingPage
     {
         public ReturnPageEnum ReturnPage { get; }
-        public ToSettingPage() { throw new NotImplementedException(); }
+        public ToSettingPage() { throw new NotImplementedException(nameof(ToSettingPage)); }
         public ToSettingPage(ReturnPageEnum returnPage) => ReturnPage = returnPage;
     }
 

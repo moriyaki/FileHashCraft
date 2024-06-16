@@ -101,9 +101,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
 
         #region コンストラクタ
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         public SetWildcardControlViewModel()
         {
-            throw new NotImplementedException("PageSelectTargetViewModelWildcard");
+            throw new NotImplementedException(nameof(SetWildcardControlViewModel));
         }
 
         public SetWildcardControlViewModel(

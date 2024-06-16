@@ -19,7 +19,11 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
     #endregion インターフェース
     public class CurrentDirectoryFIleSystemWatcherService : ICurrentDirectoryFIleSystemWatcherService
     {
-        public CurrentDirectoryFIleSystemWatcherService() { throw new NotImplementedException(); }
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        public CurrentDirectoryFIleSystemWatcherService() { throw new NotImplementedException(nameof(CurrentDirectoryFIleSystemWatcherService)); }
 
         private readonly IFileSystemServices _fileSystemService;
         public CurrentDirectoryFIleSystemWatcherService(

@@ -24,8 +24,12 @@
     {
         private readonly ICurrentDirectoryFIleSystemWatcherService _currentDirectoryFIleSystemWatcherService;
         private readonly IFileWatcherService _drivesFileSystemWatcherService;
-
-        public FileSystemWatcherService() { throw new NotImplementedException(); }
+        
+        /// <summary>
+        /// 引数なしの直接呼び出しは許容しません。
+        /// </summary>
+        /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
+        public FileSystemWatcherService() { throw new NotImplementedException(nameof(FileSystemWatcherService)); }
         public FileSystemWatcherService(
             ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IFileWatcherService drivesFileSystemWatcherService)
