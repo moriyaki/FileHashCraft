@@ -15,31 +15,31 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public interface ISetWildcardControlViewModel
     {
         /// <summary>
-        /// ワイルドカード検索条件コレクション
+        /// 検索条件コレクション
         /// </summary>
-        ObservableCollection<CriteriaItemViewModel> CriteriaItems { get; set; }
+        ObservableCollection<BaseCriteriaItemViewModel> CriteriaItems { get; set; }
         /// <summary>
         /// 選択された検索条件コレクション
         /// </summary>
-        ObservableCollection<CriteriaItemViewModel> SelectedItems { get; set; }
+        ObservableCollection<BaseCriteriaItemViewModel> SelectedItems { get; set; }
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
         WildcardSearchErrorStatus SearchErrorStatus { get; }
         /// <summary>
-        /// ワイルドカード検索条件を追加します。
+        /// 検索条件を追加します。
         /// </summary>
         void AddCriteria();
         /// <summary>
-        /// リストボックスのワイルドカード検索条件から離れます。
+        /// リストボックスの検索条件から離れます。
         /// </summary>
         void LeaveListBoxCriteria();
         /// <summary>
-        /// リストボックスのワイルドカード検索条件から強制的に離れます。
+        /// リストボックスの検索条件から強制的に離れます。
         /// </summary>
         void LeaveListBoxCriteriaForce();
         /// <summary>
-        /// ワイルドカード文字列が正しいかを検査します。
+        /// 検索条件が正しいかを検査します。
         /// </summary>
         bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "");
     }
@@ -120,11 +120,102 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 _helpWindowViewModel.Initialize(HelpPage.Wildcard);
             });
 
+            // リストボックスの選択状態が変わった時の処理をします。
+            WeakReferenceMessenger.Default.Register<IsSelectedWildcardChanged>(this, (_, m) =>
+            {
+                if (m.IsSelected)
+                {
+                    SelectedItems.Add(m.SelectedItem);
+                }
+                else
+                {
+                    SelectedItems.Remove(m.SelectedItem);
+                }
+                ModifyCriteriaCommand.NotifyCanExecuteChanged();
+                RemoveCriteriaCommand.NotifyCanExecuteChanged();
+            });
             // リストボックスアイテムが編集された時のエラーチェックをします。
-            WeakReferenceMessenger.Default.Register<SelectedChangedCriteria>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<SelectedChangedWildcardCriteria>(this, (_, m) =>
                 m.Reply(IsCriteriaConditionCorrent(m.WildcardCriteria, m.OriginalWildcardCriteria)));
         }
         #endregion コンストラクタ
+
+        /// <summary>
+        /// ワイルドカード検索条件を追加します。
+        /// </summary>
+        public override void AddCriteria()
+        {
+            var newWildcard = new WildcardCriteriaItemViewModel(_settingsService)
+            {
+                Criteria = SearchCriteriaText,
+            };
+            CriteriaItems.Add(newWildcard);
+            FileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Wildcard);
+            _pageSelectTargetViewModelMain.SetTargetCountChanged();
+            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
+            SearchCriteriaText = string.Empty;
+        }
+
+        /// <summary>
+        /// ワイルドカード検索条件を削除します。
+        /// </summary>
+        public override void RemoveCriteria()
+        {
+            foreach (var item in SelectedItems)
+            {
+                FileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Wildcard);
+                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
+                _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
+                _pageSelectTargetViewModelMain.SetTargetCountChanged();
+                CriteriaItems.Remove(item);
+            }
+            SelectedItems.Clear();
+            ModifyCriteriaCommand.NotifyCanExecuteChanged();
+            RemoveCriteriaCommand.NotifyCanExecuteChanged();
+            LeaveListBoxCriteria();
+            WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
+        }
+
+        /// <summary>
+        /// リストボックスのワイルドカード検索条件から離れます。
+        /// </summary>
+        public override void LeaveListBoxCriteria()
+        {
+            var listItem = SelectedItems.FirstOrDefault(c => c.IsEditMode);
+            if (listItem != null)
+            {
+                listItem.IsEditMode = false;
+                ModefyCriteria(listItem);
+            }
+            // ワイルドカード検索条件の新規欄を反映する
+            IsCriteriaConditionCorrent(SearchCriteriaText);
+        }
+
+        /// <summary>
+        /// リストボックスのワイルドカード検索条件から強制的に離れます。
+        /// </summary>
+        public override void LeaveListBoxCriteriaForce()
+        {
+            var listItem = SelectedItems.FirstOrDefault(c => c.IsEditMode);
+            if (listItem != null)
+            {
+                listItem.IsEditMode = false;
+                listItem.Criteria = listItem.OriginalCriteria;
+                WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
+                IsCriteriaConditionCorrent(SearchCriteriaText);
+            }
+        }
+        /// <summary>
+        /// ワイルドカード検索条件を変更します。
+        /// </summary>
+        /// <param name="modifiedItem">変更されたワイルドカード検索条件</param>
+        public override void ModefyCriteria(BaseCriteriaItemViewModel modifiedItem)
+        {
+            FileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
+            FileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Wildcard);
+            _pageSelectTargetViewModelMain.SetTargetCountChanged();
+            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
+        }
 
         /// <summary>
         /// ワイルドカード文字列が正しいかを検査します。

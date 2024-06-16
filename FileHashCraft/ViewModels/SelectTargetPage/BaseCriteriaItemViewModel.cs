@@ -60,6 +60,16 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         {
         }
 
-        protected abstract void RestoreCriteria();
+        /// <summary>
+        /// 間違っているワイルドカード検索条件は元に戻します。
+        /// </summary>
+        protected void RestoreCriteria()
+        {
+            // 
+            if (!_CriteriaConditionCorrent)
+            {
+                Criteria = OriginalCriteria;
+            }
+        }
     }
 }

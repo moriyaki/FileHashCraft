@@ -22,35 +22,79 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+ 
         <!-- modify button -->
         <Button Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="RegexModify" 
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Command="{Binding ModifyCriteriaCommand}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonModify, Mode=OneWay}"/>
         <!-- Remove button -->
-        <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="ReexRemove" 
+        <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="3" x:Name="RegexRemove" 
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Command="{Binding RemoveCriteriaCommand}"
                             Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonRemove, Mode=OneWay}"/>
         <!-- Add button -->
-        <Button Grid.Row="3" Grid.Column="2"  Margin="3" x:Name="RegularExpressionAdd"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"/>
+        <Button Grid.Row="3" Grid.Column="2" Margin="3" x:Name="RegexAdd"
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonAdd, Mode=OneWay}"
+                            Command="{Binding AddCriteriaCommand}"/>
         <!-- Help button -->
         <Button Grid.Row="3" Grid.Column="3" Margin="3" x:Name="RegexHelp" 
                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                             Content="?"
-                            />
-        <!-- Regular Expression Search Criteria ListBox -->
-        <ListBox Grid.Row="0" Grid.Column="0" x:Name="RegularExpressSearch" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="3"/>
-        <!-- Regular Expression Search Criteria -->
-        <Label Grid.Row="3" Grid.Column="0" x:Name="LabelRegularExpression"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Criteria, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="RegularExpressionCriteria"
-                             Text="{}"/>
-        <!-- Regular Expression Search Criteria Error -->
-        <Label Grid.Row="4" Grid.Column="0" x:Name="LabelRegularExpressionError"
-                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
-        <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" x:Name="RegularExpressionError"
-                               Background="Red" Text="" Margin="3" Grid.RowSpan="2"/>
+                            Command="{Binding HelpOpenCommand}"/>
 
+        <!-- Search Criteria ListBox -->
+        <ListBox x:Name="RegexSearchListBox"
+                             ItemsSource="{Binding CriteriaItems}"
+                             SelectionMode="Extended"
+                             KeyDown="ListBoxItemRegexCriteria_KeyDown"
+                             MouseDown="ListBoxRegexCriteria_MouseDown"
+                             Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="3">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="ListBoxCriterias"
+                                             VerticalAlignment="Center" Padding="0"
+                                             LostFocus="ListBoxRegexCriterias_LostFocus"
+                                             FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                                             Focusable="{Binding IsEditMode}"
+                                             Background="{Binding ItemBackgroudColor}"
+                                             BorderThickness="{Binding BorderTickness}"
+                                             Text="{Binding Criteria,UpdateSourceTrigger=PropertyChanged}"
+                                             KeyDown="ListBoxRegexCriterias_KeyDown"
+                                             >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="PreviewMouseDown">
+                                    <i:InvokeCommandAction Command="{Binding ListBoxItemTextBoxRegexCriteriaClicked}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+        <!-- Criteria Input -->
+        <Label Grid.Row="3" Grid.Column="0" x:Name="LabeldSearch"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Criteria, Mode=OneWay}"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="NewRegexCriteria"
+                             KeyDown="NewRegexCriteria_KeyDown"
+                             Background="{Binding CiriteriaAddTextBoxBackgroudColor}"
+                             Text="{Binding SearchCriteriaText,UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Criteria Syntax Error -->
+        <Label Grid.Row="4" Grid.Column="0" x:Name="LabelCriteriaError"
+                           Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelRegex_Error, Mode=OneWay}" Margin="3" Grid.RowSpan="2"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Grid.RowSpan="2" Margin="3" VerticalAlignment="Center"
+                               x:Name="CriteriaErrorTextBlock"
+                               Background="{Binding SearchErrorBackground}" 
+                               Text="{Binding SearchCriteriaErrorOutput}" />
     </Grid>
 
 </UserControl>

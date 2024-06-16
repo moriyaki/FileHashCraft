@@ -457,6 +457,294 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   An alternation construct in a regular expression contains a comment. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_AlternationHasComment {
+            get {
+                return ResourceManager.GetString("LabelRegexError_AlternationHasComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An alternation in a regular expression has a malformed condition. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_AlternationHasMalformedCondition {
+            get {
+                return ResourceManager.GetString("LabelRegexError_AlternationHasMalformedCondition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An alternation construct in a regular expression contains a malformed reference. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_AlternationHasMalformedReference {
+            get {
+                return ResourceManager.GetString("LabelRegexError_AlternationHasMalformedReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An alternation construct in a regular expression uses a named capture. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_AlternationHasNamedCapture {
+            get {
+                return ResourceManager.GetString("LabelRegexError_AlternationHasNamedCapture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An alternation in a regular expression has too many conditions. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_AlternationHasTooManyConditions {
+            get {
+                return ResourceManager.GetString("LabelRegexError_AlternationHasTooManyConditions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An alternation construct in a regular expression contains an undefined reference. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_AlternationHasUndefinedReference {
+            get {
+                return ResourceManager.GetString("LabelRegexError_AlternationHasUndefinedReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The group name of a captured group in a regular expression is invalid. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_CaptureGroupNameInvalid {
+            get {
+                return ResourceManager.GetString("LabelRegexError_CaptureGroupNameInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A regular expression defines a numbered subexpression named zero. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_CaptureGroupOfZero {
+            get {
+                return ResourceManager.GetString("LabelRegexError_CaptureGroupOfZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A character class in a regular expression with an exclusion group is not the last part of the character class. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_ExclusionGroupNotLast {
+            get {
+                return ResourceManager.GetString("LabelRegexError_ExclusionGroupNotLast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A regular expression has a non-escaped left parenthesis, or misses a closing right parenthesis. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_InsufficientClosingParentheses {
+            get {
+                return ResourceManager.GetString("LabelRegexError_InsufficientClosingParentheses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A regular expression has a non-escaped right parenthesis, or misses an opening left parenthesis. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_InsufficientOpeningParentheses {
+            get {
+                return ResourceManager.GetString("LabelRegexError_InsufficientOpeningParentheses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A hexadecimal escape sequence in a regular expression does not have enough digits, or contains invalid digits. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_InsufficientOrInvalidHexDigits {
+            get {
+                return ResourceManager.GetString("LabelRegexError_InsufficientOrInvalidHexDigits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A grouping construct in a regular expression is invalid or malformed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_InvalidGroupingConstruct {
+            get {
+                return ResourceManager.GetString("LabelRegexError_InvalidGroupingConstruct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A Unicode property escape in a regular expression is invalid or unknown. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_InvalidUnicodePropertyEscape {
+            get {
+                return ResourceManager.GetString("LabelRegexError_InvalidUnicodePropertyEscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A named reference in a regular expression is malformed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_MalformedNamedReference {
+            get {
+                return ResourceManager.GetString("LabelRegexError_MalformedNamedReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A Unicode property escape is malformed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_MalformedUnicodePropertyEscape {
+            get {
+                return ResourceManager.GetString("LabelRegexError_MalformedUnicodePropertyEscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A control character in a regular expression is missing. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_MissingControlCharacter {
+            get {
+                return ResourceManager.GetString("LabelRegexError_MissingControlCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Repeated quantifiers on another quantifier inside a regular expression are not grouped in parentheses. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_NestedQuantifiersNotParenthesized {
+            get {
+                return ResourceManager.GetString("LabelRegexError_NestedQuantifiersNotParenthesized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A quantifier in a regular expression is in a position where it cannot quantify anything, like at the beginning of a regular expression or in a group. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_QuantifierAfterNothing {
+            get {
+                return ResourceManager.GetString("LabelRegexError_QuantifierAfterNothing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A captured group or a quantifier in a regular expression is not within range, that is, it is larger than Int32.MaxValue. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_QuantifierOrCaptureGroupOutOfRange {
+            get {
+                return ResourceManager.GetString("LabelRegexError_QuantifierOrCaptureGroupOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A character class in a regular expression contains an inverse character range, like z-a instead of a-z. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_ReversedCharacterRange {
+            get {
+                return ResourceManager.GetString("LabelRegexError_ReversedCharacterRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A quantifier range in a regular expression is inverse, like {10,1} instead of {1,10}. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_ReversedQuantifierRange {
+            get {
+                return ResourceManager.GetString("LabelRegexError_ReversedQuantifierRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A character-class in a regular expression contains a short-hand class that is not allowed inside a character class. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_ShorthandClassInCharacterRange {
+            get {
+                return ResourceManager.GetString("LabelRegexError_ShorthandClassInCharacterRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A used named reference in a regular expression is not defined. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UndefinedNamedReference {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UndefinedNamedReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A used numbered reference in a regular expression is not defined. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UndefinedNumberedReference {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UndefinedNumberedReference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A regular expression ends with a non-escaped ending backslash. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UnescapedEndingBackslash {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UnescapedEndingBackslash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An unknown regular expression parse error. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_Unknown {
+            get {
+                return ResourceManager.GetString("LabelRegexError_Unknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A control character in a regular expression is not recognized. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UnrecognizedControlCharacter {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UnrecognizedControlCharacter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An escape character or sequence in a regular expression is invalid. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UnrecognizedEscape {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UnrecognizedEscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A unicode property in a regular expression is not recognized, or invalid. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UnrecognizedUnicodeProperty {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UnrecognizedUnicodeProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A regular expression has a non-escaped left square bracket, or misses a closing right square bracket. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UnterminatedBracket {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UnterminatedBracket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   A comment in a regular expression is not terminated. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelRegexError_UnterminatedComment {
+            get {
+                return ResourceManager.GetString("LabelRegexError_UnterminatedComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   During internal file writing or other processing of found files. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelSettings {

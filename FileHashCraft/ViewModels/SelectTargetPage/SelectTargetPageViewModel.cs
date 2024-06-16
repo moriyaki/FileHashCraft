@@ -35,7 +35,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         ///  PageSelectTargetViewModelの正規表現ViewModel
         /// </summary>
-        ISetRegExControlViewModel ViewModelRegEx { get; }
+        ISetRegexControlViewModel ViewModelRegEx { get; }
 
         /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
@@ -77,7 +77,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         ///  PageSelectTargetViewModelの正規表現ViewModel
         /// </summary>
-        public ISetRegExControlViewModel ViewModelRegEx { get; }
+        public ISetRegexControlViewModel ViewModelRegEx { get; }
 
         /// <summary>
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
@@ -154,7 +154,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain,
             ISetExtentionControlViewModel pageSelectTargetViewModelExtention,
             ISetWildcardControlViewModel pageSelectTargetViewModelWildcard,
-            ISetRegExControlViewModel pageSelectTargetViewModelRegEx,
+            ISetRegexControlViewModel pageSelectTargetViewModelRegEx,
             ISetExpertControlViewModel pageSelectTargetViewModelExpert,
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,

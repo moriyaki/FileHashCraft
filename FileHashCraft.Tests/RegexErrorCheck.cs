@@ -54,7 +54,6 @@ namespace FileHashCraft.Tests
 #pragma warning disable RCS1118 // const しろと五月蠅い
     public class RegexErrorCheck
     {
-     
         /*
         /// <summary>
         /// AlternationHasComment,
@@ -202,22 +201,22 @@ namespace FileHashCraft.Tests
             Assert.Fail("Failed CaptureGroupOfZero");
         }
         /// <summary>
-        /// InsufficientOrInvalidHexDigits,    // like @"\uabc" or @"\xr"
+        /// ExclusionGroupNotLast,              // like @"[a-z-[xy]A]"
         /// </summary>
         [Fact]
-        public void InsufficientOrInvalidHexDigitsError()
+        public void ExclusionGroupNotLastError()
         {
-            var regexString = @"\xr";
+            var regexString = "[a-z-[xy]A]";
             try
             {
                 var regex = new Regex(regexString);
             }
             catch (RegexParseException regException)
             {
-                Assert.Equal(RegexParseError.InsufficientOrInvalidHexDigits, regException.Error);
+                Assert.Equal(RegexParseError.ExclusionGroupNotLast, regException.Error);
                 return;
             }
-            Assert.Fail("Failed InsufficientOrInvalidHexDigits");
+            Assert.Fail("Failed InsufficientClosingParentheses");
         }
         /// <summary>
         /// InsufficientClosingParentheses,    // like @"(((foo))"
@@ -254,6 +253,24 @@ namespace FileHashCraft.Tests
                 return;
             }
             Assert.Fail("Failed InsufficientOpeningParentheses");
+        }
+        /// <summary>
+        /// InsufficientOrInvalidHexDigits,    // like @"\uabc" or @"\xr"
+        /// </summary>
+        [Fact]
+        public void InsufficientOrInvalidHexDigitsError()
+        {
+            var regexString = @"\xr";
+            try
+            {
+                var regex = new Regex(regexString);
+            }
+            catch (RegexParseException regException)
+            {
+                Assert.Equal(RegexParseError.InsufficientOrInvalidHexDigits, regException.Error);
+                return;
+            }
+            Assert.Fail("Failed InsufficientOrInvalidHexDigits");
         }
         /// <summary>
         /// InvalidGroupingConstruct,          // like @"(?" or @"(?<foo"
@@ -333,7 +350,7 @@ namespace FileHashCraft.Tests
         [Fact]
         public void MissingControlCharacterError()
         {
-            var regexString = @"\c";
+            var regexString = "\\c";
             try
             {
                 var regex = new Regex(regexString);

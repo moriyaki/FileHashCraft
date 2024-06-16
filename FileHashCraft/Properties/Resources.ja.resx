@@ -285,6 +285,134 @@
     <value>フォント</value>
     <comment>Label/PageSettings</comment>
   </data>
+  <data name="LabelRegexError_AlternationHasComment" xml:space="preserve">
+    <value>正規表現の交替構文にはコメントが含まれます。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasMalformedCondition" xml:space="preserve">
+    <value>正規表現内の交互配列に不正な条件があります。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasMalformedReference" xml:space="preserve">
+    <value>正規表現内の交替構文に不正な参照が含まれています。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasNamedCapture" xml:space="preserve">
+    <value>正規表現における交替構文は、名前付きキャプチャを使用します。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasTooManyConditions" xml:space="preserve">
+    <value>正規表現の交替は条件が多すぎます。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasUndefinedReference" xml:space="preserve">
+    <value>正規表現の交替構文に未定義の参照が含まれています。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_CaptureGroupNameInvalid" xml:space="preserve">
+    <value>正規表現でキャプチャしたグループ名が無効です。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_CaptureGroupOfZero" xml:space="preserve">
+    <value>正規表現は、ゼロという番号の付いた部分式を定義します。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ExclusionGroupNotLast" xml:space="preserve">
+    <value>除外グループを持つ正規表現の文字クラスは、文字クラスの最後の部分ではありません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InsufficientClosingParentheses" xml:space="preserve">
+    <value>正規表現の左括弧がエスケープされていないか、右括弧が閉じられていません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InsufficientOpeningParentheses" xml:space="preserve">
+    <value>正規表現にエスケープされていない右括弧があるか、左括弧がありません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InsufficientOrInvalidHexDigits" xml:space="preserve">
+    <value>正規表現内の16進数エスケープシーケンスの桁数が足りないか、無効な桁が含まれています。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InvalidGroupingConstruct" xml:space="preserve">
+    <value>正規表現内のグループ化構文が無効または不正です。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InvalidUnicodePropertyEscape" xml:space="preserve">
+    <value>正規表現内の Unicode プロパティ・エスケープが無効または不明です。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_MalformedNamedReference" xml:space="preserve">
+    <value>正規表現内の名前付き参照が不正です。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_MalformedUnicodePropertyEscape" xml:space="preserve">
+    <value>Unicode プロパティのエスケープが不正です。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_MissingControlCharacter" xml:space="preserve">
+    <value>正規表現の制御文字がありません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_NestedQuantifiersNotParenthesized" xml:space="preserve">
+    <value>正規表現内で別の量化子の上に繰り返される量化子は、括弧でグループ化されていません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_QuantifierAfterNothing" xml:space="preserve">
+    <value>正規表現中の量化子は、正規表現の先頭やグループの中など、何かを量化できない位置にあります。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_QuantifierOrCaptureGroupOutOfRange" xml:space="preserve">
+    <value>正規表現内の捕捉グループまたは量化子が範囲内にない、つまりInt32.MaxValueより大きいです。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ReversedCharacterRange" xml:space="preserve">
+    <value>正規表現の文字クラスは、a-zの代わりにz-aのように、逆の文字範囲を含む。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ReversedQuantifierRange" xml:space="preserve">
+    <value>正規表現における量化子の範囲が、{1,10}の代わりに{10,1}のように逆数である。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ShorthandClassInCharacterRange" xml:space="preserve">
+    <value>正規表現の文字クラスは、文字クラスの内部では許可されないショートハンド・クラスを含んでいます。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UndefinedNamedReference" xml:space="preserve">
+    <value>正規表現で使用される名前付き参照が定義されていません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UndefinedNumberedReference" xml:space="preserve">
+    <value>正規表現で使用される番号参照が定義されていません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnescapedEndingBackslash" xml:space="preserve">
+    <value>正規表現の最後は、エスケープされていないバックスラッシュで終わっています。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_Unknown" xml:space="preserve">
+    <value>不明な正規表現の解析エラーです。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnrecognizedControlCharacter" xml:space="preserve">
+    <value>正規表現内の制御文字が認識されません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnrecognizedEscape" xml:space="preserve">
+    <value>正規表現内のエスケープ文字またはシーケンスが無効です。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnrecognizedUnicodeProperty" xml:space="preserve">
+    <value>正規表現の unicode プロパティが認識されないか、無効です。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnterminatedBracket" xml:space="preserve">
+    <value>正規表現の左角括弧がエスケープされていないか、右角括弧が閉じられていません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnterminatedComment" xml:space="preserve">
+    <value>正規表現中のコメントは終了しません。</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
   <data name="LabelRegex_Criteria" xml:space="preserve">
     <value>正規表現での検索条件</value>
     <comment>Label/PageSelectTargetRegEx</comment>
@@ -299,15 +427,15 @@
   </data>
   <data name="LabelWildcardError_AlreadyRegistered" xml:space="preserve">
     <value>既に登録されているワイルドカード条件です。</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SetWildcardUserControl</comment>
   </data>
   <data name="LabelWildcardError_Empty" xml:space="preserve">
     <value>ワイルドカード検索条件が入力されていません</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SetWildcardUserControl</comment>
   </data>
   <data name="LabelWildcardError_NotAllowedCharacter" xml:space="preserve">
     <value>ファイル名に許可されてない文字です</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SetWildcardUserControl</comment>
   </data>
   <data name="LabelWildcardError_TooManyAsterisk" xml:space="preserve">
     <value>'*'の利用が多すぎます</value>
@@ -315,11 +443,11 @@
   </data>
   <data name="LabelWildcard_Criteria" xml:space="preserve">
     <value>ワイルドカードでの検索条件</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SetWildcardUserControl</comment>
   </data>
   <data name="LabelWildcard_Error" xml:space="preserve">
     <value>ワイルドカードのエラー</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SetWildcardUserControl</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>更新日時</value>

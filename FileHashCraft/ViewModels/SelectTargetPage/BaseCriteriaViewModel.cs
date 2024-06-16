@@ -15,12 +15,12 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// ワイルドカード検索条件コレクション
         /// </summary>
-        public virtual ObservableCollection<CriteriaItemViewModel> CriteriaItems { get; set; }
+        public virtual ObservableCollection<BaseCriteriaItemViewModel> CriteriaItems { get; set; }
 
         /// <summary>
         /// 選択された検索条件コレクション
         /// </summary>
-        public virtual ObservableCollection<CriteriaItemViewModel> SelectedItems { get; set; }
+        public virtual ObservableCollection<BaseCriteriaItemViewModel> SelectedItems { get; set; }
 
         /// <summary>
         /// 検索条件エラー出力の背景色
@@ -76,6 +76,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 AddCriteriaCommand.NotifyCanExecuteChanged();
             }
         }
+
         /// <summary>
         /// ワイルドカード検索条件を追加します。
         /// </summary>
@@ -95,6 +96,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public abstract RelayCommand HelpOpenCommand { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタ
@@ -121,13 +123,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 () => IsCriteriaConditionCorrent(SearchCriteriaText) && _pageSelectTargetViewModelMain.Status == FileScanStatus.Finished
             );
 
-            // ワイルドカード条件一覧から編集モードにします。
+            // 検索条件一覧から編集モードにします。
             ModifyCriteriaCommand = new RelayCommand(
                 () => SelectedItems[0].IsEditMode = true,
                 () => SelectedItems.Count == 1
             );
 
-            // ワイルドカード条件一覧削除します。
+            // 検索条件一覧削除します。
             RemoveCriteriaCommand = new RelayCommand(
                 () => RemoveCriteria(),
                 () => SelectedItems.Count > 0
@@ -139,98 +141,35 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             // リストボックスアイテムの編集状態から抜けた時の処理をします。
             WeakReferenceMessenger.Default.Register<IsEditModeChanged>(this, (_, _) =>
                 OnPropertyChanged(nameof(CiriteriaAddTextBoxBackgroudColor)));
-            // リストボックスの選択状態が変わった時の処理をします。
-            WeakReferenceMessenger.Default.Register<IsSelectedChanged>(this, (_, m) =>
-            {
-                if (m.IsSelected)
-                {
-                    SelectedItems.Add(m.SelectedItem);
-                }
-                else
-                {
-                    SelectedItems.Remove(m.SelectedItem);
-                }
-                ModifyCriteriaCommand.NotifyCanExecuteChanged();
-                RemoveCriteriaCommand.NotifyCanExecuteChanged();
-            });
         }
         #endregion コンストラクタ
 
         /// <summary>
         /// ワイルドカード検索条件を追加します。
         /// </summary>
-        public void AddCriteria()
-        {
-            var newWildcard = new CriteriaItemViewModel(_settingsService)
-            {
-                Criteria = SearchCriteriaText,
-            };
-            CriteriaItems.Add(newWildcard);
-            FileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Wildcard);
-            _pageSelectTargetViewModelMain.SetTargetCountChanged();
-            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
-            SearchCriteriaText = string.Empty;
-        }
+        public abstract void AddCriteria();
 
         /// <summary>
         /// ワイルドカード検索条件を削除します。
         /// </summary>
-        public void RemoveCriteria()
-        {
-            foreach (var item in SelectedItems)
-            {
-                FileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Wildcard);
-                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
-                _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
-                _pageSelectTargetViewModelMain.SetTargetCountChanged();
-                CriteriaItems.Remove(item);
-            }
-            SelectedItems.Clear();
-            ModifyCriteriaCommand.NotifyCanExecuteChanged();
-            LeaveListBoxCriteria();
-            WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
-        }
+        public abstract void RemoveCriteria();
 
         /// <summary>
         /// リストボックスのワイルドカード検索条件から離れます。
         /// </summary>
-        public void LeaveListBoxCriteria()
-        {
-            var listItem = SelectedItems.FirstOrDefault(c => c.IsEditMode);
-            if (listItem != null)
-            {
-                listItem.IsEditMode = false;
-                ModefyCriteria(listItem);
-            }
-            // ワイルドカード検索条件の新規欄を反映する
-            IsCriteriaConditionCorrent(SearchCriteriaText);
-        }
+        public abstract void LeaveListBoxCriteria();
 
         /// <summary>
         /// リストボックスのワイルドカード検索条件から強制的に離れます。
         /// </summary>
-        public void LeaveListBoxCriteriaForce()
-        {
-            var listItem = SelectedItems.FirstOrDefault(c => c.IsEditMode);
-            if (listItem != null)
-            {
-                listItem.IsEditMode = false;
-                listItem.Criteria = listItem.OriginalCriteria;
-                WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
-                IsCriteriaConditionCorrent(SearchCriteriaText);
-            }
-        }
+        public abstract void LeaveListBoxCriteriaForce();
+
         /// <summary>
         /// ワイルドカード検索条件を変更します。
         /// </summary>
         /// <param name="modifiedItem">変更されたワイルドカード検索条件</param>
-        public void ModefyCriteria(CriteriaItemViewModel modifiedItem)
-        {
-            FileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
-            FileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Wildcard);
-            _pageSelectTargetViewModelMain.SetTargetCountChanged();
-            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
-        }
+        public abstract void ModefyCriteria(BaseCriteriaItemViewModel modifiedItem);
+
         /// <summary>
         /// ワイルドカード文字列が正しいかを検査します。
         /// 注：継承して使います。
@@ -238,9 +177,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <param name="pattern">チェックするワイルドカード文字列</param>
         /// <param name="originalPattern">(必要ならば)元のワイルドカード文字列</param>
         /// <returns>ワイルドカード文字列が正当かどうか</returns>
-        public virtual bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "")
-        {
-            return false;
-        }
+        public abstract bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "");
     }
 }

@@ -12,6 +12,7 @@ using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FileHashCraft
@@ -126,7 +127,9 @@ namespace FileHashCraft
             services.AddSingleton<ISelectTargetPageViewModel, SelectTargetPageViewModel>();
             services.AddSingleton<ISetExtentionControlViewModel, SetExtentionControlViewModel>();
             services.AddSingleton<ISetWildcardControlViewModel, SetWildcardControlViewModel>();
-            services.AddSingleton<ISetRegExControlViewModel, SetRegExControlViewModel>();
+            services.AddTransient<IWildcardCriteriaItemViewModel, WildcardCriteriaItemViewModel>();
+            services.AddSingleton<ISetRegexControlViewModel, SetRegexControlViewModel>();
+            services.AddTransient<IRegexCriteriaItemViewModel, RegexCriteriaItemViewModel>();
             services.AddSingleton<ISetExpertControlViewModel, SetExpertControlViewModel>();
 
             // Model

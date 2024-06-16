@@ -1,21 +1,23 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
-using FileHashCraft.ViewModels.SelectTargetPage;
+using FileHashCraft.Services;
 
-namespace FileHashCraft.ViewModels.PageSelectTarget
+namespace FileHashCraft.ViewModels.SelectTargetPage
 {
-    public interface ICriteriaItemViewModel
+    public interface IRegexCriteriaItemViewModel
     {
         /// <summary>
-        /// ワイルドカード検索条件
+        /// 検索条件
         /// </summary>
         string Criteria { get; set; }
     }
-
-    public class CriteriaItemViewModel : BaseCriteriaItemViewModel, ICriteriaItemViewModel
+    public class RegexCriteriaItemViewModel : BaseCriteriaItemViewModel, IRegexCriteriaItemViewModel
     {
         #region バインディング
         /// <summary>
@@ -26,7 +28,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             get => _Criteria;
             set
             {
-                _CriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new SelectedChangedCriteria(value, OriginalCriteria));
+                _CriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new SelectedChangedRegexCriteria(value, OriginalCriteria));
                 SetProperty(ref _Criteria, value);
             }
         }
@@ -45,7 +47,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 {
                     // 表示モードになったら、オリジナルを保存して編集モードに入ります。
                     OriginalCriteria = Criteria;
-                    WeakReferenceMessenger.Default.Send(new ListBoxSeletedWildcardTextBoxFocus());
+                    WeakReferenceMessenger.Default.Send(new ListBoxSeletedRegexTextBoxFocus());
                 }
                 else
                 {
@@ -55,7 +57,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 OnPropertyChanged(nameof(ItemBackgroudColor));
                 OnPropertyChanged(nameof(BorderTickness));
                 WeakReferenceMessenger.Default.Send(new IsEditModeChanged());
-                WeakReferenceMessenger.Default.Send(new SelectedChangedCriteria(Criteria, OriginalCriteria));
+                WeakReferenceMessenger.Default.Send(new SelectedChangedRegexCriteria(Criteria, OriginalCriteria));
             }
         }
 
@@ -72,14 +74,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 {
                     RestoreCriteria();
                 }
-                WeakReferenceMessenger.Default.Send(new IsSelectedChanged(value, this));
+                WeakReferenceMessenger.Default.Send(new IsSelectedRegexChanged(value, this));
             }
         }
 
         /// <summary>
         /// リストボックスアイテムのテキストボックスがクリックされた時の処理です。
         /// </summary>
-        public RelayCommand ListBoxItemTextBoxWildcardCriteriaClicked { get; set; }
+        public RelayCommand ListBoxItemTextBoxRegexCriteriaClicked { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
@@ -87,29 +89,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// コンストラクタ：リストボックスでアイテムがクリックされたかのイベント処理をします。
         /// </summary>
         /// <param name="settingsService"></param>
-        public CriteriaItemViewModel(
+        public RegexCriteriaItemViewModel(
             ISettingsService settingsService
         ) : base(settingsService)
         {
-            ListBoxItemTextBoxWildcardCriteriaClicked = new RelayCommand(() =>
+            ListBoxItemTextBoxRegexCriteriaClicked = new RelayCommand(() =>
             {
                 IsEditMode = true;
                 if (!IsSelected)
                 {
                     // 選択状態が外れたら、新規入力画面にキャレットを当てます。
-                    WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
+                    WeakReferenceMessenger.Default.Send(new NewRegexCriteriaFocus());
                 }
             });
         }
         #endregion コンストラクタ
 
-        protected override void RestoreCriteria()
-        {
-            // 間違っているワイルドカード検索条件は元に戻します。
-            if (!_CriteriaConditionCorrent)
-            {
-                Criteria = OriginalCriteria;
-            }
-        }
     }
 }

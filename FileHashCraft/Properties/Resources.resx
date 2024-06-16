@@ -285,6 +285,134 @@
     <value>Font</value>
     <comment>Label/PageSettings</comment>
   </data>
+  <data name="LabelRegexError_AlternationHasComment" xml:space="preserve">
+    <value>An alternation construct in a regular expression contains a comment.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasMalformedCondition" xml:space="preserve">
+    <value>An alternation in a regular expression has a malformed condition.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasMalformedReference" xml:space="preserve">
+    <value>An alternation construct in a regular expression contains a malformed reference.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasNamedCapture" xml:space="preserve">
+    <value>An alternation construct in a regular expression uses a named capture.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasTooManyConditions" xml:space="preserve">
+    <value>An alternation in a regular expression has too many conditions.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_AlternationHasUndefinedReference" xml:space="preserve">
+    <value>An alternation construct in a regular expression contains an undefined reference.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_CaptureGroupNameInvalid" xml:space="preserve">
+    <value>The group name of a captured group in a regular expression is invalid.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_CaptureGroupOfZero" xml:space="preserve">
+    <value>A regular expression defines a numbered subexpression named zero.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ExclusionGroupNotLast" xml:space="preserve">
+    <value>A character class in a regular expression with an exclusion group is not the last part of the character class.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InsufficientClosingParentheses" xml:space="preserve">
+    <value>A regular expression has a non-escaped left parenthesis, or misses a closing right parenthesis.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InsufficientOpeningParentheses" xml:space="preserve">
+    <value>A regular expression has a non-escaped right parenthesis, or misses an opening left parenthesis.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InsufficientOrInvalidHexDigits" xml:space="preserve">
+    <value>A hexadecimal escape sequence in a regular expression does not have enough digits, or contains invalid digits.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InvalidGroupingConstruct" xml:space="preserve">
+    <value>A grouping construct in a regular expression is invalid or malformed.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_InvalidUnicodePropertyEscape" xml:space="preserve">
+    <value>A Unicode property escape in a regular expression is invalid or unknown.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_MalformedNamedReference" xml:space="preserve">
+    <value>A named reference in a regular expression is malformed.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_MalformedUnicodePropertyEscape" xml:space="preserve">
+    <value>A Unicode property escape is malformed.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_MissingControlCharacter" xml:space="preserve">
+    <value>A control character in a regular expression is missing.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_NestedQuantifiersNotParenthesized" xml:space="preserve">
+    <value>Repeated quantifiers on another quantifier inside a regular expression are not grouped in parentheses.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_QuantifierAfterNothing" xml:space="preserve">
+    <value>A quantifier in a regular expression is in a position where it cannot quantify anything, like at the beginning of a regular expression or in a group.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_QuantifierOrCaptureGroupOutOfRange" xml:space="preserve">
+    <value>A captured group or a quantifier in a regular expression is not within range, that is, it is larger than Int32.MaxValue.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ReversedCharacterRange" xml:space="preserve">
+    <value>A character class in a regular expression contains an inverse character range, like z-a instead of a-z.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ReversedQuantifierRange" xml:space="preserve">
+    <value>A quantifier range in a regular expression is inverse, like {10,1} instead of {1,10}.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_ShorthandClassInCharacterRange" xml:space="preserve">
+    <value>A character-class in a regular expression contains a short-hand class that is not allowed inside a character class.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UndefinedNamedReference" xml:space="preserve">
+    <value>A used named reference in a regular expression is not defined.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UndefinedNumberedReference" xml:space="preserve">
+    <value>A used numbered reference in a regular expression is not defined.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnescapedEndingBackslash" xml:space="preserve">
+    <value>A regular expression ends with a non-escaped ending backslash.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_Unknown" xml:space="preserve">
+    <value>An unknown regular expression parse error.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnrecognizedControlCharacter" xml:space="preserve">
+    <value>A control character in a regular expression is not recognized.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnrecognizedEscape" xml:space="preserve">
+    <value>An escape character or sequence in a regular expression is invalid.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnrecognizedUnicodeProperty" xml:space="preserve">
+    <value>A unicode property in a regular expression is not recognized, or invalid.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnterminatedBracket" xml:space="preserve">
+    <value>A regular expression has a non-escaped left square bracket, or misses a closing right square bracket.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
+  <data name="LabelRegexError_UnterminatedComment" xml:space="preserve">
+    <value>A comment in a regular expression is not terminated.</value>
+    <comment>Label/SetRegexUserControl</comment>
+  </data>
   <data name="LabelRegex_Criteria" xml:space="preserve">
     <value>Regular Expression Search Criteria</value>
     <comment>Label/PageSelectTarget</comment>

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
 using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.Services.Messages
 {
@@ -53,12 +54,14 @@ namespace FileHashCraft.Services.Messages
     }
     #endregion 拡張子チェックボックスメッセージ
 
-    #region ワイルドカードメッセージ
+    #region ワイルドカード/正規表現共通メッセージ
     /// <summary>
     /// 編集モード/閲覧モードの変更を通知するメッセージ
     /// </summary>
     public class IsEditModeChanged;
+    #endregion ワイルドカード/正規表現共通メッセージ
 
+    #region ワイルドカードメッセージ
     /// <summary>
     /// ワイルドカード一覧のテキストボックスにフォーカスを移すメッセージ
     /// </summary>
@@ -70,14 +73,14 @@ namespace FileHashCraft.Services.Messages
     public class NewWildcardCriteriaFocus;
 
     /// <summary>
-    /// 選択されたアイテムの状態が変わったことを知らせるメッセージ
+    /// 選択されたワイルドカードアイテムの状態が変わったことを知らせるメッセージ
     /// </summary>
-    public class IsSelectedChanged
+    public class IsSelectedWildcardChanged
     {
         public bool IsSelected { get; set; }
-        public CriteriaItemViewModel SelectedItem { get; set; }
-        public IsSelectedChanged() { throw new NotSupportedException(); }
-        public IsSelectedChanged(bool isSelected, CriteriaItemViewModel selectedItem)
+        public WildcardCriteriaItemViewModel SelectedItem { get; set; }
+        public IsSelectedWildcardChanged() { throw new NotSupportedException(); }
+        public IsSelectedWildcardChanged(bool isSelected, WildcardCriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
             SelectedItem = selectedItem;
@@ -87,20 +90,66 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// リストボックスのワイルドカード検索条件編集の内容通知メッセージ
     /// </summary>
-    public class SelectedChangedCriteria : RequestMessage<bool>
+    public class SelectedChangedWildcardCriteria : RequestMessage<bool>
     {
         public string WildcardCriteria { get; set; } = string.Empty;
         public string OriginalWildcardCriteria { get; set; } = string.Empty;
-        public SelectedChangedCriteria() { throw new NotImplementedException(); }
-        public SelectedChangedCriteria(string wildcardCriteria)
+        public SelectedChangedWildcardCriteria() { throw new NotImplementedException(); }
+        public SelectedChangedWildcardCriteria(string wildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
         }
-        public SelectedChangedCriteria(string wildcardCriteria, string oldWildcardCriteria)
+        public SelectedChangedWildcardCriteria(string wildcardCriteria, string oldWildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
             OriginalWildcardCriteria = oldWildcardCriteria;
         }
     }
     #endregion ワイルドカードメッセージ
+
+    #region 正規表現メッセージ
+    /// <summary>
+    /// ワイルドカード一覧のテキストボックスにフォーカスを移すメッセージ
+    /// </summary>
+    public class ListBoxSeletedRegexTextBoxFocus;
+
+    /// <summary>
+    /// ワイルドカード検索条件入力テキストボックスにフォーカスを戻すメッセージ
+    /// </summary>
+    public class NewRegexCriteriaFocus;
+
+    /// <summary>
+    /// 選択された正規表現アイテムの状態が変わったことを知らせるメッセージ
+    /// </summary>
+    public class IsSelectedRegexChanged
+    {
+        public bool IsSelected { get; set; }
+        public RegexCriteriaItemViewModel SelectedItem { get; set; }
+        public IsSelectedRegexChanged() { throw new NotSupportedException(); }
+        public IsSelectedRegexChanged(bool isSelected, RegexCriteriaItemViewModel selectedItem)
+        {
+            IsSelected = isSelected;
+            SelectedItem = selectedItem;
+        }
+    }
+
+    /// <summary>
+    /// リストボックスの正規表現検索条件編集の内容通知メッセージ
+    /// </summary>
+    public class SelectedChangedRegexCriteria : RequestMessage<bool>
+    {
+        public string RegexCriteria { get; set; } = string.Empty;
+        public string OriginalRegexCriteria { get; set; } = string.Empty;
+        public SelectedChangedRegexCriteria() { throw new NotImplementedException(); }
+        public SelectedChangedRegexCriteria(string wildcardCriteria)
+        {
+            RegexCriteria = wildcardCriteria;
+        }
+        public SelectedChangedRegexCriteria(string regexCriteria, string oldRegexCriteria)
+        {
+            RegexCriteria = regexCriteria;
+            OriginalRegexCriteria = oldRegexCriteria;
+        }
+    }
+    #endregion 正規表現メッセージ
 }

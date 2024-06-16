@@ -169,6 +169,12 @@ namespace FileHashCraft.Models.FileScan
                         files.UnionWith(wildcardFiles);
                         break;
                     case FileSearchOption.Regex:
+                        var regex = new Regex(criteria.SearchPattern);
+                        var regexFiles = AllFiles.Where(f =>
+                            regex.IsMatch(f.FileFullPath)
+                        && MatchFileAttributesCriteria(f, includeHidden, includeReadOnly))
+                        .Select(f => f);
+                        files.UnionWith(regexFiles);
                         break;
                     default:
                         throw new NotFiniteNumberException("GetAllCriteriaFilesCount");
@@ -196,9 +202,7 @@ namespace FileHashCraft.Models.FileScan
                             Path.GetExtension(fileFullPath),
                             StringComparison.OrdinalIgnoreCase)
                          && MatchFileAttributesCriteria(file, includeHidden, includeReadOnly))
-                        {
-                            return true;
-                        }
+                        { return true; }
                         break;
                     case FileSearchOption.Wildcard:
                         var wildcardRegex = WildcardToRegexPattern(criteria.SearchPattern);
@@ -206,6 +210,9 @@ namespace FileHashCraft.Models.FileScan
                         { return true; }
                         break;
                     case FileSearchOption.Regex:
+                        var regex = new Regex(criteria.SearchPattern);
+                        if (regex.IsMatch(file.FileFullPath) && MatchFileAttributesCriteria(file, includeHidden, includeReadOnly))
+                        { return true; }
                         break;
                     default:
                         throw new NotFiniteNumberException("IsCriteriaFile");
