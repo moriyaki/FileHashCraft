@@ -46,23 +46,23 @@
 
         <!-- Search Criteria ListBox -->
         <ListBox x:Name="WildcardSearchListBox"
-                             ItemsSource="{Binding WildcardItems}"
+                             ItemsSource="{Binding CriteriaItems}"
                              SelectionMode="Extended"
-                             KeyDown="ListBoxItemCriteria_KeyDown"
-                             MouseDown="ListBoxCriteria_MouseDown"
+                             KeyDown="ListBoxItemWildcardCriteria_KeyDown"
+                             MouseDown="ListBoxWildcardCriteria_MouseDown"
                              Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Margin="3">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <TextBox x:Name="ListBoxCriterias"
                                              VerticalAlignment="Center" Padding="0"
-                                             LostFocus="ListBoxCriterias_LostFocus"
+                                             LostFocus="ListBoxWildcardCriterias_LostFocus"
                                              FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                              Focusable="{Binding IsEditMode}"
                                              Background="{Binding ItemBackgroudColor}"
                                              BorderThickness="{Binding BorderTickness}"
                                              Text="{Binding Criteria,UpdateSourceTrigger=PropertyChanged}"
-                                             KeyDown="ListBoxCriterias_KeyDown"
+                                             KeyDown="ListBoxWildcardCriterias_KeyDown"
                                              >
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseDown">
@@ -83,8 +83,8 @@
         <!-- Criteria Input -->
         <Label Grid.Row="3" Grid.Column="0" x:Name="LabeldSearch"
                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelWildcard_Criteria, Mode=OneWay}"/>
-        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="NewCriteria"
-                             KeyDown="NewCriteria_KeyDown"
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="3" x:Name="NewWildcardCriteria"
+                             KeyDown="NewWildcardCriteria_KeyDown"
                              Background="{Binding CiriteriaAddTextBoxBackgroudColor}"
                              Text="{Binding SearchCriteriaText,UpdateSourceTrigger=PropertyChanged}"/>
 

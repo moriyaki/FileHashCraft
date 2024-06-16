@@ -232,10 +232,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelMain.LanguageChangedMeasures();
 
             // 言語が変わった場合に備えて、拡張子グループを再設定
-            App.Current?.Dispatcher?.InvokeAsync(() => {
-                ViewModelExtention.ExtentionsGroupCollection.Clear();
-                ViewModelExtention.AddFileTypes();
-            });
+            ViewModelExtention.RefreshExtentionLanguage();
 
             // 設定画面から戻ってきた場合、処理を終了する
             if (IsExecuting)

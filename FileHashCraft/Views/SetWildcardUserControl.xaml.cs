@@ -20,7 +20,7 @@ namespace FileHashCraft.Views
             DataContext = Ioc.Default.GetService<ISetWildcardControlViewModel>();
 
            // ワイルドカード検索条件一覧のテキストボックスにフォーカスを当てる
-            WeakReferenceMessenger.Default.Register<ListBoxSeletedTextBoxFocus>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ListBoxSeletedWildcardTextBoxFocus>(this, (_, _) =>
             {
                 if (WildcardSearchListBox.SelectedIndex == -1) { return; }
                 if (WildcardSearchListBox.ItemContainerGenerator.ContainerFromIndex(
@@ -31,8 +31,8 @@ namespace FileHashCraft.Views
                 }
             });
 
-            WeakReferenceMessenger.Default.Register<NewCriteriaFocus>(this, (_, _) =>
-                NewCriteria.Focus());
+            WeakReferenceMessenger.Default.Register<NewWildcardCriteriaFocus>(this, (_, _) =>
+                NewWildcardCriteria.Focus());
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace FileHashCraft.Views
         /// </summary>
         /// <param name="sender">object</param>
         /// <param name="e">System.Windows.Input.KeyEventArgs</param>
-        private void NewCriteria_KeyDown(object sender, KeyEventArgs e)
+        private void NewWildcardCriteria_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -91,14 +91,14 @@ namespace FileHashCraft.Views
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <exception cref="NullReferenceException"></exception>
-        private void ListBoxCriteria_MouseDown(object sender, MouseButtonEventArgs e)
+        private void ListBoxWildcardCriteria_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is ListBox wildcardSearchListBox && e.OriginalSource is ScrollViewer)
             {
                 var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<ISetWildcardControlViewModel>() ?? throw new NullReferenceException(nameof(ISetWildcardControlViewModel));
                 if (_PageSelectTargetViewModelWildcard.SelectedItems.Count > 0)
                 {
-                    foreach (var item in _PageSelectTargetViewModelWildcard.WildcardItems)
+                    foreach (var item in _PageSelectTargetViewModelWildcard.CriteriaItems)
                     {
                         item.IsEditMode = false;
                         item.IsSelected = false;
@@ -112,7 +112,7 @@ namespace FileHashCraft.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ListBoxItemCriteria_KeyDown(object sender, KeyEventArgs e)
+        private void ListBoxItemWildcardCriteria_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F2)
             {
@@ -129,12 +129,17 @@ namespace FileHashCraft.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ListBoxCriterias_KeyDown(object sender, KeyEventArgs e)
+        private void ListBoxWildcardCriterias_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<ISetWildcardControlViewModel>() ?? throw new NullReferenceException(nameof(ISetWildcardControlViewModel));
                 _PageSelectTargetViewModelWildcard.LeaveListBoxCriteria();
+            }
+            if (e.Key == Key.Escape)
+            {
+                var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<ISetWildcardControlViewModel>() ?? throw new NullReferenceException(nameof(ISetWildcardControlViewModel));
+                _PageSelectTargetViewModelWildcard.LeaveListBoxCriteriaForce();
             }
         }
 
@@ -144,7 +149,7 @@ namespace FileHashCraft.Views
         /// <param name="sender">object</param>
         /// <param name="e">System.Windows.RoutedEventArgs</param>
         /// <exception cref="NullReferenceException"></exception>
-        private void ListBoxCriterias_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+        private void ListBoxWildcardCriterias_LostFocus(object sender, System.Windows.RoutedEventArgs e)
         {
             var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<ISetWildcardControlViewModel>() ?? throw new NullReferenceException(nameof(ISetWildcardControlViewModel));
             if (_PageSelectTargetViewModelWildcard.SelectedItems.Count > 0)
@@ -153,9 +158,9 @@ namespace FileHashCraft.Views
             }
         }
 
-        private void ListBoxCriterias_LostFocus(object sender, MouseButtonEventArgs e)
+        private void ListBoxWildcardCriterias_LostFocus(object sender, MouseButtonEventArgs e)
         {
-            NewCriteria.Focus();
+            NewWildcardCriteria.Focus();
         }
     }
 }

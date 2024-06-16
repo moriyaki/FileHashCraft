@@ -62,12 +62,12 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// ワイルドカード一覧のテキストボックスにフォーカスを移すメッセージ
     /// </summary>
-    public class ListBoxSeletedTextBoxFocus;
+    public class ListBoxSeletedWildcardTextBoxFocus;
 
     /// <summary>
     /// ワイルドカード検索条件入力テキストボックスにフォーカスを戻すメッセージ
     /// </summary>
-    public class NewCriteriaFocus;
+    public class NewWildcardCriteriaFocus;
 
     /// <summary>
     /// 選択されたアイテムの状態が変わったことを知らせるメッセージ
@@ -75,9 +75,9 @@ namespace FileHashCraft.Services.Messages
     public class IsSelectedChanged
     {
         public bool IsSelected { get; set; }
-        public WildcardItemViewModel SelectedItem { get; set; }
+        public CriteriaItemViewModel SelectedItem { get; set; }
         public IsSelectedChanged() { throw new NotSupportedException(); }
-        public IsSelectedChanged(bool isSelected, WildcardItemViewModel selectedItem)
+        public IsSelectedChanged(bool isSelected, CriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
             SelectedItem = selectedItem;

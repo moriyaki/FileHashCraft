@@ -43,6 +43,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         void AddFileToAllFiles(string fileFullPath);
         /// <summary>
+        /// 言語が変わった場合に備えて、拡張子グループを再設定します。
+        /// </summary>
+        public void RefreshExtentionLanguage();
+        /// <summary>
         /// 拡張子チェックボックスにチェックされた時に拡張子グループに反映します。
         /// </summary>
         void CheckExtentionReflectToGroup(string extention);
@@ -240,6 +244,17 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _scannedFilesManager.AddFile(fileFullPath);
             // 拡張子ヘルパーに拡張子を登録する(カウントもする)
             _extentionManager.AddFile(fileFullPath);
+        }
+
+        /// <summary>
+        /// 言語が変わった場合に備えて、拡張子グループを再設定します。
+        /// </summary>
+        public void RefreshExtentionLanguage()
+        {
+            App.Current?.Dispatcher?.InvokeAsync(() => {
+                ExtentionsGroupCollection.Clear();
+                AddFileTypes();
+            });
         }
         #endregion 拡張子絞り込みの処理
 
