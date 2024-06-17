@@ -9,9 +9,9 @@ namespace FileHashCraft.Views
     /// <summary>
     /// PageSettings.xaml の相互作用ロジック
     /// </summary>
-    public partial class PageSettings : Page
+    public partial class SettingsPage : Page
     {
-        public PageSettings()
+        public SettingsPage()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<ISettingsPageViewModel>();

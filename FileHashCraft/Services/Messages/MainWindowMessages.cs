@@ -169,16 +169,20 @@ namespace FileHashCraft.Services.Messages
     /// ハッシュ計算画面ページに移動するメッセージ
     /// </summary>
     public class ToHashCalcingPage;
+    /// <summary>
+    /// 同一ファイル選択ページに移動するメッセージ
+    /// </summary>
+    public class ToSameFileSelectPage;
 
     /// <summary>
     /// どこに戻るかの列挙子
     /// </summary>
     public enum ReturnPageEnum
     {
-        PageExplorer,
-        PageSettings,
-        PageTargetSelect,
-        PageHashCalcing,
+        ExplorerPage,
+        SettingsPage,
+        SelecTargettPage,
+        HashCalcingPage,
     }
 
     /// <summary>

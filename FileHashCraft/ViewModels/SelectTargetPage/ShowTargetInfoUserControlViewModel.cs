@@ -67,7 +67,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュ計算画面に移動します。
         /// </summary>
-        RelayCommand ToPageHashCalcing { get; set; }
+        RelayCommand ToHashCalcingPage { get; set; }
         /// <summary>
         /// 検索ステータスを変更します。
         /// </summary>
@@ -233,7 +233,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             set
             {
                 SetProperty(ref _CountFilteredGetHash, value);
-                ToPageHashCalcing.NotifyCanExecuteChanged();
+                ToHashCalcingPage.NotifyCanExecuteChanged();
             }
         }
 
@@ -245,12 +245,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュ計算画面に移動します。
         /// </summary>
-        public RelayCommand ToPageHashCalcing { get; set; }
+        public RelayCommand ToHashCalcingPage { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly IFileSystemServices _fileSystemService;
+        private readonly IFileSystemServices _fileSystemServices;
         public ShowTargetInfoUserControlViewModel(
             ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
@@ -258,12 +258,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         ) : base(settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
-            _fileSystemService = fileSystemServices;
+            _fileSystemServices = fileSystemServices;
             _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
 
             // ハッシュ計算画面に移動するコマンド
-            ToPageHashCalcing = new RelayCommand(
-                () => _fileSystemService.SendToHashCalcingPage(),
+            ToHashCalcingPage = new RelayCommand(
+                () => _fileSystemServices.SendToHashCalcingPage(),
                 () => CountFilteredGetHash > 0
             );
 

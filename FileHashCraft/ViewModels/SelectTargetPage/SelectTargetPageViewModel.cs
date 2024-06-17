@@ -3,12 +3,9 @@
     ハッシュを取得する検索条件ウィンドウの ViewModel を提供します。
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models.Helpers;
-using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
@@ -140,11 +137,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// エクスプローラー画面に戻ります。
         /// </summary>
-        public RelayCommand ToPageExplorer { get; set; }
+        public RelayCommand ToExplorerPage { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IFileSystemServices _fileSystemService;
+        private readonly IFileSystemServices _fileSystemServices;
         private readonly ITreeManager _directoryTreeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
@@ -168,7 +165,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelWildcard = pageSelectTargetViewModelWildcard;
             ViewModelRegEx = pageSelectTargetViewModelRegEx;
             ViewModelExpert = pageSelectTargetViewModelExpert;
-            _fileSystemService = fileSystemServices;
+            _fileSystemServices = fileSystemServices;
             _directoryTreeManager = directoryTreeManager;
             _helpWindowViewModel = helpWindowViewModel;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
@@ -180,7 +177,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             SettingsOpen = new RelayCommand(() =>
             {
                 IsExecuting = true;
-                _fileSystemService.SendToSettingsPage(ReturnPageEnum.PageTargetSelect);
+                _fileSystemServices.SendToSettingsPage(ReturnPageEnum.SelecTargettPage);
             });
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -196,10 +193,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 _helpWindowViewModel.Initialize(HelpPage.Index);
             });
             // エクスプローラー風画面に移動するコマンド
-            ToPageExplorer = new RelayCommand(() =>
+            ToExplorerPage = new RelayCommand(() =>
             {
                 CTS?.Cancel();
-                _fileSystemService.SendToExplorerPage();
+                _fileSystemServices.SendToExplorerPage();
             });
 
             // ツリービュー幅変更メッセージ受信
@@ -343,7 +340,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // 移動ボタンの利用状況を設定
             ViewModelMain.Status = FileScanStatus.None;
-            ViewModelMain.ToPageHashCalcing.NotifyCanExecuteChanged();
+            ViewModelMain.ToHashCalcingPage.NotifyCanExecuteChanged();
 
             // スキャンするディレクトリの追加
             scanHashFilesClass.ScanFiles(cancellationToken);

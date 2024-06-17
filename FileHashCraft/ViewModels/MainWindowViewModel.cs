@@ -33,7 +33,7 @@ namespace FileHashCraft.ViewModels
         }
         #endregion 初期設定
 
-        #region データバインディング
+        #region バインディング
         /// <summary>
         /// ウィンドウの開始上位置
         /// </summary>
@@ -90,6 +90,6 @@ namespace FileHashCraft.ViewModels
                 _settingsService.SendWindowHeight(value);
             }
         }
-        #endregion データバインディング
+        #endregion バインディング
     }
 }

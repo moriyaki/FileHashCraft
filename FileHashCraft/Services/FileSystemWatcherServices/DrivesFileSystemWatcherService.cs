@@ -44,7 +44,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
             throw new NotImplementedException(nameof(DrivesFileSystemWatcherService));
         }
 
-        private readonly IFileSystemServices _fileSystemService;
+        private readonly IFileSystemServices _fileSystemServices;
         private readonly ITreeManager _directoryTreeManager;
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
             ITreeManager directoryTreeManager
         )
         {
-            _fileSystemService = fileSystemServices;
+            _fileSystemServices = fileSystemServices;
             _directoryTreeManager = directoryTreeManager;
         }
         #endregion コンストラクタ
@@ -151,7 +151,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryChanged(object? sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemService.SendDirectoryItemDeleted(e.FullPath);
+            _fileSystemServices.SendDirectoryItemDeleted(e.FullPath);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryCreated(object sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemService.SendDirectoryItemCreated(e.FullPath);
+            _fileSystemServices.SendDirectoryItemCreated(e.FullPath);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryRenamed(object sender, RenamedEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemService.SendDirectoryItemRenamed(e.OldFullPath, e.FullPath);
+            _fileSystemServices.SendDirectoryItemRenamed(e.OldFullPath, e.FullPath);
         }
         #endregion ディレクトリ変更通知処理
 
@@ -185,7 +185,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void InsertOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            _fileSystemService.SendInsertOpticalMedia(path);
+            _fileSystemServices.SendInsertOpticalMedia(path);
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void EjectOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            _fileSystemService.SendEjectOpticalMedia(path);
+            _fileSystemServices.SendEjectOpticalMedia(path);
         }
         #endregion リムーバブルディスクの着脱処理
     }

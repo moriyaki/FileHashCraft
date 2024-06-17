@@ -153,9 +153,7 @@ namespace FileHashCraft.ViewModels
         /// エクスプローラー風画面にページに移動
         /// </summary>
         public RelayCommand ReturnPage { get; set; }
-        #endregion バインディング
 
-        #region コマンド
         /// <summary>
         /// 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
@@ -172,17 +170,17 @@ namespace FileHashCraft.ViewModels
         /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
         public RelayCommand IsEmptyDirectoryDeleteClicked { get; set; }
-        #endregion コマンド
+        #endregion バインディング
 
         #region コンストラクタと初期化
-        private readonly IFileSystemServices _fileSystemService;
+        private readonly IFileSystemServices _fileSystemServices;
 
         public SettingsPageViewModel(
             ISettingsService settingsService,
             IFileSystemServices fileSystemServices
         ) : base(settingsService)
         {
-            _fileSystemService = fileSystemServices;
+            _fileSystemServices = fileSystemServices;
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
@@ -210,7 +208,7 @@ namespace FileHashCraft.ViewModels
 
             // 「終了」で戻るページへのメッセージを送るコマンド
             ReturnPage = new RelayCommand(
-                () => _fileSystemService.SendReturnPageFromSettings());
+                () => _fileSystemServices.SendReturnPageFromSettings());
 
             // 読み取り専用ファイルを利用するかどうかが変更されたメッセージ受信
             WeakReferenceMessenger.Default.Register<ReadOnlyFileIncludeChanged>(this, (_, m)

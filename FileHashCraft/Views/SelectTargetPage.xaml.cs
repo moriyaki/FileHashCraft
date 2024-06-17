@@ -10,9 +10,9 @@ namespace FileHashCraft.Views
     /// <summary>
     /// PageTargetFileSetting.xaml の相互作用ロジック
     /// </summary>
-    public partial class PageSelectTarget : Page
+    public partial class SelectTargetPage : Page
     {
-        public PageSelectTarget()
+        public SelectTargetPage()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<ISelectTargetPageViewModel>();

@@ -42,6 +42,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 検索条件が正しいかを検査します。
         /// </summary>
         bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "");
+
+        // 開発用
+        string SearchCriteriaText { get; set; }
     }
     #endregion インターフェース
 

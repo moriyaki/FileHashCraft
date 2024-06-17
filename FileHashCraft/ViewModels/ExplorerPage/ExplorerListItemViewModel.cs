@@ -78,7 +78,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         }
         #endregion メソッド
 
-        #region データバインディング
+        #region バインディング
         /// <summary>
         /// ファイルの表示名
         /// </summary>
@@ -260,6 +260,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 _settingsService.SendFontSize(value);
             }
         }
-        #endregion データバインディング
+        #endregion バインディング
     }
 }

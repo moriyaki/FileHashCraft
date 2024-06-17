@@ -25,11 +25,11 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         public CurrentDirectoryFIleSystemWatcherService() { throw new NotImplementedException(nameof(CurrentDirectoryFIleSystemWatcherService)); }
 
-        private readonly IFileSystemServices _fileSystemService;
+        private readonly IFileSystemServices _fileSystemServices;
         public CurrentDirectoryFIleSystemWatcherService(
             IFileSystemServices fileSystemServices)
         {
-            _fileSystemService = fileSystemServices;
+            _fileSystemServices = fileSystemServices;
         }
 
         #region FileSystemWatcherの宣言
@@ -86,7 +86,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentCreated(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Created) return;
-            _fileSystemService.SendCurrentItemCreated(e.FullPath);
+            _fileSystemServices.SendCurrentItemCreated(e.FullPath);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentDeleted(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
-            _fileSystemService.SendCurrentItemDeleted(e.FullPath);
+            _fileSystemServices.SendCurrentItemDeleted(e.FullPath);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentRenamed(object sender, RenamedEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;
-            _fileSystemService.SendCurrentItemRenamed(e.OldFullPath, e.FullPath);
+            _fileSystemServices.SendCurrentItemRenamed(e.OldFullPath, e.FullPath);
         }
         #endregion ファイル変更通知
     }

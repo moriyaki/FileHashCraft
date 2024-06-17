@@ -16,7 +16,7 @@ namespace FileHashCraft
     ///
     public partial class MainWindow : Window
     {
-        private ReturnPageEnum FromPage { get; set; } = ReturnPageEnum.PageExplorer;
+        private ReturnPageEnum FromPage { get; set; } = ReturnPageEnum.ExplorerPage;
 
         public MainWindow()
         {
@@ -24,34 +24,37 @@ namespace FileHashCraft
             DataContext = Ioc.Default.GetService<IMainWindowViewModel>();
 
             MainFrame.Navigated += MainFrame_Navigated;
-            MainFrame.Navigate(new PageExplorer());
+            MainFrame.Navigate(new ExplorerPage());
 
             // PageExplorer へ移動のメッセージ受信したので移動
             WeakReferenceMessenger.Default.Register<ToExplorerPage>(this, (_, _) =>
-                MainFrame.Navigate(new PageExplorer()));
+                MainFrame.Navigate(new ExplorerPage()));
             // PageSelectTarget へ移動のメッセージ受信したので移動
             WeakReferenceMessenger.Default.Register<ToPageSelectTarget>(this, (_, _) =>
-                MainFrame.Navigate(new PageSelectTarget()));
+                MainFrame.Navigate(new SelectTargetPage()));
             // PageHashCalcing へ移動のメッセージ受信したので移動
             WeakReferenceMessenger.Default.Register<ToHashCalcingPage>(this, (_, _) =>
-                MainFrame.Navigate(new PageHashCalcing()));
+                MainFrame.Navigate(new HashCalcingPage()));
             // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
             WeakReferenceMessenger.Default.Register<ToSettingPage>(this, (_, m) =>
             {
                 FromPage = m.ReturnPage;
-                MainFrame.Navigate(new PageSettings());
+                MainFrame.Navigate(new SettingsPage());
             });
             // PageSetting の終了メッセージを受信したので、元のページへ移動
             WeakReferenceMessenger.Default.Register<ReturnPageFromSettings>(this, (_, _) =>
             {
                 switch (FromPage)
                 {
-                    case ReturnPageEnum.PageExplorer:
-                        MainFrame.Navigate(new PageExplorer());
+                    case ReturnPageEnum.ExplorerPage:
+                        MainFrame.Navigate(new ExplorerPage());
 
                         break;
-                    case ReturnPageEnum.PageTargetSelect:
-                        MainFrame.Navigate(new PageSelectTarget());
+                    case ReturnPageEnum.SelecTargettPage:
+                        MainFrame.Navigate(new SelectTargetPage());
+                        break;
+                    case ReturnPageEnum.HashCalcingPage:
+                        MainFrame.Navigate(new HashCalcingPage());
                         break;
                     default:
                         break;
@@ -66,12 +69,12 @@ namespace FileHashCraft
         /// <param name="e">NavigationEventArgs</param>
         private void MainFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if (e.Content is PageExplorer)
+            if (e.Content is ExplorerPage)
             {
                 var pageExplorer = Ioc.Default.GetService<IExplorerPageViewModel>();
                 pageExplorer?.Initialize();
             }
-            if (e.Content is PageSelectTarget)
+            if (e.Content is SelectTargetPage)
             {
                 var targetFileSetting = Ioc.Default.GetService<ISelectTargetPageViewModel>();
                 targetFileSetting?.Initialize();

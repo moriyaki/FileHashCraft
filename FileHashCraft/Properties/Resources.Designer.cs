@@ -106,6 +106,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Same File Result に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonHashResult {
+            get {
+                return ResourceManager.GetString("ButtonHashResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Modify に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ButtonModify {
@@ -183,42 +192,6 @@ namespace FileHashCraft.Properties {
         public static string LabelCommand {
             get {
                 return ResourceManager.GetString("LabelCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Number of all files to get hash : に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelCountAllFilesGetHash {
-            get {
-                return ResourceManager.GetString("LabelCountAllFilesGetHash", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Number of files for which a hash has already been obtained に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelCountAlreadyGetHash {
-            get {
-                return ResourceManager.GetString("LabelCountAlreadyGetHash", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Number of files to get hashes from filtered files に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelCountFilteredGetHash {
-            get {
-                return ResourceManager.GetString("LabelCountFilteredGetHash", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Number of files requiring hash acquisition : に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelCountRequireGetHash {
-            get {
-                return ResourceManager.GetString("LabelCountRequireGetHash", resourceCulture);
             }
         }
         
@@ -403,11 +376,20 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Algorithm for file hash calculation に類似しているローカライズされた文字列を検索します。
+        ///   Computing file hash. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelFileHashAlgorithmString {
+        public static string LabelFileCalcing {
             get {
-                return ResourceManager.GetString("LabelFileHashAlgorithmString", resourceCulture);
+                return ResourceManager.GetString("LabelFileCalcing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Searching for the same file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelFileMatching {
+            get {
+                return ResourceManager.GetString("LabelFileMatching", resourceCulture);
             }
         }
         
@@ -435,6 +417,60 @@ namespace FileHashCraft.Properties {
         public static string LabelFontString {
             get {
                 return ResourceManager.GetString("LabelFontString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of files to hash :. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelHashCalcing_AllHashGetFilesCount {
+            get {
+                return ResourceManager.GetString("LabelHashCalcing_AllHashGetFilesCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of files whose hashes have been retrieved :. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelHashCalcing_HashGotFileCount {
+            get {
+                return ResourceManager.GetString("LabelHashCalcing_HashGotFileCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Hash acquisition status :. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelHashCalcing_HashGotPercent {
+            get {
+                return ResourceManager.GetString("LabelHashCalcing_HashGotPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of identical files found : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelHashCalcing_MatchHashCount {
+            get {
+                return ResourceManager.GetString("LabelHashCalcing_MatchHashCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Identical file discovery status : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelHashCalcing_MatchHashPercent {
+            get {
+                return ResourceManager.GetString("LabelHashCalcing_MatchHashPercent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Name of the file being processed: に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelHashCalcing_ProcessingFileName {
+            get {
+                return ResourceManager.GetString("LabelHashCalcing_ProcessingFileName", resourceCulture);
             }
         }
         
@@ -750,6 +786,42 @@ namespace FileHashCraft.Properties {
         public static string LabelSettings {
             get {
                 return ResourceManager.GetString("LabelSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of all files to get hash : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelShowTargetInfo_CountAllFilesGetHash {
+            get {
+                return ResourceManager.GetString("LabelShowTargetInfo_CountAllFilesGetHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of files for which a hash has already been obtained : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelShowTargetInfo_CountAlreadyGetHash {
+            get {
+                return ResourceManager.GetString("LabelShowTargetInfo_CountAlreadyGetHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of files to get hashes from filtered files : に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelShowTargetInfo_CountFilteredGetHash {
+            get {
+                return ResourceManager.GetString("LabelShowTargetInfo_CountFilteredGetHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Algorithm for file hash calculation に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelShowTargetInfo_HashAlgorithm {
+            get {
+                return ResourceManager.GetString("LabelShowTargetInfo_HashAlgorithm", resourceCulture);
             }
         }
         

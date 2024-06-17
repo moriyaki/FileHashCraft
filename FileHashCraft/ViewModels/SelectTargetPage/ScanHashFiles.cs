@@ -70,6 +70,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // スキャン終了の表示に切り替える
             _pageSelectTargetViewModel.ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
+
+            //--------------------- 開発用自動化処理
+            App.Current?.Dispatcher.InvokeAsync(() =>
+            {
+                _pageSelectTargetViewModel.ViewModelWildcard.SearchCriteriaText = "*";
+                _pageSelectTargetViewModel.ViewModelWildcard.AddCriteria();
+                _pageSelectTargetViewModel.ViewModelMain.ToHashCalcingPage.Execute(this);
+            });
         }
         #endregion メイン処理
 

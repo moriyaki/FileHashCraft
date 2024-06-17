@@ -13,6 +13,7 @@ using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.ViewModels.PageSelectTarget;
 using FileHashCraft.ViewModels.SelectTargetPage;
+using FileHashCraft.ViewModels.HashCalcingPage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FileHashCraft
@@ -131,6 +132,8 @@ namespace FileHashCraft
             services.AddSingleton<ISetRegexControlViewModel, SetRegexControlViewModel>();
             services.AddTransient<IRegexCriteriaItemViewModel, RegexCriteriaItemViewModel>();
             services.AddSingleton<ISetExpertControlViewModel, SetExpertControlViewModel>();
+
+            services.AddSingleton<IHashCalcingPageViewModel, HashCalcingPageViewModel>();
 
             // Model
             services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();

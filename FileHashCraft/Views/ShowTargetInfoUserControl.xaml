@@ -20,7 +20,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!-- ハッシュ取得中かのメッセージ -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="3,3,3,3" Background="{Binding StatusColor}">
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="3" Background="{Binding StatusColor}">
             <TextBlock 
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -30,7 +30,7 @@
         <!-- Hash Algorithm Select -->
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
                     FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFileHashAlgorithmString, Mode=OneWay}"/>
+                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}"/>
 
         <ComboBox x:Name="HashAlgorithmsComboBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -42,7 +42,7 @@
         <!-- 総ファイル数 -->
         <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountAllFilesGetHash, Mode=OneWay}"/>
+                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_CountAllFilesGetHash, Mode=OneWay}"/>
 
         <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -51,7 +51,7 @@
         <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCountFilteredGetHash, Mode=OneWay}"/>
+                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_CountFilteredGetHash, Mode=OneWay}"/>
 
         <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"

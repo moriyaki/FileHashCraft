@@ -117,6 +117,15 @@ namespace FileHashCraft.Services.Messages
             WeakReferenceMessenger.Default.Send(new ToHashCalcingPage());
         }
 
+        /// <summary>
+        /// 同一ファイル選択ページに移動します。
+        /// </summary>
+        /*
+        public void SendToSameFileSelectPage()
+        {
+            WeakReferenceMessenger.Default.Send(new ToSameFileSelectPage());
+        }
+        */
         #endregion 移動処理
 
         #region ファイル監視

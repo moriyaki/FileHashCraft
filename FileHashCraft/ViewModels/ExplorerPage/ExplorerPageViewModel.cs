@@ -51,7 +51,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
     #endregion インターフェース
     public partial class ExplorerPageViewModel : BaseViewModel, IExplorerPageViewModel
     {
-        #region データバインディング
+        #region バインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     ToUpDirectory.NotifyCanExecuteChanged();
                     ListViewUpdater.Execute(null);
                     _fileSystemWatcherService.SetCurrentDirectoryWatcher(changedDirectory);
-                    _fileSystemService.SendCurrentDirectoryChanged(changedDirectory);
+                    _fileSystemServices.SendCurrentDirectoryChanged(changedDirectory);
                 }
             }
         }
@@ -168,12 +168,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public RelayCommand HelpOpen { get; set; }
-        #endregion データバインディング
+        #endregion バインディング
 
         #region コンストラクタと初期処理
         private bool IsExecuting = false;
 
-        private readonly IFileSystemServices _fileSystemService;
+        private readonly IFileSystemServices _fileSystemServices;
         private readonly IFileSystemWatcherService _fileSystemWatcherService;
         private readonly ITreeManager _treeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
@@ -187,7 +187,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
         ) : base(settingsService)
         {
-            _fileSystemService = fileSystemServices;
+            _fileSystemServices = fileSystemServices;
             _fileSystemWatcherService = fileSystemWatcherService;
             _treeManager = treeManager;
             _helpWindowViewModel = helpWindowViewModel;
@@ -229,7 +229,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     var newDirectory = SelectedListViewItem.FullPath;
                     if (Directory.Exists(newDirectory))
                     {
-                        _fileSystemService.SendCurrentDirectoryChanged(newDirectory);
+                        _fileSystemServices.SendCurrentDirectoryChanged(newDirectory);
                     }
                 }
             });
@@ -238,12 +238,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             HashCalc = new RelayCommand(() =>
             {
                 _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                _fileSystemService.SendToSelectTargetPage();
+                _fileSystemServices.SendToSelectTargetPage();
             });
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
-                _fileSystemService.SendToSettingsPage(ReturnPageEnum.PageExplorer));
+                _fileSystemServices.SendToSettingsPage(ReturnPageEnum.ExplorerPage));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -306,21 +306,41 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             }
             _treeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
 
-            // 開発用自動化処理
+            //--------------------- 開発用自動化処理
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
             {
-                if (root.FullPath == @"G:\")
+                if (root.FullPath == @"E:\")
                 {
                     root.KickChild();
                     foreach (var child in root.Children)
                     {
-                        if (child.FullPath == @"G:\Anime_Season")
+                        if (child.FullPath == @"E:\Videos")
                         {
                             child.IsChecked = true;
                         }
                     }
                     _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                    _fileSystemService.SendToSelectTargetPage();
+                    _fileSystemServices.SendToSelectTargetPage();
+                }
+                if (root.FullPath == @"H:\")
+                {
+                    root.KickChild();
+                    foreach (var child in root.Children)
+                    {
+                        if (child.FullPath == @"H:\旧D_Drive")
+                        {
+                            child.KickChild();
+                            foreach (var grandchild in root.Children)
+                            { 
+                                if (grandchild.FullPath == @"H:\旧D_Drive\iso")
+                                {
+                                    grandchild.IsChecked = true;
+                                }
+                            }
+                        }
+                    }
+                    _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+                    _fileSystemServices.SendToSelectTargetPage();
                 }
             }
         }

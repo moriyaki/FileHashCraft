@@ -119,39 +119,43 @@
   </resheader>
   <data name="ButtonAdd" xml:space="preserve">
     <value>Add</value>
-    <comment>TabContent/PageSelectTarget</comment>
+    <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="ButtonCancel" xml:space="preserve">
     <value>Cancel</value>
-    <comment>Button/PageSelectTarget</comment>
+    <comment>Button/SelectTargetPage</comment>
   </data>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>Execute Command</value>
-    <comment>Button/PageExplorer</comment>
+    <comment>Button/ExplorerPage</comment>
   </data>
   <data name="ButtonHashCalc" xml:space="preserve">
     <value>Hash calculation</value>
-    <comment>Button/PageSelectTarget</comment>
+    <comment>Button/SelectTargetPage</comment>
   </data>
   <data name="ButtonHashManagement" xml:space="preserve">
     <value>Hash Management</value>
-    <comment>Button/PageExplorer</comment>
+    <comment>Button/ExplorerPage</comment>
+  </data>
+  <data name="ButtonHashResult" xml:space="preserve">
+    <value>Same File Result</value>
+    <comment>Button/HashCalcingPage</comment>
   </data>
   <data name="ButtonModify" xml:space="preserve">
     <value>Modify</value>
-    <comment>TabContent/PageSelectTarget</comment>
+    <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="ButtonNormalSettings" xml:space="preserve">
     <value>Return to standard settings</value>
-    <comment>Button/PageSelectTarget</comment>
+    <comment>Button/SelectTargetPage</comment>
   </data>
   <data name="ButtonRemove" xml:space="preserve">
     <value>Remove</value>
-    <comment>TabContent/PageSelectTarget</comment>
+    <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="ButtonTargetFilter" xml:space="preserve">
     <value>Hash acquisition target</value>
-    <comment>Button/PageSelectTarget</comment>
+    <comment>Button/SelectTargetPage</comment>
   </data>
   <data name="Exit" xml:space="preserve">
     <value>Exit</value>
@@ -159,67 +163,51 @@
   </data>
   <data name="HashAlgorithm_SHA256" xml:space="preserve">
     <value>SHA-256 (High security: More reliable, generally faster than MD5. Recommended as standard)</value>
-    <comment>PageSettings/Security</comment>
+    <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA384" xml:space="preserve">
     <value>SHA-384 (High security: higher security strength than SHA-256, but slower computation)</value>
-    <comment>PageSettings/Security</comment>
+    <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA512" xml:space="preserve">
     <value>SHA-512 (maximum security: very high security strength, but slow computation)</value>
-    <comment>PageSettings/Security</comment>
+    <comment>SettingsPage/Security</comment>
   </data>
   <data name="LabelCommand" xml:space="preserve">
     <value>Command</value>
-    <comment>Label/PageExplorer</comment>
-  </data>
-  <data name="LabelCountAllFilesGetHash" xml:space="preserve">
-    <value>Number of all files to get hash :</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelCountAlreadyGetHash" xml:space="preserve">
-    <value>Number of files for which a hash has already been obtained</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelCountFilteredGetHash" xml:space="preserve">
-    <value>Number of files to get hashes from filtered files</value>
-    <comment>Label/PageSelectTarget</comment>
-  </data>
-  <data name="LabelCountRequireGetHash" xml:space="preserve">
-    <value>Number of files requiring hash acquisition :</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/ExplorerPage</comment>
   </data>
   <data name="LabelCurrentDirectory" xml:space="preserve">
     <value>Current Directory</value>
-    <comment>Label/PageExplorer</comment>
+    <comment>Label/ExplorerPage</comment>
   </data>
   <data name="LabelDirectoryCount" xml:space="preserve">
     <value>File Scanning : Dicrecotires</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/ShowTargetInfoUserControl</comment>
   </data>
   <data name="LabelDirectoryScanning" xml:space="preserve">
     <value>Directory Scanning...: Found</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/ShowTargetInfoUserControl</comment>
   </data>
   <data name="LabelExpert" xml:space="preserve">
     <value>For Advanced User</value>
-    <comment>Label/PageSettings</comment>
+    <comment>Label/SettingsPage</comment>
   </data>
   <data name="LabelExpert_EmptyDirDelete" xml:space="preserve">
     <value>Whether to delete empty directories or not</value>
-    <comment>Label/PageSettings/PageSelectTargetExpert</comment>
+    <comment>Label/SettingsPage/SelectTargetPageExpert</comment>
   </data>
   <data name="LabelExpert_HiddenFiles" xml:space="preserve">
     <value>Target hidden files</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelExpert_ReadOnlyFiles" xml:space="preserve">
     <value>Target read-only files</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelExpert_ZeroSizeFileDelete" xml:space="preserve">
     <value>Whether to delete files of size 0 or not</value>
-    <comment>Label/PageSettings/PageSelectTargetExpert</comment>
+    <comment>Label/SettingsPage/SelectTargetPageExpert</comment>
   </data>
   <data name="LabelExtentionFiles_Applications" xml:space="preserve">
     <value>Application Files</value>
@@ -263,27 +251,55 @@
   </data>
   <data name="LabelExtention_FilterSetting" xml:space="preserve">
     <value>Specifying file types by extension</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelExtention_GroupFilterSetting" xml:space="preserve">
     <value>Specify files by file type</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
-  <data name="LabelFileHashAlgorithmString" xml:space="preserve">
-    <value>Algorithm for file hash calculation</value>
-    <comment>Label/PageSettings</comment>
+  <data name="LabelFileCalcing" xml:space="preserve">
+    <value>Computing file hash.</value>
+    <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelFileMatching" xml:space="preserve">
+    <value>Searching for the same file.</value>
+    <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelFinished" xml:space="preserve">
     <value>Finished.</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/ShowTargetInfoUserControl</comment>
   </data>
   <data name="LabelFontSizeString" xml:space="preserve">
     <value>Font Size</value>
-    <comment>Label/PageSettings</comment>
+    <comment>Label/SettingsPage</comment>
   </data>
   <data name="LabelFontString" xml:space="preserve">
     <value>Font</value>
-    <comment>Label/PageSettings</comment>
+    <comment>Label/SettingsPage</comment>
+  </data>
+  <data name="LabelHashCalcing_AllHashGetFilesCount" xml:space="preserve">
+    <value>Number of files to hash :.</value>
+    <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelHashCalcing_HashGotFileCount" xml:space="preserve">
+    <value>Number of files whose hashes have been retrieved :.</value>
+    <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelHashCalcing_HashGotPercent" xml:space="preserve">
+    <value>Hash acquisition status :.</value>
+    <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelHashCalcing_MatchHashCount" xml:space="preserve">
+    <value>Number of identical files found :</value>
+    <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelHashCalcing_MatchHashPercent" xml:space="preserve">
+    <value>Identical file discovery status :</value>
+    <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelHashCalcing_ProcessingFileName" xml:space="preserve">
+    <value>Name of the file being processed:</value>
+    <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelRegexError_AlternationHasComment" xml:space="preserve">
     <value>An alternation construct in a regular expression contains a comment.</value>
@@ -415,39 +431,55 @@
   </data>
   <data name="LabelRegex_Criteria" xml:space="preserve">
     <value>Regular Expression Search Criteria</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelRegex_Error" xml:space="preserve">
     <value>Regular Expression Search Error</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelSettings" xml:space="preserve">
     <value>During internal file writing or other processing of found files.</value>
-    <comment>Label/PageSettings/PageSelectTarget</comment>
+    <comment>Label/SettingsPage/SelectTargetPage</comment>
+  </data>
+  <data name="LabelShowTargetInfo_CountAllFilesGetHash" xml:space="preserve">
+    <value>Number of all files to get hash :</value>
+    <comment>Label/ShowTargetInfoUserControl</comment>
+  </data>
+  <data name="LabelShowTargetInfo_CountAlreadyGetHash" xml:space="preserve">
+    <value>Number of files for which a hash has already been obtained :</value>
+    <comment>Label/ShowTargetInfoUserControl</comment>
+  </data>
+  <data name="LabelShowTargetInfo_CountFilteredGetHash" xml:space="preserve">
+    <value>Number of files to get hashes from filtered files :</value>
+    <comment>Label/ShowTargetInfoUserControl</comment>
+  </data>
+  <data name="LabelShowTargetInfo_HashAlgorithm" xml:space="preserve">
+    <value>Algorithm for file hash calculation</value>
+    <comment>Label/ShowTargetInfoUserControl</comment>
   </data>
   <data name="LabelWildcardError_AlreadyRegistered" xml:space="preserve">
     <value>Wildcard conditions that have already been registered.</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SelectTargetPageWildcard</comment>
   </data>
   <data name="LabelWildcardError_Empty" xml:space="preserve">
     <value>Wildcard search criteria not entered</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SelectTargetPageWildcard</comment>
   </data>
   <data name="LabelWildcardError_NotAllowedCharacter" xml:space="preserve">
     <value>Characters not allowed in file names</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SelectTargetPageWildcard</comment>
   </data>
   <data name="LabelWildcardError_TooManyAsterisk" xml:space="preserve">
     <value>Too much use of '*'</value>
-    <comment>Label/PageSelectTargetWildcard</comment>
+    <comment>Label/SelectTargetPageWildcard</comment>
   </data>
   <data name="LabelWildcard_Criteria" xml:space="preserve">
     <value>Wildcard Search Criteria</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelWildcard_Error" xml:space="preserve">
     <value>Wildcard Error</value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>Data Modified</value>
@@ -479,23 +511,23 @@
   </data>
   <data name="NoHaveExtentions" xml:space="preserve">
     <value>No Have Extention </value>
-    <comment>Label/PageSelectTarget</comment>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="TabContentExpert" xml:space="preserve">
     <value>(Caution) Advanced Settings(_E)</value>
-    <comment>TabContent/PageSelectTarget</comment>
+    <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="TabContentRegularExpression" xml:space="preserve">
     <value>Regular Expression Settings(_R)</value>
-    <comment>TabContent/PageSelectTarget</comment>
+    <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="TabContentStarndard" xml:space="preserve">
     <value>Standard Settings(_N)</value>
-    <comment>TabContent/PageSelectTarget</comment>
+    <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="TabContentWildCard" xml:space="preserve">
     <value>Wildcard Settings(_W)</value>
-    <comment>TabContent/PageSelectTarget</comment>
+    <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="TitleTargetFilterWindow" xml:space="preserve">
     <value>Wildcard Filter Result</value>

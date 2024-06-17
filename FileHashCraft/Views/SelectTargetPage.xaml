@@ -1,4 +1,4 @@
-﻿<Page x:Class="FileHashCraft.Views.PageSelectTarget"
+﻿<Page x:Class="FileHashCraft.Views.SelectTargetPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -27,7 +27,7 @@
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="6" Background="White"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="6" Background="Transparent"/>
 
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="5">
@@ -75,16 +75,6 @@
                       HorizontalAlignment="Left"
                       DragDelta="GridSplitter_ListDragDelta"/>
 
-        <!-- Buttons -->
-        <Button Grid.Row="3" Grid.Column="4" Margin="3"
-                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
-                Command="{Binding ToPageExplorer}"/>
-        <Button Grid.Row="3" Grid.Column="5" Margin="3"
-                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
-                Command="{Binding ViewModelMain.ToPageHashCalcing}"/>
-
         <local:ShowTargetInfoUserControl Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" />
 
         <TabControl  Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" Margin="3">
@@ -105,5 +95,16 @@
                 <local:SetExpertUserControl/>
             </TabItem>
         </TabControl>
+
+        <!-- Buttons -->
+        <Button Grid.Row="3" Grid.Column="4" Margin="3"
+                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
+                Command="{Binding ToExplorerPage}"/>
+        <Button Grid.Row="3" Grid.Column="5" Margin="3"
+                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
+                Command="{Binding ViewModelMain.ToHashCalcingPage}"/>
+
     </Grid>
 </Page>

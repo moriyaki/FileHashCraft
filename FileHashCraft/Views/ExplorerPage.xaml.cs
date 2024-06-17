@@ -14,9 +14,9 @@ namespace FileHashCraft.Views
     /// <summary>
     /// ExplorerPage.xaml の相互作用ロジック
     /// </summary>
-    public partial class PageExplorer : Page
+    public partial class ExplorerPage : Page
     {
-        public PageExplorer()
+        public ExplorerPage()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<IExplorerPageViewModel>();

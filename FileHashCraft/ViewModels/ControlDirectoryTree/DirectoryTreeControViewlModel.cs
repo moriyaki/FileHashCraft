@@ -78,7 +78,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     // カレントディレクトリを TreeView の選択状態に反映
                     FolderSelectedChanged(value);
                     // カレントディレクトリ変更のメッセージ発信
-                    _fileSystemService.SendCurrentDirectoryChanged(value);
+                    _fileSystemServices.SendCurrentDirectoryChanged(value);
                 }
             }
         }
@@ -99,7 +99,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         #endregion バインディング
 
         #region コンストラクタと初期処理
-        private readonly IFileSystemServices _fileSystemService;
+        private readonly IFileSystemServices _fileSystemServices;
         private readonly IFileWatcherService _fileWatcherService;
         private readonly ITreeManager _treeManager;
 
@@ -117,7 +117,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             ITreeManager treeManager
         ) : base(settingsService)
         {
-            _fileSystemService = fileSystemService;
+            _fileSystemServices = fileSystemService;
             _fileWatcherService = fileWatcherService;
             _treeManager = treeManager;
 
