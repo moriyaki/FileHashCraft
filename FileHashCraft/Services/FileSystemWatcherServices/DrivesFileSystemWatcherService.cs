@@ -151,7 +151,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryChanged(object? sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemServices.SendDirectoryItemDeleted(e.FullPath);
+            _fileSystemServices.NotifyDirectoryItemDeletedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryCreated(object sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemServices.SendDirectoryItemCreated(e.FullPath);
+            _fileSystemServices.NotifyDirectoryItemCreatedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryRenamed(object sender, RenamedEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemServices.SendDirectoryItemRenamed(e.OldFullPath, e.FullPath);
+            _fileSystemServices.NotifyDirectoryItemRenamedMessage(e.OldFullPath, e.FullPath);
         }
         #endregion ディレクトリ変更通知処理
 
@@ -185,7 +185,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void InsertOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            _fileSystemServices.SendInsertOpticalMedia(path);
+            _fileSystemServices.NotifyInsertOpticalMediaMessage(path);
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void EjectOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            _fileSystemServices.SendEjectOpticalMedia(path);
+            _fileSystemServices.NotifyEjectOpticalMediaMessage(path);
         }
         #endregion リムーバブルディスクの着脱処理
     }

@@ -4,32 +4,32 @@
     /// <summary>
     /// カレントディレクトリのアイテム作成メッセージ
     /// </summary>
-    public class CurrentDirectoryItemCreated
+    public class CurrentDirectoryItemCreatedMessage
     {
         public string CreatedFullPath { get; set; } = string.Empty;
-        public CurrentDirectoryItemCreated() { throw new NotImplementedException(nameof(CurrentDirectoryItemCreated)); }
-        public CurrentDirectoryItemCreated(string createdFullPath) => CreatedFullPath = createdFullPath;
+        public CurrentDirectoryItemCreatedMessage() { throw new NotImplementedException(nameof(CurrentDirectoryItemCreatedMessage)); }
+        public CurrentDirectoryItemCreatedMessage(string createdFullPath) => CreatedFullPath = createdFullPath;
     }
 
     /// <summary>
     /// カレントディレクトリのアイテム削除メッセージ
     /// </summary>
-    public class CurrentDirectoryItemDeleted
+    public class CurrentDirectoryItemDeletedMessage
     {
         public string DeletedFullPath { get; set; } = string.Empty;
-        public CurrentDirectoryItemDeleted() { throw new NotImplementedException(nameof(CurrentDirectoryItemDeleted)); }
-        public CurrentDirectoryItemDeleted(string deletedFullPath) => DeletedFullPath = deletedFullPath;
+        public CurrentDirectoryItemDeletedMessage() { throw new NotImplementedException(nameof(CurrentDirectoryItemDeletedMessage)); }
+        public CurrentDirectoryItemDeletedMessage(string deletedFullPath) => DeletedFullPath = deletedFullPath;
     }
 
     /// <summary>
     /// カレントディレクトリのアイテム名前変更メッセージ
     /// </summary>
-    public class CurrentDirectoryItemRenamed
+    public class CurrentDirectoryItemRenamedMessage
     {
         public string OldFullPath { get; set; } = string.Empty;
         public string NewFullPath { get; set; } = string.Empty;
-        public CurrentDirectoryItemRenamed() { throw new NotImplementedException(nameof(CurrentDirectoryItemRenamed)); }
-        public CurrentDirectoryItemRenamed(string oldFullPath, string newFullPath)
+        public CurrentDirectoryItemRenamedMessage() { throw new NotImplementedException(nameof(CurrentDirectoryItemRenamedMessage)); }
+        public CurrentDirectoryItemRenamedMessage(string oldFullPath, string newFullPath)
         {
             OldFullPath = oldFullPath;
             NewFullPath = newFullPath;
@@ -41,32 +41,32 @@
     /// <summary>
     /// ディレクトリのアイテム作成メッセージ
     /// </summary>
-    public class DirectoryItemCreated
+    public class DirectoryItemCreatedMessage
     {
         public string CreatedFullPath { get; set; } = string.Empty;
-        public DirectoryItemCreated() { throw new NotImplementedException(nameof(DirectoryItemCreated)); }
-        public DirectoryItemCreated(string createdFullPath) => CreatedFullPath = createdFullPath;
+        public DirectoryItemCreatedMessage() { throw new NotImplementedException(nameof(DirectoryItemCreatedMessage)); }
+        public DirectoryItemCreatedMessage(string createdFullPath) => CreatedFullPath = createdFullPath;
     }
 
     /// <summary>
     /// ディレクトリのアイテム削除メッセージ
     /// </summary>
-    public class DirectoryItemDeleted
+    public class DirectoryItemDeletedMessage
     {
         public string DeletedFullPath { get; set; } = string.Empty;
-        public DirectoryItemDeleted() { throw new NotImplementedException(nameof(DirectoryItemDeleted)); }
-        public DirectoryItemDeleted(string deletedFullPath) => DeletedFullPath = deletedFullPath;
+        public DirectoryItemDeletedMessage() { throw new NotImplementedException(nameof(DirectoryItemDeletedMessage)); }
+        public DirectoryItemDeletedMessage(string deletedFullPath) => DeletedFullPath = deletedFullPath;
     }
 
     /// <summary>
     /// ディレクトリのアイテム名前変更メッセージ
     /// </summary>
-    public class DirectoryItemRenamed
+    public class DirectoryItemRenamedMessage
     {
         public string OldFullPath { get; set; } = string.Empty;
         public string NewFullPath { get; set; } = string.Empty;
-        public DirectoryItemRenamed() { throw new NotImplementedException(nameof(DirectoryItemRenamed)); }
-        public DirectoryItemRenamed(string oldFullPath, string newFullPath)
+        public DirectoryItemRenamedMessage() { throw new NotImplementedException(nameof(DirectoryItemRenamedMessage)); }
+        public DirectoryItemRenamedMessage(string oldFullPath, string newFullPath)
         {
             OldFullPath = oldFullPath;
             NewFullPath = newFullPath;
@@ -76,21 +76,21 @@
     /// <summary>
     /// リムーバブルドライブの挿入メッセージ
     /// </summary>
-    public class OpticalDriveMediaInserted
+    public class OpticalDriveMediaInsertedMessage
     {
         public string InsertedPath { get; set; } = string.Empty;
-        public OpticalDriveMediaInserted() { throw new NotImplementedException(nameof(OpticalDriveMediaInserted)); }
-        public OpticalDriveMediaInserted(string insertedPath) => InsertedPath = insertedPath;
+        public OpticalDriveMediaInsertedMessage() { throw new NotImplementedException(nameof(OpticalDriveMediaInsertedMessage)); }
+        public OpticalDriveMediaInsertedMessage(string insertedPath) => InsertedPath = insertedPath;
     }
 
     /// <summary>
     /// リムーバブルドライブのイジェクトメッセージ
     /// </summary>
-    public class OpticalDriveMediaEjected
+    public class OpticalDriveMediaEjectedMessage
     {
         public string EjectedPath { get; set; } = string.Empty;
-        public OpticalDriveMediaEjected() { throw new NotImplementedException(nameof(OpticalDriveMediaEjected)); }
-        public OpticalDriveMediaEjected(string ejectedPath) => EjectedPath = ejectedPath;
+        public OpticalDriveMediaEjectedMessage() { throw new NotImplementedException(nameof(OpticalDriveMediaEjectedMessage)); }
+        public OpticalDriveMediaEjectedMessage(string ejectedPath) => EjectedPath = ejectedPath;
     }
     #endregion ディレクトリ変更メッセージ
 }

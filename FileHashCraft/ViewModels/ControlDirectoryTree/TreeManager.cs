@@ -88,10 +88,10 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
             _treeCheckedManager = treeCheckedManager;
             _treeExpandedManager = treeExpandedManager;
 
-            WeakReferenceMessenger.Default.Register<AddToExpandDirectoryManager>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<AddToExpandDirectoryManagerMessage>(this, (_, m)
                 => AddExpandedDirectoryManager(m.Child));
 
-            WeakReferenceMessenger.Default.Register<RemoveFromExpandDirectoryManager>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<RemoveFromExpandDirectoryManagerMessage>(this, (_, m)
                 => RemoveExpandedDirectoryManager(m.Child));
         }
         //-----------------------------------TreeCheckedManager

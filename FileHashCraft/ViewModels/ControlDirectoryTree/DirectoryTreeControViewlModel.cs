@@ -78,7 +78,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     // カレントディレクトリを TreeView の選択状態に反映
                     FolderSelectedChanged(value);
                     // カレントディレクトリ変更のメッセージ発信
-                    _fileSystemServices.SendCurrentDirectoryChanged(value);
+                    _fileSystemServices.NotifyChangeCurrentDirectory(value);
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             _treeManager = treeManager;
 
             // カレントディレクトリの変更メッセージ
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, message) =>
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryChangedMessage>(this, (_, message) =>
             {
                 if (CurrentFullPath == message.CurrentFullPath) return;
                 CurrentFullPath = message.CurrentFullPath;
@@ -130,7 +130,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             });
 
             // ツリービュー幅変更
-            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<TreeWidthChangedMessage>(this, (_, m)
                 => TreeWidth = m.TreeWidth);
 
             foreach (var root in SpecialFolderAndRootDrives.ScanDrives())
@@ -139,23 +139,23 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
 
             // ディレクトリの内容が変更された
-            WeakReferenceMessenger.Default.Register<DirectoryItemDeleted>(this, async (_, m)
+            WeakReferenceMessenger.Default.Register<DirectoryItemDeletedMessage>(this, async (_, m)
                 => await DirectoryChanged(m.DeletedFullPath));
 
             // ディレクトリの内容が追加された
-            WeakReferenceMessenger.Default.Register<DirectoryItemCreated>(this, async (_, m)
+            WeakReferenceMessenger.Default.Register<DirectoryItemCreatedMessage>(this, async (_, m)
                 => await DirectoryCreated(m.CreatedFullPath));
 
             // ディレクトリの名前が変更された
-            WeakReferenceMessenger.Default.Register<DirectoryItemRenamed>(this, async(_, m)
+            WeakReferenceMessenger.Default.Register<DirectoryItemRenamedMessage>(this, async(_, m)
                 => await DirectoryRenamed(m.OldFullPath, m.NewFullPath));
 
             // リムーバブルドライブが追加または挿入された
-            WeakReferenceMessenger.Default.Register<OpticalDriveMediaInserted>(this, async (_, m)
+            WeakReferenceMessenger.Default.Register<OpticalDriveMediaInsertedMessage>(this, async (_, m)
                 => await OpticalDriveMediaInserted(m.InsertedPath));
 
             // リムーバブルドライブがイジェクトされた
-            WeakReferenceMessenger.Default.Register<OpticalDriveMediaEjected>(this, async (_, m)
+            WeakReferenceMessenger.Default.Register<OpticalDriveMediaEjectedMessage>(this, async (_, m)
                 => await OpticalDriveMediaEjected(m.EjectedPath));
 
             // ツリービューのチェックボックスを表示するか否か

@@ -70,9 +70,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
+            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
 
             var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
             _CurrentFontFamily = settingsService.CurrentFont;
@@ -308,7 +308,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     SetProperty(ref _IsSelected, value);
                     if (value)
                     {
-                        WeakReferenceMessenger.Default.Send(new CurrentDirectoryChanged(this.FullPath));
+                        WeakReferenceMessenger.Default.Send(new CurrentDirectoryChangedMessage(this.FullPath));
                         if (HasChildren)
                         {
                             KickChild();
@@ -341,7 +341,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     foreach (var child in Children)
                     {
                         // ディレクトリノードを展開マネージャに追加
-                        WeakReferenceMessenger.Default.Send(new AddToExpandDirectoryManager(child));
+                        WeakReferenceMessenger.Default.Send(new AddToExpandDirectoryManagerMessage(child));
                         if (IsChecked == true) { child.IsChecked = true; }
                     }
                 }
@@ -350,7 +350,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     foreach (var child in Children)
                     {
                         // ディレクトリノードを展開マネージャから削除
-                        WeakReferenceMessenger.Default.Send(new RemoveFromExpandDirectoryManager(child));
+                        WeakReferenceMessenger.Default.Send(new RemoveFromExpandDirectoryManagerMessage(child));
                     }
                 }
             }

@@ -10,136 +10,136 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// ウィンドウの上位置を変更するメッセージ
     /// </summary>
-    public class WindowTopChanged
+    public class WindowTopChangedMessage
     {
         public double Top { get; }
-        public WindowTopChanged() { throw new NotImplementedException(nameof(WindowTopChanged)); }
-        public WindowTopChanged(double top) => Top = top;
+        public WindowTopChangedMessage() { throw new NotImplementedException(nameof(WindowTopChangedMessage)); }
+        public WindowTopChangedMessage(double top) => Top = top;
     }
     /// <summary>
     /// ウィンドウの左位置を変更するメッセージ
     /// </summary>
-    public class WindowLeftChanged
+    public class WindowLeftChangedMessage
     {
         public double Left { get; }
-        public WindowLeftChanged() { throw new NotImplementedException(nameof(WindowLeftChanged)); }
-        public WindowLeftChanged(double left) => Left = left;
+        public WindowLeftChangedMessage() { throw new NotImplementedException(nameof(WindowLeftChangedMessage)); }
+        public WindowLeftChangedMessage(double left) => Left = left;
     }
     /// <summary>
     /// ウィンドウの幅を変更するメッセージ
-    public class WindowWidthChanged
+    public class WindowWidthChangedMessage
     {
         public double Width { get; }
-        public WindowWidthChanged() { throw new NotImplementedException(nameof(WindowWidthChanged)); }
-        public WindowWidthChanged(double width) => Width = width;
+        public WindowWidthChangedMessage() { throw new NotImplementedException(nameof(WindowWidthChangedMessage)); }
+        public WindowWidthChangedMessage(double width) => Width = width;
     }
     /// <summary>
     /// ウィンドウの高さを変更するメッセージ
     /// </summary>
-    public class WindowHeightChanged
+    public class WindowHeightChangedMessage
     {
         public double Height { get; }
-        public WindowHeightChanged() { throw new NotImplementedException(nameof(WindowHeightChanged)); }
-        public WindowHeightChanged(double height) => Height = height;
+        public WindowHeightChangedMessage() { throw new NotImplementedException(nameof(WindowHeightChangedMessage)); }
+        public WindowHeightChangedMessage(double height) => Height = height;
     }
     /// <summary>
     /// ツリービュー幅の変更メッセージ
     /// </summary>
-    public class TreeWidthChanged
+    public class TreeWidthChangedMessage
     {
         public double TreeWidth { get; }
 
-        public TreeWidthChanged() { throw new NotImplementedException(nameof(TreeWidthChanged)); }
+        public TreeWidthChangedMessage() { throw new NotImplementedException(nameof(TreeWidthChangedMessage)); }
 
-        public TreeWidthChanged(double treeWidth) => TreeWidth = treeWidth;
+        public TreeWidthChangedMessage(double treeWidth) => TreeWidth = treeWidth;
     }
     /// <summary>
     /// リストボックス幅の変更メッセージ
     /// </summary>
-    public class ListWidthChanged
+    public class ListWidthChangedMessage
     {
         public double ListWidth { get; }
 
-        public ListWidthChanged() { throw new NotImplementedException(nameof(ListWidthChanged)); }
+        public ListWidthChangedMessage() { throw new NotImplementedException(nameof(ListWidthChangedMessage)); }
 
-        public ListWidthChanged(double listWidth) => ListWidth = listWidth;
+        public ListWidthChangedMessage(double listWidth) => ListWidth = listWidth;
     }
     /// <summary>
     /// 選択されている言語変更のメッセージ
     /// </summary>
-    public class SelectedLanguageChanged
+    public class SelectedLanguageChangedMessage
     {
         public string SelectedLanguage { get; }
-        public SelectedLanguageChanged() { throw new NotImplementedException(nameof(SelectedLanguageChanged)); }
-        public SelectedLanguageChanged(string selectedLanguage) => SelectedLanguage = selectedLanguage;
+        public SelectedLanguageChangedMessage() { throw new NotImplementedException(nameof(SelectedLanguageChangedMessage)); }
+        public SelectedLanguageChangedMessage(string selectedLanguage) => SelectedLanguage = selectedLanguage;
     }
 
     /// <summary>
     /// ハッシュ計算アルゴリズムの変更メッセージ
     /// </summary>
-    public class HashAlgorithmChanged
+    public class HashAlgorithmChangedMessage
     {
         public string HashAlgorithm { get; }
-        public HashAlgorithmChanged() { throw new NotImplementedException(nameof(HashAlgorithmChanged)); }
-        public HashAlgorithmChanged(string hashAlgorithm) => HashAlgorithm = hashAlgorithm;
+        public HashAlgorithmChangedMessage() { throw new NotImplementedException(nameof(HashAlgorithmChangedMessage)); }
+        public HashAlgorithmChangedMessage(string hashAlgorithm) => HashAlgorithm = hashAlgorithm;
     }
     /// <summary>
     /// 読み取り専用ファイルを削除対象に含むかどうかの変更メッセージ
     /// </summary>
-    public class ReadOnlyFileIncludeChanged
+    public class ReadOnlyFileIncludeChangedMessage
     {
         public bool ReadOnlyFileInclude { get; }
-        public ReadOnlyFileIncludeChanged() { throw new NotImplementedException(nameof(ReadOnlyFileIncludeChanged)); }
-        public ReadOnlyFileIncludeChanged(bool readOnlyFileInclude) => ReadOnlyFileInclude = readOnlyFileInclude;
+        public ReadOnlyFileIncludeChangedMessage() { throw new NotImplementedException(nameof(ReadOnlyFileIncludeChangedMessage)); }
+        public ReadOnlyFileIncludeChangedMessage(bool readOnlyFileInclude) => ReadOnlyFileInclude = readOnlyFileInclude;
     }
     /// <summary>
     /// 隠しファイルを削除対象に含むかどうかの変更メッセージ
     /// </summary>
-    public class HiddenFileIncludeChanged
+    public class HiddenFileIncludeChangedMessage
     {
         public bool HiddenFileInclude { get; }
-        public HiddenFileIncludeChanged() { throw new NotImplementedException(nameof(HiddenFileIncludeChanged)); }
-        public HiddenFileIncludeChanged(bool hiddenFileInclude) => HiddenFileInclude = hiddenFileInclude;
+        public HiddenFileIncludeChangedMessage() { throw new NotImplementedException(nameof(HiddenFileIncludeChangedMessage)); }
+        public HiddenFileIncludeChangedMessage(bool hiddenFileInclude) => HiddenFileInclude = hiddenFileInclude;
     }
 
     /// <summary>
     /// 0サイズのファイルを削除対象に含むかどうかの変更メッセージ
     /// </summary>
-    public class ZeroSizeFileDeleteChanged
+    public class ZeroSizeFileDeleteChangedMessage
     {
         public bool ZeroSizeFileDelete { get; }
-        public ZeroSizeFileDeleteChanged() { throw new NotImplementedException(nameof(ZeroSizeFileDeleteChanged)); }
-        public ZeroSizeFileDeleteChanged(bool zeroSizeFileDelete) => ZeroSizeFileDelete = zeroSizeFileDelete;
+        public ZeroSizeFileDeleteChangedMessage() { throw new NotImplementedException(nameof(ZeroSizeFileDeleteChangedMessage)); }
+        public ZeroSizeFileDeleteChangedMessage(bool zeroSizeFileDelete) => ZeroSizeFileDelete = zeroSizeFileDelete;
     }
 
     /// <summary>
     /// 空のディレクトリを削除対象に含むかどうかの変更メッセージ
     /// </summary>
-    public class EmptyDirectoryDeleteChanged
+    public class EmptyDirectoryDeleteChangedMessage
     {
         public bool EmptyDirectoryDelete { get; }
-        public EmptyDirectoryDeleteChanged() { throw new NotImplementedException(nameof(EmptyDirectoryDeleteChanged)); }
-        public EmptyDirectoryDeleteChanged(bool emptyDirectoryDelete) => EmptyDirectoryDelete = emptyDirectoryDelete;
+        public EmptyDirectoryDeleteChangedMessage() { throw new NotImplementedException(nameof(EmptyDirectoryDeleteChangedMessage)); }
+        public EmptyDirectoryDeleteChangedMessage(bool emptyDirectoryDelete) => EmptyDirectoryDelete = emptyDirectoryDelete;
     }
 
     /// <summary>
     /// フォントの変更メッセージ
     /// </summary>
-    public class CurrentFontFamilyChanged
+    public class CurrentFontFamilyChangedMessage
     {
         public FontFamily CurrentFontFamily { get; }
-        public CurrentFontFamilyChanged() { throw new NotImplementedException(nameof(CurrentFontFamilyChanged)); }
-        public CurrentFontFamilyChanged(FontFamily currentFontFamily) => CurrentFontFamily = currentFontFamily;
+        public CurrentFontFamilyChangedMessage() { throw new NotImplementedException(nameof(CurrentFontFamilyChangedMessage)); }
+        public CurrentFontFamilyChangedMessage(FontFamily currentFontFamily) => CurrentFontFamily = currentFontFamily;
     }
 
     /// <summary>
     /// フォントサイズの変更メッセージ
     /// </summary>
-    public class FontSizeChanged
+    public class FontSizeChangedMessage
     {
         public double FontSize { get; }
-        public FontSizeChanged() { throw new NotImplementedException(nameof(FontSizeChanged)); }
-        public FontSizeChanged(double fontSize) => FontSize = fontSize;
+        public FontSizeChangedMessage() { throw new NotImplementedException(nameof(FontSizeChangedMessage)); }
+        public FontSizeChangedMessage(double fontSize) => FontSize = fontSize;
     }
     #endregion MainView用メッセージ
 
@@ -147,11 +147,11 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// カレントディレクトリの移動メッセージ
     /// </summary>
-    public class CurrentDirectoryChanged
+    public class CurrentDirectoryChangedMessage
     {
         public string CurrentFullPath { get; } = string.Empty;
-        public CurrentDirectoryChanged() { throw new NotImplementedException(nameof(CurrentDirectoryChanged)); }
-        public CurrentDirectoryChanged(string currentFullPath) => CurrentFullPath = currentFullPath;
+        public CurrentDirectoryChangedMessage() { throw new NotImplementedException(nameof(CurrentDirectoryChangedMessage)); }
+        public CurrentDirectoryChangedMessage(string currentFullPath) => CurrentFullPath = currentFullPath;
     }
     #endregion カレントディレクトリの移動
 
@@ -159,20 +159,20 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// エクスプローラー風画面ページに移動するメッセージ
     /// </summary>
-    public class ToExplorerPage;
+    public class ToExplorerPageMessage;
 
     /// <summary>
     /// ハッシュ計算対象選択ページに移動するメッセージ
     /// </summary>
-    public class ToPageSelectTarget;
+    public class ToPageSelectTargetMessage;
     /// <summary>
     /// ハッシュ計算画面ページに移動するメッセージ
     /// </summary>
-    public class ToHashCalcingPage;
+    public class ToHashCalcingPageMessage;
     /// <summary>
     /// 同一ファイル選択ページに移動するメッセージ
     /// </summary>
-    public class ToSameFileSelectPage;
+    public class ToSameFileSelectPageMessage;
 
     /// <summary>
     /// どこに戻るかの列挙子
@@ -188,17 +188,17 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// 戻るページを指定して設定画面に移動するメッセージ
     /// </summary>
-    public class ToSettingPage
+    public class ToSettingPageMessage
     {
         public ReturnPageEnum ReturnPage { get; }
-        public ToSettingPage() { throw new NotImplementedException(nameof(ToSettingPage)); }
-        public ToSettingPage(ReturnPageEnum returnPage) => ReturnPage = returnPage;
+        public ToSettingPageMessage() { throw new NotImplementedException(nameof(ToSettingPageMessage)); }
+        public ToSettingPageMessage(ReturnPageEnum returnPage) => ReturnPage = returnPage;
     }
 
     /// <summary>
     /// 元のページへの移動メッセージ
     /// </summary>
-    public class ReturnPageFromSettings;
+    public class ReturnPageFromSettingsMessage;
 
     #endregion ページ移動用メッセージ
 }

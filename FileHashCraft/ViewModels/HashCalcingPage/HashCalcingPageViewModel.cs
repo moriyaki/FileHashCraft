@@ -178,7 +178,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
-                _fileSystemServices.SendToSettingsPage(ReturnPageEnum.HashCalcingPage));
+                _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.HashCalcingPage));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -195,7 +195,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             });
             // ファイル選択画面に戻るコマンド
             ToSelectTargetPage = new RelayCommand(() =>
-                _fileSystemServices.SendToSelectTargetPage());
+                _fileSystemServices.NavigateToSelectTargetPage());
             // 同一ファイル選択ページに移動するコマンド
             ToSameFileSelectPage = new RelayCommand(
                 () => MessageBox.Show("ToSameFileSelectPage未実装"),

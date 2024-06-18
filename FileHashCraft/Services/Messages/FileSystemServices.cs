@@ -2,73 +2,72 @@
 
 namespace FileHashCraft.Services.Messages
 {
+    #region インターフェース
     public interface IFileSystemServices
     {
-        #region 移動処理
         /// <summary>
         /// カレントディレクトリを移動します。
         /// </summary>
         /// <param name="fullPath">移動先カレントディレクトリ</param>
-        public void SendCurrentDirectoryChanged(string fullPath);
+        public void NotifyChangeCurrentDirectory(string fullPath);
 
         /// <summary>
         /// 設定画面ページに移動します。
         /// </summary>
         /// <param name="pageEnum"></param>
-        public void SendToSettingsPage(ReturnPageEnum pageEnum);
+        public void NavigateToSettingsPage(ReturnPageEnum pageEnum);
         /// <summary>
         /// 設定画面ページから元の画面に移動します。
         /// </summary>
-        public void SendReturnPageFromSettings();
+        public void NavigateReturnPageFromSettings();
         /// <summary>
         /// エクスプローラー風画面に移動します。
         /// </summary>
-        public void SendToExplorerPage();
+        public void NavigateToExplorerPage();
         /// <summary>
         /// ハッシュ取得絞り込み画面に移動します。
         /// </summary>
-        public void SendToSelectTargetPage();
+        public void NavigateToSelectTargetPage();
         /// <summary>
         /// ハッシュ計算画面に移動に移動します。
         /// </summary>
-        public void SendToHashCalcingPage();
-        #endregion 移動処理
+        public void NavigateToHashCalcingPage();
 
-        #region ファイル監視
         /// <summary>
         /// カレントディレクトリにアイテムが追加された事をメッセージ送信します。
         /// </summary>
-        public void SendCurrentItemCreated(string fullPath);
+        public void NotifyCurrentItemCreatedMessage(string fullPath);
         /// <summary>
         /// カレントディレクトリのアイテムが削除された事をメッセージ送信します。
         /// </summary>
-        public void SendCurrentItemDeleted(string fullPath);
+        public void NotifyCurrentItemDeletedMessage(string fullPath);
         /// <summary>
         /// カレントディレクトリのアイテムが名前変更された事をメッセージ送信します。
         /// </summary>
-        public void SendCurrentItemRenamed(string oldFullPath, string newFullPath);
+        public void NotifyCurrentItemRenamedMessage(string oldFullPath, string newFullPath);
         /// <summary>
         /// ディレクトリのアイテムが追加された事をメッセージ送信します。
         /// </summary>
-        public void SendDirectoryItemCreated(string fullPath);
+        public void NotifyDirectoryItemCreatedMessage(string fullPath);
         /// <summary>
         /// ディレクトリのアイテムが削除された事をメッセージ送信します。
         /// </summary>
-        public void SendDirectoryItemDeleted(string fullPath);
+        public void NotifyDirectoryItemDeletedMessage(string fullPath);
         /// <summary>
         /// ディレクトリのアイテムが名前変更された事をメッセージ送信します。
         /// </summary>
-        public void SendDirectoryItemRenamed(string oldFullPathm, string newFullPathm);
+        public void NotifyDirectoryItemRenamedMessage(string oldFullPathm, string newFullPathm);
         /// <summary>
         /// リムーバブルドライブの追加または挿入された事をメッセージ送信します。
         /// </summary>
-        public void SendInsertOpticalMedia(string fullPath);
+        public void NotifyInsertOpticalMediaMessage(string fullPath);
         /// <summary>
         /// リムーバブルメディアの削除またはイジェクトされた事をメッセージ送信します。
         /// </summary>
-        public void SendEjectOpticalMedia(string fullPath);
-        #endregion ファイル監視
+        public void NotifyEjectOpticalMediaMessage(string fullPath);
     }
+    #endregion インターフェース
+
     public class FileSystemServices : IFileSystemServices
     {
         #region 移動処理
@@ -76,54 +75,54 @@ namespace FileHashCraft.Services.Messages
         /// カレントディレクトリを移動します。
         /// </summary>
         /// <param name="fullPath">移動先カレントディレクトリ</param>
-        public void SendCurrentDirectoryChanged(string fullPath)
+        public void NotifyChangeCurrentDirectory(string fullPath)
         {
-            WeakReferenceMessenger.Default.Send(new CurrentDirectoryChanged(fullPath));
+            WeakReferenceMessenger.Default.Send(new CurrentDirectoryChangedMessage(fullPath));
         }
         /// <summary>
         /// 設定画面ページに移動します。
         /// </summary>
         /// <param name="pageEnum"></param>
-        public void SendToSettingsPage(ReturnPageEnum pageEnum)
+        public void NavigateToSettingsPage(ReturnPageEnum pageEnum)
         {
-            WeakReferenceMessenger.Default.Send(new ToSettingPage(pageEnum));
+            WeakReferenceMessenger.Default.Send(new ToSettingPageMessage(pageEnum));
         }
         /// <summary>
         /// 設定画面ページから元の画面に移動します。
         /// </summary>
-        public void SendReturnPageFromSettings()
+        public void NavigateReturnPageFromSettings()
         {
-            WeakReferenceMessenger.Default.Send(new ReturnPageFromSettings());
+            WeakReferenceMessenger.Default.Send(new ReturnPageFromSettingsMessage());
         }
         /// <summary>
         /// エクスプローラー風画面に移動します。
         /// </summary>
-        public void SendToExplorerPage()
+        public void NavigateToExplorerPage()
         {
-            WeakReferenceMessenger.Default.Send(new ToExplorerPage());
+            WeakReferenceMessenger.Default.Send(new ToExplorerPageMessage());
         }
         /// <summary>
         /// ハッシュ取得絞り込み画面に移動します。
         /// </summary>
-        public void SendToSelectTargetPage()
+        public void NavigateToSelectTargetPage()
         {
-            WeakReferenceMessenger.Default.Send(new ToPageSelectTarget());
+            WeakReferenceMessenger.Default.Send(new ToPageSelectTargetMessage());
         }
         /// <summary>
         /// ハッシュ計算画面に移動に移動します。
         /// </summary>
-        public void SendToHashCalcingPage()
+        public void NavigateToHashCalcingPage()
         {
-            WeakReferenceMessenger.Default.Send(new ToHashCalcingPage());
+            WeakReferenceMessenger.Default.Send(new ToHashCalcingPageMessage());
         }
 
         /// <summary>
         /// 同一ファイル選択ページに移動します。
         /// </summary>
         /*
-        public void SendToSameFileSelectPage()
+        public void NavigateToSameFileSelectPage()
         {
-            WeakReferenceMessenger.Default.Send(new ToSameFileSelectPage());
+            WeakReferenceMessenger.Default.Send(new ToSameFileSelectPageMessage());
         }
         */
         #endregion 移動処理
@@ -133,18 +132,18 @@ namespace FileHashCraft.Services.Messages
         /// カレントディレクトリにアイテムが追加された事をメッセージ送信します。
         /// </summary>
         /// <param name="fullPath">追加されたアイテムのフルパス</param>
-        public void SendCurrentItemCreated(string fullPath)
+        public void NotifyCurrentItemCreatedMessage(string fullPath)
         {
-            WeakReferenceMessenger.Default.Send(new CurrentDirectoryItemCreated(fullPath));
+            WeakReferenceMessenger.Default.Send(new CurrentDirectoryItemCreatedMessage(fullPath));
         }
 
         /// <summary>
         /// カレントディレクトリのアイテムが削除された事をメッセージ送信します。
         /// </summary
         /// <param name="fullPath">削除されたアイテムのフルパス</param>
-        public void SendCurrentItemDeleted(string fullPath)
+        public void NotifyCurrentItemDeletedMessage(string fullPath)
         {
-            WeakReferenceMessenger.Default.Send(new CurrentDirectoryItemDeleted(fullPath));
+            WeakReferenceMessenger.Default.Send(new CurrentDirectoryItemDeletedMessage(fullPath));
         }
 
         /// <summary>
@@ -152,51 +151,51 @@ namespace FileHashCraft.Services.Messages
         /// </summary>
         /// <param name="oldFullPath">名前変更される前のアイテムのフルパス</param>
         /// <param name="newFullPath">名前変更された後のアイテムのフルパス</param>
-        public void SendCurrentItemRenamed(string oldFullPath, string newFullPath)
+        public void NotifyCurrentItemRenamedMessage(string oldFullPath, string newFullPath)
         {
-            WeakReferenceMessenger.Default.Send(new CurrentDirectoryItemRenamed(oldFullPath, newFullPath));
+            WeakReferenceMessenger.Default.Send(new CurrentDirectoryItemRenamedMessage(oldFullPath, newFullPath));
         }
         /// <summary>
         /// ディレクトリのアイテムが追加された事をメッセージ送信します。
         /// </summary>
         /// <param name="fullPath">追加されたアイテムのフルパス</param>
-        public void SendDirectoryItemCreated(string fullPath)
+        public void NotifyDirectoryItemCreatedMessage(string fullPath)
         {
-            WeakReferenceMessenger.Default.Send(new DirectoryItemCreated(fullPath));
+            WeakReferenceMessenger.Default.Send(new DirectoryItemCreatedMessage(fullPath));
         }
         /// <summary>
         /// ディレクトリのアイテムが削除された事をメッセージ送信します。
         /// </summary>
         /// <param name="fullPath">削除されたアイテムのフルパス</param>
-        public void SendDirectoryItemDeleted(string fullPath)
+        public void NotifyDirectoryItemDeletedMessage(string fullPath)
         {
-            WeakReferenceMessenger.Default.Send(new DirectoryItemDeleted(fullPath));
+            WeakReferenceMessenger.Default.Send(new DirectoryItemDeletedMessage(fullPath));
         }
         /// <summary>
         /// ディレクトリのアイテムが名前変更された事をメッセージ送信します。
         /// </summary>
         /// <param name="oldFullPath">名前変更される前のアイテムのフルパス</param>
         /// <param name="newFullPath">名前変更された後のアイテムのフルパス</param>
-        public void SendDirectoryItemRenamed(string oldFullPath, string newFullPath)
+        public void NotifyDirectoryItemRenamedMessage(string oldFullPath, string newFullPath)
         {
-            WeakReferenceMessenger.Default.Send(new DirectoryItemRenamed(oldFullPath, newFullPath));
+            WeakReferenceMessenger.Default.Send(new DirectoryItemRenamedMessage(oldFullPath, newFullPath));
         }
 
         /// <summary>
         /// リムーバブルドライブの追加または挿入された事をメッセージ送信します。
         /// </summary>
         /// <param name="fullPath">リムーバブルドライブのフルパス</param>
-        public void SendInsertOpticalMedia(string fullPath)
+        public void NotifyInsertOpticalMediaMessage(string fullPath)
         {
-            WeakReferenceMessenger.Default.Send(new OpticalDriveMediaInserted(fullPath));
+            WeakReferenceMessenger.Default.Send(new OpticalDriveMediaInsertedMessage(fullPath));
         }
         /// <summary>
         /// リムーバブルメディアの削除またはイジェクトされた事をメッセージ送信します。
         /// </summary>
         /// <param name="fullPath">リムーバブルドライブのフルパス</param>
-        public void SendEjectOpticalMedia(string fullPath)
+        public void NotifyEjectOpticalMediaMessage(string fullPath)
         {
-            WeakReferenceMessenger.Default.Send(new OpticalDriveMediaEjected(fullPath));
+            WeakReferenceMessenger.Default.Send(new OpticalDriveMediaEjectedMessage(fullPath));
         }
         #endregion ファイル監視
     }

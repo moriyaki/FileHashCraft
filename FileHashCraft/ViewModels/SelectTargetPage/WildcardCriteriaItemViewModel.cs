@@ -26,7 +26,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             get => _Criteria;
             set
             {
-                _CriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new SelectedChangedWildcardCriteria(value, OriginalCriteria));
+                _CriteriaConditionCorrent = WeakReferenceMessenger.Default.Send(new SelectedChangedWildcardCriteriaRequestMessage(value, OriginalCriteria));
                 SetProperty(ref _Criteria, value);
             }
         }
@@ -45,7 +45,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 {
                     // 表示モードになったら、オリジナルを保存して編集モードに入ります。
                     OriginalCriteria = Criteria;
-                    WeakReferenceMessenger.Default.Send(new ListBoxSeletedWildcardTextBoxFocus());
+                    WeakReferenceMessenger.Default.Send(new ListBoxSeletedWildcardTextBoxFocusMessage());
                 }
                 else
                 {
@@ -54,8 +54,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
                 OnPropertyChanged(nameof(ItemBackgroudColor));
                 OnPropertyChanged(nameof(BorderTickness));
-                WeakReferenceMessenger.Default.Send(new IsEditModeChanged());
-                WeakReferenceMessenger.Default.Send(new SelectedChangedWildcardCriteria(Criteria, OriginalCriteria));
+                WeakReferenceMessenger.Default.Send(new IsEditModeChangedMessage());
+                WeakReferenceMessenger.Default.Send(new SelectedChangedWildcardCriteriaRequestMessage(Criteria, OriginalCriteria));
             }
         }
 
@@ -72,7 +72,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 {
                     RestoreCriteria();
                 }
-                WeakReferenceMessenger.Default.Send(new IsSelectedWildcardChanged(value, this));
+                WeakReferenceMessenger.Default.Send(new IsSelectedWildcardChangedMessage(value, this));
             }
         }
 
@@ -97,7 +97,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (!IsSelected)
                 {
                     // 選択状態が外れたら、新規入力画面にキャレットを当てます。
-                    WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
+                    WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocusMessage());
                 }
             });
         }

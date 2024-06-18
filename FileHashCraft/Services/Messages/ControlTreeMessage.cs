@@ -9,11 +9,11 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// ディレクトリノードを展開マネージャに追加するメッセージ
     /// </summary>
-    public class AddToExpandDirectoryManager
+    public class AddToExpandDirectoryManagerMessage
     {
         public DirectoryTreeViewItemModel Child { get; set; }
-        public AddToExpandDirectoryManager() { throw new NotImplementedException(nameof(AddToExpandDirectoryManager)); }
-        public AddToExpandDirectoryManager(DirectoryTreeViewItemModel child)
+        public AddToExpandDirectoryManagerMessage() { throw new NotImplementedException(nameof(AddToExpandDirectoryManagerMessage)); }
+        public AddToExpandDirectoryManagerMessage(DirectoryTreeViewItemModel child)
         {
             Child = child;
         }
@@ -22,11 +22,11 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// ディレクトリノードを展開マネージャから削除するメッセージ
     /// </summary>
-    public class RemoveFromExpandDirectoryManager
+    public class RemoveFromExpandDirectoryManagerMessage
     {
         public DirectoryTreeViewItemModel Child { get; set; }
-        public RemoveFromExpandDirectoryManager() { throw new NotImplementedException(nameof(RemoveFromExpandDirectoryManager)); }
-        public RemoveFromExpandDirectoryManager(DirectoryTreeViewItemModel child)
+        public RemoveFromExpandDirectoryManagerMessage() { throw new NotImplementedException(nameof(RemoveFromExpandDirectoryManagerMessage)); }
+        public RemoveFromExpandDirectoryManagerMessage(DirectoryTreeViewItemModel child)
         {
             Child = child;
         }

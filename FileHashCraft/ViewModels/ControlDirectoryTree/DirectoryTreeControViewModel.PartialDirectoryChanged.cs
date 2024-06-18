@@ -111,7 +111,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (deletedTreeItem == null) { return; }
 
             // カレントディレクトリに削除メッセージを送信
-            _fileSystemServices.SendCurrentItemDeleted(deletedItemFullPath);
+            _fileSystemServices.NotifyCurrentItemDeletedMessage(deletedItemFullPath);
 
             // 削除されたツリービューアイテムの削除
             await App.Current.Dispatcher.InvokeAsync(() =>
@@ -149,7 +149,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             var addTreeItem = new DirectoryTreeViewItemModel(fileInformation);
 
             // カレントディレクトリに作成メッセージを送信
-            _fileSystemServices.SendCurrentItemCreated(fullPath);
+            _fileSystemServices.NotifyCurrentItemCreatedMessage(fullPath);
 
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
@@ -206,7 +206,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (renamedTreeItem == null) { return; }
 
             // カレントディレクトリに名前変更メッセージを送信
-            _fileSystemServices.SendCurrentItemRenamed(oldFullPath, newFullPath);
+            _fileSystemServices.NotifyCurrentItemRenamedMessage(oldFullPath, newFullPath);
             int newTreeIndex = 0;
             await App.Current.Dispatcher.InvokeAsync(() =>
             {

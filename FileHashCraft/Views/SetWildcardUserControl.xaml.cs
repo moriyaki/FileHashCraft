@@ -20,7 +20,7 @@ namespace FileHashCraft.Views
             DataContext = Ioc.Default.GetService<ISetWildcardControlViewModel>();
 
            // ワイルドカード検索条件一覧のテキストボックスにフォーカスを当てる
-            WeakReferenceMessenger.Default.Register<ListBoxSeletedWildcardTextBoxFocus>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ListBoxSeletedWildcardTextBoxFocusMessage>(this, (_, _) =>
             {
                 if (WildcardSearchListBox.SelectedIndex == -1) { return; }
                 if (WildcardSearchListBox.ItemContainerGenerator.ContainerFromIndex(
@@ -31,7 +31,7 @@ namespace FileHashCraft.Views
                 }
             });
 
-            WeakReferenceMessenger.Default.Register<NewWildcardCriteriaFocus>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<NewWildcardCriteriaFocusMessage>(this, (_, _) =>
                 NewWildcardCriteria.Focus());
         }
 

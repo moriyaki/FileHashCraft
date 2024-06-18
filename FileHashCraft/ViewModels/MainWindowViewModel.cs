@@ -26,10 +26,10 @@ namespace FileHashCraft.ViewModels
             Width = _settingsService.Width;
             Height = _settingsService.Height;
 
-            WeakReferenceMessenger.Default.Register<WindowTopChanged>(this, (_, m) => Top = m.Top);
-            WeakReferenceMessenger.Default.Register<WindowLeftChanged>(this, (_, m) => Left = m.Left);
-            WeakReferenceMessenger.Default.Register<WindowWidthChanged>(this, (_, m) => Width = m.Width);
-            WeakReferenceMessenger.Default.Register<WindowHeightChanged>(this, (_, m) => Height = m.Height);
+            WeakReferenceMessenger.Default.Register<WindowTopChangedMessage>(this, (_, m) => Top = m.Top);
+            WeakReferenceMessenger.Default.Register<WindowLeftChangedMessage>(this, (_, m) => Left = m.Left);
+            WeakReferenceMessenger.Default.Register<WindowWidthChangedMessage>(this, (_, m) => Width = m.Width);
+            WeakReferenceMessenger.Default.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
         }
         #endregion 初期設定
 

@@ -27,22 +27,22 @@ namespace FileHashCraft
             MainFrame.Navigate(new ExplorerPage());
 
             // PageExplorer へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToExplorerPage>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ToExplorerPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new ExplorerPage()));
             // PageSelectTarget へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToPageSelectTarget>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ToPageSelectTargetMessage>(this, (_, _) =>
                 MainFrame.Navigate(new SelectTargetPage()));
             // PageHashCalcing へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToHashCalcingPage>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ToHashCalcingPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new HashCalcingPage()));
             // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
-            WeakReferenceMessenger.Default.Register<ToSettingPage>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<ToSettingPageMessage>(this, (_, m) =>
             {
                 FromPage = m.ReturnPage;
                 MainFrame.Navigate(new SettingsPage());
             });
             // PageSetting の終了メッセージを受信したので、元のページへ移動
-            WeakReferenceMessenger.Default.Register<ReturnPageFromSettings>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<ReturnPageFromSettingsMessage>(this, (_, _) =>
             {
                 switch (FromPage)
                 {

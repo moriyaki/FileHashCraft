@@ -25,10 +25,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _FontSize = _settingsService.FontSize;
 
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
                 => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m)
                 => FontSize = m.FontSize);
         }
 

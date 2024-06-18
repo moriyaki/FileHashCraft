@@ -1,4 +1,4 @@
 ﻿namespace FileHashCraft.Services.Messages
 {
-    public class FileHashCalcFinished;
+    public class FileHashCalcFinishedMessage;
 }

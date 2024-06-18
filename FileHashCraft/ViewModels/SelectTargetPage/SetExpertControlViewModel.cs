@@ -126,19 +126,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // 読み取り専用ファイルを利用するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<ReadOnlyFileIncludeChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<ReadOnlyFileIncludeChangedMessage>(this, (_, m)
                 => IsReadOnlyFileInclude = m.ReadOnlyFileInclude);
 
             // 隠しファイルを利用するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<HiddenFileIncludeChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<HiddenFileIncludeChangedMessage>(this, (_, m)
                 => IsHiddenFileInclude = m.HiddenFileInclude);
 
             // 0サイズファイルを削除するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<ZeroSizeFileDeleteChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m)
                 => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
 
             //空ディレクトリを削除するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<EmptyDirectoryDeleteChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<EmptyDirectoryDeleteChangedMessage>(this, (_, m)
                 => IsEmptyDirectoryDelete = m.EmptyDirectoryDelete);
         }
         #endregion コンストラクタ

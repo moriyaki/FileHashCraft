@@ -143,7 +143,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 AddCriteriaCommand.NotifyCanExecuteChanged());
 
             // リストボックスアイテムの編集状態から抜けた時の処理をします。
-            WeakReferenceMessenger.Default.Register<IsEditModeChanged>(this, (_, _) =>
+            WeakReferenceMessenger.Default.Register<IsEditModeChangedMessage>(this, (_, _) =>
                 OnPropertyChanged(nameof(CiriteriaAddTextBoxBackgroudColor)));
         }
         #endregion コンストラクタ

@@ -128,7 +128,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // リストボックスの選択状態が変わった時の処理をします。
-            WeakReferenceMessenger.Default.Register<IsSelectedWildcardChanged>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<IsSelectedWildcardChangedMessage>(this, (_, m) =>
             {
                 if (m.IsSelected)
                 {
@@ -142,7 +142,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 RemoveCriteriaCommand.NotifyCanExecuteChanged();
             });
             // リストボックスアイテムが編集された時のエラーチェックをします。
-            WeakReferenceMessenger.Default.Register<SelectedChangedWildcardCriteria>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<SelectedChangedWildcardCriteriaRequestMessage>(this, (_, m) =>
                 m.Reply(IsCriteriaConditionCorrent(m.WildcardCriteria, m.OriginalWildcardCriteria)));
         }
         #endregion コンストラクタ
@@ -180,7 +180,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ModifyCriteriaCommand.NotifyCanExecuteChanged();
             RemoveCriteriaCommand.NotifyCanExecuteChanged();
             LeaveListBoxCriteria();
-            WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
+            WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocusMessage());
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 listItem.IsEditMode = false;
                 listItem.Criteria = listItem.OriginalCriteria;
-                WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocus());
+                WeakReferenceMessenger.Default.Send(new NewWildcardCriteriaFocusMessage());
                 IsCriteriaConditionCorrent(SearchCriteriaText);
             }
         }

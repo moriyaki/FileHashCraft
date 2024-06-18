@@ -10,11 +10,11 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// 拡張子チェックボックスがチェックされたら拡張子グループ変更するメッセージ
     /// </summary>
-    public class ExtentionChechReflectToGroup
+    public class ExtentionChechReflectToGroupMessage
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionChechReflectToGroup() { throw new NotImplementedException(nameof(ExtentionChechReflectToGroup)); }
-        public ExtentionChechReflectToGroup(string name)
+        public ExtentionChechReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionChechReflectToGroupMessage)); }
+        public ExtentionChechReflectToGroupMessage(string name)
         {
             Name = name;
         }
@@ -23,11 +23,11 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// 拡張子チェックボックスがチェック解除されたら拡張子グループ変更するメッセージ
     /// </summary>
-    public class ExtentionUnchechReflectToGroup
+    public class ExtentionUnchechReflectToGroupMessage
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionUnchechReflectToGroup() { throw new NotImplementedException(nameof(ExtentionUnchechReflectToGroup)); }
-        public ExtentionUnchechReflectToGroup(string name)
+        public ExtentionUnchechReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionUnchechReflectToGroupMessage)); }
+        public ExtentionUnchechReflectToGroupMessage(string name)
         {
             Name = name;
         }
@@ -36,17 +36,17 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// チェック状態をカレントディレクトリリストボックスに反映するメッセージ
     /// </summary>
-    public class ExtentionCheckChangedToListBox;
+    public class ExtentionCheckChangedToListBoxMessage;
 
     /// <summary>
     /// 拡張子グループのチェック状態に連動して拡張子のチェック状態を変更するメッセージ
     /// </summary>
-    public class ExtentionGroupChecked
+    public class ExtentionGroupCheckedMessage
     {
         public bool IsChecked { get; set; }
         public IEnumerable<string> ExtentionCollection;
-        public ExtentionGroupChecked() { throw new NotImplementedException(nameof(ExtentionGroupChecked)); }
-        public ExtentionGroupChecked(bool isChecked, IEnumerable<string> extentionCollection)
+        public ExtentionGroupCheckedMessage() { throw new NotImplementedException(nameof(ExtentionGroupCheckedMessage)); }
+        public ExtentionGroupCheckedMessage(bool isChecked, IEnumerable<string> extentionCollection)
         {
             IsChecked = isChecked;
             ExtentionCollection = extentionCollection;
@@ -58,29 +58,29 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// 編集モード/閲覧モードの変更を通知するメッセージ
     /// </summary>
-    public class IsEditModeChanged;
+    public class IsEditModeChangedMessage;
     #endregion ワイルドカード/正規表現共通メッセージ
 
     #region ワイルドカードメッセージ
     /// <summary>
     /// ワイルドカード一覧のテキストボックスにフォーカスを移すメッセージ
     /// </summary>
-    public class ListBoxSeletedWildcardTextBoxFocus;
+    public class ListBoxSeletedWildcardTextBoxFocusMessage;
 
     /// <summary>
     /// ワイルドカード検索条件入力テキストボックスにフォーカスを戻すメッセージ
     /// </summary>
-    public class NewWildcardCriteriaFocus;
+    public class NewWildcardCriteriaFocusMessage;
 
     /// <summary>
     /// 選択されたワイルドカードアイテムの状態が変わったことを知らせるメッセージ
     /// </summary>
-    public class IsSelectedWildcardChanged
+    public class IsSelectedWildcardChangedMessage
     {
         public bool IsSelected { get; set; }
         public WildcardCriteriaItemViewModel SelectedItem { get; set; }
-        public IsSelectedWildcardChanged() { throw new NotSupportedException(nameof(IsSelectedWildcardChanged)); }
-        public IsSelectedWildcardChanged(bool isSelected, WildcardCriteriaItemViewModel selectedItem)
+        public IsSelectedWildcardChangedMessage() { throw new NotSupportedException(nameof(IsSelectedWildcardChangedMessage)); }
+        public IsSelectedWildcardChangedMessage(bool isSelected, WildcardCriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
             SelectedItem = selectedItem;
@@ -90,16 +90,16 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// リストボックスのワイルドカード検索条件編集の内容通知メッセージ
     /// </summary>
-    public class SelectedChangedWildcardCriteria : RequestMessage<bool>
+    public class SelectedChangedWildcardCriteriaRequestMessage : RequestMessage<bool>
     {
         public string WildcardCriteria { get; set; } = string.Empty;
         public string OriginalWildcardCriteria { get; set; } = string.Empty;
-        public SelectedChangedWildcardCriteria() { throw new NotImplementedException(nameof(SelectedChangedWildcardCriteria)); }
-        public SelectedChangedWildcardCriteria(string wildcardCriteria)
+        public SelectedChangedWildcardCriteriaRequestMessage() { throw new NotImplementedException(nameof(SelectedChangedWildcardCriteriaRequestMessage)); }
+        public SelectedChangedWildcardCriteriaRequestMessage(string wildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
         }
-        public SelectedChangedWildcardCriteria(string wildcardCriteria, string oldWildcardCriteria)
+        public SelectedChangedWildcardCriteriaRequestMessage(string wildcardCriteria, string oldWildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
             OriginalWildcardCriteria = oldWildcardCriteria;
@@ -111,22 +111,22 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// 正規表現一覧のテキストボックスにフォーカスを移すメッセージ
     /// </summary>
-    public class ListBoxSeletedRegexTextBoxFocus;
+    public class ListBoxSeletedRegexTextBoxFocusMessage;
 
     /// <summary>
     /// 正規表現検索条件入力テキストボックスにフォーカスを戻すメッセージ
     /// </summary>
-    public class NewRegexCriteriaFocus;
+    public class NewRegexCriteriaFocusMessage;
 
     /// <summary>
     /// 選択された正規表現アイテムの状態が変わったことを知らせるメッセージ
     /// </summary>
-    public class IsSelectedRegexChanged
+    public class IsSelectedRegexChangedMessage
     {
         public bool IsSelected { get; set; }
         public RegexCriteriaItemViewModel SelectedItem { get; set; }
-        public IsSelectedRegexChanged() { throw new NotSupportedException(nameof(IsSelectedRegexChanged)); }
-        public IsSelectedRegexChanged(bool isSelected, RegexCriteriaItemViewModel selectedItem)
+        public IsSelectedRegexChangedMessage() { throw new NotSupportedException(nameof(IsSelectedRegexChangedMessage)); }
+        public IsSelectedRegexChangedMessage(bool isSelected, RegexCriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
             SelectedItem = selectedItem;
@@ -136,16 +136,16 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// リストボックスの正規表現検索条件編集の内容通知メッセージ
     /// </summary>
-    public class SelectedChangedRegexCriteria : RequestMessage<bool>
+    public class SelectedChangedRegexCriteriaRequestMessage : RequestMessage<bool>
     {
         public string RegexCriteria { get; set; } = string.Empty;
         public string OriginalRegexCriteria { get; set; } = string.Empty;
-        public SelectedChangedRegexCriteria() { throw new NotImplementedException(nameof(SelectedChangedRegexCriteria)); }
-        public SelectedChangedRegexCriteria(string wildcardCriteria)
+        public SelectedChangedRegexCriteriaRequestMessage() { throw new NotImplementedException(nameof(SelectedChangedRegexCriteriaRequestMessage)); }
+        public SelectedChangedRegexCriteriaRequestMessage(string wildcardCriteria)
         {
             RegexCriteria = wildcardCriteria;
         }
-        public SelectedChangedRegexCriteria(string regexCriteria, string oldRegexCriteria)
+        public SelectedChangedRegexCriteriaRequestMessage(string regexCriteria, string oldRegexCriteria)
         {
             RegexCriteria = regexCriteria;
             OriginalRegexCriteria = oldRegexCriteria;

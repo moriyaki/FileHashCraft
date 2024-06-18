@@ -86,7 +86,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentCreated(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Created) return;
-            _fileSystemServices.SendCurrentItemCreated(e.FullPath);
+            _fileSystemServices.NotifyCurrentItemCreatedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentDeleted(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
-            _fileSystemServices.SendCurrentItemDeleted(e.FullPath);
+            _fileSystemServices.NotifyCurrentItemDeletedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentRenamed(object sender, RenamedEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;
-            _fileSystemServices.SendCurrentItemRenamed(e.OldFullPath, e.FullPath);
+            _fileSystemServices.NotifyCurrentItemRenamedMessage(e.OldFullPath, e.FullPath);
         }
         #endregion ファイル変更通知
     }

@@ -114,21 +114,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // 拡張子がチェックされたらグループも変更する
-            WeakReferenceMessenger.Default.Register<ExtentionChechReflectToGroup>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<ExtentionChechReflectToGroupMessage>(this, (_, m) =>
             {
                 CheckExtentionReflectToGroup(m.Name);
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
             });
 
             // 拡張子がチェック解除されたらグループも変更する
-            WeakReferenceMessenger.Default.Register<ExtentionUnchechReflectToGroup>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<ExtentionUnchechReflectToGroupMessage>(this, (_, m) =>
             {
                 UncheckExtentionReflectToGroup(m.Name);
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
             });
 
             // 拡張子グループのチェック変更に連動して拡張子チェックボックス変更
-            WeakReferenceMessenger.Default.Register<ExtentionGroupChecked>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<ExtentionGroupCheckedMessage>(this, (_, m) =>
                 ChangeCheckBoxGroup(m.IsChecked, m.ExtentionCollection));
         }
         #endregion コンストラクタ

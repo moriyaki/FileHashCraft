@@ -239,7 +239,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // リストボックスの選択状態が変わった時の処理をします。
-            WeakReferenceMessenger.Default.Register<IsSelectedRegexChanged>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<IsSelectedRegexChangedMessage>(this, (_, m) =>
             {
                 if (m.IsSelected)
                 {
@@ -253,7 +253,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 RemoveCriteriaCommand.NotifyCanExecuteChanged();
             });
             // リストボックスアイテムが編集された時のエラーチェックをします。
-            WeakReferenceMessenger.Default.Register<SelectedChangedRegexCriteria>(this, (_, m) =>
+            WeakReferenceMessenger.Default.Register<SelectedChangedRegexCriteriaRequestMessage>(this, (_, m) =>
                 m.Reply(IsCriteriaConditionCorrent(m.RegexCriteria, m.OriginalRegexCriteria)));
         }
         #endregion コンストラクタ
@@ -291,7 +291,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ModifyCriteriaCommand.NotifyCanExecuteChanged();
             RemoveCriteriaCommand.NotifyCanExecuteChanged();
             LeaveListBoxCriteria();
-            WeakReferenceMessenger.Default.Send(new NewRegexCriteriaFocus());
+            WeakReferenceMessenger.Default.Send(new NewRegexCriteriaFocusMessage());
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 listItem.IsEditMode = false;
                 listItem.Criteria = listItem.OriginalCriteria;
-                WeakReferenceMessenger.Default.Send(new NewRegexCriteriaFocus());
+                WeakReferenceMessenger.Default.Send(new NewRegexCriteriaFocusMessage());
                 IsCriteriaConditionCorrent(SearchCriteriaText);
             }
         }

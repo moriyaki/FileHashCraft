@@ -52,10 +52,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _extentionManager = extentionManager;
 
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChanged>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
 
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChanged>(this, (_, m) => FontSize = m.FontSize);
+            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
 
             _CurrentFontFamily = _settingsService.CurrentFont;
             _FontSize = _settingsService.FontSize;
@@ -160,14 +160,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (value == true)
                 {
                     FileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
-                    WeakReferenceMessenger.Default.Send(new ExtentionChechReflectToGroup(Name));
-                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBox());
+                    WeakReferenceMessenger.Default.Send(new ExtentionChechReflectToGroupMessage(Name));
+                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
                 else
                 {
                     FileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
-                    WeakReferenceMessenger.Default.Send(new ExtentionUnchechReflectToGroup(Name));
-                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBox());
+                    WeakReferenceMessenger.Default.Send(new ExtentionUnchechReflectToGroupMessage(Name));
+                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
             }
         }
@@ -225,11 +225,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _IsChecked, value);
                 if (value == true)
                 {
-                    WeakReferenceMessenger.Default.Send(new ExtentionGroupChecked(true, _extentionManager.GetGroupExtentions(FileType)));
+                    WeakReferenceMessenger.Default.Send(new ExtentionGroupCheckedMessage(true, _extentionManager.GetGroupExtentions(FileType)));
                 }
                 else
                 {
-                    WeakReferenceMessenger.Default.Send(new ExtentionGroupChecked(false, _extentionManager.GetGroupExtentions(FileType)));
+                    WeakReferenceMessenger.Default.Send(new ExtentionGroupCheckedMessage(false, _extentionManager.GetGroupExtentions(FileType)));
                 }
             }
         }

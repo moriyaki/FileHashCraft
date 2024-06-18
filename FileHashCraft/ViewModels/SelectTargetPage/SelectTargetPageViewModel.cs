@@ -177,7 +177,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             SettingsOpen = new RelayCommand(() =>
             {
                 IsExecuting = true;
-                _fileSystemServices.SendToSettingsPage(ReturnPageEnum.SelecTargettPage);
+                _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.SelecTargettPage);
             });
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -196,15 +196,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ToExplorerPage = new RelayCommand(() =>
             {
                 CTS?.Cancel();
-                _fileSystemServices.SendToExplorerPage();
+                _fileSystemServices.NavigateToExplorerPage();
             });
 
             // ツリービュー幅変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<TreeWidthChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<TreeWidthChangedMessage>(this, (_, m)
                 => TreeWidth = m.TreeWidth);
 
             // リストボックス幅変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<ListWidthChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<ListWidthChangedMessage>(this, (_, m)
                 => ListWidth = m.ListWidth);
 
             _TreeWidth = _settingsService.TreeWidth;

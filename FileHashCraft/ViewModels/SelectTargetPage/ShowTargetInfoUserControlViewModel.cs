@@ -263,16 +263,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // ハッシュ計算画面に移動するコマンド
             ToHashCalcingPage = new RelayCommand(
-                () => _fileSystemServices.SendToHashCalcingPage(),
+                () => _fileSystemServices.NavigateToHashCalcingPage(),
                 () => CountFilteredGetHash > 0
             );
 
             // カレントディレクトリが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryChangedMessage>(this, (_, m)
                 => ChangeCurrentPath(m.CurrentFullPath));
 
             // 拡張子チェックボックスのチェック状態が変更されたら、カレントディレクトリリストボックス変更
-            WeakReferenceMessenger.Default.Register<ExtentionCheckChangedToListBox>(this, (_, _)
+            WeakReferenceMessenger.Default.Register<ExtentionCheckChangedToListBoxMessage>(this, (_, _)
                 => ChangeSelectedToListBox());
         }
         #endregion コンストラクタ

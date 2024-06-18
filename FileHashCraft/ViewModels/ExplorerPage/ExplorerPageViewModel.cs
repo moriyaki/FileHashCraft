@@ -119,7 +119,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     ToUpDirectory.NotifyCanExecuteChanged();
                     ListViewUpdater.Execute(null);
                     _fileSystemWatcherService.SetCurrentDirectoryWatcher(changedDirectory);
-                    _fileSystemServices.SendCurrentDirectoryChanged(changedDirectory);
+                    _fileSystemServices.NotifyChangeCurrentDirectory(changedDirectory);
                 }
             }
         }
@@ -229,7 +229,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     var newDirectory = SelectedListViewItem.FullPath;
                     if (Directory.Exists(newDirectory))
                     {
-                        _fileSystemServices.SendCurrentDirectoryChanged(newDirectory);
+                        _fileSystemServices.NotifyChangeCurrentDirectory(newDirectory);
                     }
                 }
             });
@@ -238,12 +238,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             HashCalc = new RelayCommand(() =>
             {
                 _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                _fileSystemServices.SendToSelectTargetPage();
+                _fileSystemServices.NavigateToSelectTargetPage();
             });
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
-                _fileSystemServices.SendToSettingsPage(ReturnPageEnum.ExplorerPage));
+                _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.ExplorerPage));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -261,19 +261,19 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             });
 
             // カレントディレクトリ変更のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryChanged>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryChangedMessage>(this, (_, m)
                 => CurrentFullPath = m.CurrentFullPath);
 
             // カレントディレクトリのアイテム作成のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemCreated>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemCreatedMessage>(this, (_, m)
                 => CurrentDirectoryItemCreated(m.CreatedFullPath));
 
             // カレントディレクトリのアイテム名前変更のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemRenamed>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemRenamedMessage>(this, (_, m)
                 => CurrentDirectoryItemRenamed(m.OldFullPath, m.NewFullPath));
 
             // カレントディレクトリのアイテム削除のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemDeleted>(this, (_, m)
+            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemDeletedMessage>(this, (_, m)
                 => CurrentDirectoryItemDeleted(m.DeletedFullPath));
 
             Initialize();
@@ -320,7 +320,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         }
                     }
                     _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                    _fileSystemServices.SendToSelectTargetPage();
+                    _fileSystemServices.NavigateToSelectTargetPage();
                 }
                 if (root.FullPath == @"H:\")
                 {
@@ -340,7 +340,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         }
                     }
                     _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                    _fileSystemServices.SendToSelectTargetPage();
+                    _fileSystemServices.NavigateToSelectTargetPage();
                 }
             }
         }
