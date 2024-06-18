@@ -9,7 +9,18 @@
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<NeutralResourcesLanguage>en-US</NeutralResourcesLanguage>
 	<RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
-	<CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PlatformTarget)' == 'x86'">
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\$(PlatformTarget)\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PlatformTarget)' == 'ARM64'">
+    <RuntimeIdentifier>win-arm64</RuntimeIdentifier>
+    <PlatformTarget>ARM64</PlatformTarget>
+    <OutputPath>bin\$(PlatformTarget)\$(Configuration)\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
