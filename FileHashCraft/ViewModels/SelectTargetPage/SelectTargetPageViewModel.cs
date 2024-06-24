@@ -6,6 +6,8 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models;
+using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
@@ -142,7 +144,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
         #region コンストラクタ
         private readonly IFileSystemServices _fileSystemServices;
-        private readonly ITreeManager _directoryTreeManager;
+        private readonly IDirectoriesManager _directoriesManager;
+        private readonly IScanHashFiles _scanHashFiles;
+        private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         private bool IsExecuting = false;
@@ -155,7 +159,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ISetExpertControlViewModel pageSelectTargetViewModelExpert,
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
-            ITreeManager directoryTreeManager,
+            IDirectoriesManager directoriesManager,
+            IScanHashFiles scanHashFiles,
+            IScannedFilesManager scannedFilesManager,
             IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlViewModel
         ) : base(settingsService)
@@ -166,7 +172,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelRegEx = pageSelectTargetViewModelRegEx;
             ViewModelExpert = pageSelectTargetViewModelExpert;
             _fileSystemServices = fileSystemServices;
-            _directoryTreeManager = directoryTreeManager;
+            _directoriesManager = directoriesManager;
+            _scanHashFiles = scanHashFiles;
+            _scannedFilesManager = scannedFilesManager;
             _helpWindowViewModel = helpWindowViewModel;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
 
@@ -198,6 +206,30 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 CTS?.Cancel();
                 _fileSystemServices.NavigateToExplorerPage();
             });
+
+            // スキャンした全ディレクトリ数に加算するメッセージ
+            WeakReferenceMessenger.Default.Register<AddScannedDirectoriesCountMessage>(this, (_, m)
+                => ViewModelMain.AddScannedDirectoriesCount(m.DirectoriesCount));
+
+            // 全管理対象ファイルを追加するメッセージ
+            WeakReferenceMessenger.Default.Register<AddFileToAllFilesMessage>(this, (_, m)
+                => ViewModelExtention.AddFileToAllFiles(m.FileFullPath));
+
+            // ファイルスキャンが完了したディレクトリ数に加算するメッセージ
+            WeakReferenceMessenger.Default.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
+                => ViewModelMain.AddFilesScannedDirectoriesCount());
+
+            // ハッシュ取得対象となる総対象ファイル数にファイル数を設定するメッセージ
+            WeakReferenceMessenger.Default.Register<SetAllTargetfilesCountMessge>(this, (_, _)
+                => ViewModelMain.SetAllTargetfilesCount());
+
+            // 拡張子をリストボックスに追加するメッセージ
+            WeakReferenceMessenger.Default.Register<AddExtentionMessage>(this, (_, m)
+                => ViewModelExtention.AddExtention(m.Extention));
+
+            // ファイルの拡張子グループをリストボックスに追加するメッセージ
+            WeakReferenceMessenger.Default.Register<AddFileTypesMessage>(this, (_, _)
+                => ViewModelExtention.AddFileTypes());
 
             // ツリービュー幅変更メッセージ受信
             WeakReferenceMessenger.Default.Register<TreeWidthChangedMessage>(this, (_, m)
@@ -248,8 +280,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             catch { }
             // 既にファイル検索がされていて、ディレクトリ選択設定が変わっていなければ終了
             if (ViewModelMain.Status == FileScanStatus.Finished
-             && _directoryTreeManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
-             && _directoryTreeManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
+             && _directoriesManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
+             && _directoriesManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
             {
                 return;
             }
@@ -276,13 +308,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
             // 該当以下のディレクトリを含むディレクトリのパスをツリービューに追加する。
-            foreach (var root in _directoryTreeManager.NestedDirectories)
+            foreach (var root in _directoriesManager.NestedDirectories)
             {
                 var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
             // 該当ディレクトリのみを単独でツリービューに追加する。
-            foreach (var root in _directoryTreeManager.NonNestedDirectories)
+            foreach (var root in _directoriesManager.NonNestedDirectories)
             {
                 var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 fi.HasChildren = false;
@@ -296,9 +328,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private void SaveCurrentDirectorySelectionSettings()
         {
             NestedDirectories.Clear();
-            NestedDirectories.AddRange(_directoryTreeManager.NestedDirectories);
+            NestedDirectories.AddRange(_directoriesManager.NestedDirectories);
             NonNestedDirectories.Clear();
-            NonNestedDirectories.AddRange(_directoryTreeManager.NonNestedDirectories);
+            NonNestedDirectories.AddRange(_directoriesManager.NonNestedDirectories);
         }
 
         /// <summary>
@@ -334,7 +366,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <exception cref="InvalidOperationException"></exception>
         private void StartFileScan()
         {
-            var scanHashFilesClass = Ioc.Default.GetService<IScanHashFiles>() ?? throw new InvalidOperationException($"{nameof(IScanHashFiles)} dependency not resolved.");
             CTS = new CancellationTokenSource();
             cancellationToken = CTS.Token;
 
@@ -343,9 +374,51 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelMain.ToHashCalcingPage.NotifyCanExecuteChanged();
 
             // スキャンするディレクトリの追加
-            scanHashFilesClass.ScanFiles(cancellationToken);
+            Task.Run(() => ScanFiles(cancellationToken));
         }
         #endregion 初期処理
+
+        #region メイン処理
+        /// <summary>
+        /// スキャンするファイルを検出します。
+        /// </summary>
+        public async Task ScanFiles(CancellationToken cancellation)
+        {
+            // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
+            _scannedFilesManager.AllFiles.Clear();
+            _scanHashFiles.DirectoriesHashSet.Clear();
+            ViewModelExtention.ClearExtentions();
+
+            try
+            {
+                // ディレクトリのスキャン
+                ViewModelMain.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
+                await _scanHashFiles.DirectoriesScan(cancellation);
+
+                // ファイルのスキャン
+                ViewModelMain.ChangeHashScanStatus(FileScanStatus.FilesScanning);
+                await Task.Run(() => _scanHashFiles.DirectoryFilesScan(cancellation), cancellation);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            _scanHashFiles.ScanExtention(cancellation);
+
+            // スキャン終了の表示に切り替える
+            ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
+
+            //--------------------- 開発用自動化処理
+            /*
+            App.Current?.Dispatcher.InvokeAsync(() =>
+            {
+                ViewModelWildcard.SearchCriteriaText = "*";
+                ViewModelWildcard.AddCriteria();
+                ViewModelMain.ToHashCalcingPage.Execute(this);
+            });
+            */
+        }
+        #endregion メイン処理
 
     }
 }

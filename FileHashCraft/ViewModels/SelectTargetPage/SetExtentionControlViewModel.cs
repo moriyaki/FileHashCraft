@@ -29,7 +29,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子をリストボックスに追加します。
         /// </summary>
-        void AddExtentions(string extention);
+        void AddExtention(string extention);
         /// <summary>
         /// 拡張子のコレクションをクリアします。
         /// </summary>
@@ -175,7 +175,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// 拡張子をリストボックスに追加します。
         /// </summary>
         /// <param name="extention">拡張子</param>
-        public void AddExtentions(string extention)
+        public void AddExtention(string extention)
         {
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
             if (extentionManager.GetExtentionsCount(extention) > 0)

@@ -6,6 +6,64 @@ namespace FileHashCraft.Services.Messages
 {
     public class FileScanFinished;
 
+    #region ファイルスキャンメッセージ
+
+    /// <summary>
+    /// スキャンした全ディレクトリ数に加算するメッセージ
+    /// </summary>
+    public class AddScannedDirectoriesCountMessage
+    {
+        public int DirectoriesCount { get; set; } = 0;
+        public AddScannedDirectoriesCountMessage() { throw new NotImplementedException(nameof(AddScannedDirectoriesCountMessage)); }
+        public AddScannedDirectoriesCountMessage(int directoryCount)
+        {
+            DirectoriesCount = directoryCount;
+        }
+    }
+
+    /// <summary>
+    /// 全管理対象ファイルを追加するメッセージ
+    /// </summary>
+    public class AddFileToAllFilesMessage
+    {
+        public string FileFullPath { get; set; } = string.Empty;
+        public AddFileToAllFilesMessage() { throw new NotImplementedException(nameof(AddFileToAllFilesMessage)); }
+        public AddFileToAllFilesMessage(string fileFullPath)
+        {
+            FileFullPath = fileFullPath;
+        }
+    }
+
+    /// <summary>
+    /// ファイルスキャンが完了したディレクトリ数に加算するメッセージ
+    /// </summary>
+    public class AddFilesScannedDirectoriesCountMessage;
+
+    /// <summary>
+    /// ハッシュ取得対象となる総対象ファイル数にファイル数を設定するメッセージ
+    /// </summary>
+    public class SetAllTargetfilesCountMessge;
+
+    /// <summary>
+    /// 拡張子をリストボックスに追加するメッセージ
+    /// </summary>
+    public class AddExtentionMessage
+    {
+        public string Extention { get; set; } = string.Empty;
+        public AddExtentionMessage() { throw new NotImplementedException(nameof(AddExtentionMessage)); }
+        public AddExtentionMessage(string extention)
+        {
+            Extention = extention;
+        }
+    }
+
+    /// <summary>
+    /// ファイルの拡張子グループをリストボックスに追加するメッセージ
+    /// </summary>
+    public class AddFileTypesMessage;
+
+    #endregion ファイルスキャンメッセージ
+
     #region 拡張子チェックボックスメッセージ
     /// <summary>
     /// 拡張子チェックボックスがチェックされたら拡張子グループ変更するメッセージ

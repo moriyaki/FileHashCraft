@@ -116,14 +116,13 @@ namespace FileHashCraft
 
             services.AddSingleton<IControDirectoryTreeViewlModel, ControDirectoryTreeViewModel>();
             services.AddTransient<IDirectoryTreeViewItemModel, DirectoryTreeViewItemModel>();
-            services.AddSingleton<ITreeManager, TreeManager>();
+            services.AddSingleton<IDirectoryTreeManager, DirectoryTreeManager>();
             services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
             services.AddSingleton<IFileWatcherService, DrivesFileSystemWatcherService>();
 
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddTransient<IExplorerListItemViewModel, ExplorerListItemViewModel>();
 
-            services.AddSingleton<IScanHashFiles, ScanHashFiles>();
             services.AddSingleton<IShowTargetInfoUserControlViewModel, ShowTargetInfoUserControlViewModel>();
             services.AddSingleton<ISelectTargetPageViewModel, SelectTargetPageViewModel>();
             services.AddSingleton<ISetExtentionControlViewModel, SetExtentionControlViewModel>();
@@ -136,6 +135,8 @@ namespace FileHashCraft
             services.AddSingleton<IHashCalcingPageViewModel, HashCalcingPageViewModel>();
 
             // Model
+            services.AddSingleton<IScanHashFiles, ScanHashFiles>();
+            services.AddSingleton<IDirectoriesManager, DirectoriesManager>();
             services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();
             services.AddSingleton<IExtentionManager, ExtentionManager>();
             return services.BuildServiceProvider();

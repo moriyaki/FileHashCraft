@@ -101,7 +101,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         #region コンストラクタと初期処理
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IFileWatcherService _fileWatcherService;
-        private readonly ITreeManager _treeManager;
+        private readonly IDirectoryTreeManager _treeManager;
 
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
@@ -114,7 +114,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             IFileSystemServices fileSystemService,
             ISettingsService settingsService,
             IFileWatcherService fileWatcherService,
-            ITreeManager treeManager
+            IDirectoryTreeManager treeManager
         ) : base(settingsService)
         {
             _fileSystemServices = fileSystemService;

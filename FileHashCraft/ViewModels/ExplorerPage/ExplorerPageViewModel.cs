@@ -175,14 +175,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
 
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IFileSystemWatcherService _fileSystemWatcherService;
-        private readonly ITreeManager _treeManager;
+        private readonly IDirectoryTreeManager _treeManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         public ExplorerPageViewModel(
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             IFileSystemWatcherService fileSystemWatcherService,
-            ITreeManager treeManager,
+            IDirectoryTreeManager treeManager,
             IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
         ) : base(settingsService)
@@ -317,10 +317,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         if (child.FullPath == @"E:\Videos")
                         {
                             child.IsChecked = true;
+                            break;
                         }
                     }
-                    _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                    _fileSystemServices.NavigateToSelectTargetPage();
                 }
                 if (root.FullPath == @"H:\")
                 {
@@ -330,19 +329,20 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         if (child.FullPath == @"H:\旧D_Drive")
                         {
                             child.KickChild();
-                            foreach (var grandchild in root.Children)
-                            { 
+                            foreach (var grandchild in child.Children)
+                            {
                                 if (grandchild.FullPath == @"H:\旧D_Drive\iso")
                                 {
                                     grandchild.IsChecked = true;
+                                    break;
                                 }
                             }
                         }
                     }
-                    _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                    _fileSystemServices.NavigateToSelectTargetPage();
                 }
             }
+            _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+            _fileSystemServices.NavigateToSelectTargetPage();
         }
         #endregion コンストラクタと初期処理
 

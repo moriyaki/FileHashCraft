@@ -5,23 +5,16 @@
  */
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ControlDirectoryTree
 {
-    public interface ITreeManager
+    public interface IDirectoryTreeManager
     {
         // CheckedTreeManager
-        /// <summary>
-        /// 子ディレクトリを含むチェックされたディレクトリです。
-        /// </summary>
-        List<string> NestedDirectories { get; }
-        /// <summary>
-        /// 子ディレクトリを含まないチェックされたディレクトリです。
-        /// </summary>
-        List<string> NonNestedDirectories { get; }
         /// <summary>
         /// そのディレクトリがチェックされているかどうか。
         /// </summary>
@@ -40,10 +33,6 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
 
         // ExpandedTreeManager
-        /// <summary>
-        /// 全てのディレクトリです。
-        /// </summary>
-        List<string> Directories { get; }
         /// <summary>
         /// 展開されたディレクトリかどうか。
         /// </summary>
@@ -70,23 +59,30 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         void RemoveDirectory(string fullPath);
     }
 
-    public class TreeManager : ITreeManager
+    public class DirectoryTreeManager : IDirectoryTreeManager
     {
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        public TreeManager() { throw new NotImplementedException(nameof(TreeManager)); }
+        public DirectoryTreeManager() { throw new NotImplementedException(nameof(DirectoryTreeManager)); }
 
         private readonly ICheckedTreeItemsManager _treeCheckedManager;
         private readonly ITreeExpandedManager _treeExpandedManager;
-        public TreeManager(
+        private readonly IDirectoriesManager _directoriesManager;
+        public DirectoryTreeManager(
             ICheckedTreeItemsManager treeCheckedManager,
-            ITreeExpandedManager treeExpandedManager
+            ITreeExpandedManager treeExpandedManager,
+            IDirectoriesManager directoriesManager
             )
         {
             _treeCheckedManager = treeCheckedManager;
             _treeExpandedManager = treeExpandedManager;
+            _directoriesManager = directoriesManager;
+
+            _directoriesManager.Directories = _treeExpandedManager.Directories;
+            _directoriesManager.NestedDirectories = _treeCheckedManager.NestedDirectories;
+            _directoriesManager.NonNestedDirectories = _treeCheckedManager.NonNestedDirectories;
 
             WeakReferenceMessenger.Default.Register<AddToExpandDirectoryManagerMessage>(this, (_, m)
                 => AddExpandedDirectoryManager(m.Child));
@@ -95,17 +91,6 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
                 => RemoveExpandedDirectoryManager(m.Child));
         }
         //-----------------------------------TreeCheckedManager
-        #region リスト
-        /// <summary>
-        /// 子ディレクトリを含む、ファイルハッシュ取得対象のディレクトリを保持します。
-        /// </summary>
-        public List<string> NestedDirectories { get => _treeCheckedManager.NestedDirectories; }
-        /// <summary>
-        /// 子ディレクトリを含まない、ファイルハッシュ取得対象のディレクトリを保持します。
-        /// </summary>
-        public List<string> NonNestedDirectories { get => _treeCheckedManager.NonNestedDirectories; }
-        #endregion リスト
-
         /// <summary>
         /// そのディレクトリがチェックされているかどうかを調べます。
         /// </summary>
@@ -133,12 +118,6 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
             => _treeCheckedManager.CreateCheckBoxManager(treeRoot);
 
         //-----------------------------------TreeExpandedManager
-        /// <summary>
-        /// 登録したディレクトリのリストを取得します。
-        /// </summary>
-        /// <returns></returns>
-        public List<string> Directories { get => _treeExpandedManager.Directories; }
-
         /// <summary>
         /// 展開されたディレクトリかどうかを調べます。
         /// </summary>

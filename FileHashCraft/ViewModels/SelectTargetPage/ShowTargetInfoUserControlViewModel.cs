@@ -310,7 +310,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// スキャンした全ディレクトリ数に加算します。
         /// </summary>
         /// <param name="directoriesCount">加算する値、デフォルト値は1</param>
-        public void AddScannedDirectoriesCount(int directoriesCount = 1)
+        public void AddScannedDirectoriesCount(int directoriesCount)
         {
             App.Current?.Dispatcher?.Invoke(() => CountScannedDirectories += directoriesCount);
         }
@@ -366,7 +366,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
-        //public void ChangeExtensionToListBox(string extention, bool IsTarget)
         public void ChangeSelectedToListBox()
         {
             foreach (var item in HashFileListItems)

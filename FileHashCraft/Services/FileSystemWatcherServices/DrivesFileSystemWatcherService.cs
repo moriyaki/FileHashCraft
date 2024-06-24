@@ -45,7 +45,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         }
 
         private readonly IFileSystemServices _fileSystemServices;
-        private readonly ITreeManager _directoryTreeManager;
+        private readonly IDirectoryTreeManager _directoryTreeManager;
 
         /// <summary>
         /// コンストラクタインジェクションをします。
@@ -53,7 +53,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// <param name="directoryTreeManager">IDirectoryTreeManager</param>
         public DrivesFileSystemWatcherService(
             IFileSystemServices fileSystemServices,
-            ITreeManager directoryTreeManager
+            IDirectoryTreeManager directoryTreeManager
         )
         {
             _fileSystemServices = fileSystemServices;
