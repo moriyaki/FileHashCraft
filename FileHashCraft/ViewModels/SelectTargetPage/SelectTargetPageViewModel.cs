@@ -409,14 +409,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
 
             //--------------------- 開発用自動化処理
-            /*
             App.Current?.Dispatcher.InvokeAsync(() =>
             {
                 ViewModelWildcard.SearchCriteriaText = "*";
                 ViewModelWildcard.AddCriteria();
                 ViewModelMain.ToHashCalcingPage.Execute(this);
             });
-            */
         }
         #endregion メイン処理
 

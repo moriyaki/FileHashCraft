@@ -2,6 +2,8 @@
 
     ハッシュアルゴリズムのタイプと文字列を相互変換するヘルパークラスです。
  */
+using FileHashCraft.Properties;
+
 namespace FileHashCraft.Models.Helpers
 {
     /// <summary>
@@ -48,6 +50,17 @@ namespace FileHashCraft.Models.Helpers
                 FileHashAlgorithm.SHA384 => "SHA-384",
                 FileHashAlgorithm.SHA512 => "SHA-512",
                 _ => "SHA-256",
+            };
+        }
+
+        public static string GetAlgorithmCaption(string algorithm)
+        {
+            return algorithm switch
+            {
+                "SHA-256" => Resources.HashAlgorithm_SHA256,
+                "SHA-384" => Resources.HashAlgorithm_SHA384,
+                "SHA-512" => Resources.HashAlgorithm_SHA512,
+                _ => Resources.HashAlgorithm_SHA256,
             };
         }
     }

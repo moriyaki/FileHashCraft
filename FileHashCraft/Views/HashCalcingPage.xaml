@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -41,6 +42,7 @@
         </Menu>
         
         <!-- Status Message-->
+
         <!-- ハッシュ取得中かのメッセージ -->
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="3" Background="{Binding StatusColor}">
             <TextBlock  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -48,28 +50,39 @@
                         Text="{Binding StatusMessage}"/>
         </Border>
 
+
+        <!-- Hash Algorithm -->
+        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
+               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}"/>
+
+        <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
+               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+               Content="{Binding HashAlgorithm}"/>
+
+
         <!-- All HashGet Files Count-->
-        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
+        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_AllHashGetFilesCount, Mode=OneWay}"/>
-        <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
+        <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding AllHashGetFilesCount}"/>
 
         <!-- Hash Got Files Count -->
-        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
+        <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_HashGotFileCount, Mode=OneWay}"/>
-        <Label Grid.Row="3" Grid.Column="1"  Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
+        <Label Grid.Row="4" Grid.Column="1"  Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding HashGotFileCount}"/>
 
         <!-- Match Hash Count -->
-        <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
+        <Label Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_HashGotPercent, Mode=OneWay}"/>
 
-        <Border Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" Margin="3">
+        <Border Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3">
             <StatusBar Grid.Row="5" Grid.Column="1" Margin="3" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch">
                 <StatusBarItem HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <ProgressBar Value="{Binding HashGotPercent,Mode=OneWay}" />
@@ -78,17 +91,17 @@
         </Border>
 
         <!-- Same Hash Count -->
-        <Label Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
+        <Label Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_MatchHashCount, Mode=OneWay}"/>
-        <Label Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
+        <Label Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding MatchHashCount}"/>
 
-        <Label Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
+        <Label Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_MatchHashPercent, Mode=OneWay}"/>
-        <Border Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" Margin="3">
+        <Border Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Margin="3">
             <StatusBar Grid.Row="5" Grid.Column="1" Margin="3" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch">
                 <StatusBarItem HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                     <ProgressBar Value="{Binding MatchHashPercent,Mode=OneWay}" />
@@ -96,19 +109,19 @@
             </StatusBar>
         </Border>
 
-        <Label Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
+        <Label Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_ProcessingFileName, Mode=OneWay}"/>
-        <ListBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
+        <ListBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
         </ListBox>
 
         <!-- Buttons -->
-        <Button Grid.Row="8" Grid.Column="2" Margin="3"
+        <Button Grid.Row="9" Grid.Column="2" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
                 Command="{Binding ToSelectTargetPage}"/>
-        <Button Grid.Row="8" Grid.Column="3" Margin="3"
+        <Button Grid.Row="9" Grid.Column="3" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashResult, Mode=OneWay}"
                 Command="{Binding ToSameFileSelectPage}"/>

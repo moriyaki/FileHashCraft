@@ -3,6 +3,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -25,7 +26,9 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
     public class HashCalcingPageViewModel : BaseViewModel, IHashCalcingPageViewModel
     {
         #region バインディング
-
+        /// <summary>
+        /// ファイルハッシュ計算の進行状況
+        /// </summary>
         private FileHashCalcStatus _Status = FileHashCalcStatus.None;
         public FileHashCalcStatus Status
         {
@@ -86,6 +89,16 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         {
             get => _AllHashGetFilesCount;
             set => SetProperty(ref _AllHashGetFilesCount, value);
+        }
+
+        /// <summary>
+        /// ハッシュ計算のアルゴリズム
+        /// </summary>
+        private string _HashAlgorithm = string.Empty;
+        public string HashAlgorithm
+        {
+            get => HashAlgorithmHelper.GetAlgorithmCaption(_settingsService.HashAlgorithm);
+            set => SetProperty(ref _HashAlgorithm, value);
         }
 
         /// <summary>
@@ -174,6 +187,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             _helpWindowViewModel = helpWindowViewModel;
             _scannedFilesManager = scannedFilesManager;
 
+            HashAlgorithm = _settingsService.HashAlgorithm;
             AllHashGetFilesCount = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude);
 
             // 設定画面ページに移動するコマンド
