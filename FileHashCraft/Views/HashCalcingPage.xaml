@@ -113,6 +113,7 @@
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_ProcessingFileName, Mode=OneWay}"/>
         <ListBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
+                 ItemsSource="{Binding CalcingFiles}"
                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
         </ListBox>
 
