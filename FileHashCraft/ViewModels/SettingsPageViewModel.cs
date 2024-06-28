@@ -33,14 +33,14 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 選択されている言語
         /// </summary>
-        private string _SelectedLanguage;
+        private string _selectedLanguage;
         public string SelectedLanguage
         {
-            get => _SelectedLanguage;
+            get => _selectedLanguage;
             set
             {
-                _SelectedLanguage = value;
-                _settingsService.SendLanguage(_SelectedLanguage);
+                _selectedLanguage = value;
+                _settingsService.SendLanguage(_selectedLanguage);
                 var currentHashAlgorithms = SelectedHashAlgorithm;
                 HashAlgorithms.Clear();
                 HashAlgorithms =
@@ -68,29 +68,29 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
         /// </summary>
-        private string _SelectedHashAlgorithm;
+        private string _selectedHashAlgorithm;
         public string SelectedHashAlgorithm
         {
-            get => _SelectedHashAlgorithm;
+            get => _selectedHashAlgorithm;
             set
             {
-                if (value == _SelectedHashAlgorithm) return;
+                if (value == _selectedHashAlgorithm) return;
 
-                SetProperty(ref _SelectedHashAlgorithm, value);
+                SetProperty(ref _selectedHashAlgorithm, value);
                 _settingsService.SendHashAlogrithm(value);
             }
         }
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
-        private bool _IsReadOnlyFileInclude;
+        private bool _isReadOnlyFileInclude;
         public bool IsReadOnlyFileInclude
         {
-            get => _IsReadOnlyFileInclude;
+            get => _isReadOnlyFileInclude;
             set
             {
-                if (_IsReadOnlyFileInclude == value) return;
-                SetProperty(ref _IsReadOnlyFileInclude, value);
+                if (_isReadOnlyFileInclude == value) return;
+                SetProperty(ref _isReadOnlyFileInclude, value);
                 _settingsService.SendReadOnlyFileInclude(value);
             }
         }
@@ -98,28 +98,28 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 隠しファイルを対象にするかどうか
         /// </summary>
-        private bool _IsHiddenFileInclude;
+        private bool _isHiddenFileInclude;
         public bool IsHiddenFileInclude
         {
-            get => _IsHiddenFileInclude;
+            get => _isHiddenFileInclude;
             set
             {
-                if (_IsHiddenFileInclude == value) return;
-                SetProperty(ref _IsHiddenFileInclude, value);
+                if (_isHiddenFileInclude == value) return;
+                SetProperty(ref _isHiddenFileInclude, value);
                 _settingsService.SendHiddenFileInclude(value);
             }
         }
         /// <summary>
         ///  0 サイズのファイルを削除するかどうか
         /// </summary>
-        private bool _IsZeroSizeFileDelete;
+        private bool _isZeroSizeFileDelete;
         public bool IsZeroSizeFileDelete
         {
-            get => _IsZeroSizeFileDelete;
+            get => _isZeroSizeFileDelete;
             set
             {
-                if (_IsZeroSizeFileDelete == value) return;
-                SetProperty(ref _IsZeroSizeFileDelete, value);
+                if (_isZeroSizeFileDelete == value) return;
+                SetProperty(ref _isZeroSizeFileDelete, value);
                 _settingsService.SendZeroSizeFileDelete(value);
             }
         }
@@ -127,14 +127,14 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 空のフォルダを削除するかどうか
         /// </summary>
-        private bool _IsEmptyDirectoryDelete;
+        private bool _isEmptyDirectoryDelete;
         public bool IsEmptyDirectoryDelete
         {
-            get => _IsEmptyDirectoryDelete;
+            get => _isEmptyDirectoryDelete;
             set
             {
-                if (_IsEmptyDirectoryDelete == value) return;
-                SetProperty(ref _IsEmptyDirectoryDelete, value);
+                if (_isEmptyDirectoryDelete == value) return;
+                SetProperty(ref _isEmptyDirectoryDelete, value);
                 _settingsService.SendEmptyDirectoryDelete(value);
             }
         }
@@ -222,12 +222,12 @@ namespace FileHashCraft.ViewModels
             WeakReferenceMessenger.Default.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m)
                 => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
 
-            _SelectedLanguage = _settingsService.SelectedLanguage;
-            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
-            _IsReadOnlyFileInclude = _settingsService.IsReadOnlyFileInclude;
-            _IsHiddenFileInclude = _settingsService.IsHiddenFileInclude;
-            _IsZeroSizeFileDelete = _settingsService.IsZeroSizeFileDelete;
-            _IsEmptyDirectoryDelete = _settingsService.IsEmptyDirectoryDelete;
+            _selectedLanguage = _settingsService.SelectedLanguage;
+            _selectedHashAlgorithm = _settingsService.HashAlgorithm;
+            _isReadOnlyFileInclude = _settingsService.IsReadOnlyFileInclude;
+            _isHiddenFileInclude = _settingsService.IsHiddenFileInclude;
+            _isZeroSizeFileDelete = _settingsService.IsZeroSizeFileDelete;
+            _isEmptyDirectoryDelete = _settingsService.IsEmptyDirectoryDelete;
         }
 
         /// <summary>

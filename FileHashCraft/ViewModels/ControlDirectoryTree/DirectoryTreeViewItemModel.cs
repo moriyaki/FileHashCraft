@@ -75,8 +75,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
 
             var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
-            _CurrentFontFamily = settingsService.CurrentFont;
-            _FontSize = settingsService.FontSize;
+            _currentFontFamily = settingsService.CurrentFont;
+            _fontSize = settingsService.FontSize;
         }
 
         /// <summary>
@@ -119,21 +119,21 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ファイルの表示名
         /// </summary>
-        private string _Name = string.Empty;
+        private string _name = string.Empty;
         public string Name
         {
-            get => _Name;
-            set => SetProperty(ref _Name, value);
+            get => _name;
+            set => SetProperty(ref _name, value);
         }
 
         /// <summary>
         /// ファイルのアイコン
         /// </summary>
-        private BitmapSource? _Icon;
+        private BitmapSource? _icon;
         public BitmapSource? Icon
         {
-            get => _Icon;
-            set => SetProperty(ref _Icon, value);
+            get => _icon;
+            set => SetProperty(ref _icon, value);
         }
 
         /// <summary>
@@ -147,13 +147,13 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ファイルまたはフォルダのフルパス
         /// </summary>
-        private string _FullPath = string.Empty;
+        private string _fullPath = string.Empty;
         public string FullPath
         {
-            get => _FullPath;
+            get => _fullPath;
             set
             {
-                SetProperty(ref _FullPath, value);
+                SetProperty(ref _fullPath, value);
                 UpdatePropertiesFromFullPath();
             }
         }
@@ -175,50 +175,50 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ファイルの種類
         /// </summary>
-        private string _FileType = string.Empty;
+        private string _fileType = string.Empty;
         public string FileType
         {
-            get => _FileType;
-            set => SetProperty(ref _FileType, value);
+            get => _fileType;
+            set => SetProperty(ref _fileType, value);
         }
 
         /// <summary>
         /// ディレクトリのドライブが準備されているかどうか
         /// </summary>
-        protected bool _IsReady = false;
+        protected bool _isReady = false;
         public virtual bool IsReady
         {
-            get => _IsReady;
-            set => SetProperty(ref _IsReady, value);
+            get => _isReady;
+            set => SetProperty(ref _isReady, value);
         }
 
         /// <summary>
         /// ディレクトリのドライブが着脱可能か
         /// </summary>
-        private bool _IsRemovable = false;
+        private bool _isRemovable = false;
         public bool IsRemovable
         {
-            get => _IsRemovable;
-            set => SetProperty(ref _IsRemovable, value);
+            get => _isRemovable;
+            set => SetProperty(ref _isRemovable, value);
         }
 
         /// <summary>
         /// ディレクトリかどうか
         /// </summary>
-        private bool _IsDirectory;
+        private bool _isDirectory;
         public bool IsDirectory
         {
-            get => _IsDirectory;
-            set => SetProperty(ref _IsDirectory, value);
+            get => _isDirectory;
+            set => SetProperty(ref _isDirectory, value);
         }
 
         /// <summary>
         /// ディレクトリがディレクトリを持つかどうか
         /// </summary>
-        private bool _HasChildren = false;
+        private bool _hasChildren = false;
         public bool HasChildren
         {
-            get => _HasChildren;
+            get => _hasChildren;
             set
             {
                 if (!value)
@@ -226,7 +226,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     Children.Clear();
                     return;
                 }
-                if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
+                if (SetProperty(ref _hasChildren, value) && Children.Count == 0)
                 {
                     Children.Add(new DirectoryTreeViewItemModel() { Name = "【dummy】" });
                 }
@@ -249,20 +249,20 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリのチェックボックスがチェックされているかどうか
         /// </summary>
-        private bool? _IsChecked = false;
+        private bool? _isChecked = false;
         public bool? IsChecked
         {
-            get => _IsChecked;
+            get => _isChecked;
             set
             {
                 if (FullPath?.Length == 0) { return; }
-                if (value == _IsChecked) return;
+                if (value == _isChecked) return;
 
                 // サブディレクトリのチェック状態を変更する
                 CheckCheckBoxStatusChanged(this, value);
 
                 // 値をセットする
-                SetProperty(ref _IsChecked, value, nameof(IsChecked));
+                SetProperty(ref _isChecked, value, nameof(IsChecked));
 
                 // 親ディレクトリのチェック状態を変更する
                 ParentCheckBoxChange(this);
@@ -277,35 +277,32 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         public bool? IsCheckedForSync
         {
-            get => _IsChecked;
-            set
-            {
-                SetProperty(ref _IsChecked, value, nameof(IsChecked));
-            }
+            get => _isChecked;
+            set => SetProperty(ref _isChecked, value, nameof(IsChecked));
         }
 
         /// <summary>
         /// ディレクトリの親ディレクトリ
         /// </summary>
-        private DirectoryTreeViewItemModel? _Parent;
+        private DirectoryTreeViewItemModel? _parent;
         public DirectoryTreeViewItemModel? Parent
         {
-            get => _Parent;
-            protected set => SetProperty(ref _Parent, value);
+            get => _parent;
+            protected set => SetProperty(ref _parent, value);
         }
 
         /// <summary>
         /// ディレクトリが選択されているかどうか
         /// </summary>
-        private bool _IsSelected;
+        private bool _isSelected;
         public bool IsSelected
         {
-            get => _IsSelected;
+            get => _isSelected;
             set
             {
-                if (_IsSelected != value)
+                if (_isSelected != value)
                 {
-                    SetProperty(ref _IsSelected, value);
+                    SetProperty(ref _isSelected, value);
                     if (value)
                     {
                         WeakReferenceMessenger.Default.Send(new CurrentDirectoryChangedMessage(this.FullPath));
@@ -321,10 +318,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリが展開されているかどうか
         /// </summary>
-        private bool _IsExpanded;
+        private bool _isExpanded;
         public bool IsExpanded
         {
-            get => _IsExpanded;
+            get => _isExpanded;
             set
             {
                 if (!HasChildren)
@@ -332,9 +329,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     Children.Clear();
                     return;
                 }
-                if (SetProperty(ref _IsExpanded, value) && IsReady)
+                if (SetProperty(ref _isExpanded, value) && IsReady)
                 {
-                    if (value && !_IsKicked) { KickChild(); }
+                    if (value && !_isKicked) { KickChild(); }
                 }
                 if (value)
                 {
@@ -359,15 +356,15 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// 子ディレクトリを取得しているかどうか
         /// </summary>
-        private bool _IsKicked;
-        public bool IsKicked { get => _IsKicked; }
+        private bool _isKicked;
+        public bool IsKicked { get => _isKicked; }
 
         /// <summary>
         /// 子ノードを設定する
         /// </summary>
         public void KickChild(bool force = false)
         {
-            if (!_IsKicked || force)
+            if (!_isKicked || force)
             {
                 Children.Clear();
                 foreach (var childPath in FileManager.EnumerateDirectories(FullPath))
@@ -377,20 +374,20 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     Children.Add(item);
                 }
             }
-            _IsKicked = true;
+            _isKicked = true;
         }
 
         /// <summary>
         /// フォントの設定
         /// </summary>
-        private FontFamily _CurrentFontFamily;
+        private FontFamily _currentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _CurrentFontFamily;
+            get => _currentFontFamily;
             set
             {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
+                if (_currentFontFamily.Source == value.Source) { return; }
+                SetProperty(ref _currentFontFamily, value);
                 _settingsService.SendCurrentFont(value);
             }
         }
@@ -398,14 +395,14 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _FontSize;
+        private double _fontSize;
         public double FontSize
         {
-            get => _FontSize;
+            get => _fontSize;
             set
             {
-                if (_FontSize == value) { return; }
-                SetProperty(ref _FontSize, value);
+                if (_fontSize == value) { return; }
+                SetProperty(ref _fontSize, value);
                 _settingsService.SendFontSize(value);
             }
         }

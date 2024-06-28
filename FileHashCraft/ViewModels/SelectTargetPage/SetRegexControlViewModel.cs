@@ -88,13 +88,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
-        private RegexSearchErrorStatus _SearchErrorStatus = RegexSearchErrorStatus.None;
+        private RegexSearchErrorStatus _searchErrorStatus = RegexSearchErrorStatus.None;
         public RegexSearchErrorStatus SearchErrorStatus
         {
-            get => _SearchErrorStatus;
+            get => _searchErrorStatus;
             set
             {
-                SetProperty(ref _SearchErrorStatus, value);
+                SetProperty(ref _searchErrorStatus, value);
                 if (value == RegexSearchErrorStatus.None)
                 {
                     SearchErrorBackground = Brushes.Transparent;

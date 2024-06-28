@@ -32,13 +32,13 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// <summary>
         /// ファイルハッシュ計算の進行状況
         /// </summary>
-        private FileHashCalcStatus _Status = FileHashCalcStatus.None;
+        private FileHashCalcStatus _status = FileHashCalcStatus.None;
         public FileHashCalcStatus Status
         {
-            get => _Status;
+            get => _status;
             set
             {
-                _Status = value;
+                _status = value;
                 switch (value)
                 {
                     case FileHashCalcStatus.None:
@@ -67,53 +67,53 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// <summary>
         /// ファイルスキャン状況に合わせた背景色
         /// </summary>
-        private Brush _StatusColor = Brushes.LightGreen;
+        private Brush _statusColor = Brushes.LightGreen;
         public Brush StatusColor
         {
-            get => _StatusColor;
-            set => SetProperty(ref _StatusColor, value);
+            get => _statusColor;
+            set => SetProperty(ref _statusColor, value);
         }
 
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
-        private string _StatusMessage = string.Empty;
+        private string _statusMessage = string.Empty;
         public string StatusMessage
         {
-            get => _StatusMessage;
-            set => SetProperty(ref _StatusMessage, value);
+            get => _statusMessage;
+            set => SetProperty(ref _statusMessage, value);
         }
 
         /// <summary>
         /// ハッシュを取得する全てのファイル数
         /// </summary>
-        private int _AllHashGetFilesCount = 0;
+        private int _allHashGetFilesCount = 0;
         public int AllHashGetFilesCount
         {
-            get => _AllHashGetFilesCount;
-            set => SetProperty(ref _AllHashGetFilesCount, value);
+            get => _allHashGetFilesCount;
+            set => SetProperty(ref _allHashGetFilesCount, value);
         }
 
         /// <summary>
         /// ハッシュ計算のアルゴリズム
         /// </summary>
-        private string _HashAlgorithm = string.Empty;
+        private string _hashAlgorithm = string.Empty;
         public string HashAlgorithm
         {
             get => HashAlgorithmHelper.GetAlgorithmCaption(_settingsService.HashAlgorithm);
-            set => SetProperty(ref _HashAlgorithm, value);
+            set => SetProperty(ref _hashAlgorithm, value);
         }
 
         /// <summary>
         /// ハッシュ取得済みのファイル数
         /// </summary>
-        private int _HashGotFileCount = 0;
+        private int _hashGotFileCount = 0;
         public int HashGotFileCount
         {
-            get => _HashGotFileCount;
+            get => _hashGotFileCount;
             set
             {
-                SetProperty(ref _HashGotFileCount, value);
+                SetProperty(ref _hashGotFileCount, value);
                 OnPropertyChanged(nameof(HashGotPercent));
             }
         }
@@ -129,13 +129,13 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// <summary>
         /// ファイルが同一だった件数
         /// </summary>
-        private double _MatchHashCount = 0;
+        private double _matchHashCount = 0;
         public double MatchHashCount
         {
-            get => _MatchHashCount;
+            get => _matchHashCount;
             set
             {
-                SetProperty(ref _MatchHashCount, value);
+                SetProperty(ref _matchHashCount, value);
                 OnPropertyChanged(nameof(MatchHashPercent));
             }
         }

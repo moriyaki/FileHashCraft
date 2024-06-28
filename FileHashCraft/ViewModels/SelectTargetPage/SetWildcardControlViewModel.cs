@@ -63,13 +63,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
-        private WildcardSearchErrorStatus _SearchErrorStatus = WildcardSearchErrorStatus.None;
+        private WildcardSearchErrorStatus _searchErrorStatus = WildcardSearchErrorStatus.None;
         public WildcardSearchErrorStatus SearchErrorStatus
         {
-            get => _SearchErrorStatus;
+            get => _searchErrorStatus;
             set
             {
-                SetProperty(ref _SearchErrorStatus, value);
+                SetProperty(ref _searchErrorStatus, value);
                 switch (value)
                 {
                     case WildcardSearchErrorStatus.None:

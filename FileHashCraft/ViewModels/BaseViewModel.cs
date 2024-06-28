@@ -19,22 +19,22 @@ namespace FileHashCraft.ViewModels
         {
             _settingsService = settingsService;
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            _currentFontFamily = _settingsService.CurrentFont;
+            _fontSize = _settingsService.FontSize;
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
         }
 
-        private FontFamily _CurrentFontFamily;
+        private FontFamily _currentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _CurrentFontFamily;
+            get => _currentFontFamily;
             set
             {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _CurrentFontFamily, value);
+                if (_currentFontFamily.Source == value.Source) { return; }
+                SetProperty(ref _currentFontFamily, value);
                 _settingsService.SendCurrentFont(value);
             }
         }
@@ -42,14 +42,14 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _FontSize;
+        private double _fontSize;
         public double FontSize
         {
-            get => _FontSize;
+            get => _fontSize;
             set
             {
-                if (_FontSize == value) { return; }
-                SetProperty(ref _FontSize, value);
+                if (_fontSize == value) { return; }
+                SetProperty(ref _fontSize, value);
                 _settingsService.SendFontSize(value);
             }
         }

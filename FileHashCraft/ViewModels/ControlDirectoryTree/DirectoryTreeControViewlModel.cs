@@ -56,25 +56,25 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// チェックボックスの表示状態の設定
         /// </summary>
-        private Visibility _IsCheckBoxVisible = Visibility.Visible;
+        private Visibility _isCheckBoxVisible = Visibility.Visible;
         public Visibility IsCheckBoxVisible
         {
-            get => _IsCheckBoxVisible;
-            private set => _IsCheckBoxVisible = value;
+            get => _isCheckBoxVisible;
+            private set => _isCheckBoxVisible = value;
         }
 
         /// <summary>
         /// カレントディレクトリのフルパス
         /// </summary>
-        private string _CurrentFullPath = string.Empty;
+        private string _currentFullPath = string.Empty;
         public string CurrentFullPath
         {
-            get => _CurrentFullPath;
+            get => _currentFullPath;
             set
             {
-                if (_CurrentFullPath != value)
+                if (_currentFullPath != value)
                 {
-                    SetProperty(ref _CurrentFullPath, value);
+                    SetProperty(ref _currentFullPath, value);
                     // カレントディレクトリを TreeView の選択状態に反映
                     FolderSelectedChanged(value);
                     // カレントディレクトリ変更のメッセージ発信
@@ -85,14 +85,14 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ツリービュー横幅の設定
         /// </summary>
-        private double _TreeWidth;
+        private double _treeWidth;
         public double TreeWidth
         {
-            get => _TreeWidth;
+            get => _treeWidth;
             set
             {
-                if (_TreeWidth == value) { return; }
-                SetProperty(ref _TreeWidth, value);
+                if (_treeWidth == value) { return; }
+                SetProperty(ref _treeWidth, value);
                 _settingsService.SendTreeWidth(value);
             }
         }
@@ -162,7 +162,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             WeakReferenceMessenger.Default.Register<TreeViewIsCheckBoxVisible>(this, (_, m)
                 => m.Reply(IsCheckBoxVisible));
 
-            _TreeWidth = _settingsService.TreeWidth;
+            _treeWidth = _settingsService.TreeWidth;
         }
 
         /// <summary>

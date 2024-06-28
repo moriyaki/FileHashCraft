@@ -40,8 +40,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _messageServices = Ioc.Default.GetService<IFileSystemServices>() ?? throw new InvalidOperationException($"{nameof(IFileSystemServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            _currentFontFamily = _settingsService.CurrentFont;
+            _fontSize = _settingsService.FontSize;
 
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
@@ -82,11 +82,11 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ファイルの表示名
         /// </summary>
-        private string _Name = string.Empty;
+        private string _name = string.Empty;
         public string Name
         {
-            get => _Name;
-            set => SetProperty(ref _Name, value);
+            get => _name;
+            set => SetProperty(ref _name, value);
         }
 
         /// <summary>
@@ -100,13 +100,13 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ファイルまたはフォルダのフルパス
         /// </summary>
-        private string _FullPath = string.Empty;
+        private string _fullPath = string.Empty;
         public string FullPath
         {
-            get => _FullPath;
+            get => _fullPath;
             set
             {
-                SetProperty(ref _FullPath, value);
+                SetProperty(ref _fullPath, value);
                 Name = WindowsAPI.GetDisplayName(FullPath);
 
                 App.Current?.Dispatcher.Invoke(new Action(() =>
@@ -120,61 +120,61 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ファイルのアイコン
         /// </summary>
-        private BitmapSource? _Icon = null;
+        private BitmapSource? _icon = null;
         public BitmapSource? Icon
         {
-            get => _Icon;
-            set => SetProperty(ref _Icon, value);
+            get => _icon;
+            set => SetProperty(ref _icon, value);
         }
 
         /// <summary>
         /// ファイルの種類
         /// </summary>
-        private string _FileType = string.Empty;
+        private string _fileType = string.Empty;
         public string FileType
         {
-            get => _FileType;
-            set => SetProperty(ref _FileType, value);
+            get => _fileType;
+            set => SetProperty(ref _fileType, value);
         }
 
         /// <summary>
         /// ディレクトリがディレクトリを持つかどうか
         /// </summary>
-        protected bool _HasChildren = false;
+        protected bool _hasChildren = false;
         public virtual bool HasChildren
         {
-            get => _HasChildren;
-            set => SetProperty(ref _HasChildren, value);
+            get => _hasChildren;
+            set => SetProperty(ref _hasChildren, value);
         }
 
         /// <summary>
         /// ディレクトリのドライブが準備されているかどうか
         /// </summary>
-        protected bool _IsReady = false;
+        protected bool _isReady = false;
         public virtual bool IsReady
         {
-            get => _IsReady;
-            set => SetProperty(ref _IsReady, value);
+            get => _isReady;
+            set => SetProperty(ref _isReady, value);
         }
 
         /// <summary>
         /// ディレクトリのドライブが着脱可能か
         /// </summary>
-        private bool _IsRemovable = false;
+        private bool _isRemovable = false;
         public bool IsRemovable
         {
-            get => _IsRemovable;
-            set => SetProperty(ref _IsRemovable, value);
+            get => _isRemovable;
+            set => SetProperty(ref _isRemovable, value);
         }
 
         /// <summary>
         /// ディレクトリかどうか
         /// </summary>
-        private bool _IsDirectory = false;
+        private bool _isDirectory = false;
         public bool IsDirectory
         {
-            get => _IsDirectory;
-            set => SetProperty(ref _IsDirectory, value);
+            get => _isDirectory;
+            set => SetProperty(ref _isDirectory, value);
         }
 
         /// <summary>
@@ -188,31 +188,31 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ファイルのサイズ
         /// </summary>
-        private long? _FileSize = null;
+        private long? _fileSize = null;
         public long? FileSize
         {
-            get => _FileSize;
-            set => SetProperty(ref _FileSize, value);
+            get => _fileSize;
+            set => SetProperty(ref _fileSize, value);
         }
 
         /// <summary>
         /// 更新日時
         /// </summary>
-        private DateTime? _LastModifiedDate = null;
+        private DateTime? _lastModifiedDate = null;
         public DateTime? LastModifiedDate
         {
-            get => _LastModifiedDate;
-            set => SetProperty(ref _LastModifiedDate, value);
+            get => _lastModifiedDate;
+            set => SetProperty(ref _lastModifiedDate, value);
         }
 
         /// <summary>
         /// チェックボックス
         /// </summary>
-        private bool _IsChecked = false;
+        private bool _isChecked = false;
         public bool IsChecked
         {
-            get => _IsChecked;
-            set => SetProperty(ref _IsChecked, value);
+            get => _isChecked;
+            set => SetProperty(ref _isChecked, value);
         }
 
         /// <summary>
@@ -232,15 +232,15 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// フォントの設定
         /// </summary>
-        private FontFamily _CurrentFontFamily;
+        private FontFamily _currentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _CurrentFontFamily;
+            get => _currentFontFamily;
             set
             {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
+                if (_currentFontFamily.Source == value.Source) { return; }
 
-                SetProperty(ref _CurrentFontFamily, value);
+                SetProperty(ref _currentFontFamily, value);
                 _settingsService.SendCurrentFont(value);
             }
         }
@@ -248,15 +248,15 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _FontSize;
+        private double _fontSize;
         public double FontSize
         {
-            get => _FontSize;
+            get => _fontSize;
             set
             {
-                if (_FontSize == value) { return; }
+                if (_fontSize == value) { return; }
 
-                SetProperty(ref _FontSize, value);
+                SetProperty(ref _fontSize, value);
                 _settingsService.SendFontSize(value);
             }
         }

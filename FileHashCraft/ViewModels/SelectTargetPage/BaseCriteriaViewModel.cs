@@ -25,21 +25,21 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// 検索条件エラー出力の背景色
         /// </summary>
-        private Brush _SearchErrorBackground = Brushes.Transparent;
+        private Brush _searchErrorBackground = Brushes.Transparent;
         public Brush SearchErrorBackground
         {
-            get => _SearchErrorBackground;
-            set => SetProperty(ref _SearchErrorBackground, value);
+            get => _searchErrorBackground;
+            set => SetProperty(ref _searchErrorBackground, value);
         }
 
         /// <summary>
         /// 検索条件エラー出力
         /// </summary>
-        private string _SearchCriteriaErrorOutput = string.Empty;
+        private string _searchCriteriaErrorOutput = string.Empty;
         public string SearchCriteriaErrorOutput
         {
-            get => _SearchCriteriaErrorOutput;
-            set => SetProperty(ref _SearchCriteriaErrorOutput, value);
+            get => _searchCriteriaErrorOutput;
+            set => SetProperty(ref _searchCriteriaErrorOutput, value);
         }
 
         /// <summary>
@@ -66,13 +66,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// ワイルドカード新規検索文字列
         /// </summary>
-        private string _SearchCriteriaText = string.Empty;
+        private string _searchCriteriaText = string.Empty;
         public string SearchCriteriaText
         {
-            get => _SearchCriteriaText;
+            get => _searchCriteriaText;
             set
             {
-                SetProperty(ref _SearchCriteriaText, value);
+                SetProperty(ref _searchCriteriaText, value);
                 AddCriteriaCommand.NotifyCanExecuteChanged();
             }
         }

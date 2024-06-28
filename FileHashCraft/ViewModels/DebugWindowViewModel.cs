@@ -35,53 +35,53 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 画面の上端設定
         /// </summary>
-        private double _Top = 450d;
+        private double _top = 450d;
         public double Top
         {
-            get => _Top;
-            set => SetProperty(ref _Top, value);
+            get => _top;
+            set => SetProperty(ref _top, value);
         }
 
         /// <summary>
         /// 左端の位置設定
         /// </summary>
-        public double _Left = 400d;
+        public double _left = 400d;
         public double Left
         {
-            get => _Left;
-            set => SetProperty(ref _Left, value);
+            get => _left;
+            set => SetProperty(ref _left, value);
         }
 
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
-        private double _Width = 400d;
+        private double _width = 400d;
         public double Width
         {
-            get => _Width;
-            set => SetProperty(ref _Width, value);
+            get => _width;
+            set => SetProperty(ref _width, value);
         }
 
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
-        private double _Height = 800d;
+        private double _height = 800d;
         public double Height
         {
-            get => _Height;
-            set => SetProperty(ref _Height, value);
+            get => _height;
+            set => SetProperty(ref _height, value);
         }
 
         /// <summary>
         /// ポーリング処理中か否か
         /// </summary>
-        private bool _IsPolling = false;
+        private bool _isPolling = false;
         public bool IsPolling
         {
-            get => _IsPolling;
+            get => _isPolling;
             set
             {
-                SetProperty(ref _IsPolling, value);
+                SetProperty(ref _isPolling, value);
                 OnPropertyChanged(nameof(PollingStatus));
             }
         }
@@ -97,11 +97,11 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// デバッグテキスト
         /// </summary>
-        private string _DebugText = "ポーリング待機中";
+        private string _debugText = "ポーリング待機中";
         public string DebugText
         {
-            get => _DebugText;
-            set => SetProperty(ref _DebugText, value);
+            get => _debugText;
+            set => SetProperty(ref _debugText, value);
         }
 
         /// <summary>

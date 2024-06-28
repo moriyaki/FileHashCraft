@@ -37,56 +37,56 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ウィンドウの開始上位置
         /// </summary>
-        private double _Top = 100d;
+        private double _top = 100d;
         public double Top
         {
-            get => _Top;
+            get => _top;
             set
             {
-                if (value == _Top) { return; }
-                SetProperty(ref _Top, value);
+                if (value == _top) { return; }
+                SetProperty(ref _top, value);
                 _settingsService.SendWindowTop(value);
             }
         }
         /// <summary>
         /// ウィンドウの開始左位置
         /// </summary>
-        private double _Left = 100d;
+        private double _left = 100d;
         public double Left
         {
-            get => _Left;
+            get => _left;
             set
             {
-                if (value == _Left) { return; }
-                SetProperty(ref _Left, value);
+                if (value == _left) { return; }
+                SetProperty(ref _left, value);
                 _settingsService.SendWindowLeft(value);
             }
         }
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
-        private double _Width = 1500d;
+        private double _width = 1500d;
         public double Width
         {
-            get => _Width;
+            get => _width;
             set
             {
-                if (value == _Width) { return; }
-                SetProperty(ref _Width, value);
+                if (value == _width) { return; }
+                SetProperty(ref _width, value);
                 _settingsService.SendWindowWidth(value);
             }
         }
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
-        private double _Height = 800d;
+        private double _height = 800d;
         public double Height
         {
-            get => _Height;
+            get => _height;
             set
             {
-                if (value == _Height) { return; }
-                SetProperty(ref _Height, value);
+                if (value == _height) { return; }
+                SetProperty(ref _height, value);
                 _settingsService.SendWindowHeight(value);
             }
         }

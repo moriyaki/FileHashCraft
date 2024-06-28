@@ -21,8 +21,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            _currentFontFamily = _settingsService.CurrentFont;
+            _fontSize = _settingsService.FontSize;
 
             // フォント変更メッセージ受信
             WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
@@ -33,36 +33,36 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         #region バインディング
-        private string _FullPathFileName = string.Empty;
+        private string _fullPathFileName = string.Empty;
         public string FileFullPath
         {
-            get => _FullPathFileName;
+            get => _fullPathFileName;
             set
             {
-                SetProperty(ref _FullPathFileName, value);
+                SetProperty(ref _fullPathFileName, value);
                 Icon = WindowsAPI.GetIcon(value);
             }
         }
 
-        private BitmapSource? _Icon = null;
+        private BitmapSource? _icon = null;
         public BitmapSource? Icon
         {
-            get => _Icon;
-            set => SetProperty(ref _Icon, value);
+            get => _icon;
+            set => SetProperty(ref _icon, value);
         }
 
         public string FileName
         {
-            get => Path.GetFileName(_FullPathFileName);
+            get => Path.GetFileName(_fullPathFileName);
         }
 
-        private bool _IsHashTarget = false;
+        private bool _isHashTarget = false;
         public bool IsHashTarget
         {
-            get => _IsHashTarget;
+            get => _isHashTarget;
             set
             {
-                SetProperty(ref _IsHashTarget, value);
+                SetProperty(ref _isHashTarget, value);
                 if (value)
                 {
                     HashTargetColor = new(Colors.LightCyan);
@@ -77,25 +77,25 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 背景色：ハッシュ検索対象になっていたら変更される
         /// </summary>
-        private SolidColorBrush _HashTargetColor = new(Colors.Transparent);
+        private SolidColorBrush _hashTargetColor = new(Colors.Transparent);
         public SolidColorBrush HashTargetColor
         {
-            get => _HashTargetColor;
-            set => SetProperty(ref _HashTargetColor, value);
+            get => _hashTargetColor;
+            set => SetProperty(ref _hashTargetColor, value);
         }
 
         /// <summary>
         /// フォントの設定
         /// </summary>
-        private FontFamily _CurrentFontFamily;
+        private FontFamily _currentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _CurrentFontFamily;
+            get => _currentFontFamily;
             set
             {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
+                if (_currentFontFamily.Source == value.Source) { return; }
 
-                SetProperty(ref _CurrentFontFamily, value);
+                SetProperty(ref _currentFontFamily, value);
                 _settingsService.SendCurrentFont(value);
             }
         }
@@ -103,15 +103,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _FontSize;
+        private double _fontSize;
         public double FontSize
         {
-            get => _FontSize;
+            get => _fontSize;
             set
             {
-                if (_FontSize == value) { return; }
+                if (_fontSize == value) { return; }
 
-                SetProperty(ref _FontSize, value);
+                SetProperty(ref _fontSize, value);
                 _settingsService.SendFontSize(value);
             }
         }

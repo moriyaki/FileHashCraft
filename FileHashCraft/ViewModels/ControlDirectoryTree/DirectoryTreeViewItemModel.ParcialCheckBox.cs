@@ -47,7 +47,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 if (child.IsChecked == value) continue;
 
                 child.IsChecked = value;
-                if (node.HasChildren && node._IsKicked)
+                if (node.HasChildren && node._isKicked)
                 {
                     // 子がいたら再帰処理
                     ChildCheckBoxStatusChanged(child, value);
@@ -173,7 +173,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
 
             // TreeViewItem が展開されていたら、再帰的に検索します
-            if (searchNode.IsExpanded || searchNode._IsKicked)
+            if (searchNode.IsExpanded || searchNode._isKicked)
             {
                 foreach (var child in searchNode.Children)
                 {

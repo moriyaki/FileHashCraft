@@ -19,14 +19,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
-        private bool _IsReadOnlyFileInclude;
+        private bool _isReadOnlyFileInclude;
         public bool IsReadOnlyFileInclude
         {
-            get => _IsReadOnlyFileInclude;
+            get => _isReadOnlyFileInclude;
             set
             {
-                if (_IsReadOnlyFileInclude == value) return;
-                SetProperty(ref _IsReadOnlyFileInclude, value);
+                if (_isReadOnlyFileInclude == value) return;
+                SetProperty(ref _isReadOnlyFileInclude, value);
                 _settingsService.SendReadOnlyFileInclude(value);
                 _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
@@ -36,14 +36,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 隠しファイルを対象にするかどうか
         /// </summary>
-        private bool _IsHiddenFileInclude;
+        private bool _isHiddenFileInclude;
         public bool IsHiddenFileInclude
         {
-            get => _IsHiddenFileInclude;
+            get => _isHiddenFileInclude;
             set
             {
-                if (_IsHiddenFileInclude == value) return;
-                SetProperty(ref _IsHiddenFileInclude, value);
+                if (_isHiddenFileInclude == value) return;
+                SetProperty(ref _isHiddenFileInclude, value);
                 _settingsService.SendHiddenFileInclude(value);
                 _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
@@ -52,28 +52,28 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         ///  0 サイズのファイルを削除するかどうか
         /// </summary>
-        private bool _IsZeroSizeFileDelete;
+        private bool _isZeroSizeFileDelete;
         public bool IsZeroSizeFileDelete
         {
-            get => _IsZeroSizeFileDelete;
+            get => _isZeroSizeFileDelete;
             set
             {
-                if (_IsZeroSizeFileDelete == value) return;
-                SetProperty(ref _IsZeroSizeFileDelete, value);
+                if (_isZeroSizeFileDelete == value) return;
+                SetProperty(ref _isZeroSizeFileDelete, value);
                 _settingsService.SendZeroSizeFileDelete(value);
             }
         }
         /// <summary>
         /// 空のフォルダを削除するかどうか
         /// </summary>
-        private bool _IsEmptyDirectoryDelete;
+        private bool _isEmptyDirectoryDelete;
         public bool IsEmptyDirectoryDelete
         {
-            get => _IsEmptyDirectoryDelete;
+            get => _isEmptyDirectoryDelete;
             set
             {
-                if (_IsEmptyDirectoryDelete == value) return;
-                SetProperty(ref _IsEmptyDirectoryDelete, value);
+                if (_isEmptyDirectoryDelete == value) return;
+                SetProperty(ref _isEmptyDirectoryDelete, value);
                 _settingsService.SendEmptyDirectoryDelete(value);
             }
         }

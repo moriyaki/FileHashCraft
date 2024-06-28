@@ -57,8 +57,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // フォントサイズ変更メッセージ受信
             WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            _currentFontFamily = _settingsService.CurrentFont;
+            _fontSize = _settingsService.FontSize;
         }
         #endregion コンストラクタ
 
@@ -82,24 +82,24 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子か拡張子グループの文字列
         /// </summary>
-        private string _Name = string.Empty;
+        private string _name = string.Empty;
         public string Name
         {
-            get => _Name;
-            set => SetProperty(ref _Name, value);
+            get => _name;
+            set => SetProperty(ref _name, value);
         }
         /// <summary>
         /// フォントの設定
         /// </summary>
-        private FontFamily _CurrentFontFamily;
+        private FontFamily _currentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _CurrentFontFamily;
+            get => _currentFontFamily;
             set
             {
-                if (_CurrentFontFamily.Source == value.Source) { return; }
+                if (_currentFontFamily.Source == value.Source) { return; }
 
-                SetProperty(ref _CurrentFontFamily, value);
+                SetProperty(ref _currentFontFamily, value);
                 _settingsService.SendCurrentFont(value);
             }
         }
@@ -107,22 +107,22 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _FontSize;
+        private double _fontSize;
         public double FontSize
         {
-            get => _FontSize;
+            get => _fontSize;
             set
             {
-                if (_FontSize == value) { return; }
+                if (_fontSize == value) { return; }
 
-                SetProperty(ref _FontSize, value);
+                SetProperty(ref _fontSize, value);
                 _settingsService.SendFontSize(value);
             }
         }
         /// <summary>
         /// チェックボックスのチェックの状態
         /// </summary>
-        protected bool? _IsChecked = false;
+        protected bool? _isChecked = false;
         public virtual bool? IsChecked { get; set; }
 
         public virtual bool? IsCheckedForce { get; set; }
@@ -153,10 +153,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region バインディング
         public override bool? IsChecked
         {
-            get => _IsChecked;
+            get => _isChecked;
             set
             {
-                SetProperty(ref _IsChecked, value);
+                SetProperty(ref _isChecked, value);
                 if (value == true)
                 {
                     FileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
@@ -173,8 +173,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
         public override bool? IsCheckedForce
         {
-            get => _IsChecked;
-            set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
+            get => _isChecked;
+            set => SetProperty(ref _isChecked, value, nameof(IsChecked));
         }
         #endregion バインディング
     }
@@ -219,10 +219,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public override bool? IsChecked
         {
-            get => _IsChecked;
+            get => _isChecked;
             set
             {
-                SetProperty(ref _IsChecked, value);
+                SetProperty(ref _isChecked, value);
                 if (value == true)
                 {
                     WeakReferenceMessenger.Default.Send(new ExtentionGroupCheckedMessage(true, _extentionManager.GetGroupExtentions(FileType)));
@@ -235,8 +235,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
         public override bool? IsCheckedForce
         {
-            get => _IsChecked;
-            set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
+            get => _isChecked;
+            set => SetProperty(ref _isChecked, value, nameof(IsChecked));
         }
         #endregion バインディング
     }

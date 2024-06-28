@@ -57,11 +57,11 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// 選択されているリストビューのアイテム
         /// </summary>
-        private ExplorerListItemViewModel? _SelectedListViewItem = null;
+        private ExplorerListItemViewModel? _selectedListViewItem = null;
         public ExplorerListItemViewModel? SelectedListViewItem
         {
-            get => _SelectedListViewItem;
-            set => SetProperty(ref _SelectedListViewItem, value);
+            get => _selectedListViewItem;
+            set => SetProperty(ref _selectedListViewItem, value);
         }
 
         /// <summary>
