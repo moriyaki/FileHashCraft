@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
@@ -57,12 +58,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// 選択されているリストビューのアイテム
         /// </summary>
+        [ObservableProperty]
         private ExplorerListItemViewModel? _selectedListViewItem = null;
-        public ExplorerListItemViewModel? SelectedListViewItem
-        {
-            get => _selectedListViewItem;
-            set => SetProperty(ref _selectedListViewItem, value);
-        }
 
         /// <summary>
         /// チェックボックスの表示状態の設定
@@ -127,12 +124,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ユーザーコマンドの文字列
         /// </summary>
+        [ObservableProperty]
         private string _commandText = string.Empty;
-        public string CommandText
-        {
-            get => _commandText;
-            set => SetProperty(ref _commandText, value);
-        }
 
         /// <summary>
         /// 「上へ」コマンド

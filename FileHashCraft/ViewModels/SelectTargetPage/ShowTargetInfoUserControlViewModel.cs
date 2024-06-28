@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
@@ -99,7 +100,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class ShowTargetInfoUserControlViewModel : BaseViewModel, IShowTargetInfoUserControlViewModel
+    public partial class ShowTargetInfoUserControlViewModel : BaseViewModel, IShowTargetInfoUserControlViewModel
     {
         #region バインディング
         /// <summary>
@@ -140,22 +141,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ファイルスキャン状況に合わせた背景色
         /// </summary>
+        [ObservableProperty]
         private Brush _statusColor = Brushes.LightGreen;
-        public Brush StatusColor
-        {
-            get => _statusColor;
-            set => SetProperty(ref _statusColor, value);
-        }
 
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
+        [ObservableProperty]
         private string _statusMessage = string.Empty;
-        public string StatusMessage
-        {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
-        }
+
         /// <summary>
         /// ハッシュ計算アルゴリズムの一覧
         /// </summary>

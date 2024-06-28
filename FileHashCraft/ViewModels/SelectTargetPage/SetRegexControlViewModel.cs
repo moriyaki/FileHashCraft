@@ -44,6 +44,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "");
     }
     #endregion インターフェース
+
+    #region 正規表現エラー
     public enum RegexSearchErrorStatus
     {
         None,
@@ -82,6 +84,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         UnterminatedBracket,
         UnterminatedComment,
     }
+    #endregion 正規表現エラー
+
     public class SetRegexControlViewModel : BaseCriteriaViewModel, ISetRegexControlViewModel
     {
         #region バインディング

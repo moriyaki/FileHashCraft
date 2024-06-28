@@ -4,6 +4,7 @@
  */
 using System.Text;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
@@ -18,7 +19,7 @@ namespace FileHashCraft.ViewModels
         double Left { get; set; }
     }
     #endregion インターフェース
-    public class DebugWindowViewModel : BaseViewModel, IDebugWindowViewModel
+    public partial class DebugWindowViewModel : BaseViewModel, IDebugWindowViewModel
     {
         enum PollingTarget
         {
@@ -35,42 +36,26 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// 画面の上端設定
         /// </summary>
+        [ObservableProperty]
         private double _top = 450d;
-        public double Top
-        {
-            get => _top;
-            set => SetProperty(ref _top, value);
-        }
 
         /// <summary>
         /// 左端の位置設定
         /// </summary>
+        [ObservableProperty]
         public double _left = 400d;
-        public double Left
-        {
-            get => _left;
-            set => SetProperty(ref _left, value);
-        }
 
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
+        [ObservableProperty]
         private double _width = 400d;
-        public double Width
-        {
-            get => _width;
-            set => SetProperty(ref _width, value);
-        }
 
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
+        [ObservableProperty]
         private double _height = 800d;
-        public double Height
-        {
-            get => _height;
-            set => SetProperty(ref _height, value);
-        }
 
         /// <summary>
         /// ポーリング処理中か否か
@@ -97,12 +82,8 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// デバッグテキスト
         /// </summary>
+        [ObservableProperty]
         private string _debugText = "ポーリング待機中";
-        public string DebugText
-        {
-            get => _debugText;
-            set => SetProperty(ref _debugText, value);
-        }
 
         /// <summary>
         /// ポーリング用タイマー

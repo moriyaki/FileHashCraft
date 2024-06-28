@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
@@ -26,7 +27,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
     public interface IHashCalcingPageViewModel;
     #endregion インターフェース
 
-    public class HashCalcingPageViewModel : BaseViewModel, IHashCalcingPageViewModel
+    public partial class HashCalcingPageViewModel : BaseViewModel, IHashCalcingPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -67,12 +68,8 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// <summary>
         /// ファイルスキャン状況に合わせた背景色
         /// </summary>
+        [ObservableProperty]
         private Brush _statusColor = Brushes.LightGreen;
-        public Brush StatusColor
-        {
-            get => _statusColor;
-            set => SetProperty(ref _statusColor, value);
-        }
 
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列

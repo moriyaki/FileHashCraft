@@ -22,7 +22,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public string FullPath { get; }
     }
 
-    public class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>, IExplorerListItemViewModel
+    public partial class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>, IExplorerListItemViewModel
     {
         #region コンストラクタ
         /// <summary>
@@ -82,12 +82,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ファイルの表示名
         /// </summary>
+        [ObservableProperty]
         private string _name = string.Empty;
-        public string Name
-        {
-            get => _name;
-            set => SetProperty(ref _name, value);
-        }
 
         /// <summary>
         /// ファイル実体名
@@ -120,22 +116,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ファイルのアイコン
         /// </summary>
+        [ObservableProperty]
         private BitmapSource? _icon = null;
-        public BitmapSource? Icon
-        {
-            get => _icon;
-            set => SetProperty(ref _icon, value);
-        }
 
         /// <summary>
         /// ファイルの種類
         /// </summary>
+        [ObservableProperty]
         private string _fileType = string.Empty;
-        public string FileType
-        {
-            get => _fileType;
-            set => SetProperty(ref _fileType, value);
-        }
 
         /// <summary>
         /// ディレクトリがディレクトリを持つかどうか
@@ -160,22 +148,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ディレクトリのドライブが着脱可能か
         /// </summary>
+        [ObservableProperty]
         private bool _isRemovable = false;
-        public bool IsRemovable
-        {
-            get => _isRemovable;
-            set => SetProperty(ref _isRemovable, value);
-        }
 
         /// <summary>
         /// ディレクトリかどうか
         /// </summary>
+        [ObservableProperty]
         private bool _isDirectory = false;
-        public bool IsDirectory
-        {
-            get => _isDirectory;
-            set => SetProperty(ref _isDirectory, value);
-        }
 
         /// <summary>
         /// 表示用の更新日時文字列
@@ -188,32 +168,20 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// ファイルのサイズ
         /// </summary>
+        [ObservableProperty]
         private long? _fileSize = null;
-        public long? FileSize
-        {
-            get => _fileSize;
-            set => SetProperty(ref _fileSize, value);
-        }
 
         /// <summary>
         /// 更新日時
         /// </summary>
+        [ObservableProperty]
         private DateTime? _lastModifiedDate = null;
-        public DateTime? LastModifiedDate
-        {
-            get => _lastModifiedDate;
-            set => SetProperty(ref _lastModifiedDate, value);
-        }
 
         /// <summary>
         /// チェックボックス
         /// </summary>
+        [ObservableProperty]
         private bool _isChecked = false;
-        public bool IsChecked
-        {
-            get => _isChecked;
-            set => SetProperty(ref _isChecked, value);
-        }
 
         /// <summary>
         /// 書式化したファイルのサイズ文字列

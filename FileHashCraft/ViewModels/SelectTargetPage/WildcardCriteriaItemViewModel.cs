@@ -7,6 +7,7 @@ using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
+    #region インターフェース
     public interface IWildcardCriteriaItemViewModel
     {
         /// <summary>
@@ -14,6 +15,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         string Criteria { get; set; }
     }
+    #endregion インターフェース
 
     public class WildcardCriteriaItemViewModel : BaseCriteriaItemViewModel, IWildcardCriteriaItemViewModel
     {

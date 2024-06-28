@@ -3,6 +3,7 @@
     ハッシュを取得する検索条件ウィンドウの ViewModel を提供します。
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
@@ -52,7 +53,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class SelectTargetPageViewModel : BaseViewModel, ISelectTargetPageViewModel
+    public partial class SelectTargetPageViewModel : BaseViewModel, ISelectTargetPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -83,12 +84,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// フィルタするファイル
         /// </summary>
+        [ObservableProperty]
         private string _FilterTextBox = string.Empty;
-        public string FilterTextBox
-        {
-            get => _FilterTextBox;
-            set => SetProperty(ref _FilterTextBox, value);
-        }
+
         /// <summary>
         /// ツリービュー横幅の設定
         /// </summary>

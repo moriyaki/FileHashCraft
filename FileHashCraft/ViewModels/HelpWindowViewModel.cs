@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels
@@ -27,58 +28,38 @@ namespace FileHashCraft.ViewModels
     }
     #endregion インターフェース
 
-    public class HelpWindowViewModel : BaseViewModel, IHelpWindowViewModel
+    public partial class HelpWindowViewModel : BaseViewModel, IHelpWindowViewModel
     {
         #region バインディング
         /// <summary>
         /// 画面の上端設定
         /// </summary>
+        [ObservableProperty]
         private double _top = 450d;
-        public double Top
-        {
-            get => _top;
-            set => SetProperty(ref _top, value);
-        }
 
         /// <summary>
         /// 左端の位置設定
         /// </summary>
+        [ObservableProperty]
         public double _left = 400d;
-        public double Left
-        {
-            get => _left;
-            set => SetProperty(ref _left, value);
-        }
 
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
+        [ObservableProperty]
         private double _width = 400d;
-        public double Width
-        {
-            get => _width;
-            set => SetProperty(ref _width, value);
-        }
 
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
+        [ObservableProperty]
         private double _height = 800d;
-        public double Height
-        {
-            get => _height;
-            set => SetProperty(ref _height, value);
-        }
 
         /// <summary>
         /// 表示するヘルプHTML
         /// </summary>
+        [ObservableProperty]
         private string _htmlFile = "index.html";
-        public string HtmlFile
-        {
-            get => _htmlFile;
-            set => SetProperty(ref _htmlFile, value);
-        }
         #endregion バインディング
 
         public HelpWindowViewModel() : base() { }

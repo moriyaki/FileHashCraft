@@ -14,7 +14,7 @@ using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {
-    public class HashListFileItems : ObservableObject
+    public partial class HashListFileItems : ObservableObject
     {
         private readonly ISettingsService _settingsService;
         public HashListFileItems()
@@ -33,6 +33,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         #region バインディング
+        /// <summary>
+        /// ファイルのフルパス名
+        /// </summary>
         private string _fullPathFileName = string.Empty;
         public string FileFullPath
         {
@@ -41,15 +44,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 SetProperty(ref _fullPathFileName, value);
                 Icon = WindowsAPI.GetIcon(value);
+                OnPropertyChanged(nameof(Icon));
             }
         }
 
+        [ObservableProperty]
         private BitmapSource? _icon = null;
-        public BitmapSource? Icon
-        {
-            get => _icon;
-            set => SetProperty(ref _icon, value);
-        }
 
         public string FileName
         {

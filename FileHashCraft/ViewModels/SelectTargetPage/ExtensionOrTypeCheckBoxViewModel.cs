@@ -35,7 +35,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// <summary>
     /// 拡張子チェックボックスと、拡張子グループチェックボックスの基底クラス
     /// </summary>
-    public class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
+    public partial class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
         protected readonly ISettingsService _settingsService;
@@ -82,12 +82,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 拡張子か拡張子グループの文字列
         /// </summary>
+        [ObservableProperty]
         private string _name = string.Empty;
-        public string Name
-        {
-            get => _name;
-            set => SetProperty(ref _name, value);
-        }
+
         /// <summary>
         /// フォントの設定
         /// </summary>

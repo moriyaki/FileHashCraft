@@ -119,22 +119,14 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ファイルの表示名
         /// </summary>
+        [ObservableProperty]
         private string _name = string.Empty;
-        public string Name
-        {
-            get => _name;
-            set => SetProperty(ref _name, value);
-        }
 
         /// <summary>
         /// ファイルのアイコン
         /// </summary>
+        [ObservableProperty]
         private BitmapSource? _icon;
-        public BitmapSource? Icon
-        {
-            get => _icon;
-            set => SetProperty(ref _icon, value);
-        }
 
         /// <summary>
         /// ファイル実体名
@@ -175,42 +167,26 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ファイルの種類
         /// </summary>
+        [ObservableProperty]
         private string _fileType = string.Empty;
-        public string FileType
-        {
-            get => _fileType;
-            set => SetProperty(ref _fileType, value);
-        }
 
         /// <summary>
         /// ディレクトリのドライブが準備されているかどうか
         /// </summary>
+        [ObservableProperty]
         protected bool _isReady = false;
-        public virtual bool IsReady
-        {
-            get => _isReady;
-            set => SetProperty(ref _isReady, value);
-        }
 
         /// <summary>
         /// ディレクトリのドライブが着脱可能か
         /// </summary>
+        [ObservableProperty]
         private bool _isRemovable = false;
-        public bool IsRemovable
-        {
-            get => _isRemovable;
-            set => SetProperty(ref _isRemovable, value);
-        }
 
         /// <summary>
         /// ディレクトリかどうか
         /// </summary>
+        [ObservableProperty]
         private bool _isDirectory;
-        public bool IsDirectory
-        {
-            get => _isDirectory;
-            set => SetProperty(ref _isDirectory, value);
-        }
 
         /// <summary>
         /// ディレクトリがディレクトリを持つかどうか
@@ -284,12 +260,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ディレクトリの親ディレクトリ
         /// </summary>
+        [ObservableProperty]
         private DirectoryTreeViewItemModel? _parent;
-        public DirectoryTreeViewItemModel? Parent
-        {
-            get => _parent;
-            protected set => SetProperty(ref _parent, value);
-        }
 
         /// <summary>
         /// ディレクトリが選択されているかどうか
