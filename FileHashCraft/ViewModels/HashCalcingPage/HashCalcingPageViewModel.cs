@@ -97,7 +97,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         private string _hashAlgorithm = string.Empty;
         public string HashAlgorithm
         {
-            get => HashAlgorithmHelper.GetAlgorithmCaption(_settingsService.HashAlgorithm);
+            get => _hashAlgorithmHelper.GetAlgorithmCaption(_settingsService.HashAlgorithm);
             set => SetProperty(ref _hashAlgorithm, value);
         }
 
@@ -181,6 +181,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IScannedFilesManager _scannedFilesManager;
+        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
 
         public HashCalcingPageViewModel(
             IMessenger messenger,
@@ -188,13 +189,15 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             IFileHashCalc fileHashCalc,
             IHelpWindowViewModel helpWindowViewModel,
             IFileSystemServices fileSystemServices,
-            IScannedFilesManager scannedFilesManager
+            IScannedFilesManager scannedFilesManager,
+            IHashAlgorithmHelper hashAlgorithmHelper
         ) : base(messenger, settingsService)
         {
             _fileHashCalc = fileHashCalc;
             _fileSystemServices = fileSystemServices;
             _helpWindowViewModel = helpWindowViewModel;
             _scannedFilesManager = scannedFilesManager;
+            _hashAlgorithmHelper = hashAlgorithmHelper;
 
             HashAlgorithm = _settingsService.HashAlgorithm;
             AllHashGetFilesCount = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude);

@@ -16,17 +16,33 @@ namespace FileHashCraft.Models.Helpers
         SHA512
     }
 
+    public interface IHashAlgorithmHelper
+    {
+        /// <summary>
+        /// ハッシュアルゴリズム名からハッシュアルゴリズムタイプを取得するヘルパー
+        /// </summary>
+        FileHashAlgorithm GetAlgorithm(string algorithm);
+        /// <summary>
+        /// ハッシュアルゴリズムタイプからハッシュアルゴリズム名を取得するヘルパー
+        /// </summary>
+        string GetAlgorithmName(FileHashAlgorithm algorithmType);
+        /// <summary>
+        /// ハッシュアルゴリズ名からハッシュアルゴリズムの解説を取得するヘルパー
+        /// </summary>
+        string GetAlgorithmCaption(string algorithm);
+    }
+
     /// <summary>
     /// ハッシュアルゴリズムから識別文字を取得する
     /// </summary>
-    public static class HashAlgorithmHelper
+    public class HashAlgorithmHelper : IHashAlgorithmHelper
     {
         /// <summary>
         /// ハッシュアルゴリズム名からハッシュアルゴリズムタイプを取得するヘルパー
         /// </summary>
         /// <param name="algorithm">ハッシュアルゴリズム名</param>
         /// <returns>ハッシュアルゴリズムタイプ</returns>
-        public static FileHashAlgorithm GetAlgorithm(string algorithm)
+        public FileHashAlgorithm GetAlgorithm(string algorithm)
         {
             return algorithm switch
             {
@@ -42,7 +58,7 @@ namespace FileHashCraft.Models.Helpers
         /// </summary>
         /// <param name="algorithmType">ハッシュアルゴリズム</param>
         /// <returns>ハッシュアルゴリズム名</returns>
-        public static string GetAlgorithmName(FileHashAlgorithm algorithmType)
+        public string GetAlgorithmName(FileHashAlgorithm algorithmType)
         {
             return algorithmType switch
             {
@@ -53,7 +69,12 @@ namespace FileHashCraft.Models.Helpers
             };
         }
 
-        public static string GetAlgorithmCaption(string algorithm)
+        /// <summary>
+        /// ハッシュアルゴリズ名からハッシュアルゴリズムの解説を取得するヘルパー
+        /// </summary>
+        /// <param name="algorithm">ハッシュアルゴリズム名</param>
+        /// <returns>ハッシュアルゴリズムの解説</returns>
+        public string GetAlgorithmCaption(string algorithm)
         {
             return algorithm switch
             {

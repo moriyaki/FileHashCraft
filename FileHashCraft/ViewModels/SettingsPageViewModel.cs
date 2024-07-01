@@ -45,9 +45,9 @@ namespace FileHashCraft.ViewModels
                 HashAlgorithms.Clear();
                 HashAlgorithms =
                 [
-                    new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                    new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                    new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                    new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                    new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                    new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
                 ];
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
@@ -58,12 +58,7 @@ namespace FileHashCraft.ViewModels
         /// <summary>
         /// ハッシュ計算アルゴリズムの一覧
         /// </summary>
-        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
-        [
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
-        ];
+        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } = [];
 
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
@@ -174,14 +169,24 @@ namespace FileHashCraft.ViewModels
 
         #region コンストラクタと初期化
         private readonly IFileSystemServices _fileSystemServices;
+        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
 
         public SettingsPageViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
-            IFileSystemServices fileSystemServices
+            IFileSystemServices fileSystemServices,
+            IHashAlgorithmHelper hashAlgorithmHelper
         ) : base(messenger, settingsService)
         {
             _fileSystemServices = fileSystemServices;
+            _hashAlgorithmHelper = hashAlgorithmHelper;
+
+            HashAlgorithms =
+            [
+                new (_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new (_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new (_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+            ];
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());

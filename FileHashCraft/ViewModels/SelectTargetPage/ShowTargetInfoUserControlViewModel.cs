@@ -153,12 +153,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュ計算アルゴリズムの一覧
         /// </summary>
-        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } =
-        [
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-            new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
-        ];
+        public ObservableCollection<HashAlgorithm> HashAlgorithms { get; set; } = [];
+
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
         /// </summary>
@@ -245,16 +241,26 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IFileSystemServices _fileSystemServices;
+        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
         public ShowTargetInfoUserControlViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
-            IFileSystemServices fileSystemServices
+            IFileSystemServices fileSystemServices,
+            IHashAlgorithmHelper hashAlgorithmHelper
         ) : base(messenger, settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
             _fileSystemServices = fileSystemServices;
             _selectedHashAlgorithm = _settingsService.HashAlgorithm;
+            _hashAlgorithmHelper = hashAlgorithmHelper;
+
+            HashAlgorithms =
+            [
+                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+            ];
 
             // ハッシュ計算画面に移動するコマンド
             ToHashCalcingPage = new RelayCommand(
@@ -282,9 +288,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             HashAlgorithms.Clear();
             HashAlgorithms =
             [
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
             // ハッシュ計算アルゴリズムを再設定

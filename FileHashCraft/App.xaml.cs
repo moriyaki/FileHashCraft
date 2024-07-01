@@ -141,6 +141,7 @@ namespace FileHashCraft
 
             // Model
             services.AddSingleton<IExtentionTypeHelper, ExtentionTypeHelper>();
+            services.AddSingleton<IHashAlgorithmHelper, HashAlgorithmHelper>();
 
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
             services.AddSingleton<IDirectoriesManager, DirectoriesManager>();

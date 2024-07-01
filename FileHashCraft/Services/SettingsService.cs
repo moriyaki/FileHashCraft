@@ -156,13 +156,19 @@ namespace FileHashCraft.Services
         private readonly string settingXMLFile = "settings.xml";
         private readonly string settingsFilePath;
         private readonly IMessenger _messenger;
+        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
 
-        public SettingsService(IMessenger messenger)
+        public SettingsService(
+            IMessenger messenger,
+            IHashAlgorithmHelper hashAlgorithmHelper
+        )
         {
             var localAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appName);
             settingsFilePath = Path.Combine(localAppDataPath, settingXMLFile);
             _messenger = messenger;
+            _hashAlgorithmHelper = hashAlgorithmHelper;
 
+            _HashAlgorithm = _hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
             LoadSettings();
 
             SendWindowTop(Top);
@@ -315,7 +321,7 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
-        private string _HashAlgorithm = HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
+        private string _HashAlgorithm;
         public string HashAlgorithm
         {
             get => _HashAlgorithm;
@@ -490,7 +496,7 @@ namespace FileHashCraft.Services
                         IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
                         IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
                         SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
-                        HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
+                        HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? _hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
 
                         var fontFamilyName = root.Element("CurrentFont")?.Value ?? string.Empty;
                         CurrentFont = new FontFamilyConverter().ConvertFromString(fontFamilyName) as FontFamily ?? SystemFonts.MessageFontFamily;
