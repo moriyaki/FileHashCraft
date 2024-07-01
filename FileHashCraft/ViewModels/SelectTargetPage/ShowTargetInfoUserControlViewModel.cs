@@ -239,17 +239,20 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion バインディング
 
         #region コンストラクタ
+        private readonly IFileManager _fileManager;
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
         public ShowTargetInfoUserControlViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
+            IFileManager fileManager,
             IScannedFilesManager scannedFilesManager,
             IFileSystemServices fileSystemServices,
             IHashAlgorithmHelper hashAlgorithmHelper
         ) : base(messenger, settingsService)
         {
+            _fileManager = fileManager;
             _scannedFilesManager = scannedFilesManager;
             _fileSystemServices = fileSystemServices;
             _selectedHashAlgorithm = _settingsService.HashAlgorithm;
@@ -353,7 +356,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             App.Current?.Dispatcher?.Invoke(() => HashFileListItems.Clear());
 
-            foreach (var file in FileManager.EnumerateFiles(currentFullPath))
+            foreach (var file in _fileManager.EnumerateFiles(currentFullPath))
             {
                 var item = new HashListFileItems
                 {

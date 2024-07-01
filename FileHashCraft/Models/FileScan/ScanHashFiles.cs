@@ -42,15 +42,18 @@ namespace FileHashCraft.Models.FileScan
         private readonly IMessenger _messenger;
         private readonly IExtentionManager _extentionManager;
         private readonly IDirectoriesManager _directoriesManager;
+        private readonly IFileManager _fileManager;
         public ScanHashFiles(
             IMessenger messenger,
             IExtentionManager extentionManager,
-            IDirectoriesManager directoriesManager
+            IDirectoriesManager directoriesManager,
+            IFileManager fileManager
         )
         {
             _messenger = messenger;
             _extentionManager = extentionManager;
             _directoriesManager = directoriesManager;
+            _fileManager = fileManager;
         }
 
         #region ディレクトリを検索する
@@ -102,7 +105,7 @@ namespace FileHashCraft.Models.FileScan
                 string currentDirectory = paths.Pop();
                 result.Add(currentDirectory);
                 _messenger.Send(new AddScannedDirectoriesCountMessage(1));
-                foreach (var subDir in FileManager.EnumerateDirectories(currentDirectory))
+                foreach (var subDir in _fileManager.EnumerateDirectories(currentDirectory))
                 {
                     paths.Push(subDir);
                     if (cancellation.IsCancellationRequested) { return []; }
@@ -127,7 +130,7 @@ namespace FileHashCraft.Models.FileScan
                 {
                     await semaphore.WaitAsync(cancellation);
                     // ファイルを保持する
-                    foreach (var fileFullPath in FileManager.EnumerateFiles(directoryFullPath))
+                    foreach (var fileFullPath in _fileManager.EnumerateFiles(directoryFullPath))
                     {
                         _messenger.Send(new AddFileToAllFilesMessage(fileFullPath));
                     }

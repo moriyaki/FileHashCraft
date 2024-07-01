@@ -63,6 +63,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         #region コンストラクタ
         private readonly IMessenger _messenger;
         private readonly ISettingsService _settingsService;
+        private readonly IFileManager _fileManager;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
         /// </summary>
@@ -71,6 +72,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
+            _fileManager = Ioc.Default.GetService<IFileManager>() ?? throw new InvalidOperationException($"{nameof(IFileManager)} dependency not resolved.");
             // フォント変更メッセージ受信
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
@@ -340,7 +342,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!_isKicked || force)
             {
                 Children.Clear();
-                foreach (var childPath in FileManager.EnumerateDirectories(FullPath))
+                foreach (var childPath in _fileManager.EnumerateDirectories(FullPath))
                 {
                     var child = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
                     var item = new DirectoryTreeViewItemModel(child, this);

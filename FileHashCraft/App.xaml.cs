@@ -141,6 +141,7 @@ namespace FileHashCraft
 
             // Model
             services.AddSingleton<IExtentionManager, ExtentionManager>();
+            services.AddSingleton<IFileManager, FileManager>();
 
             // Model - FileScan
             services.AddSingleton<IDirectoriesManager, DirectoriesManager>();

@@ -168,7 +168,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
 
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IFileSystemWatcherService _fileSystemWatcherService;
-        private readonly IDirectoryTreeManager _treeManager;
+        private readonly IDirectoryTreeManager _directoryTreeManager;
+        private readonly IFileManager _fileManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         public ExplorerPageViewModel(
@@ -176,14 +177,16 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             IFileSystemWatcherService fileSystemWatcherService,
-            IDirectoryTreeManager treeManager,
+            IDirectoryTreeManager directoryTreeManager,
+            IFileManager fileManager,
             IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
         ) : base(messenger, settingsService)
         {
             _fileSystemServices = fileSystemServices;
             _fileSystemWatcherService = fileSystemWatcherService;
-            _treeManager = treeManager;
+            _directoryTreeManager = directoryTreeManager;
+            _fileManager = fileManager;
             _helpWindowViewModel = helpWindowViewModel;
             _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlModel;
 
@@ -203,7 +206,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 ListItems.Clear();
                 await Task.Run(() =>
                 {
-                    foreach (var folderFile in FileManager.EnumerateFileSystemEntries(CurrentFullPath))
+                    foreach (var folderFile in _fileManager.EnumerateFileSystemEntries(CurrentFullPath))
                     {
                         // フォルダやファイルの情報を ViewModel に変換
                         var info = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(folderFile);
@@ -231,7 +234,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             // ハッシュ管理ウィンドウ実行のコマンド
             HashCalc = new RelayCommand(() =>
             {
-                _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+                _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
                 _fileSystemServices.NavigateToSelectTargetPage();
             });
 
@@ -298,7 +301,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             {
                 _controDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
             }
-            _treeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+            _directoryTreeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
 
             //--------------------- 開発用自動化処理
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
@@ -338,7 +341,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     }
                 }
             }
-            _treeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+            _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
             _fileSystemServices.NavigateToSelectTargetPage();
         }
         #endregion コンストラクタと初期処理
