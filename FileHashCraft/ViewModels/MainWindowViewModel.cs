@@ -27,10 +27,10 @@ namespace FileHashCraft.ViewModels
             Width = _settingsService.Width;
             Height = _settingsService.Height;
 
-            messenger.Register<WindowTopChangedMessage>(this, (_, m) => Top = m.Top);
-            messenger.Register<WindowLeftChangedMessage>(this, (_, m) => Left = m.Left);
-            messenger.Register<WindowWidthChangedMessage>(this, (_, m) => Width = m.Width);
-            messenger.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
+            _messenger.Register<WindowTopChangedMessage>(this, (_, m) => Top = m.Top);
+            _messenger.Register<WindowLeftChangedMessage>(this, (_, m) => Left = m.Left);
+            _messenger.Register<WindowWidthChangedMessage>(this, (_, m) => Width = m.Width);
+            _messenger.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
         }
         #endregion 初期設定
 

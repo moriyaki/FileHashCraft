@@ -258,19 +258,19 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             });
 
             // カレントディレクトリ変更のメッセージ受信
-            messenger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
+            _messenger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
                 => CurrentFullPath = m.CurrentFullPath);
 
             // カレントディレクトリのアイテム作成のメッセージ受信
-            messenger.Register<CurrentDirectoryItemCreatedMessage>(this, (_, m)
+            _messenger.Register<CurrentDirectoryItemCreatedMessage>(this, (_, m)
                 => CurrentDirectoryItemCreated(m.CreatedFullPath));
 
             // カレントディレクトリのアイテム名前変更のメッセージ受信
-            messenger.Register<CurrentDirectoryItemRenamedMessage>(this, (_, m)
+            _messenger.Register<CurrentDirectoryItemRenamedMessage>(this, (_, m)
                 => CurrentDirectoryItemRenamed(m.OldFullPath, m.NewFullPath));
 
             // カレントディレクトリのアイテム削除のメッセージ受信
-            messenger.Register<CurrentDirectoryItemDeletedMessage>(this, (_, m)
+            _messenger.Register<CurrentDirectoryItemDeletedMessage>(this, (_, m)
                 => CurrentDirectoryItemDeleted(m.DeletedFullPath));
 
             Initialize();
@@ -304,6 +304,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _directoryTreeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
 
             //--------------------- 開発用自動化処理
+/*
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
             {
                 if (root.FullPath == @"E:\")
@@ -327,22 +328,13 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         {
                             child.KickChild();
                             child.IsChecked = true;
-                            /*
-                            foreach (var grandchild in child.Children)
-                            {
-                                if (grandchild.FullPath == @"H:\旧D_Drive\iso")
-                                {
-                                    grandchild.IsChecked = true;
-                                    break;
-                                }
-                            }
-                            */
                         }
                     }
                 }
             }
             _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
             _fileSystemServices.NavigateToSelectTargetPage();
+*/
         }
         #endregion コンストラクタと初期処理
 

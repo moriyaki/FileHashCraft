@@ -143,11 +143,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 () => SelectedItems.Count > 0
             );
 
-            messenger.Register<FileScanFinished>(this, (_, _) =>
+            _messenger.Register<FileScanFinished>(this, (_, _) =>
                 AddCriteriaCommand.NotifyCanExecuteChanged());
 
             // リストボックスアイテムの編集状態から抜けた時の処理をします。
-            messenger.Register<IsEditModeChangedMessage>(this, (_, _) =>
+            _messenger.Register<IsEditModeChangedMessage>(this, (_, _) =>
                 OnPropertyChanged(nameof(CiriteriaAddTextBoxBackgroudColor)));
         }
         #endregion コンストラクタ

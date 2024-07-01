@@ -127,19 +127,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
 
             // 読み取り専用ファイルを利用するかどうかが変更されたメッセージ受信
-            messenger.Register<ReadOnlyFileIncludeChangedMessage>(this, (_, m)
+            _messenger.Register<ReadOnlyFileIncludeChangedMessage>(this, (_, m)
                 => IsReadOnlyFileInclude = m.ReadOnlyFileInclude);
 
             // 隠しファイルを利用するかどうかが変更されたメッセージ受信
-            messenger.Register<HiddenFileIncludeChangedMessage>(this, (_, m)
+            _messenger.Register<HiddenFileIncludeChangedMessage>(this, (_, m)
                 => IsHiddenFileInclude = m.HiddenFileInclude);
 
             // 0サイズファイルを削除するかどうかが変更されたメッセージ受信
-            messenger.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m)
+            _messenger.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m)
                 => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
 
             //空ディレクトリを削除するかどうかが変更されたメッセージ受信
-            messenger.Register<EmptyDirectoryDeleteChangedMessage>(this, (_, m)
+            _messenger.Register<EmptyDirectoryDeleteChangedMessage>(this, (_, m)
                 => IsEmptyDirectoryDelete = m.EmptyDirectoryDelete);
         }
         #endregion コンストラクタ

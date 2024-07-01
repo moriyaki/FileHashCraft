@@ -204,35 +204,35 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // スキャンした全ディレクトリ数に加算するメッセージ
-            messenger.Register<AddScannedDirectoriesCountMessage>(this, (_, m)
+            _messenger.Register<AddScannedDirectoriesCountMessage>(this, (_, m)
                 => ViewModelMain.AddScannedDirectoriesCount(m.DirectoriesCount));
 
             // 全管理対象ファイルを追加するメッセージ
-            messenger.Register<AddFileToAllFilesMessage>(this, (_, m)
+            _messenger.Register<AddFileToAllFilesMessage>(this, (_, m)
                 => ViewModelExtention.AddFileToAllFiles(m.FileFullPath));
 
             // ファイルスキャンが完了したディレクトリ数に加算するメッセージ
-            messenger.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
+            _messenger.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
                 => ViewModelMain.AddFilesScannedDirectoriesCount());
 
             // ハッシュ取得対象となる総対象ファイル数にファイル数を設定するメッセージ
-            messenger.Register<SetAllTargetfilesCountMessge>(this, (_, _)
+            _messenger.Register<SetAllTargetfilesCountMessge>(this, (_, _)
                 => ViewModelMain.SetAllTargetfilesCount());
 
             // 拡張子をリストボックスに追加するメッセージ
-            messenger.Register<AddExtentionMessage>(this, (_, m)
+            _messenger.Register<AddExtentionMessage>(this, (_, m)
                 => ViewModelExtention.AddExtention(m.Extention));
 
             // ファイルの拡張子グループをリストボックスに追加するメッセージ
-            messenger.Register<AddFileTypesMessage>(this, (_, _)
+            _messenger.Register<AddFileTypesMessage>(this, (_, _)
                 => ViewModelExtention.AddFileTypes());
 
             // ツリービュー幅変更メッセージ受信
-            messenger.Register<TreeWidthChangedMessage>(this, (_, m)
+            _messenger.Register<TreeWidthChangedMessage>(this, (_, m)
                 => TreeWidth = m.TreeWidth);
 
             // リストボックス幅変更メッセージ受信
-            messenger.Register<ListWidthChangedMessage>(this, (_, m)
+            _messenger.Register<ListWidthChangedMessage>(this, (_, m)
                 => ListWidth = m.ListWidth);
 
             _TreeWidth = _settingsService.TreeWidth;
