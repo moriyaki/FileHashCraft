@@ -17,6 +17,7 @@ using FileHashCraft.ViewModels.HashCalcingPage;
 using Microsoft.Extensions.DependencyInjection;
 using FileHashCraft.Models.HashCalc;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models.Helpers;
 
 namespace FileHashCraft
 {
@@ -139,6 +140,8 @@ namespace FileHashCraft
             services.AddSingleton<IHashCalcingPageViewModel, HashCalcingPageViewModel>();
 
             // Model
+            services.AddSingleton<IExtentionTypeHelper, ExtentionTypeHelper>();
+
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
             services.AddSingleton<IDirectoriesManager, DirectoriesManager>();
             services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();

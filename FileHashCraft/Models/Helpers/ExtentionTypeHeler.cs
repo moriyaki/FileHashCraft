@@ -24,10 +24,26 @@ namespace FileHashCraft.Models.Helpers
     }
     #endregion ファイル種類
 
+    public interface IExtentionTypeHelper
+    {
+        /// <summary>
+        /// ファイルタイプから表示名を取得します。
+        /// </summary>
+        string GetFileGroupName(FileGroupType type);
+        /// <summary>
+        /// 拡張子グループから、該当する拡張子を取得します。
+        /// </summary>
+        public HashSet<string> GetFileGroupExtention(FileGroupType type);
+        /// <summary>
+        /// 拡張子がどの拡張子グループに属しているかを取得します。
+        /// </summary>
+        public FileGroupType GetFileGroupFromExtention(string extention);
+    }
+
     /// <summary>
     /// 拡張子グループから表示名や拡張子を取得するクラス
     /// </summary>
-    public static class ExtentionTypeHelper
+    public class ExtentionTypeHelper : IExtentionTypeHelper
     {
         #region ファイル種類の管理
         /// <summary>
@@ -35,7 +51,7 @@ namespace FileHashCraft.Models.Helpers
         /// </summary>
         /// <param name="type">ファイルタイプ</param>
         /// <returns>ファイルタイプの表示名</returns>
-        public static string GetFileGroupName(FileGroupType type)
+        public string GetFileGroupName(FileGroupType type)
         {
             return type switch
             {
@@ -54,9 +70,9 @@ namespace FileHashCraft.Models.Helpers
         /// <summary>
         /// 拡張子グループから、該当する拡張子を取得します。
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">ファイルのタイプ</param>
         /// <returns>基本的にファイルタイプに該当する拡張子、ただしOthersだけは空</returns>
-        public static HashSet<string> GetFileGroupExtention(FileGroupType type)
+        public HashSet<string> GetFileGroupExtention(FileGroupType type)
         {
             return type switch
             {
@@ -77,7 +93,7 @@ namespace FileHashCraft.Models.Helpers
         /// </summary>
         /// <param name="extention">拡張子</param>
         /// <returns>拡張子グループ</returns>
-        public static FileGroupType GetFileGroupFromExtention(string extention)
+        public FileGroupType GetFileGroupFromExtention(string extention)
         {
             if (MovieFiles.Contains(extention)) { return FileGroupType.Movies; }
             if (PictureFiles.Contains(extention)) { return FileGroupType.Pictures; }
@@ -94,7 +110,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主な動画ファイル
         /// </summary>
         #region 主な動画ファイル
-        private static readonly HashSet<string> MovieFiles =
+        private readonly HashSet<string> MovieFiles =
         [
             ".avi",
             ".divx",
@@ -174,7 +190,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主な画像ファイル
         /// </summary>
         #region 主な画像ファイル
-        private static readonly HashSet<string> PictureFiles =
+        private readonly HashSet<string> PictureFiles =
         [
             ".jpeg",
             ".jpg",
@@ -212,7 +228,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主なサウンドファイル
         /// </summary>
         #region 主な音楽ファイル
-        private static readonly HashSet<string> MusicFiles =
+        private readonly HashSet<string> MusicFiles =
         [
             ".ac3",
             ".eac3",
@@ -275,7 +291,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主なドキュメントファイル
         /// </summary>
         #region 主なドキュメントファイル
-        private static readonly HashSet<string> DocumentFiles =
+        private readonly HashSet<string> DocumentFiles =
         [
             ".doc",
             ".docx",
@@ -302,7 +318,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主なアプリケーションファイル
         /// </summary>
         #region 主なアプリケーションファイル
-        private static readonly HashSet<string> ApplicationFiles =
+        private readonly HashSet<string> ApplicationFiles =
         [
             ".exe",
             ".ocx",
@@ -322,7 +338,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主な圧縮ファイル
         /// </summary>
         #region 主な圧縮ファイル
-        private static readonly HashSet<string> ArchiveFiles =
+        private readonly HashSet<string> ArchiveFiles =
         [
             ".7z",
             ".zip",
@@ -353,7 +369,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主なソースコードファイル
         /// </summary>
         #region 主なソースコードファイル
-        private static readonly HashSet<string> SourceCodeFiles =
+        private readonly HashSet<string> SourceCodeFiles =
         [
             ".c",
             ".cpp",
@@ -383,7 +399,7 @@ namespace FileHashCraft.Models.Helpers
         /// 主な登録ファイル
         /// </summary>
         #region 主な登録ファイル
-        private static readonly HashSet<string> RegistrationFiles =
+        private readonly HashSet<string> RegistrationFiles =
         [
             ".reg",
             ".inf",

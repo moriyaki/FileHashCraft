@@ -44,6 +44,16 @@ namespace FileHashCraft.Models
     /// </summary>
     public class ExtentionManager : IExtentionManager
     {
+        public ExtentionManager() { throw new NotImplementedException(nameof(ExtentionManager)); }
+
+        private readonly IExtentionTypeHelper _extentionTypeHelper;
+        public ExtentionManager(
+            IExtentionTypeHelper extentionTypeHelper
+        )
+        {
+            _extentionTypeHelper = extentionTypeHelper;
+        }
+
         #region 拡張子の管理
         /// <summary>
         /// 拡張子を持つファイル数の辞書
@@ -101,13 +111,13 @@ namespace FileHashCraft.Models
 
                 foreach (var extension in _extentionCountDictionary.Keys.OrderBy(key => key))
                 {
-                    if (excludedGroups.Any(group => ExtentionTypeHelper.GetFileGroupExtention(group).Contains(extension))) { continue; }
+                    if (excludedGroups.Any(group => _extentionTypeHelper.GetFileGroupExtention(group).Contains(extension))) { continue; }
                     yield return extension;
                 }
             }
             else
             {
-                foreach (var extention in ExtentionTypeHelper.GetFileGroupExtention(fileGroupType))
+                foreach (var extention in _extentionTypeHelper.GetFileGroupExtention(fileGroupType))
                 {
                     yield return extention;
                 }

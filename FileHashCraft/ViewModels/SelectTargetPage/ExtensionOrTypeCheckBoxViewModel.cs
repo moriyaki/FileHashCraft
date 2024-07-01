@@ -41,6 +41,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         protected readonly IMessenger _messenger;
         protected readonly ISettingsService _settingsService;
         protected readonly IExtentionManager _extentionManager;
+        protected readonly IExtentionTypeHelper _extentionTypeHelper;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
         /// </summary>
@@ -48,11 +49,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         protected ExtensionOrTypeCheckBoxBase(
             IMessenger messenger,
             ISettingsService settingsService,
-            IExtentionManager extentionManager)
+            IExtentionManager extentionManager,
+            IExtentionTypeHelper extentionTypeHelper
+        )
         {
             _messenger = messenger;
             _settingsService = settingsService;
             _extentionManager = extentionManager;
+            _extentionTypeHelper = extentionTypeHelper;
 
             // フォント変更メッセージ受信
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
@@ -135,8 +139,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtensionCheckBoxViewModel(
         IMessenger messenger,
         ISettingsService settingsService,
-        IExtentionManager extentionManager
-        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager)
+        IExtentionManager extentionManager,
+        IExtentionTypeHelper extentionTypeHelper
+        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper)
     {
         #region コンストラクタと初期化
 
@@ -187,8 +192,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public class ExtentionGroupCheckBoxViewModel(
         IMessenger messenger,
         ISettingsService settingsService,
-        IExtentionManager extentionManager
-        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager)
+        IExtentionManager extentionManager,
+        IExtentionTypeHelper extentionTypeHelper
+        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper)
     {
         #region 初期化
 
@@ -199,7 +205,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             FileType = FileGroupType.Others;
             ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
-            Name = ExtentionTypeHelper.GetFileGroupName(FileGroupType.Others);
+            Name = _extentionTypeHelper.GetFileGroupName(FileGroupType.Others);
         }
 
         /// <summary>
@@ -210,7 +216,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             FileType = fileType;
             ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
-            Name = ExtentionTypeHelper.GetFileGroupName(FileType);
+            Name = _extentionTypeHelper.GetFileGroupName(FileType);
         }
         #endregion 初期化
 
