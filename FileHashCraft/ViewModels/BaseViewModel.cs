@@ -8,6 +8,7 @@ namespace FileHashCraft.ViewModels
 {
     public class BaseViewModel : ObservableObject
     {
+        protected readonly IMessenger _messenger;
         protected readonly ISettingsService _settingsService;
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
@@ -15,16 +16,20 @@ namespace FileHashCraft.ViewModels
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         public BaseViewModel() { throw new NotImplementedException(nameof(BaseViewModel)); }
 
-        public BaseViewModel(ISettingsService settingsService)
+        public BaseViewModel(
+            IMessenger messenger,
+            ISettingsService settingsService
+        )
         {
+            _messenger = messenger;
             _settingsService = settingsService;
 
             _currentFontFamily = _settingsService.CurrentFont;
             _fontSize = _settingsService.FontSize;
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
         }
 
         private FontFamily _currentFontFamily;

@@ -61,6 +61,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     public partial class DirectoryTreeViewItemModel : ObservableObject, IComparable<DirectoryTreeViewItemModel>, IDirectoryTreeViewItemModel
     {
         #region コンストラクタ
+        private readonly IMessenger _messenger;
         private readonly ISettingsService _settingsService;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
@@ -68,15 +69,15 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public DirectoryTreeViewItemModel()
         {
+            _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
 
-            var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
-            _currentFontFamily = settingsService.CurrentFont;
-            _fontSize = settingsService.FontSize;
+            _currentFontFamily = _settingsService.CurrentFont;
+            _fontSize = _settingsService.FontSize;
         }
 
         /// <summary>
@@ -217,9 +218,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// チェックボックスの表示状態の設定
         /// </summary>
-        public static Visibility IsCheckBoxVisible
+        public Visibility IsCheckBoxVisible
         {
-            get => WeakReferenceMessenger.Default.Send(new TreeViewIsCheckBoxVisible());
+            get => _messenger.Send(new TreeViewIsCheckBoxVisible());
         }
 
         /// <summary>
@@ -277,7 +278,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     SetProperty(ref _isSelected, value);
                     if (value)
                     {
-                        WeakReferenceMessenger.Default.Send(new CurrentDirectoryChangedMessage(this.FullPath));
+                        _messenger.Send(new CurrentDirectoryChangedMessage(this.FullPath));
                         if (HasChildren)
                         {
                             KickChild();
@@ -310,7 +311,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     foreach (var child in Children)
                     {
                         // ディレクトリノードを展開マネージャに追加
-                        WeakReferenceMessenger.Default.Send(new AddToExpandDirectoryManagerMessage(child));
+                        _messenger.Send(new AddToExpandDirectoryManagerMessage(child));
                         if (IsChecked == true) { child.IsChecked = true; }
                     }
                 }
@@ -319,7 +320,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     foreach (var child in Children)
                     {
                         // ディレクトリノードを展開マネージャから削除
-                        WeakReferenceMessenger.Default.Send(new RemoveFromExpandDirectoryManagerMessage(child));
+                        _messenger.Send(new RemoveFromExpandDirectoryManagerMessage(child));
                     }
                 }
             }

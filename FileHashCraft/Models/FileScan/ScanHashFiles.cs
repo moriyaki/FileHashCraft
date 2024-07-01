@@ -39,13 +39,16 @@ namespace FileHashCraft.Models.FileScan
 
         public ScanHashFiles() { throw new NotImplementedException(nameof(ScanHashFiles)); }
 
+        private readonly IMessenger _messenger;
         private readonly IExtentionManager _extentionManager;
         private readonly IDirectoriesManager _directoriesManager;
         public ScanHashFiles(
+            IMessenger messenger,
             IExtentionManager extentionManager,
             IDirectoriesManager directoriesManager
         )
         {
+            _messenger = messenger;
             _extentionManager = extentionManager;
             _directoriesManager = directoriesManager;
         }
@@ -59,7 +62,7 @@ namespace FileHashCraft.Models.FileScan
         {
             // 各ドライブに対してタスクを回す
             await DirectorySearch(_directoriesManager.NestedDirectories, cancellation);
-            WeakReferenceMessenger.Default.Send(new AddScannedDirectoriesCountMessage(_directoriesManager.NonNestedDirectories.Count));
+            _messenger.Send(new AddScannedDirectoriesCountMessage(_directoriesManager.NonNestedDirectories.Count));
         }
 
         /// <summary>
@@ -98,7 +101,7 @@ namespace FileHashCraft.Models.FileScan
             {
                 string currentDirectory = paths.Pop();
                 result.Add(currentDirectory);
-                WeakReferenceMessenger.Default.Send(new AddScannedDirectoriesCountMessage(1));
+                _messenger.Send(new AddScannedDirectoriesCountMessage(1));
                 foreach (var subDir in FileManager.EnumerateDirectories(currentDirectory))
                 {
                     paths.Push(subDir);
@@ -126,11 +129,11 @@ namespace FileHashCraft.Models.FileScan
                     // ファイルを保持する
                     foreach (var fileFullPath in FileManager.EnumerateFiles(directoryFullPath))
                     {
-                        WeakReferenceMessenger.Default.Send(new AddFileToAllFilesMessage(fileFullPath));
+                        _messenger.Send(new AddFileToAllFilesMessage(fileFullPath));
                     }
 
-                    WeakReferenceMessenger.Default.Send(new AddFilesScannedDirectoriesCountMessage());
-                    WeakReferenceMessenger.Default.Send(new SetAllTargetfilesCountMessge());
+                    _messenger.Send(new AddFilesScannedDirectoriesCountMessage());
+                    _messenger.Send(new SetAllTargetfilesCountMessge());
 
                     if (cancellation.IsCancellationRequested) { return; }
                 }
@@ -146,10 +149,10 @@ namespace FileHashCraft.Models.FileScan
         {
             foreach (var extention in _extentionManager.GetExtentions())
             {
-                WeakReferenceMessenger.Default.Send(new AddExtentionMessage(extention));
+                _messenger.Send(new AddExtentionMessage(extention));
                 if (cancellation.IsCancellationRequested) { return; }
             }
-            WeakReferenceMessenger.Default.Send(new AddFileTypesMessage());
+            _messenger.Send(new AddFileTypesMessage());
         }
         #endregion ハッシュを取得するファイルのスキャン処理
     }

@@ -229,10 +229,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         public SetRegexControlViewModel(
+            IMessenger messenger,
             ISettingsService settingsService,
             IHelpWindowViewModel helpWindowViewModel,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
-        ) : base(settingsService, helpWindowViewModel, pageSelectTargetViewModelMain)
+        ) : base(messenger, settingsService, helpWindowViewModel, pageSelectTargetViewModelMain)
         {
             // ヘルプ画面を開きます
             HelpOpenCommand = new RelayCommand(() =>
@@ -243,7 +244,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // リストボックスの選択状態が変わった時の処理をします。
-            WeakReferenceMessenger.Default.Register<IsSelectedRegexChangedMessage>(this, (_, m) =>
+            messenger.Register<IsSelectedRegexChangedMessage>(this, (_, m) =>
             {
                 if (m.IsSelected)
                 {
@@ -257,7 +258,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 RemoveCriteriaCommand.NotifyCanExecuteChanged();
             });
             // リストボックスアイテムが編集された時のエラーチェックをします。
-            WeakReferenceMessenger.Default.Register<SelectedChangedRegexCriteriaRequestMessage>(this, (_, m) =>
+            messenger.Register<SelectedChangedRegexCriteriaRequestMessage>(this, (_, m) =>
                 m.Reply(IsCriteriaConditionCorrent(m.RegexCriteria, m.OriginalRegexCriteria)));
         }
         #endregion コンストラクタ
@@ -267,7 +268,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public override void AddCriteria()
         {
-            var newRegex = new RegexCriteriaItemViewModel(_settingsService)
+            var newRegex = new RegexCriteriaItemViewModel(_messenger, _settingsService)
             {
                 Criteria = SearchCriteriaText,
             };
@@ -295,7 +296,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ModifyCriteriaCommand.NotifyCanExecuteChanged();
             RemoveCriteriaCommand.NotifyCanExecuteChanged();
             LeaveListBoxCriteria();
-            WeakReferenceMessenger.Default.Send(new NewRegexCriteriaFocusMessage());
+            _messenger.Send(new NewRegexCriteriaFocusMessage());
         }
 
         /// <summary>
@@ -323,7 +324,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 listItem.IsEditMode = false;
                 listItem.Criteria = listItem.OriginalCriteria;
-                WeakReferenceMessenger.Default.Send(new NewRegexCriteriaFocusMessage());
+                _messenger.Send(new NewRegexCriteriaFocusMessage());
                 IsCriteriaConditionCorrent(SearchCriteriaText);
             }
         }

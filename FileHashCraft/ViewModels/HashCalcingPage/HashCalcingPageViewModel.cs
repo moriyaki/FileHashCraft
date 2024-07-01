@@ -56,7 +56,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                     case FileHashCalcStatus.Finished:
                         StatusColor = Brushes.LightGreen;
                         StatusMessage = Resources.LabelFinished;
-                        //WeakReferenceMessenger.Default.Send(new FileHashCalcFinished());
+                        //_messenger.Send(new FileHashCalcFinished());
                         break;
                     default:
                         StatusColor = Brushes.Red;
@@ -183,12 +183,13 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         private readonly IScannedFilesManager _scannedFilesManager;
 
         public HashCalcingPageViewModel(
+            IMessenger messenger,
             ISettingsService settingsService,
             IFileHashCalc fileHashCalc,
             IHelpWindowViewModel helpWindowViewModel,
             IFileSystemServices fileSystemServices,
             IScannedFilesManager scannedFilesManager
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             _fileHashCalc = fileHashCalc;
             _fileSystemServices = fileSystemServices;
@@ -226,7 +227,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             );
 
             // ハッシュ計算を開始したメッセージ
-            WeakReferenceMessenger.Default.Register<StartCalcingFile>(this, (_, m) =>
+            _messenger.Register<StartCalcingFile>(this, (_, m) =>
             {
                 if (string.IsNullOrEmpty(m.BeforeFile))
                 {
@@ -249,7 +250,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                 App.Current?.Dispatcher.Invoke(() => HashGotFileCount++);
             });
             // ハッシュ計算を終了したメッセージ
-            WeakReferenceMessenger.Default.Register<EndCalcingFile>(this, (_, m)
+            _messenger.Register<EndCalcingFile>(this, (_, m)
                 => App.Current?.Dispatcher.Invoke(() => CalcingFiles.Remove(m.CalcingFile)));
 
             Initialize();

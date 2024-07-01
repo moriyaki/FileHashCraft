@@ -26,23 +26,25 @@ namespace FileHashCraft
             MainFrame.Navigated += MainFrame_Navigated;
             MainFrame.Navigate(new ExplorerPage());
 
+            var _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new NotImplementedException(nameof(IMessenger));
+
             // PageExplorer へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToExplorerPageMessage>(this, (_, _) =>
+            _messenger.Register<ToExplorerPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new ExplorerPage()));
             // PageSelectTarget へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToPageSelectTargetMessage>(this, (_, _) =>
+            _messenger.Register<ToPageSelectTargetMessage>(this, (_, _) =>
                 MainFrame.Navigate(new SelectTargetPage()));
             // PageHashCalcing へ移動のメッセージ受信したので移動
-            WeakReferenceMessenger.Default.Register<ToHashCalcingPageMessage>(this, (_, _) =>
+            _messenger.Register<ToHashCalcingPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new HashCalcingPage()));
             // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
-            WeakReferenceMessenger.Default.Register<ToSettingPageMessage>(this, (_, m) =>
+            _messenger.Register<ToSettingPageMessage>(this, (_, m) =>
             {
                 FromPage = m.ReturnPage;
                 MainFrame.Navigate(new SettingsPage());
             });
             // PageSetting の終了メッセージを受信したので、元のページへ移動
-            WeakReferenceMessenger.Default.Register<ReturnPageFromSettingsMessage>(this, (_, _) =>
+            _messenger.Register<ReturnPageFromSettingsMessage>(this, (_, _) =>
             {
                 switch (FromPage)
                 {

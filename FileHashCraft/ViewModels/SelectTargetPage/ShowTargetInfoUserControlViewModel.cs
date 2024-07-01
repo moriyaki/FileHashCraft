@@ -129,7 +129,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                     case FileScanStatus.Finished:
                         StatusColor = Brushes.LightGreen;
                         StatusMessage = Resources.LabelFinished;
-                        WeakReferenceMessenger.Default.Send(new FileScanFinished());
+                        _messenger.Send(new FileScanFinished());
                         break;
                     default: // 異常
                         StatusColor = Brushes.Red;
@@ -246,10 +246,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IFileSystemServices _fileSystemServices;
         public ShowTargetInfoUserControlViewModel(
+            IMessenger messenger,
             ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
             IFileSystemServices fileSystemServices
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
             _fileSystemServices = fileSystemServices;
@@ -262,11 +263,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             );
 
             // カレントディレクトリが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryChangedMessage>(this, (_, m)
+            _messenger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
                 => ChangeCurrentPath(m.CurrentFullPath));
 
             // 拡張子チェックボックスのチェック状態が変更されたら、カレントディレクトリリストボックス変更
-            WeakReferenceMessenger.Default.Register<ExtentionCheckChangedToListBoxMessage>(this, (_, _)
+            _messenger.Register<ExtentionCheckChangedToListBoxMessage>(this, (_, _)
                 => ChangeSelectedToListBox());
         }
         #endregion コンストラクタ

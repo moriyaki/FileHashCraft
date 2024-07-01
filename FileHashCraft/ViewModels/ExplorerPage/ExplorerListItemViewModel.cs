@@ -28,6 +28,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
+        private readonly IMessenger _messenger;
         private readonly IFileSystemServices _messageServices;
         private readonly ISettingsService _settingsService;
 
@@ -37,6 +38,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public ExplorerListItemViewModel()
         {
+            _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
             _messageServices = Ioc.Default.GetService<IFileSystemServices>() ?? throw new InvalidOperationException($"{nameof(IFileSystemServices)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
@@ -44,9 +46,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _fontSize = _settingsService.FontSize;
 
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
         }
 
         /// <summary>

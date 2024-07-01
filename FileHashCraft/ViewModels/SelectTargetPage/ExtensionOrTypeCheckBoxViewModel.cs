@@ -38,6 +38,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     public partial class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
+        protected readonly IMessenger _messenger;
         protected readonly ISettingsService _settingsService;
         protected readonly IExtentionManager _extentionManager;
         /// <summary>
@@ -45,17 +46,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         protected ExtensionOrTypeCheckBoxBase(
+            IMessenger messenger,
             ISettingsService settingsService,
             IExtentionManager extentionManager)
         {
+            _messenger = messenger;
             _settingsService = settingsService;
             _extentionManager = extentionManager;
 
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
 
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
 
             _currentFontFamily = _settingsService.CurrentFont;
             _fontSize = _settingsService.FontSize;
@@ -130,9 +133,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// ファイル拡張子のチェックボックスを扱うクラス
     /// </summary>
     public class ExtensionCheckBoxViewModel(
+        IMessenger messenger,
         ISettingsService settingsService,
         IExtentionManager extentionManager
-        ) : ExtensionOrTypeCheckBoxBase(settingsService, extentionManager)
+        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager)
     {
         #region コンストラクタと初期化
 
@@ -157,14 +161,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (value == true)
                 {
                     FileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
-                    WeakReferenceMessenger.Default.Send(new ExtentionChechReflectToGroupMessage(Name));
-                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBoxMessage());
+                    _messenger.Send(new ExtentionChechReflectToGroupMessage(Name));
+                    _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
                 else
                 {
                     FileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
-                    WeakReferenceMessenger.Default.Send(new ExtentionUnchechReflectToGroupMessage(Name));
-                    WeakReferenceMessenger.Default.Send(new ExtentionCheckChangedToListBoxMessage());
+                    _messenger.Send(new ExtentionUnchechReflectToGroupMessage(Name));
+                    _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
             }
         }
@@ -181,9 +185,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// 拡張子グループのチェックボックスを扱うクラス
     /// </summary>
     public class ExtentionGroupCheckBoxViewModel(
+        IMessenger messenger,
         ISettingsService settingsService,
         IExtentionManager extentionManager
-        ) : ExtensionOrTypeCheckBoxBase(settingsService, extentionManager)
+        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager)
     {
         #region 初期化
 
@@ -222,11 +227,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _isChecked, value);
                 if (value == true)
                 {
-                    WeakReferenceMessenger.Default.Send(new ExtentionGroupCheckedMessage(true, _extentionManager.GetGroupExtentions(FileType)));
+                    _messenger.Send(new ExtentionGroupCheckedMessage(true, _extentionManager.GetGroupExtentions(FileType)));
                 }
                 else
                 {
-                    WeakReferenceMessenger.Default.Send(new ExtentionGroupCheckedMessage(false, _extentionManager.GetGroupExtentions(FileType)));
+                    _messenger.Send(new ExtentionGroupCheckedMessage(false, _extentionManager.GetGroupExtentions(FileType)));
                 }
             }
         }

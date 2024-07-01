@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels
@@ -64,7 +65,7 @@ namespace FileHashCraft.ViewModels
 
         public HelpWindowViewModel() : base() { }
 
-        public HelpWindowViewModel(ISettingsService settingsService) : base(settingsService) { }
+        public HelpWindowViewModel(IMessenger messenger, ISettingsService settingsService) : base(messenger, settingsService) { }
 
         /// <summary>
         /// ウィンドウ位置の初期化

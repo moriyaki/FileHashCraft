@@ -16,6 +16,7 @@ using FileHashCraft.ViewModels.SelectTargetPage;
 using FileHashCraft.ViewModels.HashCalcingPage;
 using Microsoft.Extensions.DependencyInjection;
 using FileHashCraft.Models.HashCalc;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace FileHashCraft
 {
@@ -101,6 +102,8 @@ namespace FileHashCraft
         private static ServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
+
+            services.AddSingleton<IMessenger, WeakReferenceMessenger>();
 
             // Services
             services.AddSingleton<IFileSystemServices, FileSystemServices>();

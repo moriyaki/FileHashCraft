@@ -172,13 +172,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
         public ExplorerPageViewModel(
+            IMessenger messenger,
             IFileSystemServices fileSystemServices,
             ISettingsService settingsService,
             IFileSystemWatcherService fileSystemWatcherService,
             IDirectoryTreeManager treeManager,
             IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             _fileSystemServices = fileSystemServices;
             _fileSystemWatcherService = fileSystemWatcherService;
@@ -254,19 +255,19 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             });
 
             // カレントディレクトリ変更のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryChangedMessage>(this, (_, m)
+            messenger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
                 => CurrentFullPath = m.CurrentFullPath);
 
             // カレントディレクトリのアイテム作成のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemCreatedMessage>(this, (_, m)
+            messenger.Register<CurrentDirectoryItemCreatedMessage>(this, (_, m)
                 => CurrentDirectoryItemCreated(m.CreatedFullPath));
 
             // カレントディレクトリのアイテム名前変更のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemRenamedMessage>(this, (_, m)
+            messenger.Register<CurrentDirectoryItemRenamedMessage>(this, (_, m)
                 => CurrentDirectoryItemRenamed(m.OldFullPath, m.NewFullPath));
 
             // カレントディレクトリのアイテム削除のメッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentDirectoryItemDeletedMessage>(this, (_, m)
+            messenger.Register<CurrentDirectoryItemDeletedMessage>(this, (_, m)
                 => CurrentDirectoryItemDeleted(m.DeletedFullPath));
 
             Initialize();

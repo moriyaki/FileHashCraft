@@ -176,9 +176,10 @@ namespace FileHashCraft.ViewModels
         private readonly IFileSystemServices _fileSystemServices;
 
         public SettingsPageViewModel(
+            IMessenger messenger,
             ISettingsService settingsService,
             IFileSystemServices fileSystemServices
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             _fileSystemServices = fileSystemServices;
 
@@ -211,15 +212,15 @@ namespace FileHashCraft.ViewModels
                 () => _fileSystemServices.NavigateReturnPageFromSettings());
 
             // 読み取り専用ファイルを利用するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<ReadOnlyFileIncludeChangedMessage>(this, (_, m)
+            _messenger.Register<ReadOnlyFileIncludeChangedMessage>(this, (_, m)
                 => IsReadOnlyFileInclude = m.ReadOnlyFileInclude);
 
             // 隠しファイルを利用するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<HiddenFileIncludeChangedMessage>(this, (_, m)
+            _messenger.Register<HiddenFileIncludeChangedMessage>(this, (_, m)
                 => IsHiddenFileInclude = m.HiddenFileInclude);
 
             // 0サイズファイルを削除するかどうかが変更されたメッセージ受信
-            WeakReferenceMessenger.Default.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m)
+            _messenger.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m)
                 => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
 
             _selectedLanguage = _settingsService.SelectedLanguage;

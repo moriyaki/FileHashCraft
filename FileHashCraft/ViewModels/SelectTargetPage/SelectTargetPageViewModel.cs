@@ -153,13 +153,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ISetRegexControlViewModel pageSelectTargetViewModelRegEx,
             ISetExpertControlViewModel pageSelectTargetViewModelExpert,
             IFileSystemServices fileSystemServices,
+            IMessenger messenger,
             ISettingsService settingsService,
             IDirectoriesManager directoriesManager,
             IScanHashFiles scanHashFiles,
             IScannedFilesManager scannedFilesManager,
             IHelpWindowViewModel helpWindowViewModel,
             IControDirectoryTreeViewlModel controDirectoryTreeViewlViewModel
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             ViewModelMain = pageSelectTargetViewModelMain;
             ViewModelExtention = pageSelectTargetViewModelExtention;
@@ -203,35 +204,35 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // スキャンした全ディレクトリ数に加算するメッセージ
-            WeakReferenceMessenger.Default.Register<AddScannedDirectoriesCountMessage>(this, (_, m)
+            messenger.Register<AddScannedDirectoriesCountMessage>(this, (_, m)
                 => ViewModelMain.AddScannedDirectoriesCount(m.DirectoriesCount));
 
             // 全管理対象ファイルを追加するメッセージ
-            WeakReferenceMessenger.Default.Register<AddFileToAllFilesMessage>(this, (_, m)
+            messenger.Register<AddFileToAllFilesMessage>(this, (_, m)
                 => ViewModelExtention.AddFileToAllFiles(m.FileFullPath));
 
             // ファイルスキャンが完了したディレクトリ数に加算するメッセージ
-            WeakReferenceMessenger.Default.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
+            messenger.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
                 => ViewModelMain.AddFilesScannedDirectoriesCount());
 
             // ハッシュ取得対象となる総対象ファイル数にファイル数を設定するメッセージ
-            WeakReferenceMessenger.Default.Register<SetAllTargetfilesCountMessge>(this, (_, _)
+            messenger.Register<SetAllTargetfilesCountMessge>(this, (_, _)
                 => ViewModelMain.SetAllTargetfilesCount());
 
             // 拡張子をリストボックスに追加するメッセージ
-            WeakReferenceMessenger.Default.Register<AddExtentionMessage>(this, (_, m)
+            messenger.Register<AddExtentionMessage>(this, (_, m)
                 => ViewModelExtention.AddExtention(m.Extention));
 
             // ファイルの拡張子グループをリストボックスに追加するメッセージ
-            WeakReferenceMessenger.Default.Register<AddFileTypesMessage>(this, (_, _)
+            messenger.Register<AddFileTypesMessage>(this, (_, _)
                 => ViewModelExtention.AddFileTypes());
 
             // ツリービュー幅変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<TreeWidthChangedMessage>(this, (_, m)
+            messenger.Register<TreeWidthChangedMessage>(this, (_, m)
                 => TreeWidth = m.TreeWidth);
 
             // リストボックス幅変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<ListWidthChangedMessage>(this, (_, m)
+            messenger.Register<ListWidthChangedMessage>(this, (_, m)
                 => ListWidth = m.ListWidth);
 
             _TreeWidth = _settingsService.TreeWidth;

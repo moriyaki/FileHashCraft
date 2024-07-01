@@ -21,13 +21,16 @@ namespace FileHashCraft.Models.HashCalc
     {
         public FileHashCalc() { throw new NotImplementedException(nameof(FileHashCalc)); }
 
+        private readonly IMessenger _messenger;
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly ISettingsService _settingsService;
         public FileHashCalc(
+            IMessenger messenger,
             IScannedFilesManager scannedFilesManager,
             ISettingsService settingsService
         )
         {
+            _messenger = messenger;
             _scannedFilesManager = scannedFilesManager;
             _settingsService = settingsService;
         }
@@ -50,7 +53,7 @@ namespace FileHashCraft.Models.HashCalc
                 {
                     foreach (var file in drive.Value)
                     {
-                        WeakReferenceMessenger.Default.Send(new StartCalcingFile(beforeFilePath, file.FileFullPath));
+                        _messenger.Send(new StartCalcingFile(beforeFilePath, file.FileFullPath));
                         await Task.Delay(5);
                         using HashAlgorithm hashAlgorithm = _settingsService.HashAlgorithm switch
                         {
@@ -83,7 +86,7 @@ namespace FileHashCraft.Models.HashCalc
                 }
                 finally
                 {
-                    WeakReferenceMessenger.Default.Send(new EndCalcingFile(beforeFilePath));
+                    _messenger.Send(new EndCalcingFile(beforeFilePath));
                     semaphone.Release();
                 }
             }).ToList();

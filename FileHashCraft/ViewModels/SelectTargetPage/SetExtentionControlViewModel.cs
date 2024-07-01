@@ -84,11 +84,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
 
         public SetExtentionControlViewModel(
+            IMessenger messenger,
             ISettingsService settingsService,
             IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
             _extentionManager = extentionManager;
@@ -114,21 +115,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // 拡張子がチェックされたらグループも変更する
-            WeakReferenceMessenger.Default.Register<ExtentionChechReflectToGroupMessage>(this, (_, m) =>
+            _messenger.Register<ExtentionChechReflectToGroupMessage>(this, (_, m) =>
             {
                 CheckExtentionReflectToGroup(m.Name);
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
             });
 
             // 拡張子がチェック解除されたらグループも変更する
-            WeakReferenceMessenger.Default.Register<ExtentionUnchechReflectToGroupMessage>(this, (_, m) =>
+            _messenger.Register<ExtentionUnchechReflectToGroupMessage>(this, (_, m) =>
             {
                 UncheckExtentionReflectToGroup(m.Name);
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
             });
 
             // 拡張子グループのチェック変更に連動して拡張子チェックボックス変更
-            WeakReferenceMessenger.Default.Register<ExtentionGroupCheckedMessage>(this, (_, m) =>
+            _messenger.Register<ExtentionGroupCheckedMessage>(this, (_, m) =>
                 ChangeCheckBoxGroup(m.IsChecked, m.ExtentionCollection));
         }
         #endregion コンストラクタ
@@ -139,23 +140,23 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void AddFileTypes()
         {
-            var movies = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var movies = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             movies.Initialize(FileGroupType.Movies);
-            var pictures = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var pictures = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             pictures.Initialize(FileGroupType.Pictures);
-            var musics = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var musics = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             musics.Initialize(FileGroupType.Musics);
-            var documents = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var documents = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             documents.Initialize(FileGroupType.Documents);
-            var applications = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var applications = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             applications.Initialize(FileGroupType.Applications);
-            var archives = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var archives = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             archives.Initialize(FileGroupType.Archives);
-            var sources = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var sources = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             sources.Initialize(FileGroupType.SourceCodes);
-            var registrations = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var registrations = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             registrations.Initialize(FileGroupType.Registrations);
-            var others = new ExtentionGroupCheckBoxViewModel(_settingsService, _extentionManager);
+            var others = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
             others.Initialize();
 
             App.Current?.Dispatcher.Invoke(() =>
@@ -180,7 +181,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
             if (extentionManager.GetExtentionsCount(extention) > 0)
             {
-                var item = new ExtensionCheckBoxViewModel(_settingsService, _extentionManager);
+                var item = new ExtensionCheckBoxViewModel(_messenger, _settingsService, _extentionManager);
                 item.Initialize(extention);
                 App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
             }

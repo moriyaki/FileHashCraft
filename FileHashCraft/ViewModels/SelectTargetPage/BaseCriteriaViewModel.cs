@@ -109,10 +109,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         protected BaseCriteriaViewModel() { throw new NotImplementedException(nameof(BaseCriteriaViewModel)); }
 
         protected BaseCriteriaViewModel(
+            IMessenger messenger,
             ISettingsService settingsService,
             IHelpWindowViewModel helpWindowViewModel,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             _helpWindowViewModel = helpWindowViewModel;
             _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
@@ -139,11 +140,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 () => SelectedItems.Count > 0
             );
 
-            WeakReferenceMessenger.Default.Register<FileScanFinished>(this, (_, _) =>
+            messenger.Register<FileScanFinished>(this, (_, _) =>
                 AddCriteriaCommand.NotifyCanExecuteChanged());
 
             // リストボックスアイテムの編集状態から抜けた時の処理をします。
-            WeakReferenceMessenger.Default.Register<IsEditModeChangedMessage>(this, (_, _) =>
+            messenger.Register<IsEditModeChangedMessage>(this, (_, _) =>
                 OnPropertyChanged(nameof(CiriteriaAddTextBoxBackgroudColor)));
         }
         #endregion コンストラクタ

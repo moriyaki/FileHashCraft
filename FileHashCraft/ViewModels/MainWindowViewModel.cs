@@ -17,7 +17,8 @@ namespace FileHashCraft.ViewModels
         public MainWindowViewModel() :base() { }
 
         public MainWindowViewModel(
-            ISettingsService settingsService) : base(settingsService)
+            IMessenger messenger,
+            ISettingsService settingsService) : base(messenger, settingsService)
         {
             // 設定を読み込む
             _settingsService.LoadSettings();
@@ -26,10 +27,10 @@ namespace FileHashCraft.ViewModels
             Width = _settingsService.Width;
             Height = _settingsService.Height;
 
-            WeakReferenceMessenger.Default.Register<WindowTopChangedMessage>(this, (_, m) => Top = m.Top);
-            WeakReferenceMessenger.Default.Register<WindowLeftChangedMessage>(this, (_, m) => Left = m.Left);
-            WeakReferenceMessenger.Default.Register<WindowWidthChangedMessage>(this, (_, m) => Width = m.Width);
-            WeakReferenceMessenger.Default.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
+            messenger.Register<WindowTopChangedMessage>(this, (_, m) => Top = m.Top);
+            messenger.Register<WindowLeftChangedMessage>(this, (_, m) => Left = m.Left);
+            messenger.Register<WindowWidthChangedMessage>(this, (_, m) => Width = m.Width);
+            messenger.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
         }
         #endregion 初期設定
 

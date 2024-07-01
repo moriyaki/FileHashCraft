@@ -1,4 +1,5 @@
 ﻿using System.Windows.Media;
+using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels.SelectTargetPage
@@ -53,9 +54,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         private BaseCriteriaItemViewModel() { throw new NotImplementedException(nameof(BaseCriteriaItemViewModel)); }
+        
         protected BaseCriteriaItemViewModel(
-             ISettingsService settingsService
-        ) : base(settingsService)
+            IMessenger messenger, 
+            ISettingsService settingsService
+        ) : base(messenger, settingsService)
         {
         }
 

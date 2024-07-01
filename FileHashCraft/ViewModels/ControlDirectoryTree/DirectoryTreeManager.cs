@@ -67,15 +67,18 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         public DirectoryTreeManager() { throw new NotImplementedException(nameof(DirectoryTreeManager)); }
 
+        private readonly IMessenger _messenger;
         private readonly ICheckedTreeItemsManager _treeCheckedManager;
         private readonly ITreeExpandedManager _treeExpandedManager;
         private readonly IDirectoriesManager _directoriesManager;
         public DirectoryTreeManager(
+            IMessenger messenger,
             ICheckedTreeItemsManager treeCheckedManager,
             ITreeExpandedManager treeExpandedManager,
             IDirectoriesManager directoriesManager
             )
         {
+            _messenger = messenger;
             _treeCheckedManager = treeCheckedManager;
             _treeExpandedManager = treeExpandedManager;
             _directoriesManager = directoriesManager;
@@ -84,10 +87,10 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
             _directoriesManager.NestedDirectories = _treeCheckedManager.NestedDirectories;
             _directoriesManager.NonNestedDirectories = _treeCheckedManager.NonNestedDirectories;
 
-            WeakReferenceMessenger.Default.Register<AddToExpandDirectoryManagerMessage>(this, (_, m)
+            _messenger.Register<AddToExpandDirectoryManagerMessage>(this, (_, m)
                 => AddExpandedDirectoryManager(m.Child));
 
-            WeakReferenceMessenger.Default.Register<RemoveFromExpandDirectoryManagerMessage>(this, (_, m)
+            _messenger.Register<RemoveFromExpandDirectoryManagerMessage>(this, (_, m)
                 => RemoveExpandedDirectoryManager(m.Child));
         }
         //-----------------------------------TreeCheckedManager

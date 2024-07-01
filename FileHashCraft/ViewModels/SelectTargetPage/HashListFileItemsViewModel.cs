@@ -16,19 +16,21 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 {
     public partial class HashListFileItems : ObservableObject
     {
+        private readonly IMessenger _messenger;
         private readonly ISettingsService _settingsService;
         public HashListFileItems()
         {
+            _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
             _currentFontFamily = _settingsService.CurrentFont;
             _fontSize = _settingsService.FontSize;
 
             // フォント変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
+            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
                 => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            WeakReferenceMessenger.Default.Register<FontSizeChangedMessage>(this, (_, m)
+            _messenger.Register<FontSizeChangedMessage>(this, (_, m)
                 => FontSize = m.FontSize);
         }
 

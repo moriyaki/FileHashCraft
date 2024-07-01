@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
@@ -102,9 +103,10 @@ namespace FileHashCraft.ViewModels
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
         /// </summary>
         public DebugWindowViewModel(
+            IMessenger messenger,
             ISettingsService settingsService,
             IDirectoriesManager directoriesManager
-        ) : base(settingsService)
+        ) : base(messenger, settingsService)
         {
             _directoriesManager = directoriesManager;
 
