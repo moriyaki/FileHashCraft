@@ -100,6 +100,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #endregion バインディング
 
         #region コンストラクタ
+        protected readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
         protected readonly IHelpWindowViewModel _helpWindowViewModel;
         protected readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
         /// <summary>
@@ -111,10 +112,12 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         protected BaseCriteriaViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
+            IFileSearchCriteriaManager fileSearchCriteriaManager,
             IHelpWindowViewModel helpWindowViewModel,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
         ) : base(messenger, settingsService)
         {
+            _fileSearchCriteriaManager = fileSearchCriteriaManager;
             _helpWindowViewModel = helpWindowViewModel;
             _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
 

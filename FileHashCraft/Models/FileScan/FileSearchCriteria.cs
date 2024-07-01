@@ -33,27 +33,47 @@
         }
     }
 
-    public static class FileSearchCriteriaManager
+    public interface IFileSearchCriteriaManager
     {
         /// <summary>
         /// 全検索条件
         /// </summary>
-        public static List<FileSearchCriteria> AllCriteria { get; } = [];
-
+        List<FileSearchCriteria> AllCriteria { get; }
+        /// <summary>
+        /// FileSearchCriteria型で検索条件を追加します。
+        /// </summary>
+        void AddCriteria(FileSearchCriteria criteria);
         /// <summary>
         /// 検索条件を追加します。
         /// </summary>
+        void AddCriteria(string pattern, FileSearchOption criteriaType);
+        /// <summary>
+        /// 検索条件を削除します。
+        /// </summary>
+        void RemoveCriteria(string pattern, FileSearchOption criteriaType);
+    }
+
+    public class FileSearchCriteriaManager : IFileSearchCriteriaManager
+    {
+        /// <summary>
+        /// 全検索条件
+        /// </summary>
+        public List<FileSearchCriteria> AllCriteria { get; } = [];
+
+        /// <summary>
+        /// FileSearchCriteria型で検索条件を追加します。
+        /// </summary>
         /// <param name="criteria">追加する検索条件</param>
-        public static void AddCriteria(FileSearchCriteria criteria)
+        public void AddCriteria(FileSearchCriteria criteria)
         {
             AllCriteria.Add(criteria);
         }
 
         /// <summary>
-        /// 検索条件の追加
+        /// 検索条件を追加します。
         /// </summary>
         /// <param name="pattern">検索条件</param>
-        public static void AddCriteria(string pattern, FileSearchOption criteriaType)
+        public void AddCriteria(string pattern, FileSearchOption criteriaType)
         {
             var foundCriteria = AllCriteria.Find(
                 e => e.SearchPattern == pattern && e.SearchOption == criteriaType);
@@ -64,10 +84,10 @@
         }
 
         /// <summary>
-        /// 検索条件の削除
+        /// 検索条件を削除します。
         /// </summary>
         /// <param name="pattern">検索条件</param>
-        public static void RemoveCriteria(string pattern, FileSearchOption criteriaType)
+        public void RemoveCriteria(string pattern, FileSearchOption criteriaType)
         {
             var foundCriteria = AllCriteria.Find(
                 e => e.SearchPattern == pattern && e.SearchOption == criteriaType);

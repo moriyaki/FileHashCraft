@@ -42,6 +42,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         protected readonly ISettingsService _settingsService;
         protected readonly IExtentionManager _extentionManager;
         protected readonly IExtentionTypeHelper _extentionTypeHelper;
+        protected readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
         /// </summary>
@@ -50,13 +51,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IMessenger messenger,
             ISettingsService settingsService,
             IExtentionManager extentionManager,
-            IExtentionTypeHelper extentionTypeHelper
+            IExtentionTypeHelper extentionTypeHelper,
+            IFileSearchCriteriaManager fileSearchCriteriaManager
         )
         {
             _messenger = messenger;
             _settingsService = settingsService;
             _extentionManager = extentionManager;
             _extentionTypeHelper = extentionTypeHelper;
+            _fileSearchCriteriaManager = fileSearchCriteriaManager;
 
             // フォント変更メッセージ受信
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
@@ -140,8 +143,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         IMessenger messenger,
         ISettingsService settingsService,
         IExtentionManager extentionManager,
-        IExtentionTypeHelper extentionTypeHelper
-        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper)
+        IExtentionTypeHelper extentionTypeHelper,
+        IFileSearchCriteriaManager fileSearchCriteriaManager
+        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper, fileSearchCriteriaManager)
     {
         #region コンストラクタと初期化
 
@@ -165,13 +169,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 SetProperty(ref _isChecked, value);
                 if (value == true)
                 {
-                    FileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
+                    _fileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
                     _messenger.Send(new ExtentionChechReflectToGroupMessage(Name));
                     _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
                 else
                 {
-                    FileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
+                    _fileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
                     _messenger.Send(new ExtentionUnchechReflectToGroupMessage(Name));
                     _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
@@ -193,8 +197,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         IMessenger messenger,
         ISettingsService settingsService,
         IExtentionManager extentionManager,
-        IExtentionTypeHelper extentionTypeHelper
-        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper)
+        IExtentionTypeHelper extentionTypeHelper,
+        IFileSearchCriteriaManager fileSearchCriteriaManager
+        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper, fileSearchCriteriaManager)
     {
         #region 初期化
 

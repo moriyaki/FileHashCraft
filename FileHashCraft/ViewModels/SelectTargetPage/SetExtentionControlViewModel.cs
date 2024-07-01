@@ -82,6 +82,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IExtentionManager _extentionManager;
         private readonly IExtentionTypeHelper _extentionTypeHelper;
+        private readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
         private readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
 
         public SetExtentionControlViewModel(
@@ -90,12 +91,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,
             IExtentionTypeHelper extentionTypeHelper,
+            IFileSearchCriteriaManager fileSearchCriteriaManager,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
         ) : base(messenger, settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
             _extentionManager = extentionManager;
             _extentionTypeHelper = extentionTypeHelper;
+            _fileSearchCriteriaManager = fileSearchCriteriaManager;
             _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
 
             // 拡張子グループのチェックボックスのチェック状態が変更されたときのイベント
@@ -143,23 +146,23 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void AddFileTypes()
         {
-            var movies = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var movies = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             movies.Initialize(FileGroupType.Movies);
-            var pictures = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var pictures = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             pictures.Initialize(FileGroupType.Pictures);
-            var musics = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var musics = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             musics.Initialize(FileGroupType.Musics);
-            var documents = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var documents = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             documents.Initialize(FileGroupType.Documents);
-            var applications = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var applications = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             applications.Initialize(FileGroupType.Applications);
-            var archives = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var archives = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             archives.Initialize(FileGroupType.Archives);
-            var sources = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var sources = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             sources.Initialize(FileGroupType.SourceCodes);
-            var registrations = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var registrations = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             registrations.Initialize(FileGroupType.Registrations);
-            var others = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+            var others = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
             others.Initialize();
 
             App.Current?.Dispatcher.Invoke(() =>
@@ -184,7 +187,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
             if (extentionManager.GetExtentionsCount(extention) > 0)
             {
-                var item = new ExtensionCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper);
+                var item = new ExtensionCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
                 item.Initialize(extention);
                 App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
             }
@@ -225,11 +228,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             {
                 if (changedCheck)
                 {
-                    FileSearchCriteriaManager.AddCriteria(extension, FileSearchOption.Extention);
+                    _fileSearchCriteriaManager.AddCriteria(extension, FileSearchOption.Extention);
                 }
                 else
                 {
-                    FileSearchCriteriaManager.RemoveCriteria(extension, FileSearchOption.Extention);
+                    _fileSearchCriteriaManager.RemoveCriteria(extension, FileSearchOption.Extention);
                 }
             }
 

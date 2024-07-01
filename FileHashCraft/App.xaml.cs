@@ -140,14 +140,21 @@ namespace FileHashCraft
             services.AddSingleton<IHashCalcingPageViewModel, HashCalcingPageViewModel>();
 
             // Model
+            services.AddSingleton<IExtentionManager, ExtentionManager>();
+
+            // Model - FileScan
+            services.AddSingleton<IDirectoriesManager, DirectoriesManager>();
+            services.AddSingleton<IFileSearchCriteriaManager, FileSearchCriteriaManager>();
+            services.AddSingleton<IScanHashFiles, ScanHashFiles>();
+            services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();
+
+            // Model - HashCalc
+            services.AddSingleton<IFileHashCalc, FileHashCalc>();
+
+            // Model - Helper
             services.AddSingleton<IExtentionTypeHelper, ExtentionTypeHelper>();
             services.AddSingleton<IHashAlgorithmHelper, HashAlgorithmHelper>();
 
-            services.AddSingleton<IScanHashFiles, ScanHashFiles>();
-            services.AddSingleton<IDirectoriesManager, DirectoriesManager>();
-            services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();
-            services.AddSingleton<IFileHashCalc, FileHashCalc>();
-            services.AddSingleton<IExtentionManager, ExtentionManager>();
             return services.BuildServiceProvider();
         }
     }

@@ -116,9 +116,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public SetWildcardControlViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
+            IFileSearchCriteriaManager fileSearchCriteriaManager,
             IHelpWindowViewModel helpWindowViewModel,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
-        ) : base(messenger, settingsService, helpWindowViewModel, pageSelectTargetViewModelMain)
+        ) : base(messenger, settingsService, fileSearchCriteriaManager, helpWindowViewModel, pageSelectTargetViewModelMain)
         {
             // ヘルプ画面を開きます
             HelpOpenCommand = new RelayCommand(() =>
@@ -158,7 +159,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 Criteria = SearchCriteriaText,
             };
             CriteriaItems.Add(newWildcard);
-            FileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Wildcard);
+            _fileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Wildcard);
             _pageSelectTargetViewModelMain.SetTargetCountChanged();
             _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
             SearchCriteriaText = string.Empty;
@@ -171,7 +172,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             foreach (var item in SelectedItems)
             {
-                FileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Wildcard);
+                _fileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Wildcard);
                 _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
                 _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
@@ -219,8 +220,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="modifiedItem">変更されたワイルドカード検索条件</param>
         public override void ModefyCriteria(BaseCriteriaItemViewModel modifiedItem)
         {
-            FileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
-            FileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Wildcard);
+            _fileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
+            _fileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Wildcard);
             _pageSelectTargetViewModelMain.SetTargetCountChanged();
             _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
         }

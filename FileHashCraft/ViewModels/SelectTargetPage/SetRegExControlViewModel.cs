@@ -231,9 +231,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         public SetRegexControlViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
+            IFileSearchCriteriaManager fileSearchCriteriaManager,
             IHelpWindowViewModel helpWindowViewModel,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
-        ) : base(messenger, settingsService, helpWindowViewModel, pageSelectTargetViewModelMain)
+        ) : base(messenger, settingsService, fileSearchCriteriaManager, helpWindowViewModel, pageSelectTargetViewModelMain)
         {
             // ヘルプ画面を開きます
             HelpOpenCommand = new RelayCommand(() =>
@@ -273,7 +274,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 Criteria = SearchCriteriaText,
             };
             CriteriaItems.Add(newRegex);
-            FileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Regex);
+            _fileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Regex);
             _pageSelectTargetViewModelMain.SetTargetCountChanged();
             _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
             SearchCriteriaText = string.Empty;
@@ -286,7 +287,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             foreach (var item in SelectedItems)
             {
-                FileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Regex);
+                _fileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Regex);
                 _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
                 _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
                 _pageSelectTargetViewModelMain.SetTargetCountChanged();
@@ -334,8 +335,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="modifiedItem">変更された正規表現検索条件</param>
         public override void ModefyCriteria(BaseCriteriaItemViewModel modifiedItem)
         {
-            FileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
-            FileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Regex);
+            _fileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
+            _fileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Regex);
             _pageSelectTargetViewModelMain.SetTargetCountChanged();
             _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
         }

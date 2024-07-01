@@ -33,6 +33,16 @@ namespace FileHashCraft.Models.FileScan
 
     public class ScannedFilesManager : IScannedFilesManager
     {
+        public ScannedFilesManager() { throw new NotImplementedException(nameof(ScannedFilesManager)); }
+
+        private readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
+        public ScannedFilesManager(
+            IFileSearchCriteriaManager fileSearchCriteriaManager
+        )
+        {
+            _fileSearchCriteriaManager = fileSearchCriteriaManager;
+        }
+
         /// <summary>
         /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
         /// </summary>
@@ -146,7 +156,7 @@ namespace FileHashCraft.Models.FileScan
         public HashSet<HashFile> GetAllCriteriaFileName(bool includeHidden, bool includeReadOnly)
         {
             var files = new HashSet<HashFile>();
-            foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
+            foreach (var criteria in _fileSearchCriteriaManager.AllCriteria)
             {
                 switch (criteria.SearchOption)
                 {
@@ -191,7 +201,7 @@ namespace FileHashCraft.Models.FileScan
         {
             var file = AllFiles.FirstOrDefault(c => c.FileFullPath == fileFullPath);
             if (file == null) { return false; }
-            foreach (var criteria in FileSearchCriteriaManager.AllCriteria)
+            foreach (var criteria in _fileSearchCriteriaManager.AllCriteria)
             {
                 switch (criteria.SearchOption)
                 {
