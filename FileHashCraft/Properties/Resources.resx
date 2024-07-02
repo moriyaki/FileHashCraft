@@ -166,7 +166,7 @@
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA384" xml:space="preserve">
-    <value>SHA-384 (High security: higher security strength than SHA-256, but slower computation)</value>
+    <value>SHA-384 (High security: higher security strength than SHA-256, but slightly slower calculation)</value>
     <comment>SettingsPage/Security</comment>
   </data>
   <data name="HashAlgorithm_SHA512" xml:space="preserve">

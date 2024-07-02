@@ -169,7 +169,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   SHA-384 (High security: higher security strength than SHA-256, but slower computation) に類似しているローカライズされた文字列を検索します。
+        ///   SHA-384 (High security: higher security strength than SHA-256, but slightly slower calculation) に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string HashAlgorithm_SHA384 {
             get {
