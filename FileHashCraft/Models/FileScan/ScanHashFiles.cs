@@ -63,6 +63,8 @@ namespace FileHashCraft.Models.FileScan
         /// <param name="cancellation">キャンセリングトークン</param>
         public async Task DirectoriesScan(CancellationToken cancellation)
         {
+            // TODO: DirectoryListにNonNestedDirectorisの処理追加
+
             // 各ドライブに対してタスクを回す
             await DirectorySearch(_directoriesManager.NestedDirectories, cancellation);
             _messenger.Send(new AddScannedDirectoriesCountMessage(_directoriesManager.NonNestedDirectories.Count));
@@ -80,6 +82,7 @@ namespace FileHashCraft.Models.FileScan
 
             foreach (var rootDirectory in rootDirectories)
             {
+                // TODO: DirectoriesHashSet を DirectoriesList に変更！
                 await Task.Run(() =>
                 {
                     DirectoriesHashSet.UnionWith(GetDirectories(rootDirectory, cancellation));
@@ -122,6 +125,9 @@ namespace FileHashCraft.Models.FileScan
         /// <param name="cancellation">キャンセリングトークン</param>
         public async Task DirectoryFilesScan(CancellationToken cancellation)
         {
+            // TODO : DirectoriesHashSet→DirectoriesListからドライブ取得してDirectory<string, List<string>>に
+            // SemaphoneSlimの数はDirectoryのKey数に
+
             var semaphore = new SemaphoreSlim(5);
 
             foreach (var directoryFullPath in DirectoriesHashSet)
@@ -129,11 +135,7 @@ namespace FileHashCraft.Models.FileScan
                 try
                 {
                     await semaphore.WaitAsync(cancellation);
-                    // ファイルを保持する
-                    foreach (var fileFullPath in _fileManager.EnumerateFiles(directoryFullPath))
-                    {
-                        _messenger.Send(new AddFileToAllFilesMessage(fileFullPath));
-                    }
+                    _messenger.Send(new AddFilesToAllFilesMessage(_fileManager.EnumerateFiles(directoryFullPath).ToList()));
 
                     _messenger.Send(new AddFilesScannedDirectoriesCountMessage());
                     _messenger.Send(new SetAllTargetfilesCountMessge());

@@ -138,7 +138,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// <param name="is_original">オリジナルのアイコンを取得するかどうか</param>
         /// <returns>取得したファイルのアイコンとファイル種類</returns>
         /// <exception cref="Exception">ファイル情報の取得に失敗したときに発生</exception>
-        private static (BitmapSource?, string) GetResourceContent(string path, bool is_original = false)
+        private static unsafe (BitmapSource?, string) GetResourceContent(string path, bool is_original = false)
         {
             // SHFILEINFO 構造体のインスタンスを作成
             SHFILEINFO shinfo = new();
@@ -149,11 +149,11 @@ namespace FileHashCraft.ViewModels.Modules
             // オリジナルのアイコンを取得するかどうかでフラグを設定
             if (is_original)
             {
-                shFileInfoResult = SHGetFileInfo(path, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI.SHGFI_ICON | SHGFI.SHGFI_SMALLICON | SHGFI.SHGFI_TYPENAME);
+                shFileInfoResult = SHGetFileInfo(path, 0, ref shinfo, (uint)sizeof(SHFILEINFO), SHGFI.SHGFI_ICON | SHGFI.SHGFI_SMALLICON | SHGFI.SHGFI_TYPENAME);
             }
             else
             {
-                shFileInfoResult = SHGetFileInfo(path, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI.SHGFI_ICON | SHGFI.SHGFI_SMALLICON | SHGFI.SHGFI_TYPENAME | SHGFI.SHGFI_USEFILEATTRIBUTES);
+                shFileInfoResult = SHGetFileInfo(path, 0, ref shinfo, (uint)sizeof(SHFILEINFO), SHGFI.SHGFI_ICON | SHGFI.SHGFI_SMALLICON | SHGFI.SHGFI_TYPENAME | SHGFI.SHGFI_USEFILEATTRIBUTES);
             }
 
             // SHGetFileInfo 関数が失敗した場合の例外処理
@@ -171,10 +171,7 @@ namespace FileHashCraft.ViewModels.Modules
             DestroyIcon(shinfo.hIcon);
 
             // 取得したアイコンとファイル種類を返す
-            unsafe
-            {
-                return (icon, Utf16StringMarshaller.ConvertToManaged(shinfo.szTypeName) ?? String.Empty);
-            }
+            return (icon, Utf16StringMarshaller.ConvertToManaged(shinfo.szTypeName) ?? String.Empty);
         }
         #endregion WindowsAPIを使うメソッド
 

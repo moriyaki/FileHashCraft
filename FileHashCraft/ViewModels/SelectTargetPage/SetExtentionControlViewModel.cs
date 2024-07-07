@@ -41,7 +41,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 全管理対象ファイルを追加します。
         /// </summary>
-        void AddFileToAllFiles(string fileFullPath);
+        void AddFilesToAllFiles(string file);
         /// <summary>
         /// 言語が変わった場合に備えて、拡張子グループを再設定します。
         /// </summary>
@@ -242,15 +242,12 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         }
 
         /// <summary>
-        /// 全管理対象ファイルを追加します。
+        /// 拡張子ヘルパーに拡張子を登録する(カウントもする)
         /// </summary>
-        /// <param name="fileFullPath">追加するファイルのフルパス</param>
-        public void AddFileToAllFiles(string fileFullPath)
+        /// <param name="file">追加するファイルのフルパスList</param>
+        public void AddFilesToAllFiles(string file)
         {
-            // 全管理対象ファイルをModelに追加する
-            _scannedFilesManager.AddFile(fileFullPath);
-            // 拡張子ヘルパーに拡張子を登録する(カウントもする)
-            _extentionManager.AddFile(fileFullPath);
+            _extentionManager.AddFile(file);
         }
 
         /// <summary>

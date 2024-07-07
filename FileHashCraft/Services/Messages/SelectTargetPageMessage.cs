@@ -24,13 +24,13 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// 全管理対象ファイルを追加するメッセージ
     /// </summary>
-    public class AddFileToAllFilesMessage
+    public class AddFilesToAllFilesMessage
     {
-        public string FileFullPath { get; set; } = string.Empty;
-        public AddFileToAllFilesMessage() { throw new NotImplementedException(nameof(AddFileToAllFilesMessage)); }
-        public AddFileToAllFilesMessage(string fileFullPath)
+        public List<string> Files { get; set; } = [];
+        public AddFilesToAllFilesMessage() { throw new NotImplementedException(nameof(AddFilesToAllFilesMessage)); }
+        public AddFilesToAllFilesMessage(List<string> files)
         {
-            FileFullPath = fileFullPath;
+            Files = files;
         }
     }
 

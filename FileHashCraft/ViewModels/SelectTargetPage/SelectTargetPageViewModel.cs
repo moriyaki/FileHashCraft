@@ -3,6 +3,8 @@
     ハッシュを取得する検索条件ウィンドウの ViewModel を提供します。
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
+using System.Diagnostics;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -208,9 +210,15 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 => ViewModelMain.AddScannedDirectoriesCount(m.DirectoriesCount));
 
             // 全管理対象ファイルを追加するメッセージ
-            _messenger.Register<AddFileToAllFilesMessage>(this, (_, m)
-                => ViewModelExtention.AddFileToAllFiles(m.FileFullPath));
-
+            _messenger.Register<AddFilesToAllFilesMessage>(this, (_, m) =>
+            {
+                // 全管理対象ファイルをModelに追加する
+                foreach (var file in m.Files)
+                {
+                    _scannedFilesManager.AddFile(file);
+                    ViewModelExtention.AddFilesToAllFiles(file);
+                }
+            });
             // ファイルスキャンが完了したディレクトリ数に加算するメッセージ
             _messenger.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
                 => ViewModelMain.AddFilesScannedDirectoriesCount());
@@ -380,6 +388,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public async Task ScanFiles(CancellationToken cancellation)
         {
+            var sw = new Stopwatch();
+
             // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
             _scannedFilesManager.AllFiles.Clear();
             _scanHashFiles.DirectoriesHashSet.Clear();
@@ -387,13 +397,19 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             try
             {
-                // ディレクトリのスキャン
+                // ディレクトリのスキャン:1092ms
+                sw.Start();
                 ViewModelMain.ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
                 await _scanHashFiles.DirectoriesScan(cancellation);
+                sw.Stop();
+                MessageBox.Show($"Scan Directories : {sw.ElapsedMilliseconds} ms");
 
-                // ファイルのスキャン
+                // ファイルのスキャン:6642ms
+                sw.Restart();
                 ViewModelMain.ChangeHashScanStatus(FileScanStatus.FilesScanning);
                 await Task.Run(() => _scanHashFiles.DirectoryFilesScan(cancellation), cancellation);
+                sw.Stop();
+                MessageBox.Show($"Scan Files : {sw.ElapsedMilliseconds} ms");
             }
             catch (OperationCanceledException)
             {
@@ -405,12 +421,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
 
             //--------------------- 開発用自動化処理
+            /*
             App.Current?.Dispatcher.InvokeAsync(() =>
             {
                 ViewModelWildcard.SearchCriteriaText = "*";
                 ViewModelWildcard.AddCriteria();
                 ViewModelMain.ToHashCalcingPage.Execute(this);
             });
+            */
         }
         #endregion メイン処理
 
