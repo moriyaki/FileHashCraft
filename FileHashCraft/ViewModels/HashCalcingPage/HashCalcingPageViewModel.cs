@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -74,32 +75,20 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
+        [ObservableProperty]
         private string _statusMessage = string.Empty;
-        public string StatusMessage
-        {
-            get => _statusMessage;
-            set => SetProperty(ref _statusMessage, value);
-        }
 
         /// <summary>
         /// ハッシュを取得する全てのファイル数
         /// </summary>
-        private int _allHashGetFilesCount = 0;
-        public int AllHashGetFilesCount
-        {
-            get => _allHashGetFilesCount;
-            set => SetProperty(ref _allHashGetFilesCount, value);
-        }
+        [ObservableProperty]
+        private int _allHashNeedToGetFilesCount = 0;
 
         /// <summary>
         /// ハッシュ計算のアルゴリズム
         /// </summary>
+        [ObservableProperty]
         private string _hashAlgorithm = string.Empty;
-        public string HashAlgorithm
-        {
-            get => _hashAlgorithmHelper.GetAlgorithmCaption(_settingsService.HashAlgorithm);
-            set => SetProperty(ref _hashAlgorithm, value);
-        }
 
         /// <summary>
         /// ハッシュ取得済みのファイル数
@@ -120,7 +109,17 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// </summary>
         public double HashGotPercent
         {
-            get => (double)HashGotFileCount / AllHashGetFilesCount * 100;
+            get
+            {
+                if (AllHashNeedToGetFilesCount == 0)
+                {
+                    return 0d;
+                }
+                else
+                {
+                    return (double)HashGotFileCount / AllHashNeedToGetFilesCount * 100;
+                }
+            }
         }
 
         /// <summary>
@@ -142,7 +141,17 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// </summary>
         public double MatchHashPercent
         {
-            get => (double)MatchHashCount / AllHashGetFilesCount * 100;
+            get
+            {
+                if (AllHashNeedToGetFilesCount == 0)
+                {
+                    return 0d;
+                }
+                else
+                {
+                    return (double)MatchHashCount / AllHashNeedToGetFilesCount * 100;
+                }
+            }
         }
 
         /// <summary>
@@ -181,7 +190,6 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
 
         public HashCalcingPageViewModel(
             IMessenger messenger,
@@ -189,18 +197,16 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             IFileHashCalc fileHashCalc,
             IHelpWindowViewModel helpWindowViewModel,
             IFileSystemServices fileSystemServices,
-            IScannedFilesManager scannedFilesManager,
-            IHashAlgorithmHelper hashAlgorithmHelper
+            IScannedFilesManager scannedFilesManager
         ) : base(messenger, settingsService)
         {
             _fileHashCalc = fileHashCalc;
             _fileSystemServices = fileSystemServices;
             _helpWindowViewModel = helpWindowViewModel;
             _scannedFilesManager = scannedFilesManager;
-            _hashAlgorithmHelper = hashAlgorithmHelper;
 
             HashAlgorithm = _settingsService.HashAlgorithm;
-            AllHashGetFilesCount = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude);
+            //AllHashNeedToGetFilesCount = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude);
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
@@ -238,7 +244,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                 }
                 else
                 {
-                    var drive = m.BeforeFile[..2];
+                    var drive = Path.GetPathRoot(m.BeforeFile) ?? "";
 
                     // インデックスを手動で検索
                     for (int i = 0; i < CalcingFiles.Count; i++)
@@ -264,7 +270,17 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             Task.Run(async () =>
             {
                 Status = FileHashCalcStatus.FileCalcing;
-                await _fileHashCalc.ProcessGetHashFilesAsync();
+                var drivesDic = _fileHashCalc.GetHashDriveFiles();
+                foreach (var drive in drivesDic)
+                {
+                    foreach (var file in drive.Value)
+                    {
+                        DebugManager.InfoWrite($"{file.FileFullPath} : 【{file.FileSize}】");
+                    }
+
+                    AllHashNeedToGetFilesCount += drive.Value.Count;
+                }
+                await _fileHashCalc.ProcessGetHashFilesAsync(drivesDic);
                 Status = FileHashCalcStatus.FileMatching;
 
                 /*
@@ -274,7 +290,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                     App.Current?.Dispatcher?.Invoke(() => MatchHashCount++);
                 }
                 */
-                App.Current?.Dispatcher?.Invoke(() => MatchHashCount = AllHashGetFilesCount);
+                App.Current?.Dispatcher?.Invoke(() => MatchHashCount = AllHashNeedToGetFilesCount);
                 Status = FileHashCalcStatus.Finished;
             });
         }

@@ -304,7 +304,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _directoryTreeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
 
             //--------------------- 開発用自動化処理
-/*
             foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
             {
                 if (root.FullPath == @"E:\")
@@ -334,7 +333,6 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             }
             _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
             _fileSystemServices.NavigateToSelectTargetPage();
-*/
         }
         #endregion コンストラクタと初期処理
 

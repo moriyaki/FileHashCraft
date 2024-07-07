@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
+using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -15,7 +10,8 @@ namespace FileHashCraft.Models.HashCalc
 {
     public interface IFileHashCalc
     {
-        Task ProcessGetHashFilesAsync();
+        Task ProcessGetHashFilesAsync(Dictionary<string, HashSet<HashFile>> filesDictionary);
+        Dictionary<string, HashSet<HashFile>> GetHashDriveFiles();
     }
     public class FileHashCalc : IFileHashCalc
     {
@@ -35,17 +31,17 @@ namespace FileHashCraft.Models.HashCalc
             _settingsService = settingsService;
         }
 
-        private int BufferSize { get; } = 8192;
+        private int BufferSize { get; } = 1048576;
 
         /// <summary>
-        /// 全てのファイルハッシュを計算します。
+        /// 同じファイルサイズの全てのファイルハッシュを計算します。
         /// </summary>
-        public async Task ProcessGetHashFilesAsync()
+        public async Task ProcessGetHashFilesAsync(Dictionary<string, HashSet<HashFile>> filesDictionary)
         {
-            var drivesDic = GetHashDriveFiles();
-            var semaphone = new SemaphoreSlim(drivesDic.Count);
+            //var drivesDic = GetHashDriveFiles();
+            var semaphone = new SemaphoreSlim(filesDictionary.Count);
 
-            var tasks = drivesDic.Select(async drive =>
+            var tasks = filesDictionary.Select(async drive =>
             {
                 await semaphone.WaitAsync();
                 var beforeFilePath = string.Empty;
@@ -66,21 +62,15 @@ namespace FileHashCraft.Models.HashCalc
                         var hash = await CalculateHashFileAsync(file.FileFullPath, hashAlgorithm);
                         if (!string.IsNullOrEmpty(hash))
                         {
-                            switch (_settingsService.HashAlgorithm)
+                            file.HashAlgorithm = _settingsService.HashAlgorithm switch
                             {
-                                case "SHA-256":
-                                    file.SHA256 = hash;
-                                    break;
-                                case "SHA-384":
-                                    file.SHA384 = hash;
-                                    break;
-                                case "SHA-512":
-                                    file.SHA512 = hash;
-                                    break;
-                                default:
-                                    throw new NotImplementedException(nameof(ProcessGetHashFilesAsync));
-                            }
+                                "SHA-256" => FileHashAlgorithm.SHA256,
+                                "SHA-384" => FileHashAlgorithm.SHA384,
+                                "SHA-512" => FileHashAlgorithm.SHA512,
+                                _ => throw new NotImplementedException(nameof(ProcessGetHashFilesAsync)),
+                            };
                         }
+                        file.FileHash = hash;
                         beforeFilePath = file.FileFullPath;
                     }
                 }
@@ -102,7 +92,6 @@ namespace FileHashCraft.Models.HashCalc
         /// <returns>ファイルのハッシュ</returns>
         private async Task<string> CalculateHashFileAsync(string filePath, HashAlgorithm hashAlgorithm)
         {
-            /*
             try
             {
                 await using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize);
@@ -116,10 +105,8 @@ namespace FileHashCraft.Models.HashCalc
             catch (IOException) { }
             catch (UnauthorizedAccessException e)
             {
-                Console.WriteLine($"Access Exception: {e.Message}");
+                DebugManager.ErrorWrite($"Access Exception: {e.Message}");
             }
-            */
-            await using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize);
             return string.Empty;
         }
 
@@ -127,12 +114,18 @@ namespace FileHashCraft.Models.HashCalc
         /// ハッシュを取得するファイルをドライブ毎に辞書に振り分けます。
         /// </summary>
         /// <returns>ドライブ毎に辞書に振り分けられたファイルリスト</returns>
-        private Dictionary<string, HashSet<HashFile>> GetHashDriveFiles()
+        public Dictionary<string, HashSet<HashFile>> GetHashDriveFiles()
         {
+            var duplicateSizeFiles = _scannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude)
+                .GroupBy(f => f.FileSize)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g)
+                .ToList();
+
             var filesDictionary = new Dictionary<string, HashSet<HashFile>>();
-            foreach (var file in _scannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude))
+            foreach (var file in duplicateSizeFiles)
             {
-                var drive = file.FileFullPath[..2];
+                var drive = Path.GetPathRoot(file.FileFullPath) ?? "";
                 if (!filesDictionary.TryGetValue(drive, out HashSet<HashFile>? value))
                 {
                     value = [];

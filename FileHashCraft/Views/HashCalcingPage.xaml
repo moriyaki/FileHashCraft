@@ -64,10 +64,10 @@
         <!-- All HashGet Files Count-->
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_AllHashGetFilesCount, Mode=OneWay}"/>
+               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_AllHashNeedToGetFilesCount, Mode=OneWay}"/>
         <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding AllHashGetFilesCount}"/>
+               Content="{Binding AllHashNeedToGetFilesCount}"/>
 
         <!-- Hash Got Files Count -->
         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="3"

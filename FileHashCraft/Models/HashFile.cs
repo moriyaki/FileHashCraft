@@ -3,6 +3,8 @@
     ハッシュを保持するファイル情報のクラスです。
  */
 using System.IO;
+using System.Security.Cryptography;
+using FileHashCraft.Models.Helpers;
 
 namespace FileHashCraft.Models
 {
@@ -23,23 +25,19 @@ namespace FileHashCraft.Models
         /// <summary>
         /// ファイルのサイズ
         /// </summary>
-        public long Length { get; }
+        public long FileSize { get; }
         /// <summary>
         /// ファイルの属性
         /// </summary>
         public FileAttributes Attributes { get; }
         /// <summary>
-        /// SHA256ハッシュ
+        /// ファイルハッシュアルゴリズム
         /// </summary>
-        public string SHA256 { get; set; } = string.Empty;
+        public FileHashAlgorithm HashAlgorithm { get; set; }
         /// <summary>
-        /// SHA384ハッシュ
+        /// ファイルハッシュ
         /// </summary>
-        public string SHA384 { get; set; } = string.Empty;
-        /// <summary>
-        /// SHA512ハッシュ
-        /// </summary>
-        public string SHA512 { get; set; } = string.Empty;
+        public string FileHash { get; set; } = string.Empty;
         #endregion メンバ
 
         #region DictionaryやHashSet用ハッシュコードの算出
@@ -63,21 +61,19 @@ namespace FileHashCraft.Models
         /// ファイル名とハッシュを保存します。
         /// </summary>
         /// <param name="fileFullPath">ファイルのフルパス</param>
-        /// <param name="sha256">SHA256ハッシュ</param>
-        /// <param name="sha384">SHA384ハッシュ</param>
-        /// <param name="sha512">SHA512ハッシュ</param>
-        public HashFile(string fileFullPath, string sha256 = "", string sha384 = "", string sha512 = "")
+        /// <param name="hashAlgorithm">ハッシュアルゴリズム</param>
+        /// <param name="fileHash">ファイルハッシュ</param>
+        public HashFile(string fileFullPath, FileHashAlgorithm hashAlgorithm, string fileHash)
         {
             FileFullPath = fileFullPath;
-            SHA256 = sha256;
-            SHA384 = sha384;
-            SHA512 = sha512;
+            HashAlgorithm = hashAlgorithm;
+            FileHash = fileHash;
             var fileInfo = new FileInfo(fileFullPath);
             LastWriteTime = fileInfo.LastWriteTime;
-            Length = fileInfo.Length;
+            FileSize = fileInfo.Length;
             Attributes = fileInfo.Attributes;
+            DebugManager.InfoWrite($"{FileFullPath} : 【{FileSize}】");
         }
         #endregion 設定処理
-
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text.RegularExpressions;
+using FileHashCraft.Models.Helpers;
 
 namespace FileHashCraft.Models.FileScan
 {
@@ -8,7 +9,7 @@ namespace FileHashCraft.Models.FileScan
         /// <summary>
         /// 全管理対象ファイルディクショナリに追加します。
         /// </summary>
-        void AddFile(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "");
+        void AddFile(string fileFullPath, FileHashAlgorithm hashAlgorithm = FileHashAlgorithm.SHA256, string fileHash = "");
         /// <summary>
         /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
         /// </summary>
@@ -52,10 +53,9 @@ namespace FileHashCraft.Models.FileScan
         /// ファイルを追加します
         /// </summary>
         /// <param name="fileFullPath">追加するファイルのフルパス</param>
-        /// <param name="hashSHA256">SHA256のハッシュ</param>
-        /// <param name="hashSHA384">SHA384のハッシュ</param>
-        /// <param name="hashSHA512">SHA512のハッシュ</param>
-        public void AddFile(string fileFullPath, string hashSHA256 = "", string hashSHA384 = "", string hashSHA512 = "")
+        /// <param name="hashAlgorithm">ファイルハッシュのアルゴリズム</param>
+        /// <param name="fileHash">ファイルのハッシュ</param>
+        public void AddFile(string fileFullPath, FileHashAlgorithm hashAlgorithm = FileHashAlgorithm.SHA256, string fileHash = "")
         {
             var fileInfo = new FileInfo(fileFullPath);
             var existingFIle = AllFiles.FirstOrDefault(f => f.FileFullPath == fileFullPath);
@@ -64,7 +64,7 @@ namespace FileHashCraft.Models.FileScan
                 AllFiles.Remove(existingFIle);
             }
 
-            var hashFile = new HashFile(fileFullPath, hashSHA256, hashSHA384, hashSHA512);
+            var hashFile = new HashFile(fileFullPath, hashAlgorithm, fileHash);
             AllFiles.Add(hashFile);
         }
 

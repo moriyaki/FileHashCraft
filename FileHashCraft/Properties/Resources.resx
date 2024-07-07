@@ -277,16 +277,16 @@
     <value>Font</value>
     <comment>Label/SettingsPage</comment>
   </data>
-  <data name="LabelHashCalcing_AllHashGetFilesCount" xml:space="preserve">
-    <value>Number of files to hash :.</value>
+  <data name="LabelHashCalcing_AllHashNeedToGetFilesCount" xml:space="preserve">
+    <value>Number of files whose hashes need to be retrieved :</value>
     <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelHashCalcing_HashGotFileCount" xml:space="preserve">
-    <value>Number of files whose hashes have been retrieved :.</value>
+    <value>Number of files whose hashes have been retrieved :</value>
     <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelHashCalcing_HashGotPercent" xml:space="preserve">
-    <value>Hash acquisition status :.</value>
+    <value>Hash acquisition status :</value>
     <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelHashCalcing_MatchHashCount" xml:space="preserve">

@@ -421,16 +421,16 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Number of files to hash :. に類似しているローカライズされた文字列を検索します。
+        ///   Number of files whose hashes need to be retrieved : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelHashCalcing_AllHashGetFilesCount {
+        public static string LabelHashCalcing_AllHashNeedToGetFilesCount {
             get {
-                return ResourceManager.GetString("LabelHashCalcing_AllHashGetFilesCount", resourceCulture);
+                return ResourceManager.GetString("LabelHashCalcing_AllHashNeedToGetFilesCount", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Number of files whose hashes have been retrieved :. に類似しているローカライズされた文字列を検索します。
+        ///   Number of files whose hashes have been retrieved : に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelHashCalcing_HashGotFileCount {
             get {
@@ -439,7 +439,7 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
-        ///   Hash acquisition status :. に類似しているローカライズされた文字列を検索します。
+        ///   Hash acquisition status : に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelHashCalcing_HashGotPercent {
             get {

@@ -277,8 +277,8 @@
     <value>フォント</value>
     <comment>Label/SettingsPage</comment>
   </data>
-  <data name="LabelHashCalcing_AllHashGetFilesCount" xml:space="preserve">
-    <value>ハッシュを取得するファイル数 :</value>
+  <data name="LabelHashCalcing_AllHashNeedToGetFilesCount" xml:space="preserve">
+    <value>ハッシュを取得する必要があるファイル数 :</value>
     <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelHashCalcing_HashGotFileCount" xml:space="preserve">
