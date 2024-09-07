@@ -430,6 +430,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Total number of target files :  に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string LabelHashCalcing_AllTargetFilesCount {
+            get {
+                return ResourceManager.GetString("LabelHashCalcing_AllTargetFilesCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Number of files whose hashes have been retrieved : に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string LabelHashCalcing_HashGotFileCount {
@@ -453,15 +462,6 @@ namespace FileHashCraft.Properties {
         public static string LabelHashCalcing_MatchHashCount {
             get {
                 return ResourceManager.GetString("LabelHashCalcing_MatchHashCount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Identical file discovery status : に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string LabelHashCalcing_MatchHashPercent {
-            get {
-                return ResourceManager.GetString("LabelHashCalcing_MatchHashPercent", resourceCulture);
             }
         }
         

@@ -34,11 +34,38 @@ namespace FileHashCraft.Models.HashCalc
         private int BufferSize { get; } = 1048576;
 
         /// <summary>
+        /// ハッシュを取得するファイルをドライブ毎に辞書に振り分けます。
+        /// </summary>
+        /// <returns>ドライブ毎に辞書に振り分けられたファイルリスト</returns>
+        public Dictionary<string, HashSet<HashFile>> GetHashDriveFiles()
+        {
+            var duplicateSizeFiles = _scannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude)
+                .GroupBy(f => f.FileSize)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g)
+                .ToHashSet();
+
+            var filesDictionary = new Dictionary<string, HashSet<HashFile>>();
+            foreach (var file in duplicateSizeFiles)
+            {
+                DebugManager.InfoWrite($"{file.FileFullPath},{file.FileSize}");
+                var drive = Path.GetPathRoot(file.FileFullPath) ?? "";
+                if (!filesDictionary.TryGetValue(drive, out HashSet<HashFile>? value))
+                {
+                    value = [];
+                    filesDictionary[drive] = value;
+                }
+
+                value.Add(file);
+            }
+            return filesDictionary;
+        }
+
+        /// <summary>
         /// 同じファイルサイズの全てのファイルハッシュを計算します。
         /// </summary>
         public async Task ProcessGetHashFilesAsync(Dictionary<string, HashSet<HashFile>> filesDictionary)
         {
-            //var drivesDic = GetHashDriveFiles();
             var semaphone = new SemaphoreSlim(filesDictionary.Count);
 
             var tasks = filesDictionary.Select(async drive =>
@@ -50,7 +77,6 @@ namespace FileHashCraft.Models.HashCalc
                     foreach (var file in drive.Value)
                     {
                         _messenger.Send(new StartCalcingFile(beforeFilePath, file.FileFullPath));
-                        await Task.Delay(5);
                         using HashAlgorithm hashAlgorithm = _settingsService.HashAlgorithm switch
                         {
                             "SHA-512" => SHA512.Create(),
@@ -108,33 +134,6 @@ namespace FileHashCraft.Models.HashCalc
                 DebugManager.ErrorWrite($"Access Exception: {e.Message}");
             }
             return string.Empty;
-        }
-
-        /// <summary>
-        /// ハッシュを取得するファイルをドライブ毎に辞書に振り分けます。
-        /// </summary>
-        /// <returns>ドライブ毎に辞書に振り分けられたファイルリスト</returns>
-        public Dictionary<string, HashSet<HashFile>> GetHashDriveFiles()
-        {
-            var duplicateSizeFiles = _scannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude)
-                .GroupBy(f => f.FileSize)
-                .Where(g => g.Count() > 1)
-                .SelectMany(g => g)
-                .ToList();
-
-            var filesDictionary = new Dictionary<string, HashSet<HashFile>>();
-            foreach (var file in duplicateSizeFiles)
-            {
-                var drive = Path.GetPathRoot(file.FileFullPath) ?? "";
-                if (!filesDictionary.TryGetValue(drive, out HashSet<HashFile>? value))
-                {
-                    value = [];
-                    filesDictionary[drive] = value;
-                }
-
-                value.Add(file);
-            }
-            return filesDictionary;
         }
     }
 }

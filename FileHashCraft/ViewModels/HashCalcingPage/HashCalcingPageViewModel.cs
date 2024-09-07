@@ -5,9 +5,9 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.HashCalc;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -79,6 +79,12 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         private string _statusMessage = string.Empty;
 
         /// <summary>
+        /// 総対象ファイル数
+        /// </summary>
+        [ObservableProperty]
+        private int _allTargetFilesCount = 0;
+
+        /// <summary>
         /// ハッシュを取得する全てのファイル数
         /// </summary>
         [ObservableProperty]
@@ -125,34 +131,8 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// <summary>
         /// ファイルが同一だった件数
         /// </summary>
+        [ObservableProperty]
         private double _matchHashCount = 0;
-        public double MatchHashCount
-        {
-            get => _matchHashCount;
-            set
-            {
-                SetProperty(ref _matchHashCount, value);
-                OnPropertyChanged(nameof(MatchHashPercent));
-            }
-        }
-
-        /// <summary>
-        /// 同一ファイルチェックのパーセンテージ
-        /// </summary>
-        public double MatchHashPercent
-        {
-            get
-            {
-                if (AllHashNeedToGetFilesCount == 0)
-                {
-                    return 0d;
-                }
-                else
-                {
-                    return (double)MatchHashCount / AllHashNeedToGetFilesCount * 100;
-                }
-            }
-        }
 
         /// <summary>
         /// 計算中のハッシュファイル
@@ -187,23 +167,23 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
 
         #region コンストラクタ
         private readonly IFileHashCalc _fileHashCalc;
+        private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
         private readonly IFileSystemServices _fileSystemServices;
-        private readonly IScannedFilesManager _scannedFilesManager;
 
         public HashCalcingPageViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
             IFileHashCalc fileHashCalc,
             IHelpWindowViewModel helpWindowViewModel,
-            IFileSystemServices fileSystemServices,
-            IScannedFilesManager scannedFilesManager
+            IScannedFilesManager scannedFilesManager,
+            IFileSystemServices fileSystemServices
         ) : base(messenger, settingsService)
         {
             _fileHashCalc = fileHashCalc;
+            _scannedFilesManager = scannedFilesManager;
             _fileSystemServices = fileSystemServices;
             _helpWindowViewModel = helpWindowViewModel;
-            _scannedFilesManager = scannedFilesManager;
 
             HashAlgorithm = _settingsService.HashAlgorithm;
             //AllHashNeedToGetFilesCount = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude);
@@ -269,28 +249,25 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         {
             Task.Run(async () =>
             {
+                AllTargetFilesCount = _scannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude).Count;
                 Status = FileHashCalcStatus.FileCalcing;
-                var drivesDic = _fileHashCalc.GetHashDriveFiles();
-                foreach (var drive in drivesDic)
+                var sameFileCandidate = _fileHashCalc.GetHashDriveFiles();
+                foreach (var fileInDrive in sameFileCandidate)
                 {
-                    foreach (var file in drive.Value)
-                    {
-                        DebugManager.InfoWrite($"{file.FileFullPath} : 【{file.FileSize}】");
-                    }
-
-                    AllHashNeedToGetFilesCount += drive.Value.Count;
+                    AllHashNeedToGetFilesCount += fileInDrive.Value.Count;
                 }
-                await _fileHashCalc.ProcessGetHashFilesAsync(drivesDic);
+                await _fileHashCalc.ProcessGetHashFilesAsync(sameFileCandidate);
                 Status = FileHashCalcStatus.FileMatching;
 
-                /*
-                for (var i = 0; i < AllHashGetFilesCount; i++)
-                {
-                    await Task.Delay(1);
-                    App.Current?.Dispatcher?.Invoke(() => MatchHashCount++);
-                }
-                */
-                App.Current?.Dispatcher?.Invoke(() => MatchHashCount = AllHashNeedToGetFilesCount);
+                var sameFiles = sameFileCandidate.Values
+                    .SelectMany(hashSet => hashSet)
+                    .GroupBy(file => new { file.FileSize, file.FileHash })
+                    .Where(g => g.Count() > 1)
+                    .SelectMany(g => g)
+                    .ToHashSet();
+
+                App.Current?.Dispatcher?.Invoke(() => MatchHashCount = sameFiles.Count);
+
                 Status = FileHashCalcStatus.Finished;
             });
         }

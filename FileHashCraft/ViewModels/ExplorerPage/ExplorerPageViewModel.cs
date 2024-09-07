@@ -500,7 +500,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <param name="lParam">IntPtr</param>
         /// <param name="handled">ref bool</param>
         /// <returns>IntPtr</returns>
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        private unsafe IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             // メッセージに対する処理を追加
             Object? ptrToStructure;
@@ -522,7 +522,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     {
                         if (lParam != IntPtr.Zero)
                         {
-                            ptrToStructure = Marshal.PtrToStructure(lParam, typeof(DEV_BROADCAST_VOLUME));
+                            ptrToStructure = (object?)(*(DEV_BROADCAST_VOLUME*)lParam);
                             if (ptrToStructure != null)
                             {
                                 volume = (DEV_BROADCAST_VOLUME)ptrToStructure;
@@ -538,7 +538,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     {
                         if (lParam != IntPtr.Zero)
                         {
-                            ptrToStructure = Marshal.PtrToStructure(lParam, typeof(DEV_BROADCAST_VOLUME));
+                            ptrToStructure = (object?)(*(DEV_BROADCAST_VOLUME*)lParam);
                             if (ptrToStructure != null)
                             {
                                 volume = (DEV_BROADCAST_VOLUME)ptrToStructure;

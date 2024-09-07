@@ -281,6 +281,10 @@
     <value>ハッシュを取得する必要があるファイル数 :</value>
     <comment>Label/HashCalcingPage</comment>
   </data>
+  <data name="LabelHashCalcing_AllTargetFilesCount" xml:space="preserve">
+    <value>対象総ファイル数：</value>
+    <comment>Label/HashCalcingPage</comment>
+  </data>
   <data name="LabelHashCalcing_HashGotFileCount" xml:space="preserve">
     <value>ハッシュを取得したファイル数 :</value>
     <comment>Label/HashCalcingPage</comment>
@@ -290,11 +294,7 @@
     <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelHashCalcing_MatchHashCount" xml:space="preserve">
-    <value>同一のファイル発見数 :</value>
-    <comment>Label/HashCalcingPage</comment>
-  </data>
-  <data name="LabelHashCalcing_MatchHashPercent" xml:space="preserve">
-    <value>同一のファイル発見状況 :</value>
+    <value>同一ファイル数 :</value>
     <comment>Label/HashCalcingPage</comment>
   </data>
   <data name="LabelHashCalcing_ProcessingFileName" xml:space="preserve">

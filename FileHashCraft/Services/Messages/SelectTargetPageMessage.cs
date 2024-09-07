@@ -22,19 +22,6 @@ namespace FileHashCraft.Services.Messages
     }
 
     /// <summary>
-    /// 全管理対象ファイルを追加するメッセージ
-    /// </summary>
-    public class AddFilesToAllFilesMessage
-    {
-        public List<string> Files { get; set; } = [];
-        public AddFilesToAllFilesMessage() { throw new NotImplementedException(nameof(AddFilesToAllFilesMessage)); }
-        public AddFilesToAllFilesMessage(List<string> files)
-        {
-            Files = files;
-        }
-    }
-
-    /// <summary>
     /// ファイルスキャンが完了したディレクトリ数に加算するメッセージ
     /// </summary>
     public class AddFilesScannedDirectoriesCountMessage;

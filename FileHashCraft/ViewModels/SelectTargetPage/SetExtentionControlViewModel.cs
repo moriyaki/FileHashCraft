@@ -39,10 +39,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         void ChangeCheckBoxGroup(bool changedCheck, IEnumerable<string> extentionCollention);
         /// <summary>
-        /// 全管理対象ファイルを追加します。
-        /// </summary>
-        void AddFilesToAllFiles(string file);
-        /// <summary>
         /// 言語が変わった場合に備えて、拡張子グループを再設定します。
         /// </summary>
         public void RefreshExtentionLanguage();
@@ -239,15 +235,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // 拡張子数の変更通知
             _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
             _pageSelectTargetViewModelMain.SetTargetCountChanged();
-        }
-
-        /// <summary>
-        /// 拡張子ヘルパーに拡張子を登録する(カウントもする)
-        /// </summary>
-        /// <param name="file">追加するファイルのフルパスList</param>
-        public void AddFilesToAllFiles(string file)
-        {
-            _extentionManager.AddFile(file);
         }
 
         /// <summary>

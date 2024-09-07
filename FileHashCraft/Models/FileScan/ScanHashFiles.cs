@@ -42,17 +42,20 @@ namespace FileHashCraft.Models.FileScan
         private readonly IMessenger _messenger;
         private readonly IExtentionManager _extentionManager;
         private readonly IDirectoriesManager _directoriesManager;
+        private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IFileManager _fileManager;
         public ScanHashFiles(
             IMessenger messenger,
             IExtentionManager extentionManager,
             IDirectoriesManager directoriesManager,
+            IScannedFilesManager scannedFilesManager,
             IFileManager fileManager
         )
         {
             _messenger = messenger;
             _extentionManager = extentionManager;
             _directoriesManager = directoriesManager;
+            _scannedFilesManager = scannedFilesManager;
             _fileManager = fileManager;
         }
 
@@ -63,8 +66,6 @@ namespace FileHashCraft.Models.FileScan
         /// <param name="cancellation">キャンセリングトークン</param>
         public async Task DirectoriesScan(CancellationToken cancellation)
         {
-            // TODO: DirectoryListにNonNestedDirectorisの処理追加
-
             // 各ドライブに対してタスクを回す
             await DirectorySearch(_directoriesManager.NestedDirectories, cancellation);
             _messenger.Send(new AddScannedDirectoriesCountMessage(_directoriesManager.NonNestedDirectories.Count));
@@ -82,7 +83,6 @@ namespace FileHashCraft.Models.FileScan
 
             foreach (var rootDirectory in rootDirectories)
             {
-                // TODO: DirectoriesHashSet を DirectoriesList に変更！
                 await Task.Run(() =>
                 {
                     DirectoriesHashSet.UnionWith(GetDirectories(rootDirectory, cancellation));
@@ -125,9 +125,6 @@ namespace FileHashCraft.Models.FileScan
         /// <param name="cancellation">キャンセリングトークン</param>
         public async Task DirectoryFilesScan(CancellationToken cancellation)
         {
-            // TODO : DirectoriesHashSet→DirectoriesListからドライブ取得してDirectory<string, List<string>>に
-            // SemaphoneSlimの数はDirectoryのKey数に
-
             var semaphore = new SemaphoreSlim(5);
 
             foreach (var directoryFullPath in DirectoriesHashSet)
@@ -135,7 +132,11 @@ namespace FileHashCraft.Models.FileScan
                 try
                 {
                     await semaphore.WaitAsync(cancellation);
-                    _messenger.Send(new AddFilesToAllFilesMessage(_fileManager.EnumerateFiles(directoryFullPath).ToList()));
+                    foreach (var file in _fileManager.EnumerateFiles(directoryFullPath))
+                    {
+                        _scannedFilesManager.AddFile(file);
+                        _extentionManager.AddFile(file);
+                    }
 
                     _messenger.Send(new AddFilesScannedDirectoriesCountMessage());
                     _messenger.Send(new SetAllTargetfilesCountMessge());

@@ -72,7 +72,6 @@ namespace FileHashCraft.Models
             LastWriteTime = fileInfo.LastWriteTime;
             FileSize = fileInfo.Length;
             Attributes = fileInfo.Attributes;
-            DebugManager.InfoWrite($"{FileFullPath} : 【{FileSize}】");
         }
         #endregion 設定処理
     }
