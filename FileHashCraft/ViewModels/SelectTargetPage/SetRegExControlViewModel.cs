@@ -1,13 +1,13 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Properties;
-using FileHashCraft.Services.Messages;
-using FileHashCraft.Services;
-using System.Windows.Media;
-using FileHashCraft.ViewModels.SelectTargetPage;
 using FileHashCraft.Models.FileScan;
-using System.Text.RegularExpressions;
+using FileHashCraft.Properties;
+using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
+using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.ViewModels.PageSelectTarget
 {

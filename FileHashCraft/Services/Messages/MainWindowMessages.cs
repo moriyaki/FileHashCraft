@@ -170,9 +170,9 @@ namespace FileHashCraft.Services.Messages
     /// </summary>
     public class ToHashCalcingPageMessage;
     /// <summary>
-    /// 同一ファイル選択ページに移動するメッセージ
+    /// 同一ファイル画面選択ページに移動するメッセージ
     /// </summary>
-    public class ToSameFileSelectPageMessage;
+    public class ToSameFileSelectSimplePageMessage;
 
     /// <summary>
     /// どこに戻るかの列挙子

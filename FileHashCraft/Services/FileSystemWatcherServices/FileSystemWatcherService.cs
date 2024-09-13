@@ -24,7 +24,7 @@
     {
         private readonly ICurrentDirectoryFIleSystemWatcherService _currentDirectoryFIleSystemWatcherService;
         private readonly IFileWatcherService _drivesFileSystemWatcherService;
-        
+
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>

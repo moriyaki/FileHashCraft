@@ -54,9 +54,8 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         private BaseCriteriaItemViewModel() { throw new NotImplementedException(nameof(BaseCriteriaItemViewModel)); }
-        
         protected BaseCriteriaItemViewModel(
-            IMessenger messenger, 
+            IMessenger messenger,
             ISettingsService settingsService
         ) : base(messenger, settingsService)
         {

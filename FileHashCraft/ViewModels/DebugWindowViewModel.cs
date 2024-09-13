@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
-using FileHashCraft.ViewModels.ControlDirectoryTree;
 
 namespace FileHashCraft.ViewModels
 {

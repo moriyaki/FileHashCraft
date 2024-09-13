@@ -37,6 +37,9 @@ namespace FileHashCraft
             // PageHashCalcing へ移動のメッセージ受信したので移動
             _messenger.Register<ToHashCalcingPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new HashCalcingPage()));
+            // PageSameFileSelectSimple へ移動のメッセージ受信したので移動
+            _messenger.Register<ToSameFileSelectSimplePageMessage>(this, (_, _) =>
+                MainFrame.Navigate(new SameFileSelectSimplePage()));
             // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
             _messenger.Register<ToSettingPageMessage>(this, (_, m) =>
             {

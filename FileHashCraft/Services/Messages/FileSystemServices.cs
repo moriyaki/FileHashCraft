@@ -9,67 +9,75 @@ namespace FileHashCraft.Services.Messages
         /// カレントディレクトリを移動します。
         /// </summary>
         /// <param name="fullPath">移動先カレントディレクトリ</param>
-        public void NotifyChangeCurrentDirectory(string fullPath);
+        void NotifyChangeCurrentDirectory(string fullPath);
 
         /// <summary>
         /// 設定画面ページに移動します。
         /// </summary>
         /// <param name="pageEnum"></param>
-        public void NavigateToSettingsPage(ReturnPageEnum pageEnum);
+        void NavigateToSettingsPage(ReturnPageEnum pageEnum);
         /// <summary>
         /// 設定画面ページから元の画面に移動します。
         /// </summary>
-        public void NavigateReturnPageFromSettings();
+        void NavigateReturnPageFromSettings();
         /// <summary>
         /// エクスプローラー風画面に移動します。
         /// </summary>
-        public void NavigateToExplorerPage();
+        void NavigateToExplorerPage();
         /// <summary>
         /// ハッシュ取得絞り込み画面に移動します。
         /// </summary>
-        public void NavigateToSelectTargetPage();
+        void NavigateToSelectTargetPage();
         /// <summary>
         /// ハッシュ計算画面に移動に移動します。
         /// </summary>
-        public void NavigateToHashCalcingPage();
-
+        void NavigateToHashCalcingPage();
+        /// <summary>
+        /// ハッシュ計算画面に移動に移動します。
+        /// </summary>
+        void NavigateToSameFileSelectSimplePage();
         /// <summary>
         /// カレントディレクトリにアイテムが追加された事をメッセージ送信します。
         /// </summary>
-        public void NotifyCurrentItemCreatedMessage(string fullPath);
+        void NotifyCurrentItemCreatedMessage(string fullPath);
         /// <summary>
         /// カレントディレクトリのアイテムが削除された事をメッセージ送信します。
         /// </summary>
-        public void NotifyCurrentItemDeletedMessage(string fullPath);
+        void NotifyCurrentItemDeletedMessage(string fullPath);
         /// <summary>
         /// カレントディレクトリのアイテムが名前変更された事をメッセージ送信します。
         /// </summary>
-        public void NotifyCurrentItemRenamedMessage(string oldFullPath, string newFullPath);
+        void NotifyCurrentItemRenamedMessage(string oldFullPath, string newFullPath);
         /// <summary>
         /// ディレクトリのアイテムが追加された事をメッセージ送信します。
         /// </summary>
-        public void NotifyDirectoryItemCreatedMessage(string fullPath);
+        void NotifyDirectoryItemCreatedMessage(string fullPath);
         /// <summary>
         /// ディレクトリのアイテムが削除された事をメッセージ送信します。
         /// </summary>
-        public void NotifyDirectoryItemDeletedMessage(string fullPath);
+        void NotifyDirectoryItemDeletedMessage(string fullPath);
         /// <summary>
         /// ディレクトリのアイテムが名前変更された事をメッセージ送信します。
         /// </summary>
-        public void NotifyDirectoryItemRenamedMessage(string oldFullPathm, string newFullPathm);
+        void NotifyDirectoryItemRenamedMessage(string oldFullPathm, string newFullPathm);
         /// <summary>
         /// リムーバブルドライブの追加または挿入された事をメッセージ送信します。
         /// </summary>
-        public void NotifyInsertOpticalMediaMessage(string fullPath);
+        void NotifyInsertOpticalMediaMessage(string fullPath);
         /// <summary>
         /// リムーバブルメディアの削除またはイジェクトされた事をメッセージ送信します。
         /// </summary>
-        public void NotifyEjectOpticalMediaMessage(string fullPath);
+        void NotifyEjectOpticalMediaMessage(string fullPath);
     }
     #endregion インターフェース
 
     public class FileSystemServices : IFileSystemServices
     {
+        private FileSystemServices()
+        {
+            throw new NotImplementedException(nameof(FileSystemServices));
+        }
+
         private readonly IMessenger _messenger;
         public FileSystemServices(IMessenger messenger)
         {
@@ -123,14 +131,12 @@ namespace FileHashCraft.Services.Messages
         }
 
         /// <summary>
-        /// 同一ファイル選択ページに移動します。
+        /// 同一ファイル選択画面ページに移動します。
         /// </summary>
-        /*
-        public void NavigateToSameFileSelectPage()
+        public void NavigateToSameFileSelectSimplePage()
         {
-            _messenger.Send(new ToSameFileSelectPageMessage());
+            _messenger.Send(new ToSameFileSelectSimplePageMessage());
         }
-        */
         #endregion 移動処理
 
         #region ファイル監視

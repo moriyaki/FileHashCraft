@@ -5,7 +5,6 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.HashCalc;
 using FileHashCraft.Properties;
@@ -111,6 +110,11 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         }
 
         /// <summary>
+        /// ハッシュ計算が終了したか否か
+        /// </summary>
+        private bool _hashCalcFinished = false;
+
+        /// <summary>
         /// ハッシュ取得状況のパーセンテージ
         /// </summary>
         public double HashGotPercent
@@ -186,7 +190,6 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             _helpWindowViewModel = helpWindowViewModel;
 
             HashAlgorithm = _settingsService.HashAlgorithm;
-            //AllHashNeedToGetFilesCount = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude);
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
@@ -211,8 +214,8 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
 
             // 同一ファイル選択ページに移動するコマンド
             ToSameFileSelectPage = new RelayCommand(
-                () => MessageBox.Show("ToSameFileSelectPage未実装"),
-                () => false
+                () => _fileSystemServices.NavigateToSameFileSelectSimplePage(),
+                () => _hashCalcFinished
             );
 
             // ハッシュ計算を開始したメッセージ
@@ -257,7 +260,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                     AllHashNeedToGetFilesCount += fileInDrive.Value.Count;
                 }
                 await _fileHashCalc.ProcessGetHashFilesAsync(sameFileCandidate);
-                Status = FileHashCalcStatus.FileMatching;
+                App.Current?.Dispatcher?.Invoke(() => Status = FileHashCalcStatus.FileMatching);
 
                 var sameFiles = sameFileCandidate.Values
                     .SelectMany(hashSet => hashSet)
@@ -266,9 +269,13 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                     .SelectMany(g => g)
                     .ToHashSet();
 
-                App.Current?.Dispatcher?.Invoke(() => MatchHashCount = sameFiles.Count);
-
-                Status = FileHashCalcStatus.Finished;
+                App.Current?.Dispatcher?.Invoke(() =>
+                {
+                    MatchHashCount = sameFiles.Count;
+                    Status = FileHashCalcStatus.Finished;
+                    _hashCalcFinished = true;
+                    ToSameFileSelectPage.NotifyCanExecuteChanged();
+                });
             });
         }
         #endregion コンストラクタ

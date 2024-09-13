@@ -1,5 +1,4 @@
-﻿using System.Windows.Media;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;

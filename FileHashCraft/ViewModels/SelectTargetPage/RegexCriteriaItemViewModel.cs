@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Services.Messages;
 using FileHashCraft.Services;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {

@@ -3,8 +3,6 @@
     ハッシュを取得する検索条件ウィンドウの ViewModel を提供します。
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
-using System.Diagnostics;
-using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
