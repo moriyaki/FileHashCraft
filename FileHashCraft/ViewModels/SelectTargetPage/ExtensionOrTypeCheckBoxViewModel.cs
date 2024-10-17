@@ -11,7 +11,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -35,30 +34,27 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     /// <summary>
     /// 拡張子チェックボックスと、拡張子グループチェックボックスの基底クラス
     /// </summary>
-    public partial class ExtensionOrTypeCheckBoxBase : ObservableObject, IExtensionOrTypeCheckBoxBase
+    public partial class BaseExtensionOrTypeCheckBox : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
         protected readonly IMessenger _messenger;
         protected readonly ISettingsService _settingsService;
         protected readonly IExtentionManager _extentionManager;
-        protected readonly IExtentionTypeHelper _extentionTypeHelper;
         protected readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
-        protected ExtensionOrTypeCheckBoxBase(
+        protected BaseExtensionOrTypeCheckBox(
             IMessenger messenger,
             ISettingsService settingsService,
             IExtentionManager extentionManager,
-            IExtentionTypeHelper extentionTypeHelper,
             IFileSearchCriteriaManager fileSearchCriteriaManager
         )
         {
             _messenger = messenger;
             _settingsService = settingsService;
             _extentionManager = extentionManager;
-            _extentionTypeHelper = extentionTypeHelper;
             _fileSearchCriteriaManager = fileSearchCriteriaManager;
 
             // フォント変更メッセージ受信
@@ -143,9 +139,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         IMessenger messenger,
         ISettingsService settingsService,
         IExtentionManager extentionManager,
-        IExtentionTypeHelper extentionTypeHelper,
         IFileSearchCriteriaManager fileSearchCriteriaManager
-        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper, fileSearchCriteriaManager)
+        ) : BaseExtensionOrTypeCheckBox(messenger, settingsService, extentionManager, fileSearchCriteriaManager)
     {
         #region コンストラクタと初期化
 
@@ -161,6 +156,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion 初期化
 
         #region バインディング
+        /// <summary>
+        /// setterのメッセージは親のViewModelへの送信、拡張子グループのチェックボックス遷移などを行う
+        /// </summary>
         public override bool? IsChecked
         {
             get => _isChecked;
@@ -197,9 +195,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         IMessenger messenger,
         ISettingsService settingsService,
         IExtentionManager extentionManager,
-        IExtentionTypeHelper extentionTypeHelper,
         IFileSearchCriteriaManager fileSearchCriteriaManager
-        ) : ExtensionOrTypeCheckBoxBase(messenger, settingsService, extentionManager, extentionTypeHelper, fileSearchCriteriaManager)
+        ) : BaseExtensionOrTypeCheckBox(messenger, settingsService, extentionManager, fileSearchCriteriaManager)
     {
         #region 初期化
 
@@ -210,7 +207,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             FileType = FileGroupType.Others;
             ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
-            Name = _extentionTypeHelper.GetFileGroupName(FileGroupType.Others);
+            Name = _extentionManager.GetFileGroupName(FileGroupType.Others);
         }
 
         /// <summary>
@@ -221,14 +218,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             FileType = fileType;
             ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
-            Name = _extentionTypeHelper.GetFileGroupName(FileType);
+            Name = _extentionManager.GetFileGroupName(FileType);
         }
         #endregion 初期化
 
         #region バインディング
         public FileGroupType FileType { get; set; }
         /// <summary>
-        /// チェックボックスの状態
+        /// チェックボックスの状態、拡張子グループのチェックボックスが変更されたら、拡張子チェックボックスにも変更
         /// </summary>
         public override bool? IsChecked
         {

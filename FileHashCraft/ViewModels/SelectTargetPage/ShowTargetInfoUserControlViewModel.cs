@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -100,7 +99,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public partial class ShowTargetInfoUserControlViewModel : BaseViewModel, IShowTargetInfoUserControlViewModel
+    public partial class ShowTargetInfoUserControlViewModel : ViewModelBase, IShowTargetInfoUserControlViewModel
     {
         #region バインディング
         /// <summary>

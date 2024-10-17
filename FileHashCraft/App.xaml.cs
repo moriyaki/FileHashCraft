@@ -17,7 +17,6 @@ using FileHashCraft.ViewModels.HashCalcingPage;
 using Microsoft.Extensions.DependencyInjection;
 using FileHashCraft.Models.HashCalc;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models.Helpers;
 
 namespace FileHashCraft
 {

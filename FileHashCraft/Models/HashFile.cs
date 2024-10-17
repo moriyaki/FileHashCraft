@@ -4,7 +4,6 @@
  */
 using System.IO;
 using System.Security.Cryptography;
-using FileHashCraft.Models.Helpers;
 
 namespace FileHashCraft.Models
 {

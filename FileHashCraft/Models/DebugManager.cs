@@ -5,7 +5,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace FileHashCraft.Models.Helpers
+namespace FileHashCraft.Models
 {
     /// <summary>
     /// ログレベル

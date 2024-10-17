@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -53,7 +52,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class SetExtentionControlViewModel : BaseViewModel, ISetExtentionControlViewModel
+    public class SetExtentionControlViewModel : ViewModelBase, ISetExtentionControlViewModel
     {
         #region バインディング
         /// <summary>
@@ -77,23 +76,20 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #region コンストラクタ
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IExtentionManager _extentionManager;
-        private readonly IExtentionTypeHelper _extentionTypeHelper;
         private readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
         private readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
 
         public SetExtentionControlViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
-            IScannedFilesManager scannedFilesManager,
             IExtentionManager extentionManager,
-            IExtentionTypeHelper extentionTypeHelper,
+            IScannedFilesManager scannedFilesManager,
             IFileSearchCriteriaManager fileSearchCriteriaManager,
             IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
         ) : base(messenger, settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
             _extentionManager = extentionManager;
-            _extentionTypeHelper = extentionTypeHelper;
             _fileSearchCriteriaManager = fileSearchCriteriaManager;
             _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
 
@@ -109,7 +105,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // 拡張子のチェックボックスのチェック状態が変更されたときのイベント
             ExtentionCheckBoxClickedCommand = new RelayCommand<object>((parameter) =>
             {
-                if (parameter is ExtensionOrTypeCheckBoxBase checkBoxViewModel)
+                if (parameter is BaseExtensionOrTypeCheckBox checkBoxViewModel)
                 {
                     App.Current?.Dispatcher?.Invoke(() =>
                         checkBoxViewModel.IsChecked = !checkBoxViewModel.IsChecked);
@@ -142,33 +138,34 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public void AddFileTypes()
         {
-            var movies = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var movies = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             movies.Initialize(FileGroupType.Movies);
-            var pictures = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var pictures = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             pictures.Initialize(FileGroupType.Pictures);
-            var musics = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var musics = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             musics.Initialize(FileGroupType.Musics);
-            var documents = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var documents = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             documents.Initialize(FileGroupType.Documents);
-            var applications = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
-            applications.Initialize(FileGroupType.Applications);
-            var archives = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var archives = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             archives.Initialize(FileGroupType.Archives);
-            var sources = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var applications = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
+            applications.Initialize(FileGroupType.Applications);
+            var sources = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             sources.Initialize(FileGroupType.SourceCodes);
-            var registrations = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var registrations = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             registrations.Initialize(FileGroupType.Registrations);
-            var others = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+            var others = new ExtentionGroupCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
             others.Initialize();
 
             App.Current?.Dispatcher.Invoke(() =>
             {
-                if (movies.ExtentionCount > 0) { ExtentionsGroupCollection.Add(movies); }
-                if (pictures.ExtentionCount > 0) { ExtentionsGroupCollection.Add(pictures); }
-                if (musics.ExtentionCount > 0) { ExtentionsGroupCollection.Add(musics); }
-                if (documents.ExtentionCount > 0) { ExtentionsGroupCollection.Add(documents); }
+                // 「動画」「画像」「サウンド」「ドキュメント」「圧縮」ファイルは標準でチェックを付ける
+                if (movies.ExtentionCount > 0) { ExtentionsGroupCollection.Add(movies); movies.IsChecked = true; }
+                if (pictures.ExtentionCount > 0) { ExtentionsGroupCollection.Add(pictures); pictures.IsChecked = true; }
+                if (musics.ExtentionCount > 0) { ExtentionsGroupCollection.Add(musics); musics.IsChecked = true; }
+                if (documents.ExtentionCount > 0) { ExtentionsGroupCollection.Add(documents); documents.IsChecked = true; }
+                if (archives.ExtentionCount > 0) { ExtentionsGroupCollection.Add(archives); archives.IsChecked = true; }
                 if (applications.ExtentionCount > 0) { ExtentionsGroupCollection.Add(applications); }
-                if (archives.ExtentionCount > 0) { ExtentionsGroupCollection.Add(archives); }
                 if (sources.ExtentionCount > 0) { ExtentionsGroupCollection.Add(sources); }
                 if (registrations.ExtentionCount > 0) { ExtentionsGroupCollection.Add(registrations); }
                 if (others.ExtentionCount > 0) { ExtentionsGroupCollection.Add(others); }
@@ -183,7 +180,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             var extentionManager = Ioc.Default.GetService<IExtentionManager>() ?? throw new NullReferenceException(nameof(IExtentionManager));
             if (extentionManager.GetExtentionsCount(extention) > 0)
             {
-                var item = new ExtensionCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _extentionTypeHelper, _fileSearchCriteriaManager);
+                var item = new ExtensionCheckBoxViewModel(_messenger, _settingsService, _extentionManager, _fileSearchCriteriaManager);
                 item.Initialize(extention);
                 App.Current?.Dispatcher.Invoke(() => ExtentionCollection.Add(item));
             }
@@ -219,7 +216,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 }
             });
 
-            // 拡張子の追加・削除処理
+            // 拡張子条件の追加・削除処理
             foreach (var extension in extensionCollection)
             {
                 if (changedCheck)
@@ -256,7 +253,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="extention">拡張子</param>
         public void CheckExtentionReflectToGroup(string extention)
         {
-            var fileGroupType = _extentionTypeHelper.GetFileGroupFromExtention(extention);
+            var fileGroupType = _extentionManager.GetFileGroupFromExtention(extention);
             var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
             if (group == null) return;
 
@@ -270,7 +267,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
             {
                 var item = ExtentionCollection.FirstOrDefault(i => i.Name == groupExtention);
-                // 1つでもチェックされてない拡張子があればそのまま戻る
+                // 1つでもチェックされてない拡張子があればnullのまま戻る
                 if (item != null && item.IsChecked == false) { return; }
             }
             // 全てチェックされていたらチェック状態を null → true
@@ -283,7 +280,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <param name="extention">拡張子</param>
         public void UncheckExtentionReflectToGroup(string extention)
         {
-            var fileGroupType = _extentionTypeHelper.GetFileGroupFromExtention(extention);
+            var fileGroupType = _extentionManager.GetFileGroupFromExtention(extention);
             var group = ExtentionsGroupCollection.FirstOrDefault(g => g.FileType == fileGroupType);
             if (group == null) return;
 
@@ -297,7 +294,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             foreach (var groupExtention in _extentionManager.GetGroupExtentions(fileGroupType))
             {
                 var item = ExtentionCollection.FirstOrDefault(i => i.Name == groupExtention);
-                // 1つでもチェックされてない拡張子があればそのまま戻る
+                // 1つでもチェックされてない拡張子があればnullのまま戻る
                 if (item != null && item.IsChecked == true) { return; }
             }
             // 全てチェック解除されていたらチェック状態を null → false

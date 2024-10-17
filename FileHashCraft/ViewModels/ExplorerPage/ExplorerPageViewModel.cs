@@ -10,7 +10,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
 using FileHashCraft.Services.Messages;
@@ -49,7 +48,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class ExplorerPageViewModel : BaseViewModel, IExplorerPageViewModel
+    public partial class ExplorerPageViewModel : ViewModelBase, IExplorerPageViewModel
     {
         #region バインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];

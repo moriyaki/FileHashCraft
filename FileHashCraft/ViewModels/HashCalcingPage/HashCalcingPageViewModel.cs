@@ -27,7 +27,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
     public interface IHashCalcingPageViewModel;
     #endregion インターフェース
 
-    public partial class HashCalcingPageViewModel : BaseViewModel, IHashCalcingPageViewModel
+    public partial class HashCalcingPageViewModel : ViewModelBase, IHashCalcingPageViewModel
     {
         #region バインディング
         /// <summary>

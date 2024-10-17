@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models.Helpers;
+using FileHashCraft.Models;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
@@ -18,7 +18,7 @@ namespace FileHashCraft.ViewModels
     public interface ISettingsPageViewModel;
     #endregion インターフェース
 
-    public class SettingsPageViewModel : BaseViewModel, ISettingsPageViewModel
+    public class SettingsPageViewModel : ViewModelBase, ISettingsPageViewModel
     {
         #region バインディング
         /// <summary>

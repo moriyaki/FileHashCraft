@@ -53,7 +53,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public partial class SelectTargetPageViewModel : BaseViewModel, ISelectTargetPageViewModel
+    public partial class SelectTargetPageViewModel : ViewModelBase, ISelectTargetPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -272,8 +272,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             catch { }
             // 既にファイル検索がされていて、ディレクトリ選択設定が変わっていなければ終了
             if (ViewModelMain.Status == FileScanStatus.Finished
-             && _directoriesManager.NestedDirectories.OrderBy(x => x).SequenceEqual(NestedDirectories.OrderBy(x => x))
-             && _directoriesManager.NonNestedDirectories.OrderBy(x => x).SequenceEqual(NonNestedDirectories.OrderBy(x => x)))
+             && _directoriesManager.NestedDirectories.Order().SequenceEqual(NestedDirectories.Order())
+             && _directoriesManager.NonNestedDirectories.Order().SequenceEqual(NonNestedDirectories.Order()))
             {
                 return;
             }
@@ -398,6 +398,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             // スキャン終了の表示に切り替える
             ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
 
+            /*
             //--------------------- 開発用自動化処理
             App.Current?.Dispatcher.InvokeAsync(() =>
             {
@@ -405,6 +406,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 ViewModelWildcard.AddCriteria();
                 ViewModelMain.ToHashCalcingPage.Execute(this);
             });
+            */
         }
         #endregion メイン処理
 

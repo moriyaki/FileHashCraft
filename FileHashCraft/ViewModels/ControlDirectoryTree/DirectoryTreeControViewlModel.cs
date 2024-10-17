@@ -45,7 +45,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         double TreeWidth { get; set; }
     }
     #endregion インターフェース
-    public partial class ControDirectoryTreeViewModel : BaseViewModel, IControDirectoryTreeViewlModel
+    public partial class ControDirectoryTreeViewModel : ViewModelBase, IControDirectoryTreeViewlModel
     {
         #region バインディング
         /// <summary>

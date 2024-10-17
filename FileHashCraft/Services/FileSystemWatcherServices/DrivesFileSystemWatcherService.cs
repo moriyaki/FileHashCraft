@@ -3,9 +3,9 @@
     ドライブ以下全てのファイルを監視するクラスです。
  */
 using System.IO;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.Services.Messages;
+using FileHashCraft.Models;
 
 namespace FileHashCraft.Services.FileSystemWatcherServices
 {

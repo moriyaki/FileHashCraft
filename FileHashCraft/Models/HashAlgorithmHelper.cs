@@ -4,7 +4,7 @@
  */
 using FileHashCraft.Properties;
 
-namespace FileHashCraft.Models.Helpers
+namespace FileHashCraft.Models
 {
     /// <summary>
     /// 洗濯できるハッシュアルゴリズム

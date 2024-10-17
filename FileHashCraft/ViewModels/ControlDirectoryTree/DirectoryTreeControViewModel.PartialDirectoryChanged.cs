@@ -5,7 +5,7 @@
  */
 using System.Collections.ObjectModel;
 using System.IO;
-using FileHashCraft.Models.Helpers;
+using FileHashCraft.Models;
 using FileHashCraft.Services;
 using FileHashCraft.ViewModels.Modules;
 

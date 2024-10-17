@@ -3,7 +3,7 @@
     カレントディレクトリの変更を監視するクラスです。
  */
 using System.IO;
-using FileHashCraft.Models.Helpers;
+using FileHashCraft.Models;
 using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.Services.FileSystemWatcherServices

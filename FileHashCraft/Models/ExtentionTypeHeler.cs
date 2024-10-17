@@ -4,7 +4,7 @@
  */
 using FileHashCraft.Properties;
 
-namespace FileHashCraft.Models.Helpers
+namespace FileHashCraft.Models
 {
     #region 拡張子グループ
     /// <summary>
@@ -33,11 +33,11 @@ namespace FileHashCraft.Models.Helpers
         /// <summary>
         /// 拡張子グループから、該当する拡張子を取得します。
         /// </summary>
-        public HashSet<string> GetFileGroupExtention(FileGroupType type);
+        HashSet<string> GetFileGroupExtention(FileGroupType type);
         /// <summary>
         /// 拡張子がどの拡張子グループに属しているかを取得します。
         /// </summary>
-        public FileGroupType GetFileGroupFromExtention(string extention);
+        FileGroupType GetFileGroupFromExtention(string extention);
     }
 
     /// <summary>
@@ -59,8 +59,8 @@ namespace FileHashCraft.Models.Helpers
                 FileGroupType.Pictures => Resources.LabelExtentionFiles_Pictures,
                 FileGroupType.Musics => Resources.LabelExtentionFiles_Sounds,
                 FileGroupType.Documents => Resources.LabelExtentionFiles_Documents,
-                FileGroupType.Applications => Resources.LabelExtentionFiles_Applications,
                 FileGroupType.Archives => Resources.LabelExtentionFiles_Archives,
+                FileGroupType.Applications => Resources.LabelExtentionFiles_Applications,
                 FileGroupType.SourceCodes => Resources.LabelExtentionFiles_SourceCodes,
                 FileGroupType.Registrations => Resources.LabelExtentionFiles_Registrations,
                 _ => Resources.LabelExtentionFiles_OtherFiles,
@@ -80,8 +80,8 @@ namespace FileHashCraft.Models.Helpers
                 FileGroupType.Pictures => PictureFiles,
                 FileGroupType.Musics => MusicFiles,
                 FileGroupType.Documents => DocumentFiles,
-                FileGroupType.Applications => ApplicationFiles,
                 FileGroupType.Archives => ArchiveFiles,
+                FileGroupType.Applications => ApplicationFiles,
                 FileGroupType.SourceCodes => SourceCodeFiles,
                 FileGroupType.Registrations => RegistrationFiles,
                 _ => [],
@@ -99,8 +99,8 @@ namespace FileHashCraft.Models.Helpers
             if (PictureFiles.Contains(extention)) { return FileGroupType.Pictures; }
             if (MusicFiles.Contains(extention)) { return FileGroupType.Musics; }
             if (DocumentFiles.Contains(extention)) { return FileGroupType.Documents; }
-            if (ApplicationFiles.Contains(extention)) { return FileGroupType.Applications; }
             if (ArchiveFiles.Contains(extention)) { return FileGroupType.Archives; }
+            if (ApplicationFiles.Contains(extention)) { return FileGroupType.Applications; }
             if (SourceCodeFiles.Contains(extention)) { return FileGroupType.SourceCodes; }
             if (RegistrationFiles.Contains(extention)) { return FileGroupType.Registrations; }
             return FileGroupType.Others;
@@ -315,26 +315,6 @@ namespace FileHashCraft.Models.Helpers
         ];
         #endregion 主なドキュメントファイル
         /// <summary>
-        /// 主なアプリケーションファイル
-        /// </summary>
-        #region 主なアプリケーションファイル
-        private readonly HashSet<string> ApplicationFiles =
-        [
-            ".exe",
-            ".ocx",
-            ".app",
-            ".apk",
-            ".deb",
-            ".dmg",
-            ".rpm",
-            ".msi",
-            ".jar",
-            ".bat",
-            ".sh",
-            ".ps1",
-        ];
-        #endregion 主なアプリケーションファイル
-        /// <summary>
         /// 主な圧縮ファイル
         /// </summary>
         #region 主な圧縮ファイル
@@ -365,6 +345,26 @@ namespace FileHashCraft.Models.Helpers
             ".arj",
         ];
         #endregion 主な圧縮ファイル
+        /// <summary>
+        /// 主なアプリケーションファイル
+        /// </summary>
+        #region 主なアプリケーションファイル
+        private readonly HashSet<string> ApplicationFiles =
+        [
+            ".exe",
+            ".ocx",
+            ".app",
+            ".apk",
+            ".deb",
+            ".dmg",
+            ".rpm",
+            ".msi",
+            ".jar",
+            ".bat",
+            ".sh",
+            ".ps1",
+        ];
+        #endregion 主なアプリケーションファイル
         /// <summary>
         /// 主なソースコードファイル
         /// </summary>

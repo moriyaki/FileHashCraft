@@ -11,7 +11,7 @@ namespace FileHashCraft.ViewModels
     #region インターフェース
     public interface IMainWindowViewModel;
     #endregion インターフェース
-    public class MainWindowViewModel : BaseViewModel, IMainWindowViewModel
+    public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     {
         #region 初期設定
         public MainWindowViewModel() :base() { }

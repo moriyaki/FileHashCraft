@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Models.Helpers;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -48,7 +47,6 @@ namespace FileHashCraft.Models.HashCalc
             var filesDictionary = new Dictionary<string, HashSet<HashFile>>();
             foreach (var file in duplicateSizeFiles)
             {
-                DebugManager.InfoWrite($"{file.FileFullPath},{file.FileSize}");
                 var drive = Path.GetPathRoot(file.FileFullPath) ?? "";
                 if (!filesDictionary.TryGetValue(drive, out HashSet<HashFile>? value))
                 {

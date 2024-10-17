@@ -4,7 +4,6 @@
     拡張子を持つファイル数を管理します。
 */
 using System.IO;
-using FileHashCraft.Models.Helpers;
 
 namespace FileHashCraft.Models
 {
@@ -36,6 +35,20 @@ namespace FileHashCraft.Models
         /// 拡張子を全て削除する
         /// </summary>
         void ClearExtentions();
+
+        // ExtentionTypeHelperメソッド
+        /// <summary>
+        /// ファイルタイプから表示名を取得します。
+        /// </summary>
+        string GetFileGroupName(FileGroupType type);
+        /// <summary>
+        /// 拡張子グループから、該当する拡張子を取得します。
+        /// </summary>
+        HashSet<string> GetFileGroupExtention(FileGroupType type);
+        /// <summary>
+        /// 拡張子がどの拡張子グループに属しているかを取得します。
+        /// </summary>
+        FileGroupType GetFileGroupFromExtention(string extention);
     }
     #endregion インターフェース
 
@@ -85,7 +98,7 @@ namespace FileHashCraft.Models
         /// <returns>拡張子コレクション</returns>
         public IEnumerable<string> GetExtentions()
         {
-            return _extentionCountDictionary.Keys.OrderBy(key => key);
+            return _extentionCountDictionary.Keys.Order();
         }
 
         /// <summary>
@@ -109,7 +122,7 @@ namespace FileHashCraft.Models
                     FileGroupType.Registrations
                 };
 
-                foreach (var extension in _extentionCountDictionary.Keys.OrderBy(key => key))
+                foreach (var extension in _extentionCountDictionary.Keys.Order())
                 {
                     if (excludedGroups.Any(group => _extentionTypeHelper.GetFileGroupExtention(group).Contains(extension))) { continue; }
                     yield return extension;
@@ -158,5 +171,30 @@ namespace FileHashCraft.Models
         }
 
         #endregion 拡張子の管理
+
+        #region ExtentionTypeHelperメソッド
+        /// <summary>
+        /// ファイルタイプから表示名を取得します。
+        /// </summary>
+        public string GetFileGroupName(FileGroupType type)
+        {
+            return _extentionTypeHelper.GetFileGroupName(type);
+        }
+        /// <summary>
+        /// 拡張子グループから、該当する拡張子を取得します。
+        /// </summary>
+        public HashSet<string> GetFileGroupExtention(FileGroupType type)
+        {
+            return _extentionTypeHelper.GetFileGroupExtention(type);
+        }
+        /// <summary>
+        /// 拡張子がどの拡張子グループに属しているかを取得します。
+        /// </summary>
+        public FileGroupType GetFileGroupFromExtention(string extention)
+        {
+            return _extentionTypeHelper.GetFileGroupFromExtention(extention);
+        }
+
+        #endregion ExtentionTypeHelperメソッド
     }
 }

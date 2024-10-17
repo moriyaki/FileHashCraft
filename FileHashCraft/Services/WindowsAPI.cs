@@ -8,7 +8,7 @@ using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using FileHashCraft.Models.Helpers;
+using FileHashCraft.Models;
 
 namespace FileHashCraft.ViewModels.Modules
 {
