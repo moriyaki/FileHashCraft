@@ -17,6 +17,7 @@ using FileHashCraft.ViewModels.HashCalcingPage;
 using Microsoft.Extensions.DependencyInjection;
 using FileHashCraft.Models.HashCalc;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.ViewModels.DuplicateSelectPage;
 
 namespace FileHashCraft
 {
@@ -121,7 +122,7 @@ namespace FileHashCraft
             services.AddSingleton<IControDirectoryTreeViewlModel, ControDirectoryTreeViewModel>();
             services.AddTransient<IDirectoryTreeViewItemModel, DirectoryTreeViewItemModel>();
             services.AddSingleton<IDirectoryTreeManager, DirectoryTreeManager>();
-            services.AddSingleton<ICurrentDirectoryFIleSystemWatcherService, CurrentDirectoryFIleSystemWatcherService>();
+            services.AddSingleton<ICurrentDirFileSystemWatcherService, CurrentDirFileSystemWatcherService>();
             services.AddSingleton<IFileWatcherService, DrivesFileSystemWatcherService>();
 
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
@@ -137,6 +138,11 @@ namespace FileHashCraft
             services.AddSingleton<ISetExpertControlViewModel, SetExpertControlViewModel>();
 
             services.AddSingleton<IHashCalcingPageViewModel, HashCalcingPageViewModel>();
+
+            services.AddSingleton<IDuplicateSelectPageViewModel, DuplicateSelectPageViewModel>();
+            services.AddSingleton<IDupFilesDirsListBoxControlViewModel, DupFilesDirsListBoxControlViewModel>();
+            services.AddSingleton<IDupDirsFilesTreeViewControlViewModel, DupDirsFilesTreeViewControlViewModel>();
+            services.AddSingleton<IDupLinkedDirsFilesTreeViewControlViewModel, DupLinkedDirsFilesTreeViewControlViewModel>();
 
             // Model
             services.AddSingleton<IExtentionManager, ExtentionManager>();

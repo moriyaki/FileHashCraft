@@ -22,7 +22,7 @@
 
     public class FileSystemWatcherService : IFileSystemWatcherService
     {
-        private readonly ICurrentDirectoryFIleSystemWatcherService _currentDirectoryFIleSystemWatcherService;
+        private readonly ICurrentDirFileSystemWatcherService _currentDirectoryFIleSystemWatcherService;
         private readonly IFileWatcherService _drivesFileSystemWatcherService;
 
         /// <summary>
@@ -31,7 +31,7 @@
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
         public FileSystemWatcherService() { throw new NotImplementedException(nameof(FileSystemWatcherService)); }
         public FileSystemWatcherService(
-            ICurrentDirectoryFIleSystemWatcherService currentDirectoryFIleSystemWatcherService,
+            ICurrentDirFileSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IFileWatcherService drivesFileSystemWatcherService)
         {
             _currentDirectoryFIleSystemWatcherService = currentDirectoryFIleSystemWatcherService;

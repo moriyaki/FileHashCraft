@@ -48,7 +48,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         void HwndRemoveHook();
     }
     #endregion インターフェース
-    public partial class ExplorerPageViewModel : ViewModelBase, IExplorerPageViewModel
+    public partial class ExplorerPageViewModel : BaseViewModel, IExplorerPageViewModel
     {
         #region バインディング
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
@@ -311,8 +311,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     {
                         if (child.FullPath == @"E:\Videos")
                         {
+                            child.KickChild();
                             child.IsChecked = true;
-                            break;
                         }
                     }
                 }

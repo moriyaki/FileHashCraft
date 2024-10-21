@@ -9,7 +9,7 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.Services.FileSystemWatcherServices
 {
     #region インターフェース
-    public interface ICurrentDirectoryFIleSystemWatcherService
+    public interface ICurrentDirFileSystemWatcherService
     {
         /// <summary>
         /// カレントディレクトリに対してファイル変更監視の設定をします。
@@ -17,16 +17,16 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         void SetCurrentDirectoryWatcher(string currentDirectory);
     }
     #endregion インターフェース
-    public class CurrentDirectoryFIleSystemWatcherService : ICurrentDirectoryFIleSystemWatcherService
+    public class CurrentDirFileSystemWatcherService : ICurrentDirFileSystemWatcherService
     {
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        public CurrentDirectoryFIleSystemWatcherService() { throw new NotImplementedException(nameof(CurrentDirectoryFIleSystemWatcherService)); }
+        public CurrentDirFileSystemWatcherService() { throw new NotImplementedException(nameof(CurrentDirFileSystemWatcherService)); }
 
         private readonly IFileSystemServices _fileSystemServices;
-        public CurrentDirectoryFIleSystemWatcherService(
+        public CurrentDirFileSystemWatcherService(
             IFileSystemServices fileSystemServices)
         {
             _fileSystemServices = fileSystemServices;
