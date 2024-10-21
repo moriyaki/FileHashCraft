@@ -42,7 +42,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ツリービューの横幅設定をします。
         /// </summary>
-        double TreeWidth { get; set; }
+        double DirectoryTreeViewWidth { get; set; }
     }
     #endregion インターフェース
     public partial class ControDirectoryTreeViewModel : BaseViewModel, IControDirectoryTreeViewlModel
@@ -66,15 +66,15 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// カレントディレクトリのフルパス
         /// </summary>
-        private string _currentFullPath = string.Empty;
+        private string _CurrentFullPath = string.Empty;
         public string CurrentFullPath
         {
-            get => _currentFullPath;
+            get => _CurrentFullPath;
             set
             {
-                if (_currentFullPath != value)
+                if (_CurrentFullPath != value)
                 {
-                    SetProperty(ref _currentFullPath, value);
+                    SetProperty(ref _CurrentFullPath, value);
                     // カレントディレクトリを TreeView の選択状態に反映
                     FolderSelectedChanged(value);
                     // カレントディレクトリ変更のメッセージ発信
@@ -85,15 +85,15 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// ツリービュー横幅の設定
         /// </summary>
-        private double _treeWidth;
-        public double TreeWidth
+        private double _DirectoryTreeViewWidth;
+        public double DirectoryTreeViewWidth
         {
-            get => _treeWidth;
+            get => _DirectoryTreeViewWidth;
             set
             {
-                if (_treeWidth == value) { return; }
-                SetProperty(ref _treeWidth, value);
-                _settingsService.SendTreeWidth(value);
+                if (_DirectoryTreeViewWidth == value) { return; }
+                SetProperty(ref _DirectoryTreeViewWidth, value);
+                _settingsService.SendDirectoriesTreeViewWidth(value);
             }
         }
         #endregion バインディング
@@ -131,8 +131,8 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             });
 
             // ツリービュー幅変更
-            _messenger.Register<TreeWidthChangedMessage>(this, (_, m)
-                => TreeWidth = m.TreeWidth);
+            _messenger.Register<DirectoriesTreeViewWidthChangedMessage>(this, (_, m)
+                => DirectoryTreeViewWidth = m.DirectoriesTreeViewWidth);
 
             foreach (var root in SpecialFolderAndRootDrives.ScanDrives())
             {
@@ -163,7 +163,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             _messenger.Register<TreeViewIsCheckBoxVisible>(this, (_, m)
                 => m.Reply(IsCheckBoxVisible));
 
-            _treeWidth = _settingsService.TreeWidth;
+            _DirectoryTreeViewWidth = _settingsService.DirectoriesTreeViewWidth;
         }
 
         /// <summary>

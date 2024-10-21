@@ -32,7 +32,7 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ツリービューの幅
         /// </summary>
-        double TreeWidth { get; }
+        double DirectoriesTreeViewWidth { get; }
         /// <summary>
         /// リストボックスの幅
         /// </summary>
@@ -105,11 +105,11 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ツリービューの幅を設定します。
         /// </summary>
-        void SendTreeWidth(double width);
+        void SendDirectoriesTreeViewWidth(double width);
         /// <summary>
         /// リストボックスの幅を設定します。
         /// </summary>
-        void SendListWidth(double width);
+        void SendFilesListBoxWidth(double width);
         /// <summary>
         /// 利用言語を設定します。
         /// </summary>
@@ -175,8 +175,8 @@ namespace FileHashCraft.Services
             SendWindowLeft(Left);
             SendWindowWidth(Width);
             SendWindowHeight(Height);
-            SendTreeWidth(TreeWidth);
-            SendListWidth(ListWidth);
+            SendDirectoriesTreeViewWidth(DirectoriesTreeViewWidth);
+            SendFilesListBoxWidth(ListWidth);
             SendLanguage(SelectedLanguage);
             SendHashAlogrithm(HashAlgorithm);
             SendReadOnlyFileInclude(IsReadOnlyFileInclude);
@@ -191,8 +191,8 @@ namespace FileHashCraft.Services
             _messenger.Register<WindowWidthChangedMessage>(this, (_, m) => Width = m.Width);
             _messenger.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
 
-            _messenger.Register<TreeWidthChangedMessage>(this, (_, m) => TreeWidth = m.TreeWidth);
-            _messenger.Register<ListWidthChangedMessage>(this, (_, m) => ListWidth = m.ListWidth);
+            _messenger.Register<DirectoriesTreeViewWidthChangedMessage>(this, (_, m) => DirectoriesTreeViewWidth = m.DirectoriesTreeViewWidth);
+            _messenger.Register<FilesListBoxWidthChangedMessage>(this, (_, m) => ListWidth = m.FilesListBoxWidth);
 
             _messenger.Register<SelectedLanguageChangedMessage>(this, (_, m) => SelectedLanguage = m.SelectedLanguage);
             _messenger.Register<HashAlgorithmChangedMessage>(this, (_, m) => HashAlgorithm = m.HashAlgorithm);
@@ -271,15 +271,15 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ツリービューの幅
         /// </summary>
-        private double _TreeWidth = 300d;
-        public double TreeWidth
+        private double _DirectoriesTreeViewWidth = 300d;
+        public double DirectoriesTreeViewWidth
         {
-            get => _TreeWidth;
+            get => _DirectoriesTreeViewWidth;
             set
             {
-                if (value == _TreeWidth) { return; }
-                _TreeWidth = value;
-                SendTreeWidth(value);
+                if (value == _DirectoriesTreeViewWidth) { return; }
+                _DirectoriesTreeViewWidth = value;
+                SendDirectoriesTreeViewWidth(value);
                 SaveSettings();
             }
         }
@@ -295,7 +295,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _ListWidth) { return; }
                 _ListWidth = value;
-                SendListWidth(value);
+                SendFilesListBoxWidth(value);
                 SaveSettings();
             }
         }
@@ -489,7 +489,7 @@ namespace FileHashCraft.Services
                         Left = Convert.ToDouble(root.Element("Left")?.Value);
                         Width = Convert.ToDouble(root.Element("Width")?.Value);
                         Height = Convert.ToDouble(root.Element("Height")?.Value);
-                        TreeWidth = Convert.ToDouble(root.Element("TreeWidth")?.Value);
+                        DirectoriesTreeViewWidth = Convert.ToDouble(root.Element("TreeWidth")?.Value);
                         ListWidth = Convert.ToDouble(root.Element("ListWidth")?.Value);
                         IsReadOnlyFileInclude = Convert.ToBoolean(root.Element("IsReadOnlyFileInclude")?.Value);
                         IsHiddenFileInclude = Convert.ToBoolean(root.Element("IsHiddenFileInclude")?.Value);
@@ -522,7 +522,7 @@ namespace FileHashCraft.Services
                         new XElement("Left", Left),
                         new XElement("Width", Width),
                         new XElement("Height", Height),
-                        new XElement("TreeWidth", TreeWidth),
+                        new XElement("TreeWidth", DirectoriesTreeViewWidth),
                         new XElement("ListWidth", ListWidth),
                         new XElement("IsReadOnlyFileInclude", IsReadOnlyFileInclude),
                         new XElement("IsHiddenFileInclude", IsHiddenFileInclude),
@@ -586,20 +586,20 @@ namespace FileHashCraft.Services
             _messenger.Send(new WindowHeightChangedMessage(height));
         }
         /// <summary>
-        /// ツリービューの幅を設定します。
+        /// ディレクトリツリービューの幅を設定します。
         /// </summary>
-        /// <param name="width">ツリービューの幅</param>
-        public void SendTreeWidth(double width)
+        /// <param name="directoriesTreeViewWidth">ツリービューの幅</param>
+        public void SendDirectoriesTreeViewWidth(double directoriesTreeViewWidth)
         {
-            _messenger.Send(new TreeWidthChangedMessage(width));
+            _messenger.Send(new DirectoriesTreeViewWidthChangedMessage(directoriesTreeViewWidth));
         }
         /// <summary>
-        /// リストボックスの幅を設定します。
+        /// ファイル一覧リストボックスの幅を設定します。
         /// </summary>
-        /// <param name="width">リストボックスの幅</param>
-        public void SendListWidth(double width)
+        /// <param name="filesListBoxWidth">リストボックスの幅</param>
+        public void SendFilesListBoxWidth(double filesListBoxWidth)
         {
-            _messenger.Send(new ListWidthChangedMessage(width));
+            _messenger.Send(new FilesListBoxWidthChangedMessage(filesListBoxWidth));
         }
         /// <summary>
         /// 利用言語を設定します。

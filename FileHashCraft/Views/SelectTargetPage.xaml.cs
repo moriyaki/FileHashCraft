@@ -48,7 +48,7 @@ namespace FileHashCraft.Views
         private void GridSplitter_TreeDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             var explorerTree = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlModel));
-            explorerTree.TreeWidth = HashTargetTreeView.ActualWidth;
+            explorerTree.DirectoryTreeViewWidth = HashTargetTreeView.ActualWidth;
         }
         /// <summary>
         /// リストボックスのスプリッタが移動された時、ListBoxの横幅を設定します。

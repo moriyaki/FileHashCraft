@@ -43,26 +43,26 @@ namespace FileHashCraft.Services.Messages
         public WindowHeightChangedMessage(double height) => Height = height;
     }
     /// <summary>
-    /// ツリービュー幅の変更メッセージ
+    /// ディレクトリツリービュー幅の変更メッセージ
     /// </summary>
-    public class TreeWidthChangedMessage
+    public class DirectoriesTreeViewWidthChangedMessage
     {
-        public double TreeWidth { get; }
+        public double DirectoriesTreeViewWidth { get; }
 
-        public TreeWidthChangedMessage() { throw new NotImplementedException(nameof(TreeWidthChangedMessage)); }
+        public DirectoriesTreeViewWidthChangedMessage() { throw new NotImplementedException(nameof(DirectoriesTreeViewWidthChangedMessage)); }
 
-        public TreeWidthChangedMessage(double treeWidth) => TreeWidth = treeWidth;
+        public DirectoriesTreeViewWidthChangedMessage(double treeViewWidth) => DirectoriesTreeViewWidth = treeViewWidth;
     }
     /// <summary>
-    /// リストボックス幅の変更メッセージ
+    /// ファイル一覧リストボックス幅の変更メッセージ
     /// </summary>
-    public class ListWidthChangedMessage
+    public class FilesListBoxWidthChangedMessage
     {
-        public double ListWidth { get; }
+        public double FilesListBoxWidth { get; }
 
-        public ListWidthChangedMessage() { throw new NotImplementedException(nameof(ListWidthChangedMessage)); }
+        public FilesListBoxWidthChangedMessage() { throw new NotImplementedException(nameof(FilesListBoxWidthChangedMessage)); }
 
-        public ListWidthChangedMessage(double listWidth) => ListWidth = listWidth;
+        public FilesListBoxWidthChangedMessage(double filesListBoxWidth) => FilesListBoxWidth = filesListBoxWidth;
     }
     /// <summary>
     /// 選択されている言語変更のメッセージ

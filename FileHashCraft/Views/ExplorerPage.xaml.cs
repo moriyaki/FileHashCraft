@@ -81,7 +81,7 @@ namespace FileHashCraft.Views
             var controlTree = Ioc.Default.GetService<IControDirectoryTreeViewlModel>();
             if (controlTree == null) { throw new NullReferenceException(nameof(controlTree)); }
 
-            controlTree.TreeWidth = ExplorerTreeView.ActualWidth;
+            controlTree.DirectoryTreeViewWidth = ExplorerTreeView.ActualWidth;
         }
     }
 }
