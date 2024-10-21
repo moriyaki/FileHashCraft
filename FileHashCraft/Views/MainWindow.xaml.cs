@@ -78,18 +78,27 @@ namespace FileHashCraft
         {
             if (e.Content is ExplorerPage)
             {
-                var pageExplorer = Ioc.Default.GetService<IExplorerPageViewModel>();
+                var pageExplorer = Ioc.Default.GetService<IExplorerPageViewModel>() ?? throw new NullReferenceException(nameof(IExplorerPageViewModel));
                 pageExplorer?.Initialize();
+                return;
             }
             if (e.Content is SelectTargetPage)
             {
-                var targetFileSetting = Ioc.Default.GetService<ISelectTargetPageViewModel>();
-                targetFileSetting?.Initialize();
+                var targetFileSetting = Ioc.Default.GetService<ISelectTargetPageViewModel>() ?? throw new NullReferenceException(nameof(ISelectTargetPageViewModel));
+                targetFileSetting.Initialize();
+                return;
             }
             if (e.Content is HashCalcingPage)
             {
-                var hashCalcing = Ioc.Default.GetService<IHashCalcingPageViewModel>();
-                hashCalcing?.Initialize();
+                var hashCalcing = Ioc.Default.GetService<IHashCalcingPageViewModel>() ?? throw new NullReferenceException(nameof(IHashCalcingPageViewModel));
+                hashCalcing.Initialize();
+                return;
+            }
+            if (e.Content is DuplicateSelectPage)
+            {
+                var dupSelect = Ioc.Default.GetService<IDuplicateSelectPageViewModel>() ?? throw new NullReferenceException(nameof(IDuplicateSelectPageViewModel));
+                dupSelect.Initialize();
+                return;
             }
         }
 

@@ -135,11 +135,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
     {
         #region バインディング
         /// <summary>
-        /// PageSelectTargetViewModelのメインViewModel
-        /// </summary>
-        //public IShowTargetInfoUserControlViewModel ViewModelMain { get; }
-
-        /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
         public ISetExtentionControlViewModel ViewModelExtention { get; }

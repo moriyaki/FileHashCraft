@@ -9,10 +9,22 @@ namespace FileHashCraft.Models.DupSelectAndDelete
 {
     public interface IDupFilesManager
     {
+        /// <summary>
+        /// 重複ファイルがあるディレクトリを取得する
+        /// </summary>
+        HashSet<string> GetDirectories();
+        /// <summary>
+        /// 重複ファイルのハッシュを取得する
+        /// </summary>
+        HashSet<string> GetHashes();
+        /// <summary>
+        /// 重複ファイルがあるファイルを一括で追加する
+        /// </summary>
         void AddDuplicateFiles(HashSet<HashFile> files);
     }
     public class DupFilesManager : IDupFilesManager
     {
+        #region メンバ
         /// <summary>
         /// ディレクトリごとのHashFileディクショナリ
         /// </summary>
@@ -22,6 +34,27 @@ namespace FileHashCraft.Models.DupSelectAndDelete
         /// ハッシュごとのHashFileディクショナリ
         /// </summary>
         private readonly Dictionary<string, HashSet<HashFile>> _dupHashFiles = [];
+        #endregion メンバ
+
+        #region 取得メソッド
+        /// <summary>
+        /// 重複ファイルがあるディレクトリを取得する
+        /// </summary>
+        /// <returns>重複ファイルがあるディレクトリHashSet</returns>
+        public HashSet<string> GetDirectories()
+        {
+            return [.. _dicectoryFiles.Keys];
+        }
+
+        /// <summary>
+        /// 重複ファイルのハッシュを取得する
+        /// </summary>
+        /// <returns>重複ファイルのハッシュHashSet</returns>
+        public HashSet<string> GetHashes()
+        {
+            return [.. _dupHashFiles.Keys];
+        }
+        #endregion 取得メソッド
 
         /// <summary>
         /// 重複ファイルがあるファイルを一括で追加する

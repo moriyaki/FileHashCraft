@@ -5,11 +5,13 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Models.DupSelectAndDelete;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.HashCalc;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
+using FileHashCraft.Views;
 
 namespace FileHashCraft.ViewModels.HashCalcingPage
 {
@@ -162,14 +164,18 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// ファイル選択画面に戻ります。
         /// </summary>
         public RelayCommand ToSelectTargetPage { get; set; }
+        /// <summary>
+        /// 重複ファイル削除画面に移動します。
+        /// </summary>
+        public RelayCommand ToDupDeletePage { get; set; }
         #endregion バインディング
 
-        #region コンストラクタ
-        private readonly IFileHashCalc _FileHashCalc;
-        private readonly IScannedFilesManager _ScannedFilesManager;
-        private readonly IHelpWindowViewModel _HelpWindowViewModel;
-        private readonly IFileSystemServices _FileSystemServices;
-        private readonly IDuplicateFilesManager _DuplicateFilesManager;
+        #region コンストラクタと初期化
+        private readonly IFileHashCalc _fileHashCalc;
+        private readonly IScannedFilesManager _scannedFilesManager;
+        private readonly IHelpWindowViewModel _helpWindowViewModel;
+        private readonly IFileSystemServices _fileSystemServices;
+        private readonly IDupFilesManager _duplicateFilesManager;
 
         public HashCalcingPageViewModel(
             IMessenger messenger,
@@ -178,20 +184,20 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             IHelpWindowViewModel helpWindowViewModel,
             IScannedFilesManager scannedFilesManager,
             IFileSystemServices fileSystemServices,
-            IDuplicateFilesManager duplicateFilesManager
+            IDupFilesManager duplicateFilesManager
         ) : base(messenger, settingsService)
         {
-            _FileHashCalc = fileHashCalc;
-            _ScannedFilesManager = scannedFilesManager;
-            _FileSystemServices = fileSystemServices;
-            _HelpWindowViewModel = helpWindowViewModel;
-            _DuplicateFilesManager = duplicateFilesManager;
+            _fileHashCalc = fileHashCalc;
+            _scannedFilesManager = scannedFilesManager;
+            _fileSystemServices = fileSystemServices;
+            _helpWindowViewModel = helpWindowViewModel;
+            _duplicateFilesManager = duplicateFilesManager;
 
             HashAlgorithm = _settingsService.HashAlgorithm;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
-                _FileSystemServices.NavigateToSettingsPage(ReturnPageEnum.HashCalcingPage));
+                _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.HashCalcingPage));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -204,18 +210,23 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             {
                 var helpWindow = new Views.HelpWindow();
                 helpWindow.Show();
-                _HelpWindowViewModel.Initialize(HelpPage.Index);
+                _helpWindowViewModel.Initialize(HelpPage.Index);
             });
             // ファイル選択画面に戻るコマンド
             ToSelectTargetPage = new RelayCommand(() =>
-                _FileSystemServices.NavigateToSelectTargetPage());
+                _fileSystemServices.NavigateToSelectTargetPage());
+
+            ToDupDeletePage = new RelayCommand(
+                () => _fileSystemServices.NavigateToDuplicateSelectPage(),
+                () => MatchHashCount > 0
+            );
 
             // ドライブの追加
             _messenger.Register<CalcingDriveMessage>(this, (_, m) =>
             {
                 foreach (var drive in m.Drives)
                 {
-                    App.Current?.Dispatcher?.Invoke(() => CalcingFiles.Add(drive));
+                    App.Current?.Dispatcher?.Invoke(() => CalcingFiles.Add(drive + " All Finished."));
                 }
             });
 
@@ -237,6 +248,8 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             // ハッシュ計算を終了したメッセージ
             _messenger.Register<EndCalcingFileMessage>(this, (_, m) =>
             {
+                if (string.IsNullOrEmpty(m.CalcingFile)) { return; }
+
                 var drive = Path.GetPathRoot(m.CalcingFile) ?? "";
                 for (int i = 0; i < CalcingFiles.Count; i++)
                 {
@@ -248,8 +261,9 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                 }
             });
 
-            _messenger.Register<AllCalcingFinishedMessage>(this, (_, _) =>
-                App.Current?.Dispatcher?.Invoke(() => _FileSystemServices.NavigateToDuplicateSelectPage()));
+            // ハッシュ計算全終了メッセージ
+            _messenger.Register<FinishedCalcingFileMessage>(this, (_, _)
+                => HashGotFileCount = AllHashNeedToGetFilesCount);
         }
 
         /// <summary>
@@ -260,14 +274,14 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             CalcingFiles.Clear();
             Task.Run(async () =>
             {
-                AllTargetFilesCount = _ScannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude).Count;
+                AllTargetFilesCount = _scannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude).Count;
                 Status = FileHashCalcStatus.FileCalcing;
-                var dupFileCandidate = _FileHashCalc.GetHashDriveFiles();
+                var dupFileCandidate = _fileHashCalc.GetHashDriveFiles();
                 foreach (var fileInDrive in dupFileCandidate)
                 {
                     AllHashNeedToGetFilesCount += fileInDrive.Value.Count;
                 }
-                await _FileHashCalc.ProcessGetHashFilesAsync(dupFileCandidate);
+                await _fileHashCalc.ProcessGetHashFilesAsync(dupFileCandidate);
                 App.Current?.Dispatcher?.Invoke(() => Status = FileHashCalcStatus.FileMatching);
 
                 var sameFiles = dupFileCandidate.Values
@@ -277,18 +291,15 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                     .SelectMany(g => g)
                     .ToHashSet();
 
+                _duplicateFilesManager.AddDuplicateFiles(sameFiles);
                 App.Current?.Dispatcher?.Invoke(() =>
                 {
                     Status = FileHashCalcStatus.Finished;
                     MatchHashCount = sameFiles.Count;
+                    ToDupDeletePage.NotifyCanExecuteChanged();
                 });
-
-                _DuplicateFilesManager.AddSameFiles(sameFiles);
-
-                App.Current?.Dispatcher?.Invoke(() =>
-                    _FileSystemServices.NavigateToDuplicateSelectPage());
             });
         }
-        #endregion コンストラクタ
+        #endregion コンストラクタと初期化
     }
 }

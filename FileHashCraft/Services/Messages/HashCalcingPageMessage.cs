@@ -42,7 +42,7 @@
     }
 
     /// <summary>
-    /// 全てのファイルハッシュ計算終了メッセージ
+    /// 全てのファイルハッシュ計算終了の送信メッセージ
     /// </summary>
-    public class AllCalcingFinishedMessage;
+    public class FinishedCalcingFileMessage;
 }

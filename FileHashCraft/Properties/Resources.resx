@@ -537,4 +537,8 @@
     <value>Delete</value>
     <comment>Button/DuplicateSelectPage</comment>
   </data>
+  <data name="ButtonDupDelete" xml:space="preserve">
+    <value>Delete duplicate files</value>
+    <comment>Button/HashCalcingPage</comment>
+  </data>
 </root>

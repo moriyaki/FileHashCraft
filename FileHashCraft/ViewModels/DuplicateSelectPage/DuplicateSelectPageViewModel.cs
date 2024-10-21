@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.DuplicateSelectPage
 {
-    public interface IDuplicateSelectPageViewModel;
+    public interface IDuplicateSelectPageViewModel
+    {
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        void Initialize();
+    }
     public class DuplicateSelectPageViewModel : BaseViewModel, IDuplicateSelectPageViewModel
     {
         #region バインディング
@@ -53,6 +54,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         #endregion バインディング
 
         #region コンストラクタ
+        private readonly IDupFilesDirsListBoxControlViewModel _dupDirsFilesTreeViewControlViewModel;
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
 
@@ -61,10 +63,12 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         public DuplicateSelectPageViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
+            IDupFilesDirsListBoxControlViewModel dupFilesDirsListBoxControlViewModel,
             IFileSystemServices fileSystemServices,
             IHelpWindowViewModel helpWindowViewModel
         ) : base(messenger, settingsService)
         {
+            _dupDirsFilesTreeViewControlViewModel = dupFilesDirsListBoxControlViewModel;
             _fileSystemServices = fileSystemServices;
             _helpWindowViewModel = helpWindowViewModel;
 
@@ -92,6 +96,14 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
 
             ToSelectTargetPage = new RelayCommand(() =>
                 _fileSystemServices.NavigateToSelectTargetPage());
+        }
+
+        /// <summary>
+        /// 初期化処理
+        /// </summary>
+        public void Initialize()
+        {
+            _dupDirsFilesTreeViewControlViewModel.Initialize();
         }
         #endregion コンストラクタ
     }

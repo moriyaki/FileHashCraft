@@ -88,6 +88,15 @@ namespace FileHashCraft.Properties {
         }
         
         /// <summary>
+        ///   Delete duplicate files に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ButtonDupDelete {
+            get {
+                return ResourceManager.GetString("ButtonDupDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Execute Command に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ButtonExecuteCommand {

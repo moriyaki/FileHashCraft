@@ -536,4 +536,7 @@
   <data name="ButtonDelete" xml:space="preserve">
     <value>削除</value>
   </data>
+  <data name="ButtonDupDelete" xml:space="preserve">
+    <value>重複ファイル削除</value>
+  </data>
 </root>

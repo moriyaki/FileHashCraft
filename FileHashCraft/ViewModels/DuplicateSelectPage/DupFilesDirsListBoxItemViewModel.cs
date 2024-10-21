@@ -1,11 +1,10 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using FileHashCraft.Models.FileScan;
-using FileHashCraft.Models;
-using FileHashCraft.Services.Messages;
 using FileHashCraft.Services;
-using System.Windows.Media;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels.DuplicateSelectPage
 {
@@ -62,15 +61,10 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         protected readonly IMessenger _messenger;
         protected readonly ISettingsService _settingsService;
 
-        public DupFilesDirsListBoxItemViewModel() { throw new NotImplementedException(nameof(DupFilesDirsListBoxItemViewModel)); }
-
-        public DupFilesDirsListBoxItemViewModel(
-            IMessenger messenger,
-            ISettingsService settingsService
-        )
+        public DupFilesDirsListBoxItemViewModel()
         {
-            _messenger = messenger;
-            _settingsService = settingsService;
+            _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new NotImplementedException(nameof(IMessenger));
+            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new NotImplementedException(nameof(ISettingsService));
 
             // フォント変更メッセージ受信
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);

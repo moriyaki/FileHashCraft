@@ -8,23 +8,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding DuplicateDirectoryCollection}">
+        <ListBox x:Name="checkBoxTypeListBox" 
+                 ItemsSource="{Binding DuplicateDirectoryCollection}" 
+                 SelectedIndex="{Binding SelectedDuplicateDirectoryIndex, Mode=TwoWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
                         <Label VerticalAlignment="Center" Padding="0"
-                                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                                   Content="{Binding DuplicateDirectory, Mode=OneWay}">
-                            <Label.InputBindings>
-                                <MouseBinding Command="{Binding DataContext.DuplicateDirectoryClickedCommand, ElementName=checkBoxTypeListBox}"
-                                              CommandParameter="{Binding}" MouseAction="LeftClick"/>
-                            </Label.InputBindings>
-                        </Label>
+                               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                               Content="{Binding DuplicateDirectory, Mode=OneWay}" HorizontalAlignment="Stretch"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-
     </Grid>
 </UserControl>

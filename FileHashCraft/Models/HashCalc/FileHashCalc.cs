@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
-using System.Security.Policy;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
@@ -72,7 +71,7 @@ namespace FileHashCraft.Models.HashCalc
             var tasks = filesDictionary.Select(async drive =>
             {
                 await semaphone.WaitAsync();
-                var beforeFilePath = string.Empty;
+                var filePath = string.Empty;
                 try
                 {
                     foreach (var file in drive.Value)
@@ -90,12 +89,9 @@ namespace FileHashCraft.Models.HashCalc
                                 case "SHA-512":
                                     if (file.HashAlgorithm == FileHashAlgorithm.SHA512) continue;
                                     break;
-                                default:
-                                    break;
                             }
                         }
 
-                        _messenger.Send(new StartCalcingFileMessage(file.FileFullPath));
                         using HashAlgorithm hashAlgorithm = _settingsService.HashAlgorithm switch
                         {
                             "SHA-256" => SHA256.Create(),
@@ -104,6 +100,7 @@ namespace FileHashCraft.Models.HashCalc
                             _ => SHA256.Create(),
                         };
 
+                        _messenger.Send(new StartCalcingFileMessage(file.FileFullPath));
                         var hash = await CalculateHashFileAsync(file.FileFullPath, hashAlgorithm);
                         if (string.IsNullOrEmpty(hash)) { continue; }
 
@@ -116,18 +113,18 @@ namespace FileHashCraft.Models.HashCalc
                         };
 
                         file.FileHash = hash;
-                        beforeFilePath = file.FileFullPath;
+                        filePath = file.FileFullPath;
                     }
                 }
                 finally
                 {
-                    _messenger.Send(new EndCalcingFileMessage(beforeFilePath));
+                    _messenger.Send(new EndCalcingFileMessage(filePath));
                     semaphone.Release();
                 }
             }).ToList();
 
             await Task.WhenAll(tasks);
-            _messenger.Send(new AllCalcingFinishedMessage());
+            _messenger.Send(new FinishedCalcingFileMessage());
         }
 
         /// <summary>
