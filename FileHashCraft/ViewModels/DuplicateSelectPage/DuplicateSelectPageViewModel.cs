@@ -26,7 +26,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 if (_DupDirsFilesTreeViewWidth == value) return;
                 SetProperty(ref _DupDirsFilesTreeViewWidth, value);
-                _settingsService.SendDupDirsFilesTreeViewWidth(value);
+                _settingsService.DupDirsFilesTreeViewWidth = value;
             }
         }
 

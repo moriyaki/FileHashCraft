@@ -32,27 +32,27 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ディレクトリツリービューの幅
         /// </summary>
-        double DirectoriesTreeViewWidth { get; }
+        double DirectoriesTreeViewWidth { get; set; }
         /// <summary>
         /// ファイル一覧リストボックスの幅
         /// </summary>
-        double FilesListViewWidth { get; }
+        double FilesListBoxWidth { get; set; }
         /// <summary>
         /// 重複ファイルを含むフォルダのリストボックスの幅
         /// </summary>
-        double DupFilesDirsListBoxWidth { get; }
+        double DupFilesDirsListBoxWidth { get; set; }
         /// <summary>
         /// 重複ファイルとフォルダのツリービューの幅
         /// </summary>
-        double DupDirsFilesTreeViewWidth { get; }
+        double DupDirsFilesTreeViewWidth { get; set; }
         /// <summary>
         /// 選択されている言語
         /// </summary>
-        string SelectedLanguage { get; }
+        string SelectedLanguage { get; set; }
         /// <summary>
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
-        string HashAlgorithm { get; }
+        string HashAlgorithm { get; set; }
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
@@ -95,50 +95,6 @@ namespace FileHashCraft.Services
         /// </summary>
         void LoadSettings();
         /// <summary>
-        /// ツリービューの幅を設定します。
-        /// </summary>
-        void SendDirectoriesTreeViewWidth(double width);
-        /// <summary>
-        /// リストボックスの幅を設定します。
-        /// </summary>
-        void SendFilesListBoxWidth(double width);
-        /// <summary>
-        /// 重複ファイルを含むファイル一覧リストボックスの幅を変更します。
-        /// </summary>
-        void SendDupFilesDirsListBoxWidth(double dupFilesDirsListBoxWidth);
-        /// <summary>
-        /// 重複ファイルのツリービューの幅を変更します。
-        /// </summary>
-        void SendDupDirsFilesTreeViewWidth(double dupDirsFilesTreeViewWidth);
-        /// <summary>
-        /// 利用言語を設定します。
-        /// </summary>
-        void SendLanguage(string language);
-        /// <summary>
-        /// ファイルのハッシュアルゴリズムを設定します。
-        /// </summary>
-        void SendHashAlogrithm(string hashAlogrithm);
-        /// <summary>
-        /// 削除対象に読み取り専用ファイルを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="readOnlyFileInclude">読み取り専用ファイルを含むかどうか</param>
-        void SendReadOnlyFileInclude(bool readOnlyFileInclude);
-        /// <summary>
-        /// 削除対象に隠しファイルを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="hiddenFileInclude">隠しファイルを含むかどうか</param>
-        void SendHiddenFileInclude(bool hiddenFileInclude);
-        /// <summary>
-        /// 削除対象に0サイズのファイルを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="zeroSizeFileDelete">0サイズファイルを含むかどうか</param>
-        void SendZeroSizeFileDelete(bool zeroSizeFileDelete);
-        /// <summary>
-        /// 削除対象に空のディレクトリを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="emptyDirectoryDelete">空のディレクトリを含むかどうか</param>
-        void SendEmptyDirectoryDelete(bool emptyDirectoryDelete);
-        /// <summary>
         /// フォントを設定します
         /// </summary>
         void SendCurrentFont(FontFamily font);
@@ -171,38 +127,8 @@ namespace FileHashCraft.Services
             _HashAlgorithm = _hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
             LoadSettings();
 
-            SendWindowTop(Top);
-            SendWindowLeft(Left);
-            SendWindowWidth(Width);
-            SendWindowHeight(Height);
-            SendDirectoriesTreeViewWidth(DirectoriesTreeViewWidth);
-            SendFilesListBoxWidth(FilesListViewWidth);
-            SendLanguage(SelectedLanguage);
-            SendHashAlogrithm(HashAlgorithm);
-            SendReadOnlyFileInclude(IsReadOnlyFileInclude);
-            SendHiddenFileInclude(IsHiddenFileInclude);
-            SendZeroSizeFileDelete(IsZeroSizeFileDelete);
-            SendEmptyDirectoryDelete(IsEmptyDirectoryDelete);
             SendCurrentFont(CurrentFont);
             SendFontSize(FontSize);
-
-            _messenger.Register<WindowTopChangedMessage>(this, (_, m) => Top = m.Top);
-            _messenger.Register<WindowLeftChangedMessage>(this, (_, m) => Left = m.Left);
-            _messenger.Register<WindowWidthChangedMessage>(this, (_, m) => Width = m.Width);
-            _messenger.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
-
-            _messenger.Register<DirectoriesTreeViewWidthChangedMessage>(this, (_, m) => DirectoriesTreeViewWidth = m.DirectoriesTreeViewWidth);
-            _messenger.Register<FilesListBoxWidthChangedMessage>(this, (_, m) => FilesListViewWidth = m.FilesListBoxWidth);
-            _messenger.Register<DupFilesDirsListBoxWidthMessage>(this, (_, m) => DupFilesDirsListBoxWidth = m.DupFilesDirsListBoxWidth);
-            _messenger.Register<DupDirsFilesTreeViewWidthMessage>(this, (_, m) => _ = m.DupDirsFilesTreeViewWidth);
-
-            _messenger.Register<SelectedLanguageChangedMessage>(this, (_, m) => SelectedLanguage = m.SelectedLanguage);
-            _messenger.Register<HashAlgorithmChangedMessage>(this, (_, m) => HashAlgorithm = m.HashAlgorithm);
-
-            _messenger.Register<ReadOnlyFileIncludeChangedMessage>(this, (_, m) => IsReadOnlyFileInclude = m.ReadOnlyFileInclude);
-            _messenger.Register<HiddenFileIncludeChangedMessage>(this, (_, m) => IsHiddenFileInclude = m.HiddenFileInclude);
-            _messenger.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m) => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
-            _messenger.Register<EmptyDirectoryDeleteChangedMessage>(this, (_, m) => IsEmptyDirectoryDelete = m.EmptyDirectoryDelete);
 
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFont = m.CurrentFontFamily);
             _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
@@ -281,7 +207,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _DirectoriesTreeViewWidth) { return; }
                 _DirectoriesTreeViewWidth = value;
-                SendDirectoriesTreeViewWidth(value);
                 SaveSettings();
             }
         }
@@ -289,15 +214,14 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ファイル一覧リストボックスの幅
         /// </summary>
-        private double _FilesListViewWidth = 300d;
-        public double FilesListViewWidth
+        private double _FilesListBoxWidth = 300d;
+        public double FilesListBoxWidth
         {
-            get => _FilesListViewWidth;
+            get => _FilesListBoxWidth;
             set
             {
-                if (value == _FilesListViewWidth) { return; }
-                _FilesListViewWidth = value;
-                SendFilesListBoxWidth(value);
+                if (value == _FilesListBoxWidth) { return; }
+                _FilesListBoxWidth = value;
                 SaveSettings();
             }
         }
@@ -313,7 +237,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _DupFilesDirsListBoxWidth) { return; }
                 _DupFilesDirsListBoxWidth = value;
-                SendDupFilesDirsListBoxWidth(value);
                 SaveSettings();
             }
         }
@@ -326,7 +249,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _DupDirsFilesTreeViewWidth) { return; }
                 _DupDirsFilesTreeViewWidth = value;
-                SendDupDirsFilesTreeViewWidth(value);
                 SaveSettings();
             }
         }
@@ -344,7 +266,6 @@ namespace FileHashCraft.Services
                 _SelectedLanguage = value;
                 ResourceService.Current.ChangeCulture(value);
                 OnPropertyChanged("Resources");
-                SendLanguage(value);
                 SaveSettings();
             }
         }
@@ -360,7 +281,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _HashAlgorithm) { return; }
                 _HashAlgorithm = value;
-                SendHashAlogrithm(value);
                 SaveSettings();
             }
         }
@@ -375,7 +295,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsReadOnlyFileInclude) return;
                 _IsReadOnlyFileInclude = value;
-                SendReadOnlyFileInclude(value);
                 SaveSettings();
             }
         }
@@ -391,7 +310,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsHiddenFileInclude) return;
                 _IsHiddenFileInclude = value;
-                SendHiddenFileInclude(value);
                 SaveSettings();
             }
         }
@@ -407,7 +325,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsZeroSizeFileDelete) return;
                 _IsZeroSizeFileDelete = value;
-                SendZeroSizeFileDelete(value);
                 SaveSettings();
             }
         }
@@ -423,7 +340,6 @@ namespace FileHashCraft.Services
             {
                 if (value == _IsEmptyDirectoryDelete) return;
                 _IsEmptyDirectoryDelete = value;
-                SendEmptyDirectoryDelete(value);
                 SaveSettings();
             }
         }
@@ -440,7 +356,6 @@ namespace FileHashCraft.Services
             {
                 if (value.Source == _CurrentFont.Source) { return; }
                 _CurrentFont = value;
-                SendCurrentFont(value);
                 SaveSettings();
             }
         }
@@ -523,7 +438,7 @@ namespace FileHashCraft.Services
                         DirectoriesTreeViewWidth = Convert.ToDouble(root.Element("DirectoriesTreeViewWidth")?.Value);
                         DupFilesDirsListBoxWidth = Convert.ToDouble(root.Element("DupFilesDirsListBoxWidth")?.Value);
                         DupDirsFilesTreeViewWidth = Convert.ToDouble(root.Element("DupDirsFilesTreeViewWidth")?.Value);
-                        FilesListViewWidth = Convert.ToDouble(root.Element("FilesListViewWidth")?.Value);
+                        FilesListBoxWidth = Convert.ToDouble(root.Element("FilesListViewWidth")?.Value);
                         IsReadOnlyFileInclude = Convert.ToBoolean(root.Element("IsReadOnlyFileInclude")?.Value);
                         IsHiddenFileInclude = Convert.ToBoolean(root.Element("IsHiddenFileInclude")?.Value);
                         IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
@@ -560,7 +475,7 @@ namespace FileHashCraft.Services
                         new XElement("Width", Width),
                         new XElement("Height", Height),
                         new XElement("DirectoriesTreeViewWidth", DirectoriesTreeViewWidth),
-                        new XElement("FilesListViewWidth", FilesListViewWidth),
+                        new XElement("FilesListViewWidth", FilesListBoxWidth),
                         new XElement("DupDirsFilesTreeViewWidth", DupDirsFilesTreeViewWidth),
                         new XElement("DupFilesDirsListBoxWidth", DupFilesDirsListBoxWidth),
                         new XElement("IsReadOnlyFileInclude", IsReadOnlyFileInclude),
@@ -592,119 +507,6 @@ namespace FileHashCraft.Services
         #endregion 設定ファイルの読み書き
 
         #region ウィンドウ設定
-        /// <summary>
-        /// ウィンドウの上位置を設定します。
-        /// </summary>
-        /// <param name="top">ウィンドウの上位置</param>
-        public void SendWindowTop(double top)
-        {
-            _messenger.Send(new WindowTopChangedMessage(top));
-        }
-        /// <summary>
-        /// ウィンドウの左位置を設定します。
-        /// </summary>
-        /// <param name="left">ウィンドウの左位置</param>
-        public void SendWindowLeft(double left)
-        {
-            _messenger.Send(new WindowLeftChangedMessage(left));
-        }
-        /// <summary>
-        /// ウィンドウの幅を設定します。
-        /// </summary>
-        /// <param name="width">ウィンドウの幅</param>
-        public void SendWindowWidth(double width)
-        {
-            _messenger.Send(new WindowWidthChangedMessage(width));
-        }
-        /// <summary>
-        /// ウィンドウの高さを設定します。
-        /// </summary>
-        /// <param name="height">ウィンドウの高さ</param>
-        public void SendWindowHeight(double height)
-        {
-            _messenger.Send(new WindowHeightChangedMessage(height));
-        }
-        /// <summary>
-        /// ディレクトリツリービューの幅を設定します。
-        /// </summary>
-        /// <param name="directoriesTreeViewWidth">ツリービューの幅</param>
-        public void SendDirectoriesTreeViewWidth(double directoriesTreeViewWidth)
-        {
-            _messenger.Send(new DirectoriesTreeViewWidthChangedMessage(directoriesTreeViewWidth));
-        }
-        /// <summary>
-        /// ファイル一覧リストボックスの幅を設定します。
-        /// </summary>
-        /// <param name="filesListBoxWidth">リストボックスの幅</param>
-        public void SendFilesListBoxWidth(double filesListBoxWidth)
-        {
-            _messenger.Send(new FilesListBoxWidthChangedMessage(filesListBoxWidth));
-        }
-        /// <summary>
-        /// 重複ファイルを含むファイル一覧リストボックスの幅を変更します。
-        /// </summary>
-        /// <param name="dupFilesDirsListBoxWidth">ファイル一覧リストボックスの幅</param>
-        public void SendDupFilesDirsListBoxWidth(double dupFilesDirsListBoxWidth)
-        {
-            _messenger.Send(new DupFilesDirsListBoxWidthMessage(dupFilesDirsListBoxWidth));
-        }
-        /// <summary>
-        /// 重複ファイルのツリービューの幅を変更します。
-        /// </summary>
-        /// <param name="dupDirsFilesTreeViewWidth">重複ファイルのツリービューの幅</param>
-        public void SendDupDirsFilesTreeViewWidth(double dupDirsFilesTreeViewWidth)
-        {
-            _messenger.Send(new DupDirsFilesTreeViewWidthMessage(dupDirsFilesTreeViewWidth));
-        }
-        /// <summary>
-        /// 利用言語を設定します。
-        /// </summary>
-        /// <param name="language"></param>
-        public void SendLanguage(string language)
-        {
-            _messenger.Send(new SelectedLanguageChangedMessage(language));
-        }
-        /// <summary>
-        /// ファイルのハッシュアルゴリズムを設定します。
-        /// </summary>
-        /// <param name="hashAlogrithm">ファイルのハッシュアルゴリズム</param>
-        public void SendHashAlogrithm(string hashAlogrithm)
-        {
-            _messenger.Send(new HashAlgorithmChangedMessage(hashAlogrithm));
-        }
-        /// <summary>
-        /// 削除対象に読み取り専用ファイルを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="readOnlyFileInclude">読み取り専用ファイルを含むかどうか</param>
-        public void SendReadOnlyFileInclude(bool readOnlyFileInclude)
-        {
-            _messenger.Send(new ReadOnlyFileIncludeChangedMessage(readOnlyFileInclude));
-        }
-        /// <summary>
-        /// 削除対象に隠しファイルを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="hiddenFileInclude">隠しファイルを含むかどうか</param>
-        public void SendHiddenFileInclude(bool hiddenFileInclude)
-        {
-            _messenger.Send(new HiddenFileIncludeChangedMessage(hiddenFileInclude));
-        }
-        /// <summary>
-        /// 削除対象に0サイズのファイルを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="zeroSizeFileDelete">0サイズファイルを含むかどうか</param>
-        public void SendZeroSizeFileDelete(bool zeroSizeFileDelete)
-        {
-            _messenger.Send(new ZeroSizeFileDeleteChangedMessage(zeroSizeFileDelete));
-        }
-        /// <summary>
-        /// 削除対象に空のディレクトリを含むかどうかを設定します。
-        /// </summary>
-        /// <param name="emptyDirectoryDelete">空のディレクトリを含むかどうか</param>
-        public void SendEmptyDirectoryDelete(bool emptyDirectoryDelete)
-        {
-            _messenger.Send(new EmptyDirectoryDeleteChangedMessage(emptyDirectoryDelete));
-        }
-
         /// <summary>
         /// フォントを設定します
         /// </summary>

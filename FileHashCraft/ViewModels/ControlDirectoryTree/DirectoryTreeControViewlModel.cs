@@ -93,7 +93,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_DirectoryTreeViewWidth == value) { return; }
                 SetProperty(ref _DirectoryTreeViewWidth, value);
-                _settingsService.SendDirectoriesTreeViewWidth(value);
+                _settingsService.DirectoriesTreeViewWidth = value;
             }
         }
         #endregion バインディング
@@ -129,10 +129,6 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 CurrentFullPath = message.CurrentFullPath;
                 FolderSelectedChanged(CurrentFullPath);
             });
-
-            // ツリービュー幅変更
-            _messenger.Register<DirectoriesTreeViewWidthChangedMessage>(this, (_, m)
-                => DirectoryTreeViewWidth = m.DirectoriesTreeViewWidth);
 
             foreach (var root in SpecialFolderAndRootDrives.ScanDrives())
             {

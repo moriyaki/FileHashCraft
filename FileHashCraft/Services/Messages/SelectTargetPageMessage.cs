@@ -6,7 +6,6 @@ namespace FileHashCraft.Services.Messages
     public class FileScanFinished;
 
     #region ファイルスキャンメッセージ
-
     /// <summary>
     /// スキャンした全ディレクトリ数に加算するメッセージ
     /// </summary>

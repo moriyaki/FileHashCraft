@@ -62,7 +62,6 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                     case FileHashCalcStatus.Finished:
                         StatusColor = Brushes.LightGreen;
                         StatusMessage = Resources.LabelFinished;
-                        //_messenger.Send(new FileHashCalcFinished());
                         break;
                     default:
                         StatusColor = Brushes.Red;
@@ -170,6 +169,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         private readonly IScannedFilesManager _ScannedFilesManager;
         private readonly IHelpWindowViewModel _HelpWindowViewModel;
         private readonly IFileSystemServices _FileSystemServices;
+        private readonly IDuplicateFilesManager _DuplicateFilesManager;
 
         public HashCalcingPageViewModel(
             IMessenger messenger,
@@ -177,13 +177,15 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             IFileHashCalc fileHashCalc,
             IHelpWindowViewModel helpWindowViewModel,
             IScannedFilesManager scannedFilesManager,
-            IFileSystemServices fileSystemServices
+            IFileSystemServices fileSystemServices,
+            IDuplicateFilesManager duplicateFilesManager
         ) : base(messenger, settingsService)
         {
             _FileHashCalc = fileHashCalc;
             _ScannedFilesManager = scannedFilesManager;
             _FileSystemServices = fileSystemServices;
             _HelpWindowViewModel = helpWindowViewModel;
+            _DuplicateFilesManager = duplicateFilesManager;
 
             HashAlgorithm = _settingsService.HashAlgorithm;
 
@@ -277,10 +279,14 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
 
                 App.Current?.Dispatcher?.Invoke(() =>
                 {
-                    MatchHashCount = sameFiles.Count;
                     Status = FileHashCalcStatus.Finished;
-                    _FileSystemServices.NavigateToDuplicateSelectPage();
+                    MatchHashCount = sameFiles.Count;
                 });
+
+                _DuplicateFilesManager.AddSameFiles(sameFiles);
+
+                App.Current?.Dispatcher?.Invoke(() =>
+                    _FileSystemServices.NavigateToDuplicateSelectPage());
             });
         }
         #endregion コンストラクタ

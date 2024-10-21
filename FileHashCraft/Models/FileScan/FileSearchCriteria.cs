@@ -92,7 +92,6 @@ namespace FileHashCraft.Models.FileScan
             if (foundCriteria != null) { return; }
 
             AllCriteria.Add(new FileSearchCriteria(criteriaType, pattern));
-            //_messenger.Send(new ChangeSelectedCountMessage());
         }
 
         /// <summary>
@@ -107,7 +106,6 @@ namespace FileHashCraft.Models.FileScan
             if (foundCriteria == null) { return; }
 
             AllCriteria.Remove(foundCriteria);
-            //_messenger.Send(new ChangeSelectedCountMessage());
         }
     }
 }

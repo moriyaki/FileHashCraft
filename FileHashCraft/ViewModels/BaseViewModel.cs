@@ -29,7 +29,6 @@ namespace FileHashCraft.ViewModels
             // フォント変更メッセージ受信
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            //_messenger.Register<FontSizeChangedMessage>(this, (_, m) => SetProperty(ref _FontSize, m.FontSize));
             _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
         }
 

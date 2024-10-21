@@ -222,7 +222,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (value == _SelectedHashAlgorithm) return;
                 SetProperty(ref _SelectedHashAlgorithm, value);
-                _settingsService.SendHashAlogrithm(value);
+                _settingsService.HashAlgorithm = value;
             }
         }
 
@@ -310,7 +310,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (value == _FilesListBoxWidth) { return; }
                 SetProperty(ref _FilesListBoxWidth, value);
-                _settingsService.SendFilesListBoxWidth(value);
+                _settingsService.FilesListBoxWidth = value;
             }
         }
 
@@ -444,10 +444,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             _messenger.Register<AddFileTypesMessage>(this, (_, _)
                 => ViewModelExtention.AddFileTypes());
 
-            // リストボックス幅変更メッセージ受信
-            _messenger.Register<FilesListBoxWidthChangedMessage>(this, (_, m)
-                => FilesListBoxWidth = m.FilesListBoxWidth);
-
             // 拡張子のチェック状態がされたらグループも変更する
             _messenger.Register<ExtentionCheckReflectToGroupMessage>(this, (_, _)
                 => SetTargetCountChanged());
@@ -460,7 +456,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 SetTargetCountChanged();
                 ChangeSelectedToListBox();
             });
-            _FilesListBoxWidth = _settingsService.FilesListViewWidth;
+            _FilesListBoxWidth = _settingsService.FilesListBoxWidth;
             //ViewModelMain.SelectedHashAlgorithm= _settingsService.HashAlgorithm;
             _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
             OnPropertyChanged(nameof(SelectedHashAlgorithm));

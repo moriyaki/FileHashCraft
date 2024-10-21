@@ -139,6 +139,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 () => SelectedItems.Count > 0
             );
 
+            // ファイルスキャンが終わったら
             _messenger.Register<FileScanFinished>(this, (_, _) =>
                 AddCriteriaCommand.NotifyCanExecuteChanged());
 

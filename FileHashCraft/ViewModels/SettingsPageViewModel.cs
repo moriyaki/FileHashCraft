@@ -40,7 +40,7 @@ namespace FileHashCraft.ViewModels
             set
             {
                 _SelectedLanguage = value;
-                _settingsService.SendLanguage(_SelectedLanguage);
+                _settingsService.SelectedLanguage = value;
                 var currentHashAlgorithms = SelectedHashAlgorithm;
                 HashAlgorithms.Clear();
                 HashAlgorithms =
@@ -71,7 +71,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _SelectedHashAlgorithm) return;
                 SetProperty(ref _SelectedHashAlgorithm, value);
-                _settingsService.SendHashAlogrithm(value);
+                _settingsService.HashAlgorithm = value;
             }
         }
         /// <summary>
@@ -214,18 +214,6 @@ namespace FileHashCraft.ViewModels
             // 「終了」で戻るページへのメッセージを送るコマンド
             ReturnPage = new RelayCommand(
                 () => _fileSystemServices.NavigateReturnPageFromSettings());
-
-            // 読み取り専用ファイルを利用するかどうかが変更されたメッセージ受信
-            _messenger.Register<ReadOnlyFileIncludeChangedMessage>(this, (_, m)
-                => IsReadOnlyFileInclude = m.ReadOnlyFileInclude);
-
-            // 隠しファイルを利用するかどうかが変更されたメッセージ受信
-            _messenger.Register<HiddenFileIncludeChangedMessage>(this, (_, m)
-                => IsHiddenFileInclude = m.HiddenFileInclude);
-
-            // 0サイズファイルを削除するかどうかが変更されたメッセージ受信
-            _messenger.Register<ZeroSizeFileDeleteChangedMessage>(this, (_, m)
-                => IsZeroSizeFileDelete = m.ZeroSizeFileDelete);
 
             _SelectedLanguage = _settingsService.SelectedLanguage;
             _SelectedHashAlgorithm = _settingsService.HashAlgorithm;

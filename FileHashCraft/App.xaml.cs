@@ -156,6 +156,9 @@ namespace FileHashCraft
             // Model - HashCalc
             services.AddSingleton<IFileHashCalc, FileHashCalc>();
 
+            // Model - DupSelectAndDelete
+            services.AddSingleton<IDuplicateFilesManager, DuplicateFilesManager>();
+
             // Model - Helper
             services.AddSingleton<IExtentionTypeHelper, ExtentionTypeHelper>();
             services.AddSingleton<IHashAlgorithmHelper, HashAlgorithmHelper>();

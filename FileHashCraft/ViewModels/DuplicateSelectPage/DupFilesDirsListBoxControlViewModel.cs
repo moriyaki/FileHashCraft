@@ -29,7 +29,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 if (_DupFilesDirsListBoxWidth == value) return;
                 SetProperty(ref _DupFilesDirsListBoxWidth, value);
-                _settingsService.SendDupFilesDirsListBoxWidth(value);
+                _settingsService.DupFilesDirsListBoxWidth = value;
             }
         }
         /// <summary>
