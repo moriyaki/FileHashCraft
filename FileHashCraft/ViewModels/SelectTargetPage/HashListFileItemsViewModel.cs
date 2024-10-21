@@ -12,7 +12,7 @@ using FileHashCraft.Services;
 using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.Services.Messages;
 
-namespace FileHashCraft.ViewModels.PageSelectTarget
+namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     public partial class HashListFileItems : ObservableObject
     {

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.Views
 {

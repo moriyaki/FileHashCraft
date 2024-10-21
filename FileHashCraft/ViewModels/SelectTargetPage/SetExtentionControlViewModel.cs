@@ -7,7 +7,7 @@ using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
-namespace FileHashCraft.ViewModels.PageSelectTarget
+namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
     public interface ISetExtentionControlViewModel
@@ -77,21 +77,18 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private readonly IScannedFilesManager _scannedFilesManager;
         private readonly IExtentionManager _extentionManager;
         private readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
-        private readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
 
         public SetExtentionControlViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
             IExtentionManager extentionManager,
             IScannedFilesManager scannedFilesManager,
-            IFileSearchCriteriaManager fileSearchCriteriaManager,
-            IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
+            IFileSearchCriteriaManager fileSearchCriteriaManager
         ) : base(messenger, settingsService)
         {
             _scannedFilesManager = scannedFilesManager;
             _extentionManager = extentionManager;
             _fileSearchCriteriaManager = fileSearchCriteriaManager;
-            _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
 
             // 拡張子グループのチェックボックスのチェック状態が変更されたときのイベント
             ExtentionGroupCheckBoxClickedCommand = new RelayCommand<object>((parameter) =>
@@ -113,22 +110,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             });
 
             // 拡張子がチェックされたらグループも変更する
-            _messenger.Register<ExtentionChechReflectToGroupMessage>(this, (_, m) =>
-            {
-                CheckExtentionReflectToGroup(m.Name);
-                _pageSelectTargetViewModelMain.SetTargetCountChanged();
-            });
+            _messenger.Register<ExtentionCheckReflectToGroupMessage>(this, (_, m)
+                => CheckExtentionReflectToGroup(m.Name));
 
             // 拡張子がチェック解除されたらグループも変更する
-            _messenger.Register<ExtentionUnchechReflectToGroupMessage>(this, (_, m) =>
-            {
-                UncheckExtentionReflectToGroup(m.Name);
-                _pageSelectTargetViewModelMain.SetTargetCountChanged();
-            });
+            _messenger.Register<ExtentionUncheckReflectToGroupMessage>(this, (_, m)
+                => UncheckExtentionReflectToGroup(m.Name));
 
             // 拡張子グループのチェック変更に連動して拡張子チェックボックス変更
-            _messenger.Register<ExtentionGroupCheckedMessage>(this, (_, m) =>
-                ChangeCheckBoxGroup(m.IsChecked, m.ExtentionCollection));
+            _messenger.Register<ExtentionGroupCheckedMessage>(this, (_, m)
+                => ChangeCheckBoxGroup(m.IsChecked, m.ExtentionCollection));
         }
         #endregion コンストラクタ
 
@@ -230,8 +221,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             }
 
             // 拡張子数の変更通知
-            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
-            _pageSelectTargetViewModelMain.SetTargetCountChanged();
+            _messenger.Send(new ChangeSelectedCountMessage());
         }
 
         /// <summary>

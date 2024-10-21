@@ -5,7 +5,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services.Messages;
-using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.Views
 {
@@ -76,10 +76,10 @@ namespace FileHashCraft.Views
             if (e.Key == Key.Enter)
             {
                 var _SetRegexControlViewModel = Ioc.Default.GetService<ISetRegexControlViewModel>() ?? throw new NullReferenceException(nameof(ISetRegexControlViewModel));
-                var _PageSelectTargetViewModelMain = Ioc.Default.GetService<IShowTargetInfoUserControlViewModel>() ?? throw new NullReferenceException(nameof(IShowTargetInfoUserControlViewModel));
+                var _selectTargetPageViewModel = Ioc.Default.GetService<ISelectTargetPageViewModel>() ?? throw new NullReferenceException(nameof(ISelectTargetPageViewModel));
                 if (_SetRegexControlViewModel.SearchErrorStatus == RegexSearchErrorStatus.None)
                 {
-                    if (_PageSelectTargetViewModelMain.Status == FileScanStatus.Finished)
+                    if (_selectTargetPageViewModel.Status == FileScanStatus.Finished)
                     {
                         _SetRegexControlViewModel.AddCriteria();
                     }

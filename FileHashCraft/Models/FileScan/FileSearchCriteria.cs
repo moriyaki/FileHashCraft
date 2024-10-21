@@ -1,4 +1,7 @@
-﻿namespace FileHashCraft.Models.FileScan
+﻿using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services.Messages;
+
+namespace FileHashCraft.Models.FileScan
 {
     /// <summary>
     /// ファイル検索の種類
@@ -55,6 +58,14 @@
 
     public class FileSearchCriteriaManager : IFileSearchCriteriaManager
     {
+        private readonly IMessenger _messenger;
+
+        public FileSearchCriteriaManager() { throw new NotImplementedException(nameof(IFileSearchCriteriaManager)); }
+        public FileSearchCriteriaManager(IMessenger messenger)
+        {
+            _messenger = messenger;
+        }
+
         /// <summary>
         /// 全検索条件
         /// </summary>
@@ -81,6 +92,7 @@
             if (foundCriteria != null) { return; }
 
             AllCriteria.Add(new FileSearchCriteria(criteriaType, pattern));
+            //_messenger.Send(new ChangeSelectedCountMessage());
         }
 
         /// <summary>
@@ -95,6 +107,7 @@
             if (foundCriteria == null) { return; }
 
             AllCriteria.Remove(foundCriteria);
+            //_messenger.Send(new ChangeSelectedCountMessage());
         }
     }
 }

@@ -15,7 +15,7 @@ using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
-namespace FileHashCraft.ViewModels.PageSelectTarget
+namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
     public interface IExtensionOrTypeCheckBoxBase
@@ -167,13 +167,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (value == true)
                 {
                     _fileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
-                    _messenger.Send(new ExtentionChechReflectToGroupMessage(Name));
+                    _messenger.Send(new ExtentionCheckReflectToGroupMessage(Name));
                     _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
                 else
                 {
                     _fileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
-                    _messenger.Send(new ExtentionUnchechReflectToGroupMessage(Name));
+                    _messenger.Send(new ExtentionUncheckReflectToGroupMessage(Name));
                     _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
             }

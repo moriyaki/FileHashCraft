@@ -97,7 +97,7 @@ namespace FileHashCraft.Models.FileScan
         /// <returns>Regex型</returns>
         public static Regex WildcardToRegexPattern(string WildcardPattern)
         {
-            if (!WildcardPattern.Contains("."))
+            if (!WildcardPattern.Contains('.'))
             {
                 // ワイルドカードに拡張子がない時の処理
                 var filePattern = Regex.Escape(WildcardPattern).Replace("\\*", ".*").Replace("\\?", ".");

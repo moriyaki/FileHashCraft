@@ -1,23 +1,22 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
+using FileHashCraft.Models.HashCalc;
 using FileHashCraft.Services;
 using FileHashCraft.Services.FileSystemWatcherServices;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ControlDirectoryTree;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
-using FileHashCraft.ViewModels.ExplorerPage;
-using FileHashCraft.ViewModels.Modules;
-using FileHashCraft.ViewModels.PageSelectTarget;
-using FileHashCraft.ViewModels.SelectTargetPage;
-using FileHashCraft.ViewModels.HashCalcingPage;
-using Microsoft.Extensions.DependencyInjection;
-using FileHashCraft.Models.HashCalc;
-using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.ViewModels.DuplicateSelectPage;
+using FileHashCraft.ViewModels.ExplorerPage;
+using FileHashCraft.ViewModels.HashCalcingPage;
+using FileHashCraft.ViewModels.Modules;
+using FileHashCraft.ViewModels.SelectTargetPage;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FileHashCraft
 {
@@ -128,7 +127,6 @@ namespace FileHashCraft
             services.AddSingleton<IExplorerPageViewModel, ExplorerPageViewModel>();
             services.AddTransient<IExplorerListItemViewModel, ExplorerListItemViewModel>();
 
-            services.AddSingleton<IShowTargetInfoUserControlViewModel, ShowTargetInfoUserControlViewModel>();
             services.AddSingleton<ISelectTargetPageViewModel, SelectTargetPageViewModel>();
             services.AddSingleton<ISetExtentionControlViewModel, SetExtentionControlViewModel>();
             services.AddSingleton<ISetWildcardControlViewModel, SetWildcardControlViewModel>();

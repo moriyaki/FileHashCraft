@@ -9,7 +9,7 @@ using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.SelectTargetPage;
 
-namespace FileHashCraft.ViewModels.PageSelectTarget
+namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
     public interface ISetRegexControlViewModel
@@ -232,9 +232,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             IMessenger messenger,
             ISettingsService settingsService,
             IFileSearchCriteriaManager fileSearchCriteriaManager,
-            IHelpWindowViewModel helpWindowViewModel,
-            IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
-        ) : base(messenger, settingsService, fileSearchCriteriaManager, helpWindowViewModel, pageSelectTargetViewModelMain)
+            IHelpWindowViewModel helpWindowViewModel
+        ) : base(messenger, settingsService, fileSearchCriteriaManager, helpWindowViewModel)
         {
             // ヘルプ画面を開きます
             HelpOpenCommand = new RelayCommand(() =>
@@ -275,8 +274,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             };
             CriteriaItems.Add(newRegex);
             _fileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Regex);
-            _pageSelectTargetViewModelMain.SetTargetCountChanged();
-            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
+            _messenger.Send(new ChangeSelectedCountMessage());
             SearchCriteriaText = string.Empty;
         }
 
@@ -288,9 +286,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             foreach (var item in SelectedItems)
             {
                 _fileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Regex);
-                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
-                _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
-                _pageSelectTargetViewModelMain.SetTargetCountChanged();
+                //_selectTargetPageViewModel.SetAllTargetfilesCount();
+                _messenger.Send(new ChangeSelectedCountMessage());
                 CriteriaItems.Remove(item);
             }
             SelectedItems.Clear();
@@ -337,8 +334,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         {
             _fileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
             _fileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Regex);
-            _pageSelectTargetViewModelMain.SetTargetCountChanged();
-            _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
+            _messenger.Send(new ChangeSelectedCountMessage());
         }
 
         #region 正規表現チェック

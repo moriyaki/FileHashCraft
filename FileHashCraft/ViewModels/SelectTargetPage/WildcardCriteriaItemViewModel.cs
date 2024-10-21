@@ -2,9 +2,8 @@
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
-using FileHashCraft.ViewModels.SelectTargetPage;
 
-namespace FileHashCraft.ViewModels.PageSelectTarget
+namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
     public interface IWildcardCriteriaItemViewModel

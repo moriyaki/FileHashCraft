@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
-namespace FileHashCraft.ViewModels.PageSelectTarget
+namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     public interface ISetExpertControlViewModel
     {
@@ -28,8 +28,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_IsReadOnlyFileInclude == value) return;
                 SetProperty(ref _IsReadOnlyFileInclude, value);
                 _settingsService.IsReadOnlyFileInclude = value;
-                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
-                _pageSelectTargetViewModelMain.SetTargetCountChanged();
+                _messenger.Send(new ChangeSelectedCountMessage());
             }
         }
 
@@ -45,8 +44,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 if (_IsHiddenFileInclude == value) return;
                 SetProperty(ref _IsHiddenFileInclude, value);
                 _settingsService.IsReadOnlyFileInclude = value;
-                _pageSelectTargetViewModelMain.SetAllTargetfilesCount();
-                _pageSelectTargetViewModelMain.SetTargetCountChanged();
+                _messenger.Send(new ChangeSelectedCountMessage());
             }
         }
         /// <summary>
@@ -99,17 +97,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         #endregion コマンド
 
         #region コンストラクタ
-        //private readonly ISettingsService _settingsService;
-        private readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
         public SetExpertControlViewModel(
             IMessenger messenger,
-            ISettingsService settingsService,
-            IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
+            ISettingsService settingsService
         ) : base(messenger, settingsService)
         {
-            //_settingsService = settingsService;
-            _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
-
             // 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
             IsReadOnlyFileIncludeClicked = new RelayCommand(()
                 => IsReadOnlyFileInclude = !IsReadOnlyFileInclude);

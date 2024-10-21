@@ -3,7 +3,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Services;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
-using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.Views
 {

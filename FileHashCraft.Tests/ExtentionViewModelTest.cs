@@ -2,7 +2,7 @@
 using FileHashCraft.Services;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.Tests

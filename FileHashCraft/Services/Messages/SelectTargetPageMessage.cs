@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging.Messages;
-using FileHashCraft.ViewModels.PageSelectTarget;
 using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.Services.Messages
@@ -53,26 +52,25 @@ namespace FileHashCraft.Services.Messages
 
     #region 拡張子チェックボックスメッセージ
     /// <summary>
-    /// 拡張子チェックボックスがチェックされたら拡張子グループ変更するメッセージ
+    /// 拡張子がチェックボックスされたら拡張子グループ変更するメッセージ
     /// </summary>
-    public class ExtentionChechReflectToGroupMessage
+    public class ExtentionCheckReflectToGroupMessage
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionChechReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionChechReflectToGroupMessage)); }
-        public ExtentionChechReflectToGroupMessage(string name)
+        public ExtentionCheckReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionCheckReflectToGroupMessage)); }
+        public ExtentionCheckReflectToGroupMessage(string name)
         {
             Name = name;
         }
     }
-
     /// <summary>
-    /// 拡張子チェックボックスがチェック解除されたら拡張子グループ変更するメッセージ
+    /// 拡張子がチェックボックス解除されたら拡張子グループ変更するメッセージ
     /// </summary>
-    public class ExtentionUnchechReflectToGroupMessage
+    public class ExtentionUncheckReflectToGroupMessage
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionUnchechReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionUnchechReflectToGroupMessage)); }
-        public ExtentionUnchechReflectToGroupMessage(string name)
+        public ExtentionUncheckReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionUncheckReflectToGroupMessage)); }
+        public ExtentionUncheckReflectToGroupMessage(string name)
         {
             Name = name;
         }
@@ -97,6 +95,8 @@ namespace FileHashCraft.Services.Messages
             ExtentionCollection = extentionCollection;
         }
     }
+
+    public class ChangeSelectedCountMessage;
     #endregion 拡張子チェックボックスメッセージ
 
     #region ワイルドカード/正規表現共通メッセージ

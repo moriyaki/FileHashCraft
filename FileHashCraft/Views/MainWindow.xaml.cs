@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ExplorerPage;
-using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 using FileHashCraft.ViewModels.DuplicateSelectPage;
 using FileHashCraft.Views;
 using FileHashCraft.ViewModels.HashCalcingPage;

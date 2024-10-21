@@ -5,7 +5,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services.Messages;
-using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.Views
 {
@@ -74,13 +74,13 @@ namespace FileHashCraft.Views
         {
             if (e.Key == Key.Enter)
             {
-                var _PageSelectTargetViewModelWildcard = Ioc.Default.GetService<ISetWildcardControlViewModel>() ?? throw new NullReferenceException(nameof(ISetWildcardControlViewModel));
-                var _PageSelectTargetViewModelMain = Ioc.Default.GetService<IShowTargetInfoUserControlViewModel>() ?? throw new NullReferenceException(nameof(IShowTargetInfoUserControlViewModel));
-                if (_PageSelectTargetViewModelWildcard.SearchErrorStatus == WildcardSearchErrorStatus.None)
+                var _pageSelectTargetViewModelWildcard = Ioc.Default.GetService<ISetWildcardControlViewModel>() ?? throw new NullReferenceException(nameof(ISetWildcardControlViewModel));
+                var _selectTargetPageViewModel = Ioc.Default.GetService<ISelectTargetPageViewModel>() ?? throw new NullReferenceException(nameof(ISelectTargetPageViewModel));
+                if (_pageSelectTargetViewModelWildcard.SearchErrorStatus == WildcardSearchErrorStatus.None)
                 {
-                    if (_PageSelectTargetViewModelMain.Status == FileScanStatus.Finished)
+                    if (_selectTargetPageViewModel.Status == FileScanStatus.Finished)
                     {
-                        _PageSelectTargetViewModelWildcard.AddCriteria();
+                        _pageSelectTargetViewModelWildcard.AddCriteria();
                     }
                 }
             }

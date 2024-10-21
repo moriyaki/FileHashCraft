@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
-using FileHashCraft.ViewModels.PageSelectTarget;
 
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {
@@ -102,7 +101,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #region コンストラクタ
         protected readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
         protected readonly IHelpWindowViewModel _helpWindowViewModel;
-        protected readonly IShowTargetInfoUserControlViewModel _pageSelectTargetViewModelMain;
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
@@ -113,13 +111,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             IMessenger messenger,
             ISettingsService settingsService,
             IFileSearchCriteriaManager fileSearchCriteriaManager,
-            IHelpWindowViewModel helpWindowViewModel,
-            IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain
+            IHelpWindowViewModel helpWindowViewModel
         ) : base(messenger, settingsService)
         {
             _fileSearchCriteriaManager = fileSearchCriteriaManager;
             _helpWindowViewModel = helpWindowViewModel;
-            _pageSelectTargetViewModelMain = pageSelectTargetViewModelMain;
 
             // コレクションのインスタンスを生成します。
             CriteriaItems = [];
@@ -128,7 +124,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             // ワイルドカードを追加します。
             AddCriteriaCommand = new RelayCommand(
                 () => AddCriteria(),
-                () => IsCriteriaConditionCorrent(SearchCriteriaText) && _pageSelectTargetViewModelMain.Status == FileScanStatus.Finished
+                () => IsCriteriaConditionCorrent(SearchCriteriaText)
             );
 
             // 検索条件一覧から編集モードにします。
