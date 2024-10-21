@@ -6,6 +6,7 @@ using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels;
 using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.PageSelectTarget;
+using FileHashCraft.ViewModels.DuplicateSelectPage;
 using FileHashCraft.Views;
 
 namespace FileHashCraft
@@ -38,8 +39,8 @@ namespace FileHashCraft
             _messenger.Register<ToHashCalcingPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new HashCalcingPage()));
             // PageSameFileSelectSimple へ移動のメッセージ受信したので移動
-            _messenger.Register<ToSameFileSelectSimplePageMessage>(this, (_, _) =>
-                MainFrame.Navigate(new SameFileSelectSimplePage()));
+            _messenger.Register<ToDuplicateSelectPage>(this, (_, _) =>
+                MainFrame.Navigate(new DuplicateSelectPage()));
             // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
             _messenger.Register<ToSettingPageMessage>(this, (_, m) =>
             {

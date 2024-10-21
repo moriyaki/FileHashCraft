@@ -4,7 +4,7 @@ using FileHashCraft.Services;
 
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {
-    public abstract class BaseCriteriaItemViewModel : ViewModelBase
+    public abstract class BaseCriteriaItemViewModel : BaseViewModel
     {
         #region バインディング
         /// <summary>

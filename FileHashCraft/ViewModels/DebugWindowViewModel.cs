@@ -19,7 +19,7 @@ namespace FileHashCraft.ViewModels
         double Left { get; set; }
     }
     #endregion インターフェース
-    public partial class DebugWindowViewModel : ViewModelBase, IDebugWindowViewModel
+    public partial class DebugWindowViewModel : BaseViewModel, IDebugWindowViewModel
     {
         enum PollingTarget
         {

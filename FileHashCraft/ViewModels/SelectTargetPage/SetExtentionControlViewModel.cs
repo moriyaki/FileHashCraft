@@ -52,7 +52,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public class SetExtentionControlViewModel : ViewModelBase, ISetExtentionControlViewModel
+    public class SetExtentionControlViewModel : BaseViewModel, ISetExtentionControlViewModel
     {
         #region バインディング
         /// <summary>

@@ -27,7 +27,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
     public interface IHashCalcingPageViewModel;
     #endregion インターフェース
 
-    public partial class HashCalcingPageViewModel : ViewModelBase, IHashCalcingPageViewModel
+    public partial class HashCalcingPageViewModel : BaseViewModel, IHashCalcingPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -110,11 +110,6 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         }
 
         /// <summary>
-        /// ハッシュ計算が終了したか否か
-        /// </summary>
-        private bool _hashCalcFinished = false;
-
-        /// <summary>
         /// ハッシュ取得状況のパーセンテージ
         /// </summary>
         public double HashGotPercent
@@ -162,11 +157,6 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// ファイル選択画面に戻ります。
         /// </summary>
         public RelayCommand ToSelectTargetPage { get; set; }
-
-        /// <summary>
-        /// 同一ファイル選択ページに移動します。
-        /// </summary>
-        public RelayCommand ToSameFileSelectPage { get; set; }
         #endregion バインディング
 
         #region コンストラクタ
@@ -212,37 +202,31 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             ToSelectTargetPage = new RelayCommand(() =>
                 _fileSystemServices.NavigateToSelectTargetPage());
 
-            // 同一ファイル選択ページに移動するコマンド
-            ToSameFileSelectPage = new RelayCommand(
-                () => _fileSystemServices.NavigateToSameFileSelectSimplePage(),
-                () => _hashCalcFinished
-            );
+            // ドライブの追加
+            _messenger.Register<CalcingDriveMessage>(this, (_, m) =>
+            {
+                foreach (var drive in m.Drives)
+                {
+                    App.Current?.Dispatcher?.Invoke(() => CalcingFiles.Add(drive));
+                }
+            });
 
             // ハッシュ計算を開始したメッセージ
-            _messenger.Register<StartCalcingFile>(this, (_, m) =>
+            _messenger.Register<StartCalcingFileMessage>(this, (_, m) =>
             {
-                if (string.IsNullOrEmpty(m.BeforeFile))
+                var drive = Path.GetPathRoot(m.CalcingFile) ?? "";
+                for (int i = 0; i < CalcingFiles.Count; i++)
                 {
-                    App.Current?.Dispatcher.Invoke(() => CalcingFiles.Add(m.CalcingFile));
-                }
-                else
-                {
-                    var drive = Path.GetPathRoot(m.BeforeFile) ?? "";
-
-                    // インデックスを手動で検索
-                    for (int i = 0; i < CalcingFiles.Count; i++)
+                    if (CalcingFiles[i].StartsWith(drive))
                     {
-                        if (CalcingFiles[i].StartsWith(drive))
-                        {
-                            App.Current?.Dispatcher.Invoke(() => CalcingFiles[i] = m.CalcingFile);
-                            break;
-                        }
+                        App.Current?.Dispatcher.Invoke(() => CalcingFiles[i] = m.CalcingFile);
                     }
                 }
-                App.Current?.Dispatcher.Invoke(() => HashGotFileCount++);
+                HashGotFileCount++;
             });
+
             // ハッシュ計算を終了したメッセージ
-            _messenger.Register<EndCalcingFile>(this, (_, m)
+            _messenger.Register<EndCalcingFileMessage>(this, (_, m)
                 => App.Current?.Dispatcher.Invoke(() => CalcingFiles.Remove(m.CalcingFile)));
 
             Initialize();
@@ -273,8 +257,6 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                 {
                     MatchHashCount = sameFiles.Count;
                     Status = FileHashCalcStatus.Finished;
-                    _hashCalcFinished = true;
-                    ToSameFileSelectPage.NotifyCanExecuteChanged();
                 });
             });
         }

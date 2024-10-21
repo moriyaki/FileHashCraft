@@ -172,7 +172,7 @@ namespace FileHashCraft.Services.Messages
     /// <summary>
     /// 同一ファイル画面選択ページに移動するメッセージ
     /// </summary>
-    public class ToSameFileSelectSimplePageMessage;
+    public class ToDuplicateSelectPage;
 
     /// <summary>
     /// どこに戻るかの列挙子

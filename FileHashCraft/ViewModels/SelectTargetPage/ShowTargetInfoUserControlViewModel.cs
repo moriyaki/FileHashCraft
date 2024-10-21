@@ -99,7 +99,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public partial class ShowTargetInfoUserControlViewModel : ViewModelBase, IShowTargetInfoUserControlViewModel
+    public partial class ShowTargetInfoUserControlViewModel : BaseViewModel, IShowTargetInfoUserControlViewModel
     {
         #region バインディング
         /// <summary>

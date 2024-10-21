@@ -2,23 +2,40 @@
 {
     public class FileHashCalcFinishedMessage;
 
-    public class StartCalcingFile
+    /// <summary>
+    /// ハッシュを計算するドライブの送信メッセージ
+    /// </summary>
+    public class CalcingDriveMessage
     {
-        public string BeforeFile { get; set; } = string.Empty;
-        public string CalcingFile { get; set; } = string.Empty;
-        public StartCalcingFile() { throw new NotImplementedException(nameof(StartCalcingFile)); }
-        public StartCalcingFile(string beforeFile, string calcingFile)
+        public HashSet<string> Drives { get; set; } = [];
+        public CalcingDriveMessage() { throw new NotImplementedException(nameof(StartCalcingFileMessage)); }
+        public CalcingDriveMessage(HashSet<string> drives)
         {
-            BeforeFile = beforeFile;
+            Drives = drives;
+        }
+    }
+
+    /// <summary>
+    /// ファイルハッシュ計算開始の送信メッセージ
+    /// </summary>
+    public class StartCalcingFileMessage
+    {
+        public string CalcingFile { get; set; } = string.Empty;
+        public StartCalcingFileMessage() { throw new NotImplementedException(nameof(StartCalcingFileMessage)); }
+        public StartCalcingFileMessage(string calcingFile)
+        {
             CalcingFile = calcingFile;
         }
     }
 
-    public class EndCalcingFile
+    /// <summary>
+    /// ファイルハッシュ計算終了の送信メッセージ
+    /// </summary>
+    public class EndCalcingFileMessage
     {
         public string CalcingFile { get; set; } = string.Empty;
-        public EndCalcingFile() { throw new NotImplementedException(nameof(EndCalcingFile)); }
-        public EndCalcingFile(string calcingFile)
+        public EndCalcingFileMessage() { throw new NotImplementedException(nameof(EndCalcingFileMessage)); }
+        public EndCalcingFileMessage(string calcingFile)
         {
             CalcingFile = calcingFile;
         }

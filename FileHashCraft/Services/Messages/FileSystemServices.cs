@@ -135,7 +135,7 @@ namespace FileHashCraft.Services.Messages
         /// </summary>
         public void NavigateToSameFileSelectSimplePage()
         {
-            _messenger.Send(new ToSameFileSelectSimplePageMessage());
+            _messenger.Send(new ToDuplicateSelectPage());
         }
         #endregion 移動処理
 

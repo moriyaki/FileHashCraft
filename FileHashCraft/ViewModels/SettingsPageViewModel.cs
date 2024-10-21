@@ -18,7 +18,7 @@ namespace FileHashCraft.ViewModels
     public interface ISettingsPageViewModel;
     #endregion インターフェース
 
-    public class SettingsPageViewModel : ViewModelBase, ISettingsPageViewModel
+    public class SettingsPageViewModel : BaseViewModel, ISettingsPageViewModel
     {
         #region バインディング
         /// <summary>

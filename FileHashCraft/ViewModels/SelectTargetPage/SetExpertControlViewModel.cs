@@ -13,7 +13,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         bool IsEmptyDirectoryDelete { get; set; }
     }
 
-    public class SetExpertControlViewModel : ViewModelBase, ISetExpertControlViewModel
+    public class SetExpertControlViewModel : BaseViewModel, ISetExpertControlViewModel
     {
         #region バインディング
         /// <summary>

@@ -29,7 +29,7 @@ namespace FileHashCraft.ViewModels
     }
     #endregion インターフェース
 
-    public partial class HelpWindowViewModel : ViewModelBase, IHelpWindowViewModel
+    public partial class HelpWindowViewModel : BaseViewModel, IHelpWindowViewModel
     {
         #region バインディング
         /// <summary>

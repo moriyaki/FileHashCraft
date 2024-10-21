@@ -6,7 +6,7 @@ using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.ViewModels
 {
-    public class ViewModelBase : ObservableObject
+    public class BaseViewModel : ObservableObject
     {
         protected readonly IMessenger _messenger;
         protected readonly ISettingsService _settingsService;
@@ -14,9 +14,9 @@ namespace FileHashCraft.ViewModels
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        public ViewModelBase() { throw new NotImplementedException(nameof(ViewModelBase)); }
+        public BaseViewModel() { throw new NotImplementedException(nameof(BaseViewModel)); }
 
-        public ViewModelBase(
+        public BaseViewModel(
             IMessenger messenger,
             ISettingsService settingsService
         )

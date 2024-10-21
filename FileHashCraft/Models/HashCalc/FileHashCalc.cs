@@ -56,6 +56,8 @@ namespace FileHashCraft.Models.HashCalc
 
                 value.Add(file);
             }
+            var drives = filesDictionary.Keys.ToHashSet();
+            _messenger.Send(new CalcingDriveMessage(drives));
             return filesDictionary;
         }
 
@@ -74,7 +76,7 @@ namespace FileHashCraft.Models.HashCalc
                 {
                     foreach (var file in drive.Value)
                     {
-                        _messenger.Send(new StartCalcingFile(beforeFilePath, file.FileFullPath));
+                        _messenger.Send(new StartCalcingFileMessage(file.FileFullPath));
                         using HashAlgorithm hashAlgorithm = _settingsService.HashAlgorithm switch
                         {
                             "SHA-512" => SHA512.Create(),
@@ -100,7 +102,7 @@ namespace FileHashCraft.Models.HashCalc
                 }
                 finally
                 {
-                    _messenger.Send(new EndCalcingFile(beforeFilePath));
+                    _messenger.Send(new EndCalcingFileMessage(beforeFilePath));
                     semaphone.Release();
                 }
             }).ToList();

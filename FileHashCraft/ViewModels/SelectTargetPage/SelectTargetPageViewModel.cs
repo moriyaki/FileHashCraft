@@ -53,7 +53,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
     }
     #endregion インターフェース
 
-    public partial class SelectTargetPageViewModel : ViewModelBase, ISelectTargetPageViewModel
+    public partial class SelectTargetPageViewModel : BaseViewModel, ISelectTargetPageViewModel
     {
         #region バインディング
         /// <summary>
@@ -397,16 +397,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // スキャン終了の表示に切り替える
             ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
-
-            /*
-            //--------------------- 開発用自動化処理
-            App.Current?.Dispatcher.InvokeAsync(() =>
-            {
-                ViewModelWildcard.SearchCriteriaText = "*";
-                ViewModelWildcard.AddCriteria();
-                ViewModelMain.ToHashCalcingPage.Execute(this);
-            });
-            */
         }
         #endregion メイン処理
 
