@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Services;
@@ -76,26 +77,44 @@ namespace FileHashCraft.Models.HashCalc
                 {
                     foreach (var file in drive.Value)
                     {
+                        if (!string.IsNullOrEmpty(file.FileHash))
+                        {
+                            switch (_settingsService.HashAlgorithm)
+                            {
+                                case "SHA-256":
+                                    if (file.HashAlgorithm == FileHashAlgorithm.SHA256) continue;
+                                    break;
+                                case "SHA-384":
+                                    if (file.HashAlgorithm == FileHashAlgorithm.SHA384) continue;
+                                    break;
+                                case "SHA-512":
+                                    if (file.HashAlgorithm == FileHashAlgorithm.SHA512) continue;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
                         _messenger.Send(new StartCalcingFileMessage(file.FileFullPath));
                         using HashAlgorithm hashAlgorithm = _settingsService.HashAlgorithm switch
                         {
-                            "SHA-512" => SHA512.Create(),
-                            "SHA-384" => SHA384.Create(),
                             "SHA-256" => SHA256.Create(),
+                            "SHA-384" => SHA384.Create(),
+                            "SHA-512" => SHA512.Create(),
                             _ => SHA256.Create(),
                         };
 
                         var hash = await CalculateHashFileAsync(file.FileFullPath, hashAlgorithm);
-                        if (!string.IsNullOrEmpty(hash))
+                        if (string.IsNullOrEmpty(hash)) { continue; }
+
+                        file.HashAlgorithm = _settingsService.HashAlgorithm switch
                         {
-                            file.HashAlgorithm = _settingsService.HashAlgorithm switch
-                            {
-                                "SHA-256" => FileHashAlgorithm.SHA256,
-                                "SHA-384" => FileHashAlgorithm.SHA384,
-                                "SHA-512" => FileHashAlgorithm.SHA512,
-                                _ => throw new NotImplementedException(nameof(ProcessGetHashFilesAsync)),
-                            };
-                        }
+                            "SHA-256" => FileHashAlgorithm.SHA256,
+                            "SHA-384" => FileHashAlgorithm.SHA384,
+                            "SHA-512" => FileHashAlgorithm.SHA512,
+                            _ => throw new NotImplementedException(nameof(ProcessGetHashFilesAsync)),
+                        };
+
                         file.FileHash = hash;
                         beforeFilePath = file.FileFullPath;
                     }
@@ -108,6 +127,7 @@ namespace FileHashCraft.Models.HashCalc
             }).ToList();
 
             await Task.WhenAll(tasks);
+            _messenger.Send(new AllCalcingFinishedMessage());
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FileHashCraft.Models.HashCalc
 {
-    public interface ISameFilesManager
+    public interface IDuplicateFilesManager
     {
         /// <summary>
         /// 同一ファイル
@@ -17,7 +17,7 @@ namespace FileHashCraft.Models.HashCalc
 
         void AddSameFiles(IEnumerable<HashFile> files);
     }
-    public class SameFilesManager : ISameFilesManager
+    public class DuplicateFilesManager : IDuplicateFilesManager
     {
         public HashSet<HashFile> SameFiles { get; set; } = [];
 

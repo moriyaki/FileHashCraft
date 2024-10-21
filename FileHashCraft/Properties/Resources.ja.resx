@@ -150,7 +150,7 @@
     <comment>Button/SelectTargetPage</comment>
   </data>
   <data name="ButtonRemove" xml:space="preserve">
-    <value>削除</value>
+    <value>除去</value>
     <comment>TabContent/SelectTargetPage</comment>
   </data>
   <data name="ButtonTargetFilter" xml:space="preserve">
@@ -532,5 +532,8 @@
   <data name="TitleTargetFilterWindow" xml:space="preserve">
     <value>フィルタ結果</value>
     <comment>TargetFilterWindow</comment>
+  </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>削除</value>
   </data>
 </root>

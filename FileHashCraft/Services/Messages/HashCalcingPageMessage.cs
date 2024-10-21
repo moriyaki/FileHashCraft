@@ -40,4 +40,9 @@
             CalcingFile = calcingFile;
         }
     }
+
+    /// <summary>
+    /// 全てのファイルハッシュ計算終了メッセージ
+    /// </summary>
+    public class AllCalcingFinishedMessage;
 }

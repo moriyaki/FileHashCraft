@@ -21,16 +21,17 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
             <ColumnDefinition Width="Auto" MinWidth="100"/>
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="6" Background="Transparent"/>
+        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="7" Background="Transparent"/>
 
         <!-- Menu -->
-        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="5">
+        <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="7">
             <MenuItem Command="{Binding SettingsOpen}"
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
             <MenuItem Command="{Binding DebugOpen}"
@@ -75,9 +76,9 @@
                       HorizontalAlignment="Left"
                       DragDelta="GridSplitter_ListDragDelta"/>
 
-        <local:ShowTargetInfoUserControl Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="3" />
+        <local:ShowTargetInfoUserControl Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="3" />
 
-        <TabControl  Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" Margin="3">
+        <TabControl  Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="3" Margin="3">
             <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <local:SeteExtentionUserControl/>
@@ -97,11 +98,11 @@
         </TabControl>
 
         <!-- Buttons -->
-        <Button Grid.Row="3" Grid.Column="4" Margin="3"
+        <Button Grid.Row="3" Grid.Column="5" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
                 Command="{Binding ToExplorerPage}"/>
-        <Button Grid.Row="3" Grid.Column="5" Margin="3"
+        <Button Grid.Row="3" Grid.Column="6" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                 Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
                 Command="{Binding ViewModelMain.ToHashCalcingPage}"/>

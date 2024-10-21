@@ -8,6 +8,7 @@ using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.PageSelectTarget;
 using FileHashCraft.ViewModels.DuplicateSelectPage;
 using FileHashCraft.Views;
+using FileHashCraft.ViewModels.HashCalcingPage;
 
 namespace FileHashCraft
 {
@@ -84,6 +85,11 @@ namespace FileHashCraft
             {
                 var targetFileSetting = Ioc.Default.GetService<ISelectTargetPageViewModel>();
                 targetFileSetting?.Initialize();
+            }
+            if (e.Content is HashCalcingPage)
+            {
+                var hashCalcing = Ioc.Default.GetService<IHashCalcingPageViewModel>();
+                hashCalcing?.Initialize();
             }
         }
 

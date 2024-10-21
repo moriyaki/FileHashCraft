@@ -232,7 +232,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
                 => ListWidth = m.FilesListBoxWidth);
 
             _TreeWidth = _settingsService.DirectoriesTreeViewWidth;
-            _ListWidth = _settingsService.ListWidth;
+            _ListWidth = _settingsService.FilesListViewWidth;
             ViewModelMain.SelectedHashAlgorithm= _settingsService.HashAlgorithm;
         }
         #endregion コンストラクタ
@@ -397,6 +397,9 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
 
             // スキャン終了の表示に切り替える
             ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
+
+            //--------------------- 開発用自動化処理
+            App.Current?.Dispatcher.InvokeAsync(() => ViewModelMain.ToHashCalcingPage.Execute(this));
         }
         #endregion メイン処理
 

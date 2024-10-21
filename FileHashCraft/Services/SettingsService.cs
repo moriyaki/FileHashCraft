@@ -30,13 +30,21 @@ namespace FileHashCraft.Services
         /// </summary>
         double Height { get; }
         /// <summary>
-        /// ツリービューの幅
+        /// ディレクトリツリービューの幅
         /// </summary>
         double DirectoriesTreeViewWidth { get; }
         /// <summary>
-        /// リストボックスの幅
+        /// ファイル一覧リストボックスの幅
         /// </summary>
-        double ListWidth { get; }
+        double FilesListViewWidth { get; }
+        /// <summary>
+        /// 重複ファイルを含むフォルダのリストボックスの幅
+        /// </summary>
+        double DupFilesDirsListBoxWidth { get; }
+        /// <summary>
+        /// 重複ファイルとフォルダのツリービューの幅
+        /// </summary>
+        double DupDirsFilesTreeViewWidth { get; }
         /// <summary>
         /// 選択されている言語
         /// </summary>
@@ -111,6 +119,14 @@ namespace FileHashCraft.Services
         /// </summary>
         void SendFilesListBoxWidth(double width);
         /// <summary>
+        /// 重複ファイルを含むファイル一覧リストボックスの幅を変更します。
+        /// </summary>
+        void SendDupFilesDirsListBoxWidth(double dupFilesDirsListBoxWidth);
+        /// <summary>
+        /// 重複ファイルのツリービューの幅を変更します。
+        /// </summary>
+        void SendDupDirsFilesTreeViewWidth(double dupDirsFilesTreeViewWidth);
+        /// <summary>
         /// 利用言語を設定します。
         /// </summary>
         void SendLanguage(string language);
@@ -149,7 +165,7 @@ namespace FileHashCraft.Services
     }
     #endregion インターフェース
 
-    public class SettingsService :ObservableObject, ISettingsService
+    public class SettingsService : ObservableObject, ISettingsService
     {
         #region コンストラクタ
         private readonly string appName = "FileHashCraft";
@@ -176,7 +192,7 @@ namespace FileHashCraft.Services
             SendWindowWidth(Width);
             SendWindowHeight(Height);
             SendDirectoriesTreeViewWidth(DirectoriesTreeViewWidth);
-            SendFilesListBoxWidth(ListWidth);
+            SendFilesListBoxWidth(FilesListViewWidth);
             SendLanguage(SelectedLanguage);
             SendHashAlogrithm(HashAlgorithm);
             SendReadOnlyFileInclude(IsReadOnlyFileInclude);
@@ -192,7 +208,9 @@ namespace FileHashCraft.Services
             _messenger.Register<WindowHeightChangedMessage>(this, (_, m) => Height = m.Height);
 
             _messenger.Register<DirectoriesTreeViewWidthChangedMessage>(this, (_, m) => DirectoriesTreeViewWidth = m.DirectoriesTreeViewWidth);
-            _messenger.Register<FilesListBoxWidthChangedMessage>(this, (_, m) => ListWidth = m.FilesListBoxWidth);
+            _messenger.Register<FilesListBoxWidthChangedMessage>(this, (_, m) => FilesListViewWidth = m.FilesListBoxWidth);
+            _messenger.Register<DupFilesDirsListBoxWidthMessage>(this, (_, m) => DupFilesDirsListBoxWidth = m.DupFilesDirsListBoxWidth);
+            _messenger.Register<DupDirsFilesTreeViewWidthMessage>(this, (_, m) => _ = m.DupDirsFilesTreeViewWidth);
 
             _messenger.Register<SelectedLanguageChangedMessage>(this, (_, m) => SelectedLanguage = m.SelectedLanguage);
             _messenger.Register<HashAlgorithmChangedMessage>(this, (_, m) => HashAlgorithm = m.HashAlgorithm);
@@ -285,17 +303,46 @@ namespace FileHashCraft.Services
         }
 
         /// <summary>
-        /// リストボックスの幅
+        /// ファイル一覧リストボックスの幅
         /// </summary>
-        private double _ListWidth = 300d;
-        public double ListWidth
+        private double _FilesListViewWidth = 300d;
+        public double FilesListViewWidth
         {
-            get => _ListWidth;
+            get => _FilesListViewWidth;
             set
             {
-                if (value == _ListWidth) { return; }
-                _ListWidth = value;
+                if (value == _FilesListViewWidth) { return; }
+                _FilesListViewWidth = value;
                 SendFilesListBoxWidth(value);
+                SaveSettings();
+            }
+        }
+
+        /// <summary>
+        /// ファイル一覧リストボックスの幅
+        /// </summary>
+        private double _DupFilesDirsListBoxWidth = 400d;
+        public double DupFilesDirsListBoxWidth
+        {
+            get => _DupFilesDirsListBoxWidth;
+            set
+            {
+                if (value == _DupFilesDirsListBoxWidth) { return; }
+                _DupFilesDirsListBoxWidth = value;
+                SendDupFilesDirsListBoxWidth(value);
+                SaveSettings();
+            }
+        }
+
+        private double _DupDirsFilesTreeViewWidth = 500d;
+        public double DupDirsFilesTreeViewWidth
+        {
+            get => _DupDirsFilesTreeViewWidth;
+            set
+            {
+                if (value == _DupDirsFilesTreeViewWidth) { return; }
+                _DupDirsFilesTreeViewWidth = value;
+                SendDupDirsFilesTreeViewWidth(value);
                 SaveSettings();
             }
         }
@@ -321,7 +368,7 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
-        private string _HashAlgorithm;
+        private string _HashAlgorithm = "SHA-256";
         public string HashAlgorithm
         {
             get => _HashAlgorithm;
@@ -417,7 +464,7 @@ namespace FileHashCraft.Services
         /// <summary>
         /// フォントのサイズ
         /// </summary>
-        private double _FontSize;
+        private double _FontSize = SystemFonts.MessageFontSize;
         public double FontSize
         {
             get => _FontSize;
@@ -489,8 +536,10 @@ namespace FileHashCraft.Services
                         Left = Convert.ToDouble(root.Element("Left")?.Value);
                         Width = Convert.ToDouble(root.Element("Width")?.Value);
                         Height = Convert.ToDouble(root.Element("Height")?.Value);
-                        DirectoriesTreeViewWidth = Convert.ToDouble(root.Element("TreeWidth")?.Value);
-                        ListWidth = Convert.ToDouble(root.Element("ListWidth")?.Value);
+                        DirectoriesTreeViewWidth = Convert.ToDouble(root.Element("DirectoriesTreeViewWidth")?.Value);
+                        DupFilesDirsListBoxWidth = Convert.ToDouble(root.Element("DupFilesDirsListBoxWidth")?.Value);
+                        DupDirsFilesTreeViewWidth = Convert.ToDouble(root.Element("DupDirsFilesTreeViewWidth")?.Value);
+                        FilesListViewWidth = Convert.ToDouble(root.Element("FilesListViewWidth")?.Value);
                         IsReadOnlyFileInclude = Convert.ToBoolean(root.Element("IsReadOnlyFileInclude")?.Value);
                         IsHiddenFileInclude = Convert.ToBoolean(root.Element("IsHiddenFileInclude")?.Value);
                         IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
@@ -505,6 +554,10 @@ namespace FileHashCraft.Services
                 }
                 // XMLが正当ではないときはデフォルトの値を使う
                 catch (XmlException) { }
+            }
+            else
+            {
+                SaveSettings();
             }
         }
 
@@ -522,8 +575,10 @@ namespace FileHashCraft.Services
                         new XElement("Left", Left),
                         new XElement("Width", Width),
                         new XElement("Height", Height),
-                        new XElement("TreeWidth", DirectoriesTreeViewWidth),
-                        new XElement("ListWidth", ListWidth),
+                        new XElement("DirectoriesTreeViewWidth", DirectoriesTreeViewWidth),
+                        new XElement("FilesListViewWidth", FilesListViewWidth),
+                        new XElement("DupDirsFilesTreeViewWidth", DupDirsFilesTreeViewWidth),
+                        new XElement("DupFilesDirsListBoxWidth", DupFilesDirsListBoxWidth),
                         new XElement("IsReadOnlyFileInclude", IsReadOnlyFileInclude),
                         new XElement("IsHiddenFileInclude", IsHiddenFileInclude),
                         new XElement("IsZeroSizeFileDelete", IsZeroSizeFileDelete),
@@ -600,6 +655,22 @@ namespace FileHashCraft.Services
         public void SendFilesListBoxWidth(double filesListBoxWidth)
         {
             _messenger.Send(new FilesListBoxWidthChangedMessage(filesListBoxWidth));
+        }
+        /// <summary>
+        /// 重複ファイルを含むファイル一覧リストボックスの幅を変更します。
+        /// </summary>
+        /// <param name="dupFilesDirsListBoxWidth">ファイル一覧リストボックスの幅</param>
+        public void SendDupFilesDirsListBoxWidth(double dupFilesDirsListBoxWidth)
+        {
+            _messenger.Send(new DupFilesDirsListBoxWidthMessage(dupFilesDirsListBoxWidth));
+        }
+        /// <summary>
+        /// 重複ファイルのツリービューの幅を変更します。
+        /// </summary>
+        /// <param name="dupDirsFilesTreeViewWidth">重複ファイルのツリービューの幅</param>
+        public void SendDupDirsFilesTreeViewWidth(double dupDirsFilesTreeViewWidth)
+        {
+            _messenger.Send(new DupDirsFilesTreeViewWidthMessage(dupDirsFilesTreeViewWidth));
         }
         /// <summary>
         /// 利用言語を設定します。

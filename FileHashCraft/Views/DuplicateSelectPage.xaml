@@ -9,18 +9,18 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="DuplicateSelectPage">
 
-    <Grid>
+    <Grid PreviewMouseWheel="OnMouseWheel">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
@@ -36,25 +36,37 @@
                       Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
         </Menu>
 
-        <local:DupFilesDirsListBoxControl Grid.Row="1" Grid.Column="1"/>
-        
+        <local:DupFilesDirsListBoxControl Grid.Row="1" Grid.Column="0" Width="{Binding DupFilesDirsListBoxWidth}"/>
         <GridSplitter Grid.Row="1" Grid.Column="1" Width="3"
                       HorizontalAlignment="Stretch" 
-                      DragDelta="GridSplitter_DuplicateListBoxDragDelta"/>
+                      DragDelta="GridSplitter_DupFilesDirsListBoxDragDelta"/>
 
-        <TreeView x:Name="DuplicateFolder" Grid.Row="1" Grid.Column="2" Width="100"/>
-
+        <local:DupDirsFilesTreeViewControl Grid.Row="1" Grid.Column="2" Width="{Binding DupDirsFilesTreeViewWidth}"/>
         <GridSplitter Grid.Row="1" Grid.Column="3" Width="3"
                       HorizontalAlignment="Stretch" 
-                      DragDelta="GridSplitter_DuplicateTreeViewDragDelta"/>
+                      DragDelta="GridSplitter_DupDirsFilesTreeViewDragDelta"/>
+        <local:DupLinkedDirsFilesTreeViewControl Grid.Row="1" Grid.Column="4"/>
 
-        <TreeView Grid.Row="1" Grid.Column="4" Width="100"/>
-        
         <!-- Button -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" HorizontalAlignment="Right">
-            <Button Content="削除" Width="150"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Background="Yellow" Margin="3"
+                           Text="aaaaaaaaaaaaaaaaaaaaaaaa"
+                           FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
+                <Button Grid.Column="1" Width="100" Margin="3"
+                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
+                        Command="{Binding ToSelectTargetPage}"/>
+                <Button Grid.Column="2" Width="100" Margin="3" Command="{Binding DeleteCommand}"
+                        FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonDelete, Mode=OneWay}"/>
+
+            </Grid>
         </StackPanel>
-
-
     </Grid>
 </Page>

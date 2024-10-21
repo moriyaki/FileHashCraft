@@ -533,4 +533,8 @@
     <value>Wildcard Filter Result</value>
     <comment>TargetFilterWindow</comment>
   </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>Button/DuplicateSelectPage</comment>
+  </data>
 </root>

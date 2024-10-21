@@ -141,6 +141,7 @@ namespace FileHashCraft
 
             services.AddSingleton<IDuplicateSelectPageViewModel, DuplicateSelectPageViewModel>();
             services.AddSingleton<IDupFilesDirsListBoxControlViewModel, DupFilesDirsListBoxControlViewModel>();
+            services.AddTransient<IDupFilesDirsListBoxItemViewModel, DupFilesDirsListBoxItemViewModel>();
             services.AddSingleton<IDupDirsFilesTreeViewControlViewModel, DupDirsFilesTreeViewControlViewModel>();
             services.AddSingleton<IDupLinkedDirsFilesTreeViewControlViewModel, DupLinkedDirsFilesTreeViewControlViewModel>();
 

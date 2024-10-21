@@ -33,9 +33,9 @@ namespace FileHashCraft.Services.Messages
         /// </summary>
         void NavigateToHashCalcingPage();
         /// <summary>
-        /// ハッシュ計算画面に移動に移動します。
+        /// 同一ファイル選択画面ページに移動します。
         /// </summary>
-        void NavigateToSameFileSelectSimplePage();
+        void NavigateToDuplicateSelectPage();
         /// <summary>
         /// カレントディレクトリにアイテムが追加された事をメッセージ送信します。
         /// </summary>
@@ -133,7 +133,7 @@ namespace FileHashCraft.Services.Messages
         /// <summary>
         /// 同一ファイル選択画面ページに移動します。
         /// </summary>
-        public void NavigateToSameFileSelectSimplePage()
+        public void NavigateToDuplicateSelectPage()
         {
             _messenger.Send(new ToDuplicateSelectPage());
         }

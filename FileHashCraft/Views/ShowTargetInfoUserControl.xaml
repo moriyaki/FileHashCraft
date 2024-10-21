@@ -17,10 +17,10 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <!-- ハッシュ取得中かのメッセージ -->
-        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="3" Background="{Binding StatusColor}">
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="3" Background="{Binding StatusColor}" HorizontalAlignment="Stretch">
             <TextBlock 
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -32,7 +32,7 @@
                     FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                     Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}"/>
 
-        <ComboBox x:Name="HashAlgorithmsComboBox" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
+        <ComboBox x:Name="HashAlgorithmsComboBox" Grid.Row="1" Grid.Column="1" Margin="3"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         ItemsSource="{Binding HashAlgorithms}"
                         SelectedValue="{Binding SelectedHashAlgorithm}"
@@ -44,7 +44,7 @@
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_CountAllFilesGetHash, Mode=OneWay}"/>
 
-        <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left"
+        <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         Content="{Binding CountAllTargetFilesGetHash}"/>
 
@@ -53,7 +53,7 @@
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_CountFilteredGetHash, Mode=OneWay}"/>
 
-        <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left"
+        <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                         Content="{Binding CountFilteredGetHash}"/>
     </Grid>

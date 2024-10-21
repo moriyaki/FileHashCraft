@@ -64,6 +64,27 @@ namespace FileHashCraft.Services.Messages
 
         public FilesListBoxWidthChangedMessage(double filesListBoxWidth) => FilesListBoxWidth = filesListBoxWidth;
     }
+
+    /// <summary>
+    /// ファイル削除画面のディレクトリ一覧リストボックス幅の変更メッセージ
+    /// </summary>
+    public class DupFilesDirsListBoxWidthMessage
+    {
+        public double DupFilesDirsListBoxWidth { get; }
+        public DupFilesDirsListBoxWidthMessage() { throw new NotImplementedException(nameof(DupFilesDirsListBoxWidthMessage)); }
+        public DupFilesDirsListBoxWidthMessage(double dupFilesDirsListBoxWidth) => DupFilesDirsListBoxWidth = dupFilesDirsListBoxWidth;
+    }
+
+    /// <summary>
+    /// ファイル削除画面の選択されたディレクトリ一覧ツリービュー幅の変更メッセージ
+    /// </summary>
+    public class DupDirsFilesTreeViewWidthMessage
+    {
+        public double DupDirsFilesTreeViewWidth { get; }
+        public DupDirsFilesTreeViewWidthMessage() { throw new NotImplementedException(nameof(DupDirsFilesTreeViewWidthMessage)); }
+        public DupDirsFilesTreeViewWidthMessage(double dupDirsFilesTreeViewWidth) => DupDirsFilesTreeViewWidth = dupDirsFilesTreeViewWidth;
+    }
+
     /// <summary>
     /// 選択されている言語変更のメッセージ
     /// </summary>
