@@ -5,20 +5,115 @@ namespace FileHashCraft.Tests
 {
     public class WildcardToRegexPatternTests
     {
-        [Theory]
-        [InlineData("*.txt", "^.*\\.txt$", RegexOptions.IgnoreCase)]
-        [InlineData("file.*", "^file(?:\\..+)?$", RegexOptions.IgnoreCase)]
-        [InlineData("file?.log", "^file.\\.log$", RegexOptions.IgnoreCase)]
-        [InlineData("*.log", "^.*\\.log$", RegexOptions.IgnoreCase)]
-        [InlineData("file", "^file$", RegexOptions.IgnoreCase)]
-        public void WildcardToRegexPattern_ShouldReturnCorrectRegex(string wildcardPattern, string expectedPattern, RegexOptions options)
+        [Fact]
+        public void FileNameAsteriskTest()
         {
+            var wildcardPattern = "craft*.txt";
+            var expectedPattern = "^craft.*\\.txt$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
-
-            // Assert
+            // Result
             Assert.Equal(expectedPattern, result.ToString());
-            Assert.Equal(options, result.Options);
+        }
+
+        [Fact]
+        public void FileExtentionAsteriskTest()
+        {
+            var wildcardPattern = "file.*";
+            var expectedPattern = "^file(?:\\..+)?$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+        [Fact]
+        public void FileNameQuestionTest()
+        {
+            var wildcardPattern = "file?.log";
+            var expectedPattern = "^file.\\.log$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+        [Fact]
+        public void FileNameAllAsteriskTest()
+        {
+            var wildcardPattern = "*.log";
+            var expectedPattern = "^.*\\.log$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+        [Fact]
+        public void FileNameNoWildcardTest()
+        {
+            var wildcardPattern = "file";
+            var expectedPattern = "^file$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+        [Fact]
+        public void FileNameBracketsEscapeTest()
+        {
+            var wildcardPattern = "file[1].txt";
+            var expectedPattern = "^file\\[1]\\.txt$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+        [Fact]
+        public void FileNameParenthesesEscapeTest()
+        {
+            var wildcardPattern = "file(1).txt";
+            var expectedPattern = "^file\\(1\\)\\.txt$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+        [Fact]
+        public void FileNameCurlyBracesEscapeTest()
+        {
+            var wildcardPattern = "file{1}.txt";
+            var expectedPattern = "^file\\{1}\\.txt$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+
+        [Fact]
+        public void FileNamePlusEscapeTest()
+        {
+            var wildcardPattern = "file+.log";
+            var expectedPattern = "^file\\+\\.log$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
+        }
+
+        [Fact]
+        public void FileNameStartEndEscapeTest()
+        {
+            var wildcardPattern = "file^$.log";
+            var expectedPattern = "^file\\^\\$\\.log$";
+            // Act
+            var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
+            // Result
+            Assert.Equal(expectedPattern, result.ToString());
         }
     }
 }
