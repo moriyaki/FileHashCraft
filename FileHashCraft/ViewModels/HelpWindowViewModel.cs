@@ -36,31 +36,31 @@ namespace FileHashCraft.ViewModels
         /// 画面の上端設定
         /// </summary>
         [ObservableProperty]
-        private double _top = 450d;
+        private double _Top = 450d;
 
         /// <summary>
         /// 左端の位置設定
         /// </summary>
         [ObservableProperty]
-        public double _left = 400d;
+        public double _Left = 400d;
 
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
         [ObservableProperty]
-        private double _width = 400d;
+        private double _Width = 400d;
 
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
         [ObservableProperty]
-        private double _height = 800d;
+        private double _Height = 800d;
 
         /// <summary>
         /// 表示するヘルプHTML
         /// </summary>
         [ObservableProperty]
-        private string _htmlFile = "index.html";
+        private string _HtmlFile = "index.html";
         #endregion バインディング
 
         public HelpWindowViewModel() : base() { }

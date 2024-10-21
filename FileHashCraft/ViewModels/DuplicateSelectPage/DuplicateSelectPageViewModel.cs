@@ -53,8 +53,8 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IFileSystemServices _FileSystemServices;
-        private readonly IHelpWindowViewModel _HelpWindowViewModel;
+        private readonly IFileSystemServices _fileSystemServices;
+        private readonly IHelpWindowViewModel _helpWindowViewModel;
 
         public DuplicateSelectPageViewModel() { throw new NotImplementedException(nameof(DuplicateSelectPageViewModel)); }
 
@@ -65,14 +65,14 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             IHelpWindowViewModel helpWindowViewModel
         ) : base(messenger, settingsService)
         {
-            _FileSystemServices = fileSystemServices;
-            _HelpWindowViewModel = helpWindowViewModel;
+            _fileSystemServices = fileSystemServices;
+            _helpWindowViewModel = helpWindowViewModel;
 
             _DupDirsFilesTreeViewWidth = settingsService.DupDirsFilesTreeViewWidth;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(()
-                => _FileSystemServices.NavigateToSettingsPage(ReturnPageEnum.SelecTargettPage));
+                => _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.SelecTargettPage));
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
             {
@@ -84,16 +84,14 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 var helpWindow = new Views.HelpWindow();
                 helpWindow.Show();
-                _HelpWindowViewModel.Initialize(HelpPage.Index);
+                _helpWindowViewModel.Initialize(HelpPage.Index);
             });
             // 削除コマンド
             DeleteCommand = new RelayCommand(()
                 => System.Windows.MessageBox.Show("まだだよ"));
 
             ToSelectTargetPage = new RelayCommand(() =>
-                _FileSystemServices.NavigateToSelectTargetPage());
-
-
+                _fileSystemServices.NavigateToSelectTargetPage());
         }
         #endregion コンストラクタ
     }

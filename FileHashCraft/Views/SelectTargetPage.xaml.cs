@@ -58,7 +58,7 @@ namespace FileHashCraft.Views
         private void GridSplitter_ListDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             var _PageSelectTargetViewModel = Ioc.Default.GetService<ISelectTargetPageViewModel>() ?? throw new NullReferenceException(nameof(ISelectTargetPageViewModel));
-            _PageSelectTargetViewModel.ListWidth = FileListBox.ActualWidth + e.HorizontalChange;
+            _PageSelectTargetViewModel.FilesListBoxWidth = FileListBox.ActualWidth + e.HorizontalChange;
         }
     }
 }

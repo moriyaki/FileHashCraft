@@ -56,11 +56,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// チェックボックスの表示状態の設定
         /// </summary>
-        private Visibility _isCheckBoxVisible = Visibility.Visible;
+        private Visibility _IsCheckBoxVisible = Visibility.Visible;
         public Visibility IsCheckBoxVisible
         {
-            get => _isCheckBoxVisible;
-            private set => _isCheckBoxVisible = value;
+            get => _IsCheckBoxVisible;
+            private set => _IsCheckBoxVisible = value;
         }
 
         /// <summary>

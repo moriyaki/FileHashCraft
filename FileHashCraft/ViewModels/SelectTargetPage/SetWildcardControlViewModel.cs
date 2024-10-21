@@ -63,13 +63,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
-        private WildcardSearchErrorStatus _searchErrorStatus = WildcardSearchErrorStatus.None;
+        private WildcardSearchErrorStatus _SearchErrorStatus = WildcardSearchErrorStatus.None;
         public WildcardSearchErrorStatus SearchErrorStatus
         {
-            get => _searchErrorStatus;
+            get => _SearchErrorStatus;
             set
             {
-                SetProperty(ref _searchErrorStatus, value);
+                SetProperty(ref _SearchErrorStatus, value);
                 switch (value)
                 {
                     case WildcardSearchErrorStatus.None:
@@ -100,7 +100,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public override RelayCommand HelpOpenCommand { get; set; }
-
         #endregion バインディング
 
         #region コンストラクタ

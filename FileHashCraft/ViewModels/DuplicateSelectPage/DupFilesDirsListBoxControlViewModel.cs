@@ -50,11 +50,12 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 if (parameter is DupFilesDirsListBoxItemViewModel checkBoxViewModel)
                 {
-                    var item = parameter as DupFilesDirsListBoxItemViewModel;
-                    MessageBox.Show(item.DuplicateDirectory);
+                    if (parameter is DupFilesDirsListBoxItemViewModel item)
+                    {
+                        MessageBox.Show(item.DuplicateDirectory);
+                    }
                 }
             });
-
 
             var path = @"C:\users\moriyaki\";
             var item = new DupFilesDirsListBoxItemViewModel(_messenger, _settingsService)

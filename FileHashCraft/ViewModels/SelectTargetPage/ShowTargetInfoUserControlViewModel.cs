@@ -105,13 +105,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ファイルスキャン状況
         /// </summary>
-        private FileScanStatus _status = FileScanStatus.None;
+        private FileScanStatus _Status = FileScanStatus.None;
         public FileScanStatus Status
         {
-            get => _status;
+            get => _Status;
             set
             {
-                _status = value;
+                _Status = value;
                 switch (value)
                 {
                     case FileScanStatus.None:
@@ -141,13 +141,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// ファイルスキャン状況に合わせた背景色
         /// </summary>
         [ObservableProperty]
-        private Brush _statusColor = Brushes.LightGreen;
+        private Brush _StatusColor = Brushes.LightGreen;
 
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
         [ObservableProperty]
-        private string _statusMessage = string.Empty;
+        private string _StatusMessage = string.Empty;
 
         /// <summary>
         /// ハッシュ計算アルゴリズムの一覧
@@ -157,14 +157,14 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュ計算アルゴリズムの取得と設定
         /// </summary>
-        private string _selectedHashAlgorithm;
+        private string _SelectedHashAlgorithm;
         public string SelectedHashAlgorithm
         {
-            get => _selectedHashAlgorithm;
+            get => _SelectedHashAlgorithm;
             set
             {
-                if (value == _selectedHashAlgorithm) return;
-                SetProperty(ref _selectedHashAlgorithm, value);
+                if (value == _SelectedHashAlgorithm) return;
+                SetProperty(ref _SelectedHashAlgorithm, value);
                 _settingsService.SendHashAlogrithm(value);
             }
         }
@@ -172,13 +172,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 全ディレクトリ数(StatusBar用)
         /// </summary>
-        private int _countScannedDirectories = 0;
+        private int _CountScannedDirectories = 0;
         public int CountScannedDirectories
         {
-            get => _countScannedDirectories;
+            get => _CountScannedDirectories;
             set
             {
-                SetProperty(ref _countScannedDirectories, value);
+                SetProperty(ref _CountScannedDirectories, value);
                 Status = FileScanStatus.DirectoriesScanning;
             }
         }
@@ -186,13 +186,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数(StatusBar用)
         /// </summary>
-        private int _countHashFilesDirectories = 0;
+        private int _CountHashFilesDirectories = 0;
         public int CountHashFilesDirectories
         {
-            get => _countHashFilesDirectories;
+            get => _CountHashFilesDirectories;
             set
             {
-                SetProperty(ref _countHashFilesDirectories, value);
+                SetProperty(ref _CountHashFilesDirectories, value);
                 Status = FileScanStatus.FilesScanning;
                 OnPropertyChanged(nameof(StatusMessage));
             }
@@ -201,13 +201,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ハッシュを取得する全ファイル数
         /// </summary>
-        private int _countAllTargetFilesGetHash = 0;
+        private int _CountAllTargetFilesGetHash = 0;
         public int CountAllTargetFilesGetHash
         {
-            get => _countAllTargetFilesGetHash;
+            get => _CountAllTargetFilesGetHash;
             set
             {
-                SetProperty(ref _countAllTargetFilesGetHash, value);
+                SetProperty(ref _CountAllTargetFilesGetHash, value);
                 OnPropertyChanged(nameof(StatusMessage));
             }
         }
@@ -215,13 +215,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
-        private int _countFilteredGetHash = 0;
+        private int _CountFilteredGetHash = 0;
         public int CountFilteredGetHash
         {
-            get => _countFilteredGetHash;
+            get => _CountFilteredGetHash;
             set
             {
-                SetProperty(ref _countFilteredGetHash, value);
+                SetProperty(ref _CountFilteredGetHash, value);
                 ToHashCalcingPage.NotifyCanExecuteChanged();
             }
         }
@@ -254,7 +254,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _fileManager = fileManager;
             _scannedFilesManager = scannedFilesManager;
             _fileSystemServices = fileSystemServices;
-            _selectedHashAlgorithm = _settingsService.HashAlgorithm;
+            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
             _hashAlgorithmHelper = hashAlgorithmHelper;
 
             HashAlgorithms =

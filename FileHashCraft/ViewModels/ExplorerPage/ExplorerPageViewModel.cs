@@ -328,8 +328,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     }
                 }
             }
+            /*
             _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
             _fileSystemServices.NavigateToSelectTargetPage();
+            */
+            //--------------------- 開発用自動化処理ここまで
+
         }
         #endregion コンストラクタと初期処理
 

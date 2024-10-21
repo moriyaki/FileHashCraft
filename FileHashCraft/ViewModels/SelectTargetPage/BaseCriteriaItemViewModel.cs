@@ -10,7 +10,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// ワイルドカード検索条件
         /// </summary>
-        protected string _criteria = string.Empty;
+        protected string _Criteria = string.Empty;
         public abstract string Criteria { get; set; }
 
         public string OriginalCriteria { get; set; } = string.Empty;
@@ -18,7 +18,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// ワイルドカード検索条件が正当かどうか
         /// </summary>
-        protected bool _criteriaConditionCorrent;
+        protected bool _CriteriaConditionCorrent;
 
         /// <summary>
         /// アイテムの背景色
@@ -39,13 +39,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// 編集モードかどうか
         /// </summary>
-        protected bool _isEditMode = false;
+        protected bool _IsEditMode = false;
         public abstract bool IsEditMode { get; set; }
 
         /// <summary>
         /// 該当アイテムが選択されているかのプロパティです。
         /// </summary>
-        protected bool _isSelected = false;
+        protected bool _IsSelected = false;
         public abstract bool IsSelected { get; set; }
         #endregion バインディング
 
@@ -67,7 +67,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         protected void RestoreCriteria()
         {
             // 
-            if (!_criteriaConditionCorrent)
+            if (!_CriteriaConditionCorrent)
             {
                 Criteria = OriginalCriteria;
             }

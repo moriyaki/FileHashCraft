@@ -24,38 +24,39 @@ namespace FileHashCraft.ViewModels
             _messenger = messenger;
             _settingsService = settingsService;
 
-            _currentFontFamily = _settingsService.CurrentFont;
-            _fontSize = _settingsService.FontSize;
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
             // フォント変更メッセージ受信
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
+            //_messenger.Register<FontSizeChangedMessage>(this, (_, m) => SetProperty(ref _FontSize, m.FontSize));
             _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
         }
 
-        private FontFamily _currentFontFamily;
+        private FontFamily _CurrentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _currentFontFamily;
+            get => _CurrentFontFamily;
             set
             {
-                if (_currentFontFamily.Source == value.Source) { return; }
-                SetProperty(ref _currentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+                SetProperty(ref _CurrentFontFamily, value);
+                _settingsService.CurrentFont = value;
             }
         }
 
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _fontSize;
+        private double _FontSize;
         public double FontSize
         {
-            get => _fontSize;
+            get => _FontSize;
             set
             {
-                if (_fontSize == value) { return; }
-                SetProperty(ref _fontSize, value);
-                _settingsService.SendFontSize(value);
+                if (_FontSize == value) { return; }
+                SetProperty(ref _FontSize, value);
+                _settingsService.FontSize = value;
             }
         }
     }

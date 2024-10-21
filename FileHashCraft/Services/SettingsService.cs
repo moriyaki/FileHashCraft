@@ -16,19 +16,19 @@ namespace FileHashCraft.Services
         /// <summary>
         /// ウィンドウの開始上位置
         /// </summary>
-        double Top { get; }
+        double Top { get; set; }
         /// <summary>
         /// ウィンドウの開始左位置
         /// </summary>
-        double Left { get; }
+        double Left { get; set; }
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
-        double Width { get; }
+        double Width { get; set; }
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
-        double Height { get; }
+        double Height { get; set; }
         /// <summary>
         /// ディレクトリツリービューの幅
         /// </summary>
@@ -56,28 +56,28 @@ namespace FileHashCraft.Services
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
-        bool IsReadOnlyFileInclude { get; }
+        bool IsReadOnlyFileInclude { get; set; }
         /// <summary>
         /// 隠しファイルを対象にするかどうか
         /// </summary>
-        bool IsHiddenFileInclude { get; }
+        bool IsHiddenFileInclude { get; set; }
         /// <summary>
         /// 0 サイズのファイルを削除するかどうか
         /// </summary>
-        bool IsZeroSizeFileDelete { get; }
+        bool IsZeroSizeFileDelete { get; set; }
         /// <summary>
         /// 空のフォルダを削除するかどうか
         /// </summary>
-        bool IsEmptyDirectoryDelete { get; }
+        bool IsEmptyDirectoryDelete { get; set; }
         /// <summary>
         /// フォントの変更
         /// MainWindowを参照できる所には以下のコード
         /// </summary>
-        FontFamily CurrentFont { get; }
+        FontFamily CurrentFont { get; set; }
         /// <summary>
         /// フォントのサイズ
         /// </summary>
-        double FontSize { get; }
+        double FontSize { get; set; }
         /// <summary>
         /// 設定できるフォントサイズのコレクションを取得します。
         /// </summary>
@@ -94,22 +94,6 @@ namespace FileHashCraft.Services
         /// 設定を読み込みます。
         /// </summary>
         void LoadSettings();
-        /// <summary>
-        /// ウィンドウの上位置を設定します。
-        /// </summary>
-        void SendWindowTop(double top);
-        /// <summary>
-        /// ウィンドウの左位置を設定します。
-        /// </summary>
-        void SendWindowLeft(double left);
-        /// <summary>
-        /// ウィンドウの幅を設定します。
-        /// </summary>
-        void SendWindowWidth(double width);
-        /// <summary>
-        /// ウィンドウの高さを設定します。
-        /// </summary>
-        void SendWindowHeight(double height);
         /// <summary>
         /// ツリービューの幅を設定します。
         /// </summary>

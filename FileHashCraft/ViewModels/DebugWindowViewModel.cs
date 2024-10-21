@@ -37,36 +37,36 @@ namespace FileHashCraft.ViewModels
         /// 画面の上端設定
         /// </summary>
         [ObservableProperty]
-        private double _top = 450d;
+        private double _Top = 450d;
 
         /// <summary>
         /// 左端の位置設定
         /// </summary>
         [ObservableProperty]
-        public double _left = 400d;
+        public double _Left = 400d;
 
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
         [ObservableProperty]
-        private double _width = 400d;
+        private double _Width = 400d;
 
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
         [ObservableProperty]
-        private double _height = 800d;
+        private double _Height = 800d;
 
         /// <summary>
         /// ポーリング処理中か否か
         /// </summary>
-        private bool _isPolling = false;
+        private bool _IsPolling = false;
         public bool IsPolling
         {
-            get => _isPolling;
+            get => _IsPolling;
             set
             {
-                SetProperty(ref _isPolling, value);
+                SetProperty(ref _IsPolling, value);
                 OnPropertyChanged(nameof(PollingStatus));
             }
         }
@@ -83,7 +83,7 @@ namespace FileHashCraft.ViewModels
         /// デバッグテキスト
         /// </summary>
         [ObservableProperty]
-        private string _debugText = "ポーリング待機中";
+        private string _DebugText = "ポーリング待機中";
 
         /// <summary>
         /// ポーリング用タイマー

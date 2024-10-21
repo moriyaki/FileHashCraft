@@ -39,13 +39,13 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// <summary>
         /// ファイルハッシュ計算の進行状況
         /// </summary>
-        private FileHashCalcStatus _status = FileHashCalcStatus.None;
+        private FileHashCalcStatus _Status = FileHashCalcStatus.None;
         public FileHashCalcStatus Status
         {
-            get => _status;
+            get => _Status;
             set
             {
-                _status = value;
+                _Status = value;
                 switch (value)
                 {
                     case FileHashCalcStatus.None:
@@ -75,42 +75,42 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// ファイルスキャン状況に合わせた背景色
         /// </summary>
         [ObservableProperty]
-        private Brush _statusColor = Brushes.LightGreen;
+        private Brush _StatusColor = Brushes.LightGreen;
 
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
         [ObservableProperty]
-        private string _statusMessage = string.Empty;
+        private string _StatusMessage = string.Empty;
 
         /// <summary>
         /// 総対象ファイル数
         /// </summary>
         [ObservableProperty]
-        private int _allTargetFilesCount = 0;
+        private int _AllTargetFilesCount = 0;
 
         /// <summary>
         /// ハッシュを取得する全てのファイル数
         /// </summary>
         [ObservableProperty]
-        private int _allHashNeedToGetFilesCount = 0;
+        private int _AllHashNeedToGetFilesCount = 0;
 
         /// <summary>
         /// ハッシュ計算のアルゴリズム
         /// </summary>
         [ObservableProperty]
-        private string _hashAlgorithm = string.Empty;
+        private string _HashAlgorithm = string.Empty;
 
         /// <summary>
         /// ハッシュ取得済みのファイル数
         /// </summary>
-        private int _hashGotFileCount = 0;
+        private int _HashGotFileCount = 0;
         public int HashGotFileCount
         {
-            get => _hashGotFileCount;
+            get => _HashGotFileCount;
             set
             {
-                SetProperty(ref _hashGotFileCount, value);
+                SetProperty(ref _HashGotFileCount, value);
                 OnPropertyChanged(nameof(HashGotPercent));
             }
         }
@@ -137,7 +137,7 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         /// ファイルが同一だった件数
         /// </summary>
         [ObservableProperty]
-        private double _matchHashCount = 0;
+        private double _MatchHashCount = 0;
 
         /// <summary>
         /// 計算中のハッシュファイル

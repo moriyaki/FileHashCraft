@@ -24,11 +24,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public override string Criteria
         {
-            get => _criteria;
+            get => _Criteria;
             set
             {
-                _criteriaConditionCorrent = _messenger.Send(new SelectedChangedWildcardCriteriaRequestMessage(value, OriginalCriteria));
-                SetProperty(ref _criteria, value);
+                _CriteriaConditionCorrent = _messenger.Send(new SelectedChangedWildcardCriteriaRequestMessage(value, OriginalCriteria));
+                SetProperty(ref _Criteria, value);
             }
         }
 
@@ -37,11 +37,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public override bool IsEditMode
         {
-            get => _isEditMode;
+            get => _IsEditMode;
             set
             {
-                if (_isEditMode == value) { return; }
-                SetProperty(ref _isEditMode, value);
+                if (_IsEditMode == value) { return; }
+                SetProperty(ref _IsEditMode, value);
                 if (value)
                 {
                     // 表示モードになったら、オリジナルを保存して編集モードに入ります。
@@ -65,10 +65,10 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// </summary>
         public override bool IsSelected
         {
-            get => _isSelected;
+            get => _IsSelected;
             set
             {
-                SetProperty(ref _isSelected, value);
+                SetProperty(ref _IsSelected, value);
                 if (!value)
                 {
                     RestoreCriteria();

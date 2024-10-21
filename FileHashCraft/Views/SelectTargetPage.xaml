@@ -49,14 +49,14 @@
 
         <ListBox x:Name="FileListBox" 
                  Grid.Row="1" Grid.Column="2" Grid.RowSpan="6" Margin="3" HorizontalAlignment="Left"
-                 Width="{Binding ListWidth,Mode=TwoWay}"
-                 ItemsSource="{Binding ViewModelMain.HashFileListItems,Mode=OneWay}"
-                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
+                 Width="{Binding FilesListBoxWidth,Mode=TwoWay}"
+                 ItemsSource="{Binding ViewModelMain.HashFileListItems,Mode=OneWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding Icon, Mode=OneWay}" Width="{Binding FontSize}" Height="{Binding FontSize}"/>
-                        <TextBlock Text="{Binding FileName}" Padding="0">
+                        <TextBlock Text="{Binding FileName}" Padding="0"
+                                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Style.Triggers>

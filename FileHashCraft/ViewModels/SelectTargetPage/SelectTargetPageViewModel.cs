@@ -45,7 +45,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// リストボックスの幅
         /// </summary>
-        double ListWidth { get; set; }
+        double FilesListBoxWidth { get; set; }
         /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
@@ -88,30 +88,16 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         private string _FilterTextBox = string.Empty;
 
         /// <summary>
-        /// ツリービュー横幅の設定
-        /// </summary>
-        private double _TreeWidth;
-        public double TreeWidth
-        {
-            get => _TreeWidth;
-            set
-            {
-                if (value == _TreeWidth) { return; }
-                SetProperty(ref _TreeWidth, value);
-                _settingsService.SendDirectoriesTreeViewWidth(value);
-            }
-        }
-        /// <summary>
         /// リストボックスの幅を設定します
         /// </summary>
-        private double _ListWidth;
-        public double ListWidth
+        private double _FilesListBoxWidth;
+        public double FilesListBoxWidth
         {
-            get => _ListWidth;
+            get => _FilesListBoxWidth;
             set
             {
-                if (value == _ListWidth) { return; }
-                SetProperty(ref _ListWidth, value);
+                if (value == _FilesListBoxWidth) { return; }
+                SetProperty(ref _FilesListBoxWidth, value);
                 _settingsService.SendFilesListBoxWidth(value);
             }
         }
@@ -223,16 +209,11 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _messenger.Register<AddFileTypesMessage>(this, (_, _)
                 => ViewModelExtention.AddFileTypes());
 
-            // ツリービュー幅変更メッセージ受信
-            _messenger.Register<DirectoriesTreeViewWidthChangedMessage>(this, (_, m)
-                => TreeWidth = m.DirectoriesTreeViewWidth);
-
             // リストボックス幅変更メッセージ受信
             _messenger.Register<FilesListBoxWidthChangedMessage>(this, (_, m)
-                => ListWidth = m.FilesListBoxWidth);
+                => FilesListBoxWidth = m.FilesListBoxWidth);
 
-            _TreeWidth = _settingsService.DirectoriesTreeViewWidth;
-            _ListWidth = _settingsService.FilesListViewWidth;
+            _FilesListBoxWidth = _settingsService.FilesListViewWidth;
             ViewModelMain.SelectedHashAlgorithm= _settingsService.HashAlgorithm;
         }
         #endregion コンストラクタ
@@ -399,7 +380,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             ViewModelMain.ChangeHashScanStatus(FileScanStatus.Finished);
 
             //--------------------- 開発用自動化処理
-            App.Current?.Dispatcher.InvokeAsync(() => ViewModelMain.ToHashCalcingPage.Execute(this));
+            //App.Current?.Dispatcher.InvokeAsync(() => ViewModelMain.ToHashCalcingPage.Execute(this));
         }
         #endregion メイン処理
 

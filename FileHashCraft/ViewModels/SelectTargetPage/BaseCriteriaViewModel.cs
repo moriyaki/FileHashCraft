@@ -25,21 +25,21 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// 検索条件エラー出力の背景色
         /// </summary>
-        private Brush _searchErrorBackground = Brushes.Transparent;
+        private Brush _SearchErrorBackground = Brushes.Transparent;
         public Brush SearchErrorBackground
         {
-            get => _searchErrorBackground;
-            set => SetProperty(ref _searchErrorBackground, value);
+            get => _SearchErrorBackground;
+            set => SetProperty(ref _SearchErrorBackground, value);
         }
 
         /// <summary>
         /// 検索条件エラー出力
         /// </summary>
-        private string _searchCriteriaErrorOutput = string.Empty;
+        private string _SearchCriteriaErrorOutput = string.Empty;
         public string SearchCriteriaErrorOutput
         {
-            get => _searchCriteriaErrorOutput;
-            set => SetProperty(ref _searchCriteriaErrorOutput, value);
+            get => _SearchCriteriaErrorOutput;
+            set => SetProperty(ref _SearchCriteriaErrorOutput, value);
         }
 
         /// <summary>
@@ -66,13 +66,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <summary>
         /// ワイルドカード新規検索文字列
         /// </summary>
-        private string _searchCriteriaText = string.Empty;
+        private string _SearchCriteriaText = string.Empty;
         public string SearchCriteriaText
         {
-            get => _searchCriteriaText;
+            get => _SearchCriteriaText;
             set
             {
-                SetProperty(ref _searchCriteriaText, value);
+                SetProperty(ref _SearchCriteriaText, value);
                 AddCriteriaCommand.NotifyCanExecuteChanged();
             }
         }
@@ -152,6 +152,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         }
         #endregion コンストラクタ
 
+        #region abstractメソッド
         /// <summary>
         /// ワイルドカード検索条件を追加します。
         /// </summary>
@@ -186,5 +187,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <param name="originalPattern">(必要ならば)元のワイルドカード文字列</param>
         /// <returns>ワイルドカード文字列が正当かどうか</returns>
         public abstract bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "");
+        #endregion abstractメソッド
     }
 }

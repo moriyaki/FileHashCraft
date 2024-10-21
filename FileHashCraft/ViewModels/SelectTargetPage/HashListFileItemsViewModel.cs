@@ -23,8 +23,8 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
 
-            _currentFontFamily = _settingsService.CurrentFont;
-            _fontSize = _settingsService.FontSize;
+            _CurrentFontFamily = _settingsService.CurrentFont;
+            _FontSize = _settingsService.FontSize;
 
             // フォント変更メッセージ受信
             _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
@@ -38,24 +38,24 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// ファイルのフルパス名
         /// </summary>
-        private string _fullPathFileName = string.Empty;
+        private string _FileFullPath = string.Empty;
         public string FileFullPath
         {
-            get => _fullPathFileName;
+            get => _FileFullPath;
             set
             {
-                SetProperty(ref _fullPathFileName, value);
+                SetProperty(ref _FileFullPath, value);
                 Icon = WindowsAPI.GetIcon(value);
                 OnPropertyChanged(nameof(Icon));
             }
         }
 
         [ObservableProperty]
-        private BitmapSource? _icon = null;
+        private BitmapSource? _Icon = null;
 
         public string FileName
         {
-            get => Path.GetFileName(_fullPathFileName);
+            get => Path.GetFileName(_FileFullPath);
         }
 
         private bool _isHashTarget = false;
@@ -79,42 +79,40 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 背景色：ハッシュ検索対象になっていたら変更される
         /// </summary>
-        private SolidColorBrush _hashTargetColor = new(Colors.Transparent);
+        private SolidColorBrush _HashTargetColor = new(Colors.Transparent);
         public SolidColorBrush HashTargetColor
         {
-            get => _hashTargetColor;
-            set => SetProperty(ref _hashTargetColor, value);
+            get => _HashTargetColor;
+            set => SetProperty(ref _HashTargetColor, value);
         }
 
         /// <summary>
         /// フォントの設定
         /// </summary>
-        private FontFamily _currentFontFamily;
+        private FontFamily _CurrentFontFamily;
         public FontFamily CurrentFontFamily
         {
-            get => _currentFontFamily;
+            get => _CurrentFontFamily;
             set
             {
-                if (_currentFontFamily.Source == value.Source) { return; }
-
-                SetProperty(ref _currentFontFamily, value);
-                _settingsService.SendCurrentFont(value);
+                if (_CurrentFontFamily.Source == value.Source) { return; }
+                SetProperty(ref _CurrentFontFamily, value);
+                _settingsService.CurrentFont = value;
             }
         }
 
         /// <summary>
         /// フォントサイズの設定
         /// </summary>
-        private double _fontSize;
+        private double _FontSize;
         public double FontSize
         {
-            get => _fontSize;
+            get => _FontSize;
             set
             {
-                if (_fontSize == value) { return; }
-
-                SetProperty(ref _fontSize, value);
-                _settingsService.SendFontSize(value);
+                if (_FontSize == value) { return; }
+                SetProperty(ref _FontSize, value);
+                _settingsService.FontSize = value;
             }
         }
         #endregion バインディング

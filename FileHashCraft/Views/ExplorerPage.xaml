@@ -127,20 +127,36 @@
                         <GridViewColumn
 						    x:Name="UpdateDate"
 						    Width="150"
-						    DisplayMemberBinding="{Binding LastFileUpdate, Mode=OneWay}"
-                            Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewDataModified, Mode=OneWay}" />
+                            Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewDataModified, Mode=OneWay}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding LastFileUpdate, Mode=OneWay}" 
+                                               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                                               TextAlignment="Right" Width="100"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                         <GridViewColumn
 						    x:Name="FileType"
 						    Width="150"
-						    DisplayMemberBinding="{Binding FileType, Mode=OneWay}"
-						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewType, Mode=OneWay}" />
-                        <GridViewColumn
-						    x:Name="FileSize"
-						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewSize, Mode=OneWay}"
-                               Width="200">
+						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewType, Mode=OneWay}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding FormattedFileSize, Mode=OneWay}" TextAlignment="Right" Width="100"/>
+                                    <TextBlock Text="{Binding FileType, Mode=OneWay}" 
+                                               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                                               TextAlignment="Right" Width="100"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn
+						    x:Name="FileSize"
+                            Width="200"
+						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewSize, Mode=OneWay}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding FormattedFileSize, Mode=OneWay}" 
+                                               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
+                                               TextAlignment="Right" Width="100"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

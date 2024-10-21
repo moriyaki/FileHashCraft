@@ -92,13 +92,13 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
-        private RegexSearchErrorStatus _searchErrorStatus = RegexSearchErrorStatus.None;
+        private RegexSearchErrorStatus _SearchErrorStatus = RegexSearchErrorStatus.None;
         public RegexSearchErrorStatus SearchErrorStatus
         {
-            get => _searchErrorStatus;
+            get => _SearchErrorStatus;
             set
             {
-                SetProperty(ref _searchErrorStatus, value);
+                SetProperty(ref _SearchErrorStatus, value);
                 if (value == RegexSearchErrorStatus.None)
                 {
                     SearchErrorBackground = Brushes.Transparent;
@@ -341,6 +341,7 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             _pageSelectTargetViewModelMain.ChangeSelectedToListBox();
         }
 
+        #region 正規表現チェック
         /// <summary>
         /// 正規表現文字列が正しいかを検査します。
         /// </summary>
@@ -480,5 +481,6 @@ namespace FileHashCraft.ViewModels.PageSelectTarget
             SearchErrorStatus = RegexSearchErrorStatus.None;
             return true;
         }
+        #endregion 正規表現チェック
     }
 }
