@@ -11,6 +11,10 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// 初期化処理
         /// </summary>
         void Initialize();
+        /// <summary>
+        /// 重複ファイルとフォルダのツリービューの幅
+        /// </summary>
+        double DupFilesDirsListBoxWidth { get; set; }
     }
     public class DuplicateSelectPageViewModel : BaseViewModel, IDuplicateSelectPageViewModel
     {
@@ -19,14 +23,14 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// <summary>
         /// 重複ファイルとフォルダのツリービューの幅
         /// </summary>
-        private double _DupDirsFilesTreeViewWidth;
-        public double DupDirsFilesTreeViewWidth
+        private double _DupFilesDirsListBoxWidth;
+        public double DupFilesDirsListBoxWidth
         {
-            get => _DupDirsFilesTreeViewWidth;
+            get => _DupFilesDirsListBoxWidth;
             set
             {
-                if (_DupDirsFilesTreeViewWidth == value) return;
-                SetProperty(ref _DupDirsFilesTreeViewWidth, value);
+                if (_DupFilesDirsListBoxWidth == value) return;
+                SetProperty(ref _DupFilesDirsListBoxWidth, value);
                 _settingsService.DupDirsFilesTreeViewWidth = value;
             }
         }
@@ -54,7 +58,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IDupFilesDirsListBoxControlViewModel _dupDirsFilesTreeViewControlViewModel;
+        private readonly IDupFilesDirsListBoxViewModel _dupDirsFilesTreeViewControlViewModel;
         private readonly IFileSystemServices _fileSystemServices;
         private readonly IHelpWindowViewModel _helpWindowViewModel;
 
@@ -63,7 +67,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         public DuplicateSelectPageViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
-            IDupFilesDirsListBoxControlViewModel dupFilesDirsListBoxControlViewModel,
+            IDupFilesDirsListBoxViewModel dupFilesDirsListBoxControlViewModel,
             IFileSystemServices fileSystemServices,
             IHelpWindowViewModel helpWindowViewModel
         ) : base(messenger, settingsService)
@@ -71,8 +75,6 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             _dupDirsFilesTreeViewControlViewModel = dupFilesDirsListBoxControlViewModel;
             _fileSystemServices = fileSystemServices;
             _helpWindowViewModel = helpWindowViewModel;
-
-            _DupDirsFilesTreeViewWidth = settingsService.DupDirsFilesTreeViewWidth;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(()
@@ -96,6 +98,8 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
 
             ToSelectTargetPage = new RelayCommand(() =>
                 _fileSystemServices.NavigateToSelectTargetPage());
+
+            DupFilesDirsListBoxWidth = settingsService.DupFilesDirsListBoxWidth;
         }
 
         /// <summary>

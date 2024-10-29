@@ -18,7 +18,7 @@ using FileHashCraft.ViewModels.Modules;
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
     #region インターフェース
-    public interface IDirectoryTreeViewItemModel
+    public interface IDirectoryTreeItem
     {
         /// <summary>
         /// ファイル表示名を設定もしくは取得します。
@@ -39,7 +39,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// 子ディレクトリのコレクションを取得します。
         /// </summary>
-        ObservableCollection<DirectoryTreeViewItemModel> Children { get; }
+        ObservableCollection<DirectoryTreeItem> Children { get; }
         /// <summary>
         /// 子ディレクトリを取得します。
         /// </summary>
@@ -58,7 +58,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         bool IsExpanded { get; }
     }
     #endregion インターフェース
-    public partial class DirectoryTreeViewItemModel : ObservableObject, IComparable<DirectoryTreeViewItemModel>, IDirectoryTreeViewItemModel
+    public partial class DirectoryTreeItem : ObservableObject, IComparable<DirectoryTreeItem>, IDirectoryTreeItem
     {
         #region コンストラクタ
         private readonly IMessenger _messenger;
@@ -68,15 +68,17 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// 必ず通すサービスロケータによる依存性注入です。
         /// </summary>
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
-        public DirectoryTreeViewItemModel()
+        public DirectoryTreeItem()
         {
             _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
             _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
             _fileManager = Ioc.Default.GetService<IFileManager>() ?? throw new InvalidOperationException($"{nameof(IFileManager)} dependency not resolved.");
             // フォント変更メッセージ受信
-            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
+                => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _messenger.Register<FontSizeChangedMessage>(this, (_, m)
+                => FontSize = m.FontSize);
 
             _CurrentFontFamily = _settingsService.CurrentFont;
             _FontSize = _settingsService.FontSize;
@@ -86,7 +88,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// コンストラクタで、ファイル情報の設定をします。
         /// </summary>
         /// <param name="f">ファイル情報</param>
-        public DirectoryTreeViewItemModel(FileItemInformation f) : this()
+        public DirectoryTreeItem(FileItemInformation f) : this()
         {
             FullPath = f.FullPath;
             IsReady = f.IsReady;
@@ -99,7 +101,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="f">ファイル情報</param>
         /// <param name="parent">親ディレクトリ</param>
-        public DirectoryTreeViewItemModel(FileItemInformation f, DirectoryTreeViewItemModel parent) : this(f)
+        public DirectoryTreeItem(FileItemInformation f, DirectoryTreeItem parent) : this(f)
         {
             Parent = parent;
         }
@@ -111,7 +113,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="other">ExplorerListItemViewModel?</param>
         /// <returns><bool/returns>
-        public int CompareTo(DirectoryTreeViewItemModel? other)
+        public int CompareTo(DirectoryTreeItem? other)
         {
             return FullPath.CompareTo(other?.FullPath);
         }
@@ -207,7 +209,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
                 if (SetProperty(ref _HasChildren, value) && Children.Count == 0)
                 {
-                    Children.Add(new DirectoryTreeViewItemModel() { Name = "【dummy】" });
+                    Children.Add(new DirectoryTreeItem() { Name = "【dummy】" });
                 }
             }
         }
@@ -215,7 +217,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <summary>
         /// このディレクトリの子ディレクトリのコレクション
         /// </summary>
-        public ObservableCollection<DirectoryTreeViewItemModel> Children { get; set; } = [];
+        public ObservableCollection<DirectoryTreeItem> Children { get; set; } = [];
 
         /// <summary>
         /// チェックボックスの表示状態の設定
@@ -264,7 +266,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// ディレクトリの親ディレクトリ
         /// </summary>
         [ObservableProperty]
-        private DirectoryTreeViewItemModel? _parent;
+        private DirectoryTreeItem? _parent;
 
         /// <summary>
         /// ディレクトリが選択されているかどうか
@@ -345,7 +347,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 foreach (var childPath in _fileManager.EnumerateDirectories(FullPath))
                 {
                     var child = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(childPath);
-                    var item = new DirectoryTreeViewItemModel(child, this);
+                    var item = new DirectoryTreeItem(child, this);
                     Children.Add(item);
                 }
             }
@@ -378,7 +380,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _settingsService.FontSize = value;;
+                _settingsService.FontSize = value;
             }
         }
         #endregion バインディング

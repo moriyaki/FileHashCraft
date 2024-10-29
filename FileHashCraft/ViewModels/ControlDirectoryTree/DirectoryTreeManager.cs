@@ -26,11 +26,11 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
-        void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
+        void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeItem> treeRoot);
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
-        void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot);
+        void CreateCheckBoxManager(ObservableCollection<DirectoryTreeItem> treeRoot);
 
         // ExpandedTreeManager
         /// <summary>
@@ -44,11 +44,11 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// <summary>
         /// ディレクトリノードを展開マネージャに追加します。
         /// </summary>
-        void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void AddExpandedDirectoryManager(DirectoryTreeItem node);
         /// <summary>
         /// ディレクトリノードを展開マネージャから削除します。
         /// </summary>
-        void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void RemoveExpandedDirectoryManager(DirectoryTreeItem node);
         /// <summary>
         /// ディレクトリを追加します。
         /// </summary>
@@ -111,13 +111,13 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
-        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot)
+        public void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeItem> treeRoot)
             => _treeCheckedManager.CheckStatusChangeFromCheckManager(treeRoot);
 
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
-        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeViewItemModel> treeRoot)
+        public void CreateCheckBoxManager(ObservableCollection<DirectoryTreeItem> treeRoot)
             => _treeCheckedManager.CreateCheckBoxManager(treeRoot);
 
         //-----------------------------------TreeExpandedManager
@@ -139,13 +139,13 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// ディレクトリノードを展開マネージャに追加します。
         /// </summary>
         /// <param name="node">追加するディレクトリノード</param>
-        public void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node) =>
+        public void AddExpandedDirectoryManager(DirectoryTreeItem node) =>
            _treeExpandedManager.AddExpandedDirectoryManager(node);
 
         /// <summary>
         /// ディレクトリノードを展開マネージャから削除します。
         /// </summary>
-        public void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node) =>
+        public void RemoveExpandedDirectoryManager(DirectoryTreeItem node) =>
             _treeExpandedManager.RemoveExpandedDirectoryManager(node);
 
         /// <summary>

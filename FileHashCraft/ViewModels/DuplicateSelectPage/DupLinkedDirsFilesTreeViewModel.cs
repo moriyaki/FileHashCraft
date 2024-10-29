@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace FileHashCraft.ViewModels.DuplicateSelectPage
 {
-    public interface IDupLinkedDirsFilesTreeViewControlViewModel;
-    public class DupLinkedDirsFilesTreeViewControlViewModel : IDupLinkedDirsFilesTreeViewControlViewModel;
+    public interface IDupLinkedDirsFilesTreeViewModel;
+    public class DupLinkedDirsFilesTreeViewModel : IDupLinkedDirsFilesTreeViewModel;
 }

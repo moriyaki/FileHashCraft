@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -9,7 +10,7 @@ using FileHashCraft.ViewModels.Modules;
 namespace FileHashCraft.ViewModels.DuplicateSelectPage
 {
     #region インターフェース
-    public interface IDupFilesDirsListBoxControlViewModel
+    public interface IDupFilesDirsListBoxViewModel
     {
         /// <summary>
         /// 重複ファイルを持つディレクトリのコレクション
@@ -22,7 +23,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
     }
     #endregion インターフェース
 
-    public class DupFilesDirsListBoxControlViewModel : BaseViewModel, IDupFilesDirsListBoxControlViewModel
+    public class DupFilesDirsListBoxViewModel : BaseViewModel, IDupFilesDirsListBoxViewModel
     {
         #region バインディング
         /// <summary>
@@ -51,7 +52,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             set
             {
                 SetProperty(ref _SelectedDuplicateDirectoryIndex, value);
-                MessageBox.Show(DuplicateDirectoryCollection[value].DuplicateDirectory);
+                _dupFilesManager.GetDuplicateFiles(DuplicateDirectoryCollection[value].DuplicateDirectory);
             }
         }
 
@@ -64,27 +65,15 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         #region コンストラクタと初期化
         private readonly IDupFilesManager _dupFilesManager;
 
-        public DupFilesDirsListBoxControlViewModel() { throw new NotImplementedException(nameof(DupFilesDirsListBoxControlViewModel)); }
+        public DupFilesDirsListBoxViewModel() { throw new NotImplementedException(nameof(DupFilesDirsListBoxViewModel)); }
 
-        public DupFilesDirsListBoxControlViewModel(
+        public DupFilesDirsListBoxViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
             IDupFilesManager dupFilesManager
         ) : base(messenger, settingsService)
         {
             _dupFilesManager = dupFilesManager;
-            /*
-            DuplicateDirectoryClickedCommand = new RelayCommand<object>((parameter) =>
-            {
-                if (parameter is DupFilesDirsListBoxItemViewModel checkBoxViewModel)
-                {
-                    if (parameter is DupFilesDirsListBoxItemViewModel item)
-                    {
-                        MessageBox.Show(item.DuplicateDirectory);
-                    }
-                }
-            });
-            */
             _DupFilesDirsListBoxWidth = settingsService.DupFilesDirsListBoxWidth;
         }
 

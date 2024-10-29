@@ -78,10 +78,7 @@ namespace FileHashCraft.Views
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
         private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            var controlTree = Ioc.Default.GetService<IControDirectoryTreeViewlModel>();
-            if (controlTree == null) { throw new NullReferenceException(nameof(controlTree)); }
-
-            controlTree.DirectoryTreeViewWidth = ExplorerTreeView.ActualWidth;
+            ExplorerTreeView.Width += e.HorizontalChange;
         }
     }
 }

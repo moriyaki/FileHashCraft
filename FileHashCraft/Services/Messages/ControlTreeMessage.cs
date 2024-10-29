@@ -11,9 +11,9 @@ namespace FileHashCraft.Services.Messages
     /// </summary>
     public class AddToExpandDirectoryManagerMessage
     {
-        public DirectoryTreeViewItemModel Child { get; set; }
+        public DirectoryTreeItem Child { get; set; }
         public AddToExpandDirectoryManagerMessage() { throw new NotImplementedException(nameof(AddToExpandDirectoryManagerMessage)); }
-        public AddToExpandDirectoryManagerMessage(DirectoryTreeViewItemModel child)
+        public AddToExpandDirectoryManagerMessage(DirectoryTreeItem child)
         {
             Child = child;
         }
@@ -24,9 +24,9 @@ namespace FileHashCraft.Services.Messages
     /// </summary>
     public class RemoveFromExpandDirectoryManagerMessage
     {
-        public DirectoryTreeViewItemModel Child { get; set; }
+        public DirectoryTreeItem Child { get; set; }
         public RemoveFromExpandDirectoryManagerMessage() { throw new NotImplementedException(nameof(RemoveFromExpandDirectoryManagerMessage)); }
-        public RemoveFromExpandDirectoryManagerMessage(DirectoryTreeViewItemModel child)
+        public RemoveFromExpandDirectoryManagerMessage(DirectoryTreeItem child)
         {
             Child = child;
         }

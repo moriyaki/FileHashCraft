@@ -104,7 +104,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="modifiedParentItem">親ツリービューアイテム</param>
         /// <param name="deletedItemFullPath">削除されたアイテムのフルパス</param>
         /// <returns>Task</returns>
-        private async Task DirectoryItemDeleted(DirectoryTreeViewItemModel modifiedParentItem, string deletedItemFullPath)
+        private async Task DirectoryItemDeleted(DirectoryTreeItem modifiedParentItem, string deletedItemFullPath)
         {
             // 削除されたツリービューアイテムの取得
             var deletedTreeItem = modifiedParentItem.Children.FirstOrDefault(c => c.FullPath == deletedItemFullPath);
@@ -146,7 +146,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             var modifiedSpecialParent = FindChangedSpecialDirectoryTreeItem(createdPath);
 
             var fileInformation = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(fullPath);
-            var addTreeItem = new DirectoryTreeViewItemModel(fileInformation);
+            var addTreeItem = new DirectoryTreeItem(fileInformation);
 
             // カレントディレクトリに作成メッセージを送信
             _fileSystemServices.NotifyCurrentItemCreatedMessage(fullPath);
@@ -191,7 +191,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             var modifiedSpecialParent = FindChangedSpecialDirectoryTreeItem(renamedPath);
 
             // 名前変更されたツリービューアイテムの取得
-            DirectoryTreeViewItemModel? renamedTreeItem = null;
+            DirectoryTreeItem? renamedTreeItem = null;
             if (modifiedParentItem != null)
             {
                 renamedTreeItem = modifiedParentItem.Children.FirstOrDefault(item => item.FullPath == oldFullPath);
@@ -270,7 +270,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     {
                         FullPath = fullPath
                     };
-                    var insertedItem = new DirectoryTreeViewItemModel(newItem);
+                    var insertedItem = new DirectoryTreeItem(newItem);
                     int newTreeIndex = FindIndexToInsert(TreeRoot, insertedItem);
                     TreeRoot.Insert(newTreeIndex, insertedItem);
                     return;
@@ -382,9 +382,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="fullPath">ファイルアイテムのパス</param>
         /// <returns>変更する必要があるディレクトリツリーアイテム</returns>
-        private DirectoryTreeViewItemModel? FindChangedDirectoryTree(string fullPath, string rootPath = "")
+        private DirectoryTreeItem? FindChangedDirectoryTree(string fullPath, string rootPath = "")
         {
-            DirectoryTreeViewItemModel? modifiedTreeItem = null;
+            DirectoryTreeItem? modifiedTreeItem = null;
             foreach (var dir in DirectoryNameService.GetDirectoryNames(fullPath, rootPath))
             {
                 if (modifiedTreeItem == null)
@@ -410,9 +410,9 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="fullPath">特殊ユーザーディレクトリが含まれることを期待するパス</param>
         /// <returns>特殊ユーザーディレクトリ内のツリーアイテム</returns>
-        private HashSet<DirectoryTreeViewItemModel> FindChangedSpecialDirectoryTreeItem(string fullPath)
+        private HashSet<DirectoryTreeItem> FindChangedSpecialDirectoryTreeItem(string fullPath)
         {
-            var specialTreeItems = new HashSet<DirectoryTreeViewItemModel>();
+            var specialTreeItems = new HashSet<DirectoryTreeItem>();
 
             foreach (var rootInfo in SpecialFolderAndRootDrives.ScanSpecialFolders())
             {
@@ -432,10 +432,10 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             return specialTreeItems;
         }
 
-        private static DirectoryTreeViewItemModel? FinddDirectoryTreeViewItem(DirectoryTreeViewItemModel root, string fullPath)
+        private static DirectoryTreeItem? FinddDirectoryTreeViewItem(DirectoryTreeItem root, string fullPath)
         {
             if (root.FullPath == fullPath) return root;
-            DirectoryTreeViewItemModel? child = root;
+            DirectoryTreeItem? child = root;
             while (true)
             {
                 child = child.Children.FirstOrDefault(item => fullPath.Contains(item.FullPath));

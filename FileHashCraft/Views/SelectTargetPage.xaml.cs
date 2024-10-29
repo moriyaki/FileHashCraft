@@ -47,8 +47,7 @@ namespace FileHashCraft.Views
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
         private void GridSplitter_TreeDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            var explorerTree = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlModel));
-            explorerTree.DirectoryTreeViewWidth = HashTargetTreeView.ActualWidth;
+            HashTargetTreeView.Width += e.HorizontalChange;
         }
         /// <summary>
         /// リストボックスのスプリッタが移動された時、ListBoxの横幅を設定します。
@@ -57,8 +56,7 @@ namespace FileHashCraft.Views
         /// <param name="e">System.Windows.Controls.Primitives.DragDeltaEventArgs</param>
         private void GridSplitter_ListDragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            var _PageSelectTargetViewModel = Ioc.Default.GetService<ISelectTargetPageViewModel>() ?? throw new NullReferenceException(nameof(ISelectTargetPageViewModel));
-            _PageSelectTargetViewModel.FilesListBoxWidth = FileListBox.ActualWidth + e.HorizontalChange;
+            FileListBox.Width += e.HorizontalChange;
         }
     }
 }

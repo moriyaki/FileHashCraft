@@ -5,14 +5,14 @@ using FileHashCraft.ViewModels.DuplicateSelectPage;
 namespace FileHashCraft.Views
 {
     /// <summary>
-    /// DupFilesDIrsListBoxControl.xaml の相互作用ロジック
+    /// DupDirsFilesTreeViewControl.xaml の相互作用ロジック
     /// </summary>
-    public partial class DupFilesDirsListBoxControl : UserControl
+    public partial class DupDirsFilesTreeControl : UserControl
     {
-        public DupFilesDirsListBoxControl()
+        public DupDirsFilesTreeControl()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<IDupFilesDirsListBoxViewModel>();
+            DataContext = Ioc.Default.GetService<IDupDirsFilesTreeViewModel>();
         }
     }
 }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using CommunityToolkit.Mvvm.Messaging;
+using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.Models.DupSelectAndDelete
 {
@@ -13,18 +10,23 @@ namespace FileHashCraft.Models.DupSelectAndDelete
         /// 重複ファイルがあるディレクトリを取得する
         /// </summary>
         HashSet<string> GetDirectories();
+
         /// <summary>
-        /// 重複ファイルのハッシュを取得する
+        /// ディレクトリ内のハッシュ重複ファイルを取得する
         /// </summary>
-        HashSet<string> GetHashes();
+        /// <param name="directory"></param>
+        void GetDuplicateFiles(string directory);
+
         /// <summary>
         /// 重複ファイルがあるファイルを一括で追加する
         /// </summary>
         void AddDuplicateFiles(HashSet<HashFile> files);
     }
+
     public class DupFilesManager : IDupFilesManager
     {
         #region メンバ
+
         /// <summary>
         /// ディレクトリごとのHashFileディクショナリ
         /// </summary>
@@ -34,9 +36,27 @@ namespace FileHashCraft.Models.DupSelectAndDelete
         /// ハッシュごとのHashFileディクショナリ
         /// </summary>
         private readonly Dictionary<string, HashSet<HashFile>> _dupHashFiles = [];
+
         #endregion メンバ
 
+        #region コンストラクタ
+
+        public DupFilesManager()
+        { throw new NotImplementedException(nameof(DupFilesManager)); }
+
+        private readonly IMessenger _messenger;
+
+        public DupFilesManager(
+            IMessenger messenger
+        )
+        {
+            _messenger = messenger;
+        }
+
+        #endregion コンストラクタ
+
         #region 取得メソッド
+
         /// <summary>
         /// 重複ファイルがあるディレクトリを取得する
         /// </summary>
@@ -47,13 +67,14 @@ namespace FileHashCraft.Models.DupSelectAndDelete
         }
 
         /// <summary>
-        /// 重複ファイルのハッシュを取得する
+        /// ディレクトリ内のハッシュ重複ファイルを取得する
         /// </summary>
-        /// <returns>重複ファイルのハッシュHashSet</returns>
-        public HashSet<string> GetHashes()
+        /// <param name="directory"></param>
+        public void GetDuplicateFiles(string directory)
         {
-            return [.. _dupHashFiles.Keys];
+            _messenger.Send(new DuplicateFilesMessage(directory, _dicectoryFiles[directory]));
         }
+
         #endregion 取得メソッド
 
         /// <summary>
@@ -62,9 +83,10 @@ namespace FileHashCraft.Models.DupSelectAndDelete
         /// <param name="files">重複ファイルHashSet</param>
         public void AddDuplicateFiles(HashSet<HashFile> files)
         {
+            // ハッシュ毎に格納
             foreach (var hashFile in files)
             {
-                if (!_dicectoryFiles.TryGetValue(hashFile.FileHash, out HashSet<HashFile>? value))
+                if (!_dupHashFiles.TryGetValue(hashFile.FileHash, out HashSet<HashFile>? value))
                 {
                     value = [];
                     _dupHashFiles[hashFile.FileHash] = value;
@@ -72,6 +94,7 @@ namespace FileHashCraft.Models.DupSelectAndDelete
                 value.Add(hashFile);
             }
 
+            // ディレクトリ毎に格納
             foreach (var directoryFile in files)
             {
                 var dir = Path.GetDirectoryName(directoryFile.FileFullPath) ?? string.Empty;

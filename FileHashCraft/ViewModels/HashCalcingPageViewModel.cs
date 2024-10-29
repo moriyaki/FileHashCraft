@@ -297,6 +297,9 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
                     Status = FileHashCalcStatus.Finished;
                     MatchHashCount = sameFiles.Count;
                     ToDupDeletePage.NotifyCanExecuteChanged();
+                    // 自動化処理--------------------------------------------------
+                    _fileSystemServices.NavigateToDuplicateSelectPage();
+                    //-------------------------------------------------------------
                 });
             });
         }

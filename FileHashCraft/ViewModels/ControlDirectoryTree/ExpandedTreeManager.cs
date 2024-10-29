@@ -29,11 +29,11 @@ namespace FileHashCraft.ViewModels.Modules
         /// <summary>
         /// ディレクトリノードを展開マネージャに追加します。
         /// </summary>
-        void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void AddExpandedDirectoryManager(DirectoryTreeItem node);
         /// <summary>
         /// ディレクトリノードを展開マネージャから削除します。
         /// </summary>
-        void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node);
+        void RemoveExpandedDirectoryManager(DirectoryTreeItem node);
         /// <summary>
         /// 指定したパスを管理対象に追加します。
         /// </summary>
@@ -137,7 +137,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// TreeViewItem が展開された時に展開マネージャに通知します。
         /// </summary>
         /// <param name="node">展開されたノード</param>
-        public void AddExpandedDirectoryManager(DirectoryTreeViewItemModel node)
+        public void AddExpandedDirectoryManager(DirectoryTreeItem node)
         {
             AddDirectory(node.FullPath);
             if (!node.IsExpanded) return;
@@ -152,7 +152,7 @@ namespace FileHashCraft.ViewModels.Modules
         /// TreeViewItem が展開された時に展開解除マネージャに通知します。
         /// </summary>
         /// <param name="node">展開解除されたノード</param>
-        public void RemoveExpandedDirectoryManager(DirectoryTreeViewItemModel node)
+        public void RemoveExpandedDirectoryManager(DirectoryTreeItem node)
         {
             RemoveDirectory(node.FullPath);
             if (!node.HasChildren) { return; }

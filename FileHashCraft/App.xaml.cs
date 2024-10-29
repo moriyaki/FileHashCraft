@@ -120,7 +120,7 @@ namespace FileHashCraft
             services.AddSingleton<IHelpWindowViewModel, HelpWindowViewModel>();
 
             services.AddSingleton<IControDirectoryTreeViewlModel, ControDirectoryTreeViewModel>();
-            services.AddTransient<IDirectoryTreeViewItemModel, DirectoryTreeViewItemModel>();
+            services.AddTransient<IDirectoryTreeItem, DirectoryTreeItem>();
             services.AddSingleton<IDirectoryTreeManager, DirectoryTreeManager>();
             services.AddSingleton<ICurrentDirFileSystemWatcherService, CurrentDirFileSystemWatcherService>();
             services.AddSingleton<IFileWatcherService, DrivesFileSystemWatcherService>();
@@ -139,10 +139,11 @@ namespace FileHashCraft
             services.AddSingleton<IHashCalcingPageViewModel, HashCalcingPageViewModel>();
 
             services.AddSingleton<IDuplicateSelectPageViewModel, DuplicateSelectPageViewModel>();
-            services.AddSingleton<IDupFilesDirsListBoxControlViewModel, DupFilesDirsListBoxControlViewModel>();
+            services.AddSingleton<IDupFilesDirsListBoxViewModel, DupFilesDirsListBoxViewModel>();
             services.AddTransient<IDupFilesDirsListBoxItemViewModel, DupFilesDirsListBoxItemViewModel>();
-            services.AddSingleton<IDupDirsFilesTreeViewControlViewModel, DupDirsFilesTreeViewControlViewModel>();
-            services.AddSingleton<IDupLinkedDirsFilesTreeViewControlViewModel, DupLinkedDirsFilesTreeViewControlViewModel>();
+            services.AddSingleton<IDupDirsFilesTreeViewModel, DupDirsFilesTreeViewModel>();
+            services.AddSingleton<IDupLinkedDirsFilesTreeViewModel, DupLinkedDirsFilesTreeViewModel>();
+            services.AddTransient<IDupTreeItem, DupTreeItem>();
 
             // Model
             services.AddSingleton<IExtentionManager, ExtentionManager>();

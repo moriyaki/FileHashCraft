@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
-    public partial class DirectoryTreeViewItemModel
+    public partial class DirectoryTreeItem
     {
         #region 子ディレクトリのチェック管理
         /// <summary>
@@ -14,7 +14,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="current">CheckBox のチェック状態が変更された TreeViewItem</param>
         /// <param name="value">変更された CheckBox 状態</param>
-        public static void CheckCheckBoxStatusChanged(DirectoryTreeViewItemModel current, bool? value)
+        public static void CheckCheckBoxStatusChanged(DirectoryTreeItem current, bool? value)
         {
             if (current == null) { return; }
             if (current.FullPath?.Length == 0) { return; }
@@ -40,7 +40,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="node">チェック状態を変更する ExplorerTreeNodeViewModel</param>
         /// <param name="value">変更された CheckBox 状態</param>
-        private static void ChildCheckBoxStatusChanged(DirectoryTreeViewItemModel node, bool? value)
+        private static void ChildCheckBoxStatusChanged(DirectoryTreeItem node, bool? value)
         {
             foreach (var child in node.Children)
             {
@@ -58,7 +58,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// TreeViewItem の CheckBox がチェックされた時の処理をします。
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
-        private static void CheckBoxChangeToChecked(DirectoryTreeViewItemModel current)
+        private static void CheckBoxChangeToChecked(DirectoryTreeItem current)
         {
             // CheckBox のチェックがされていたら、再帰的に子を反映する
             ChildCheckBoxStatusChanged(current, true);
@@ -68,7 +68,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// TreeViewItem の CheckBox がチェック解除された時の処理をします。
         /// </summary>
         /// <param name="current">ExplorerTreeNodeViewModel</param>
-        private static void CheckBoxChangeToUnchecked(DirectoryTreeViewItemModel current)
+        private static void CheckBoxChangeToUnchecked(DirectoryTreeItem current)
         {
             // CheckBox のチェックが解除されていたら、再帰的に子を反映する
             ChildCheckBoxStatusChanged(current, false);
@@ -89,7 +89,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="currentNode">カレントディレクトリのアイテム</param>
         /// <returns>変更可能性があるディレクトリのリスト</returns>
-        private static void ParentCheckBoxChange(DirectoryTreeViewItemModel currentNode)
+        private static void ParentCheckBoxChange(DirectoryTreeItem currentNode)
         {
             var current = currentNode;
             var parent = current.Parent;
@@ -148,7 +148,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// </summary>
         /// <param name="changedNode">特殊フォルダの TreeViewItem</param>
         /// <param name="value">変更された値</param>
-        private void SyncSpecialDirectory(DirectoryTreeViewItemModel changedNode, bool? value)
+        private void SyncSpecialDirectory(DirectoryTreeItem changedNode, bool? value)
         {
             var controlDirectoryTreeViewlViewModel = Ioc.Default.GetService<IControDirectoryTreeViewlModel>() ?? throw new NullReferenceException(nameof(IControDirectoryTreeViewlModel));
             foreach (var root in controlDirectoryTreeViewlViewModel.TreeRoot)
@@ -163,7 +163,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// <param name="searchNode">子を検索するノード</param>
         /// <param name="fullPath">検索するファイルのフルパス</param>
         /// <param name="value">IsCheckedに設定する値</param>
-        private static void ChangeExpandedSpecialFolder(DirectoryTreeViewItemModel searchNode, string fullPath, bool? value)
+        private static void ChangeExpandedSpecialFolder(DirectoryTreeItem searchNode, string fullPath, bool? value)
         {
             // ノード自身が探しているパスなら反映します
             if (searchNode.FullPath.Contains(fullPath))

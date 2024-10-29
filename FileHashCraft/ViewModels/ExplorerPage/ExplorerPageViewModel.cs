@@ -202,18 +202,24 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             ListViewUpdater = new RelayCommand(async () =>
             {
                 ListItems.Clear();
-                await Task.Run(() =>
+
+                // フォルダやファイルの情報を ViewModel に変換して非同期で格納
+                var items = await Task.Run(() =>
                 {
+                    var collectedItems = new List<ExplorerListItemViewModel>();
                     foreach (var folderFile in _fileManager.EnumerateFileSystemEntries(CurrentFullPath))
                     {
-                        // フォルダやファイルの情報を ViewModel に変換
                         var info = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(folderFile);
-                        var item = new ExplorerListItemViewModel(info);
-
-                        // UI スレッドでリストビューを更新
-                        App.Current?.Dispatcher?.Invoke(() => ListItems.Add(item));
+                        collectedItems.Add(new ExplorerListItemViewModel(info));
                     }
+                    return collectedItems;
                 });
+
+                // リストビューを更新
+                foreach (var item in items)
+                {
+                    ListItems.Add(item);
+                }
             });
 
             // リストビューアイテムがダブルクリックされた時のコマンド
@@ -328,10 +334,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     }
                 }
             }
-            /*
             _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
             _fileSystemServices.NavigateToSelectTargetPage();
-            */
             //--------------------- 開発用自動化処理ここまで
 
         }

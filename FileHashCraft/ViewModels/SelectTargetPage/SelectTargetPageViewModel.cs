@@ -339,7 +339,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         private bool IsExecuting = false;
 
         public SelectTargetPageViewModel(
-            //IShowTargetInfoUserControlViewModel pageSelectTargetViewModelMain,
             ISetExtentionControlViewModel pageSelectTargetViewModelExtention,
             ISetWildcardControlViewModel pageSelectTargetViewModelWildcard,
             ISetRegexControlViewModel pageSelectTargetViewModelRegEx,
@@ -356,7 +355,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             IHashAlgorithmHelper hashAlgorithmHelper
         ) : base(messenger, settingsService)
         {
-            //ViewModelMain = pageSelectTargetViewModelMain;
             ViewModelExtention = pageSelectTargetViewModelExtention;
             ViewModelWildcard = pageSelectTargetViewModelWildcard;
             ViewModelRegEx = pageSelectTargetViewModelRegEx;
@@ -452,7 +450,6 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 ChangeSelectedToListBox();
             });
             _FilesListBoxWidth = _settingsService.FilesListBoxWidth;
-            //ViewModelMain.SelectedHashAlgorithm= _settingsService.HashAlgorithm;
             _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
             OnPropertyChanged(nameof(SelectedHashAlgorithm));
         }
@@ -620,7 +617,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             ChangeHashScanStatus(FileScanStatus.Finished);
 
             //--------------------- 開発用自動化処理
-            //App.Current?.Dispatcher.InvokeAsync(() => ViewModelMain.ToHashCalcingPage.Execute(this));
+            App.Current?.Dispatcher.InvokeAsync(() => ToHashCalcingPage.Execute(this));
         }
         #endregion メイン処理
 
