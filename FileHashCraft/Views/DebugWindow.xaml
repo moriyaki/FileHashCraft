@@ -6,21 +6,21 @@
         xmlns:local="clr-namespace:FileHashCraft.Views"
         mc:Ignorable="d"
         Title="DebugWindow"
-        Height="{Binding Height,Mode=TwoWay}" 
-        Width="{Binding Width,Mode=TwoWay}" 
-        Top="{Binding Top,Mode=TwoWay}" 
+        Height="{Binding Height,Mode=TwoWay}"
+        Width="{Binding Width,Mode=TwoWay}"
+        Top="{Binding Top,Mode=TwoWay}"
         Left="{Binding Left,Mode=TwoWay}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Button x:Name="Polling" Grid.Row="0"
                 Content="{Binding PollingStatus}"
-                Command="{Binding PollingCommand}"/>
+                Command="{Binding PollingCommand}" />
         <TextBox x:Name="DebugLog" Grid.Row="1"
                    Text="{Binding DebugText}"
                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                   ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                   ScrollViewer.VerticalScrollBarVisibility="Auto" />
     </Grid>
 </Window>

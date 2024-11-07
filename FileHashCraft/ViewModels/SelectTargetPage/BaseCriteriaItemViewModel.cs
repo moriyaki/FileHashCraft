@@ -7,10 +7,12 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
     public abstract class BaseCriteriaItemViewModel : BaseViewModel
     {
         #region バインディング
+
         /// <summary>
         /// ワイルドカード検索条件
         /// </summary>
         protected string _Criteria = string.Empty;
+
         public abstract string Criteria { get; set; }
 
         public string OriginalCriteria { get; set; } = string.Empty;
@@ -40,20 +42,25 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// 編集モードかどうか
         /// </summary>
         protected bool _IsEditMode = false;
+
         public abstract bool IsEditMode { get; set; }
 
         /// <summary>
         /// 該当アイテムが選択されているかのプロパティです。
         /// </summary>
         protected bool _IsSelected = false;
+
         public abstract bool IsSelected { get; set; }
+
         #endregion バインディング
 
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        private BaseCriteriaItemViewModel() { throw new NotImplementedException(nameof(BaseCriteriaItemViewModel)); }
+        private BaseCriteriaItemViewModel()
+        { throw new NotImplementedException(nameof(BaseCriteriaItemViewModel)); }
+
         protected BaseCriteriaItemViewModel(
             IMessenger messenger,
             ISettingsService settingsService
@@ -66,7 +73,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         protected void RestoreCriteria()
         {
-            // 
+            //
             if (!_CriteriaConditionCorrent)
             {
                 Criteria = OriginalCriteria;

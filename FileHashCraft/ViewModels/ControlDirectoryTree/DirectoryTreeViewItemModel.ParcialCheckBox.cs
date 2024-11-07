@@ -2,6 +2,7 @@
 
     ディレクトリツリービューのチェックボックス状態を管理します。
  */
+
 using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
@@ -9,6 +10,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
     public partial class DirectoryTreeItem
     {
         #region 子ディレクトリのチェック管理
+
         /// <summary>
         /// TreeViewItem の CheckBox 状態が変更された時の処理をします。
         /// </summary>
@@ -26,9 +28,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 case true:
                     CheckBoxChangeToChecked(current);
                     break;
+
                 case false:
                     CheckBoxChangeToUnchecked(current);
                     break;
+
                 default:
                     //CheckBoxChangeToMixed(current);
                     break;
@@ -54,6 +58,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
             }
         }
+
         /// <summary>
         /// TreeViewItem の CheckBox がチェックされた時の処理をします。
         /// </summary>
@@ -81,9 +86,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             // Mixed は子に反映させる必要がない
         }
+
         #endregion 子ディレクトリのチェック管理
 
         #region 親ディレクトリのチェック管理
+
         /// <summary>
         /// 変更が加えられた可能性があるカレントディレクトリの親ディレクトリリストを取得する
         /// </summary>
@@ -125,10 +132,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                         // 親が null なら、親内の全フォルダがチェックされていたら true、そうでなければ null
                         parent.IsChecked = currentChecked = childHasTrue && !childHasFalse && !childHasNull ? true : null;
                         break;
+
                     case false:
                         if (parent.IsChecked != true) { return; }
                         parent.IsChecked = null;
                         break;
+
                     default:
                         if (parent.IsChecked != true) { return; }
                         parent.IsChecked = null;
@@ -140,9 +149,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 currentChecked = parent?.IsChecked;
             }
         }
+
         #endregion 親ディレクトリのチェック管理
 
         #region 特殊フォルダのチェック管理
+
         /// <summary>
         /// 変更を特殊フォルダに反映します。
         /// </summary>
@@ -181,6 +192,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
             }
         }
+
         #endregion 特殊フォルダのチェック管理
     }
 }

@@ -26,12 +26,9 @@ namespace FileHashCraft.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var settingsService = Ioc.Default.GetService<ISettingsService>();
-                if (settingsService is not null)
-                {
-                    if (e.Delta > 0) { settingsService.FontSizePlus(); }
-                    else { settingsService.FontSizeMinus(); }
-                }
+                var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new NullReferenceException(nameof(ISettingsService));
+                if (e.Delta > 0) { settingsService.FontSizePlus(); }
+                else { settingsService.FontSizeMinus(); }
                 e.Handled = true;
             }
             else
@@ -49,6 +46,7 @@ namespace FileHashCraft.Views
         {
             DupDirsListBox.Width += e.HorizontalChange;
         }
+
         /// <summary>
         /// ツリービューのスプリッタが移動された時、TreeViewの横幅を設定します。
         /// </summary>

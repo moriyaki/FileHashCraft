@@ -1,7 +1,7 @@
 ﻿/*  DirectoryTreeCheckedDirectoryManager.cs
 
     ディレクトリのチェックボックスのチェック状態を管理します。
-    
+
     初期状態：どこもチェックされていない
         true  が来たら、その下のディレクトリを全て管理にする、上位にいたら何もしない
         false が来たら、その下のディレクトリを全て管理から外す、上位下位はUI任せ
@@ -20,41 +20,51 @@ namespace FileHashCraft.ViewModels.Modules
         /// 子ディレクトリを含む、ファイルハッシュ取得対象のディレクトリを保持します。
         /// </summary>
         List<string> NestedDirectories { get; }
+
         /// <summary>
         /// 子ディレクトリを含まない、ファイルハッシュ取得対象のディレクトリを保持します。
         /// </summary>
         List<string> NonNestedDirectories { get; }
+
         /// <summary>
         /// そのディレクトリがチェックされているかどうかを調べます。
         /// </summary>
         bool IsChecked(string fullPath);
+
         /// <summary>
         /// ディレクトリのチェック状態を変化させます。
         /// </summary>
         void CheckChanged(string fullPath, bool? checkedStatus);
+
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
         void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeItem> treeRoot);
+
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
         void CreateCheckBoxManager(ObservableCollection<DirectoryTreeItem> treeRoot);
     }
+
     public class CheckedTreeItemsManager : ICheckedTreeItemsManager
     {
         #region リスト
+
         /// <summary>
         /// 子ディレクトリを含む、ファイルハッシュ取得対象のディレクトリを保持します。
         /// </summary>
         public List<string> NestedDirectories { get; } = [];
+
         /// <summary>
         /// 子ディレクトリを含まない、ファイルハッシュ取得対象のディレクトリを保持します。
         /// </summary>
         public List<string> NonNestedDirectories { get; } = [];
+
         #endregion リスト
 
         #region メソッド
+
         /// <summary>
         /// そのディレクトリがチェックされているかどうかを調べます。
         /// </summary>
@@ -78,9 +88,11 @@ namespace FileHashCraft.ViewModels.Modules
                 case true:
                     CheckedTrue(fullPath);
                     break;
+
                 case false:
                     CheckedFalse(fullPath);
                     break;
+
                 default:
                     CheckedNull(fullPath);
                     break;
@@ -125,9 +137,11 @@ namespace FileHashCraft.ViewModels.Modules
             if (NonNestedDirectories.Any(c => c == fullPath)) { return; }
             NonNestedDirectories.Add(fullPath);
         }
+
         #endregion メソッド
 
         #region チェックマネージャからチェック状態を反映
+
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
@@ -201,9 +215,11 @@ namespace FileHashCraft.ViewModels.Modules
             }
             return false;
         }
+
         #endregion チェックマネージャからチェック状態を反映
 
         #region チェックボックスマネージャ登録
+
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
@@ -227,6 +243,7 @@ namespace FileHashCraft.ViewModels.Modules
                     RecursiveTreeNodeCheck(child);
             }
         }
+
         #endregion チェックボックスマネージャ登録
     }
 }

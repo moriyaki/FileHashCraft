@@ -10,6 +10,6 @@
         Title="FileHashCraft" Width="{Binding Width,Mode=TwoWay}" Height="{Binding Height,Mode=TwoWay}" Left="{Binding Left,Mode=TwoWay}" Top="{Binding Top,Mode=TwoWay}"
         Closed="Window_Closed">
     <Grid>
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden" />
     </Grid>
 </Window>

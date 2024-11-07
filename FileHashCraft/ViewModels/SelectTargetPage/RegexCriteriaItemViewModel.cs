@@ -6,6 +6,7 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
+
     public interface IRegexCriteriaItemViewModel
     {
         /// <summary>
@@ -13,11 +14,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         string Criteria { get; set; }
     }
+
     #endregion インターフェース
 
     public class RegexCriteriaItemViewModel : BaseCriteriaItemViewModel, IRegexCriteriaItemViewModel
     {
         #region バインディング
+
         /// <summary>
         /// ワイルドカード検索条件
         /// </summary>
@@ -26,7 +29,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             get => _Criteria;
             set
             {
-                _CriteriaConditionCorrent = _messenger.Send(new SelectedChangedRegexCriteriaRequestMessage(value, OriginalCriteria));
+                _CriteriaConditionCorrent = _Messanger.Send(new SelectedChangedRegexCriteriaRequestMessage(value, OriginalCriteria));
                 SetProperty(ref _Criteria, value);
             }
         }
@@ -45,7 +48,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 {
                     // 表示モードになったら、オリジナルを保存して編集モードに入ります。
                     OriginalCriteria = Criteria;
-                    _messenger.Send(new ListBoxSeletedRegexTextBoxFocusMessage());
+                    _Messanger.Send(new ListBoxSeletedRegexTextBoxFocusMessage());
                 }
                 else
                 {
@@ -54,8 +57,8 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 }
                 OnPropertyChanged(nameof(ItemBackgroudColor));
                 OnPropertyChanged(nameof(BorderTickness));
-                _messenger.Send(new IsEditModeChangedMessage());
-                _messenger.Send(new SelectedChangedRegexCriteriaRequestMessage(Criteria, OriginalCriteria));
+                _Messanger.Send(new IsEditModeChangedMessage());
+                _Messanger.Send(new SelectedChangedRegexCriteriaRequestMessage(Criteria, OriginalCriteria));
             }
         }
 
@@ -72,7 +75,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 {
                     RestoreCriteria();
                 }
-                _messenger.Send(new IsSelectedRegexChangedMessage(value, this));
+                _Messanger.Send(new IsSelectedRegexChangedMessage(value, this));
             }
         }
 
@@ -80,9 +83,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// リストボックスアイテムのテキストボックスがクリックされた時の処理です。
         /// </summary>
         public RelayCommand ListBoxItemTextBoxRegexCriteriaClicked { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタ
+
         /// <summary>
         /// コンストラクタ：リストボックスでアイテムがクリックされたかのイベント処理をします。
         /// </summary>
@@ -98,11 +103,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 if (!IsSelected)
                 {
                     // 選択状態が外れたら、新規入力画面にキャレットを当てます。
-                    _messenger.Send(new NewRegexCriteriaFocusMessage());
+                    _Messanger.Send(new NewRegexCriteriaFocusMessage());
                 }
             });
         }
-        #endregion コンストラクタ
 
+        #endregion コンストラクタ
     }
 }

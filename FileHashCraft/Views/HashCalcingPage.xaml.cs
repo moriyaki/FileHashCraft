@@ -26,13 +26,12 @@ namespace FileHashCraft.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var settingsService = Ioc.Default.GetService<ISettingsService>();
-                if (settingsService is not null)
+                var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new NullReferenceException(nameof(ISettingsService));
                 {
                     if (e.Delta > 0) { settingsService.FontSizePlus(); }
                     else { settingsService.FontSizeMinus(); }
+                    e.Handled = true;
                 }
-                e.Handled = true;
             }
             else
             {

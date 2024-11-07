@@ -17,6 +17,7 @@ namespace FileHashCraft.Views
 
         private static readonly object lockObject = new();
         private static DebugWindow? instance;
+
         public static DebugWindow GetInstance()
         {
             lock (lockObject)
@@ -25,6 +26,7 @@ namespace FileHashCraft.Views
                 return instance;
             }
         }
+
         public static void ShowWindow()
         {
             GetInstance().Show();

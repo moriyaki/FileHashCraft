@@ -2,30 +2,35 @@
 
     ファイルの管理とスキャンをします。
  */
+
 using System.IO;
 
 namespace FileHashCraft.Models
 {
-    // TODO : Hidden と ReadOnly もスキャンできるようにする
-
+    #region インターフェース
     public interface IFileManager
     {
         /// <summary>
         /// 指定したディレクトリ内のディレクトリをスキャンします。
         /// </summary>
         IEnumerable<string> EnumerateDirectories(string directoryFullPath);
+
         /// <summary>
         /// 指定したディレクトリ内のファイルをスキャンします。
         /// </summary>
         IEnumerable<string> EnumerateFiles(string directoryFullPath, string searchPattern = "*.*");
+
         /// <summary>
         /// 指定したディレクトリ内のディレクトリとファイルをスキャンします。
         /// </summary>
         public IEnumerable<string> EnumerateFileSystemEntries(string itemFullPath);
     }
+
+    #endregion インターフェース
     public class FileManager : IFileManager
     {
         #region ディレクトリとファイルのスキャン関連
+
         /// <summary>
         /// 除外するファイルエントリかどうかを判断する。
         /// </summary>
@@ -76,7 +81,7 @@ namespace FileHashCraft.Models
             IEnumerable<string> dirs;
             try
             {
-                 dirs = Directory.EnumerateDirectories(directoryFullPath);
+                dirs = Directory.EnumerateDirectories(directoryFullPath);
             }
             catch (UnauthorizedAccessException) { yield break; }
 
@@ -132,6 +137,7 @@ namespace FileHashCraft.Models
                 yield return file;
             }
         }
+
         #endregion ディレクトリとファイルのスキャン関連
     }
 }

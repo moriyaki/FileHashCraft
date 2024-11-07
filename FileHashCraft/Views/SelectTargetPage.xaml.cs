@@ -2,7 +2,6 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using FileHashCraft.Services;
-using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.Views
@@ -27,12 +26,9 @@ namespace FileHashCraft.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var settingsService = Ioc.Default.GetService<ISettingsService>();
-                if (settingsService is not null)
-                {
-                    if (e.Delta > 0) { settingsService.FontSizePlus(); }
-                    else { settingsService.FontSizeMinus(); }
-                }
+                var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new NullReferenceException(nameof(ISettingsService));
+                if (e.Delta > 0) { settingsService.FontSizePlus(); }
+                else { settingsService.FontSizeMinus(); }
                 e.Handled = true;
             }
             else
@@ -40,6 +36,7 @@ namespace FileHashCraft.Views
                 base.OnMouseWheel(e);
             }
         }
+
         /// <summary>
         /// ツリービューのスプリッタが移動された時、TreeViewの横幅を設定します。
         /// </summary>
@@ -49,6 +46,7 @@ namespace FileHashCraft.Views
         {
             HashTargetTreeView.Width += e.HorizontalChange;
         }
+
         /// <summary>
         /// リストボックスのスプリッタが移動された時、ListBoxの横幅を設定します。
         /// </summary>

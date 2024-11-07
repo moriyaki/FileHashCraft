@@ -16,10 +16,12 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
     public class SetExpertControlViewModel : BaseViewModel, ISetExpertControlViewModel
     {
         #region バインディング
+
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
         private bool _IsReadOnlyFileInclude;
+
         public bool IsReadOnlyFileInclude
         {
             get => _IsReadOnlyFileInclude;
@@ -27,8 +29,8 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (_IsReadOnlyFileInclude == value) return;
                 SetProperty(ref _IsReadOnlyFileInclude, value);
-                _settingsService.IsReadOnlyFileInclude = value;
-                _messenger.Send(new ChangeSelectedCountMessage());
+                _SettingsService.IsReadOnlyFileInclude = value;
+                _Messanger.Send(new ChangeSelectedCountMessage());
             }
         }
 
@@ -36,6 +38,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// 隠しファイルを対象にするかどうか
         /// </summary>
         private bool _IsHiddenFileInclude;
+
         public bool IsHiddenFileInclude
         {
             get => _IsHiddenFileInclude;
@@ -43,14 +46,16 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (_IsHiddenFileInclude == value) return;
                 SetProperty(ref _IsHiddenFileInclude, value);
-                _settingsService.IsReadOnlyFileInclude = value;
-                _messenger.Send(new ChangeSelectedCountMessage());
+                _SettingsService.IsReadOnlyFileInclude = value;
+                _Messanger.Send(new ChangeSelectedCountMessage());
             }
         }
+
         /// <summary>
         ///  0 サイズのファイルを削除するかどうか
         /// </summary>
         private bool _IsZeroSizeFileDelete;
+
         public bool IsZeroSizeFileDelete
         {
             get => _IsZeroSizeFileDelete;
@@ -58,13 +63,15 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (_IsZeroSizeFileDelete == value) return;
                 SetProperty(ref _IsZeroSizeFileDelete, value);
-                _settingsService.IsReadOnlyFileInclude = value;
+                _SettingsService.IsReadOnlyFileInclude = value;
             }
         }
+
         /// <summary>
         /// 空のフォルダを削除するかどうか
         /// </summary>
         private bool _IsEmptyDirectoryDelete;
+
         public bool IsEmptyDirectoryDelete
         {
             get => _IsEmptyDirectoryDelete;
@@ -72,31 +79,38 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (_IsEmptyDirectoryDelete == value) return;
                 SetProperty(ref _IsEmptyDirectoryDelete, value);
-                _settingsService.IsReadOnlyFileInclude = value;
+                _SettingsService.IsReadOnlyFileInclude = value;
             }
         }
+
         #endregion バインディング
 
         #region コマンド
+
         /// <summary>
         /// 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
         public RelayCommand IsReadOnlyFileIncludeClicked { get; set; }
+
         /// <summary>
         /// 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
         public RelayCommand IsHiddenFileIncludeClicked { get; set; }
+
         /// <summary>
         ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
         public RelayCommand IsZeroSizeFIleDeleteClicked { get; set; }
+
         /// <summary>
         /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
         public RelayCommand IsEmptyDirectoryDeleteClicked { get; set; }
+
         #endregion コマンド
 
         #region コンストラクタ
+
         public SetExpertControlViewModel(
             IMessenger messenger,
             ISettingsService settingsService
@@ -118,6 +132,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             IsEmptyDirectoryDeleteClicked = new RelayCommand(()
                 => IsEmptyDirectoryDelete = !IsEmptyDirectoryDelete);
         }
+
         #endregion コンストラクタ
     }
 }

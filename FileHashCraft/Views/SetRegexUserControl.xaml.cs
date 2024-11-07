@@ -20,8 +20,8 @@ namespace FileHashCraft.Views
             DataContext = Ioc.Default.GetService<ISetRegexControlViewModel>();
 
             // ワイルドカード検索条件一覧のテキストボックスにフォーカスを当てる
-            var _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new NotImplementedException(nameof(IMessenger));
-            _messenger.Register<ListBoxSeletedRegexTextBoxFocusMessage>(this, (_, _) =>
+            var _Messanger = Ioc.Default.GetService<IMessenger>() ?? throw new NullReferenceException(nameof(IMessenger));
+            _Messanger.Register<ListBoxSeletedRegexTextBoxFocusMessage>(this, (_, _) =>
             {
                 if (RegexSearchListBox.SelectedIndex == -1) { return; }
                 if (RegexSearchListBox.ItemContainerGenerator.ContainerFromIndex(
@@ -32,7 +32,7 @@ namespace FileHashCraft.Views
                 }
             });
 
-            _messenger.Register<NewRegexCriteriaFocusMessage>(this, (_, _) =>
+            _Messanger.Register<NewRegexCriteriaFocusMessage>(this, (_, _) =>
                 NewRegexCriteria.Focus());
         }
 

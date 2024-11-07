@@ -11,6 +11,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
     public abstract class BaseCriteriaViewModel : BaseViewModel
     {
         #region バインディング
+
         /// <summary>
         /// ワイルドカード検索条件コレクション
         /// </summary>
@@ -25,6 +26,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// 検索条件エラー出力の背景色
         /// </summary>
         private Brush _SearchErrorBackground = Brushes.Transparent;
+
         public Brush SearchErrorBackground
         {
             get => _SearchErrorBackground;
@@ -35,6 +37,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// 検索条件エラー出力
         /// </summary>
         private string _SearchCriteriaErrorOutput = string.Empty;
+
         public string SearchCriteriaErrorOutput
         {
             get => _SearchCriteriaErrorOutput;
@@ -66,6 +69,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// ワイルドカード新規検索文字列
         /// </summary>
         private string _SearchCriteriaText = string.Empty;
+
         public string SearchCriteriaText
         {
             get => _SearchCriteriaText;
@@ -99,13 +103,16 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #endregion バインディング
 
         #region コンストラクタ
-        protected readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
-        protected readonly IHelpWindowViewModel _helpWindowViewModel;
+
+        protected readonly IFileSearchCriteriaManager _FileSearchCriteriaManager;
+        protected readonly IHelpWindowViewModel _HelpWindowViewModel;
+
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        protected BaseCriteriaViewModel() { throw new NotImplementedException(nameof(BaseCriteriaViewModel)); }
+        protected BaseCriteriaViewModel()
+        { throw new NotImplementedException(nameof(BaseCriteriaViewModel)); }
 
         protected BaseCriteriaViewModel(
             IMessenger messenger,
@@ -114,8 +121,8 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             IHelpWindowViewModel helpWindowViewModel
         ) : base(messenger, settingsService)
         {
-            _fileSearchCriteriaManager = fileSearchCriteriaManager;
-            _helpWindowViewModel = helpWindowViewModel;
+            _FileSearchCriteriaManager = fileSearchCriteriaManager;
+            _HelpWindowViewModel = helpWindowViewModel;
 
             // コレクションのインスタンスを生成します。
             CriteriaItems = [];
@@ -140,16 +147,18 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             );
 
             // ファイルスキャンが終わったら
-            _messenger.Register<FileScanFinished>(this, (_, _) =>
+            _Messanger.Register<FileScanFinished>(this, (_, _) =>
                 AddCriteriaCommand.NotifyCanExecuteChanged());
 
             // リストボックスアイテムの編集状態から抜けた時の処理をします。
-            _messenger.Register<IsEditModeChangedMessage>(this, (_, _) =>
+            _Messanger.Register<IsEditModeChangedMessage>(this, (_, _) =>
                 OnPropertyChanged(nameof(CiriteriaAddTextBoxBackgroudColor)));
         }
+
         #endregion コンストラクタ
 
         #region abstractメソッド
+
         /// <summary>
         /// ワイルドカード検索条件を追加します。
         /// </summary>
@@ -184,6 +193,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// <param name="originalPattern">(必要ならば)元のワイルドカード文字列</param>
         /// <returns>ワイルドカード文字列が正当かどうか</returns>
         public abstract bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "");
+
         #endregion abstractメソッド
     }
 }

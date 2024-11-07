@@ -2,8 +2,8 @@
 
     ハッシュを保持するファイル情報のクラスです。
  */
+
 using System.IO;
-using System.Security.Cryptography;
 
 namespace FileHashCraft.Models
 {
@@ -13,33 +13,41 @@ namespace FileHashCraft.Models
     public class HashFile
     {
         #region メンバ
+
         /// <summary>
         /// ファイルのフルパス
         /// </summary>
         public string FileFullPath { get; }
+
         /// <summary>
         /// ファイルの最終更新日
         /// </summary>
         public DateTime LastWriteTime { get; }
+
         /// <summary>
         /// ファイルのサイズ
         /// </summary>
         public long FileSize { get; }
+
         /// <summary>
         /// ファイルの属性
         /// </summary>
         public FileAttributes Attributes { get; }
+
         /// <summary>
         /// ファイルハッシュアルゴリズム
         /// </summary>
         public FileHashAlgorithm HashAlgorithm { get; set; }
+
         /// <summary>
         /// ファイルハッシュ
         /// </summary>
         public string FileHash { get; set; } = string.Empty;
+
         #endregion メンバ
 
         #region DictionaryやHashSet用ハッシュコードの算出
+
         public override bool Equals(object? obj)
         {
             if (obj is HashFile hashFile)
@@ -53,9 +61,11 @@ namespace FileHashCraft.Models
         {
             return StringComparer.OrdinalIgnoreCase.GetHashCode(this.FileFullPath);
         }
+
         #endregion DictionaryやHashSet用ハッシュコードの算出
 
         #region 設定処理
+
         /// <summary>
         /// ファイル名とハッシュを保存します。
         /// </summary>
@@ -72,6 +82,7 @@ namespace FileHashCraft.Models
             FileSize = fileInfo.Length;
             Attributes = fileInfo.Attributes;
         }
+
         #endregion 設定処理
     }
 }

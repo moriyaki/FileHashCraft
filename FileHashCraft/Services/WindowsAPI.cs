@@ -2,6 +2,7 @@
 
     Win32APIを叩くラッパークラスです。
  */
+
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
@@ -28,6 +29,7 @@ namespace FileHashCraft.ViewModels.Modules
     }
 
     #region WindowsAPIで使うenumとstruct
+
     /// <summary>
     /// SHGetFIleInfoの第4引数で指定する、取得する情報のパラメータです。
     /// </summary>
@@ -82,11 +84,13 @@ namespace FileHashCraft.ViewModels.Modules
         public fixed ushort szDisplayName[260];
         public fixed ushort szTypeName[80];
     };
+
     # endregion WindowsAPIで使うenumとstruct
 
     public partial class WindowsAPI
     {
         #region WindowsAPIへのLibraryImport
+
         // パスからpidlを取得します。
         [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
         private static partial int SHParseDisplayName(
@@ -113,7 +117,8 @@ namespace FileHashCraft.ViewModels.Modules
         [LibraryImport("shell32", StringMarshalling = StringMarshalling.Utf16)]
         private static partial int SHGetKnownFolderPath(
             Guid rfid, uint dwFlags, nint hToken, out string @return);
-        #endregion WindowsAPIへのLibraryImport]
+
+        #endregion WindowsAPIへのLibraryImport
 
         #region WindowsAPIを使うメソッド
 
@@ -131,6 +136,7 @@ namespace FileHashCraft.ViewModels.Modules
             [KnownFolder.Music] = new Guid("{4BD8D571-6D19-48D3-BE97-422220080E43}"),
             [KnownFolder.User] = new Guid("\t{5E6C858F-0E22-4760-9AFE-EA3317B67173}"),
         };
+
         /// <summary>
         /// ディレクトリやファイルのアイコンとファイル種類を取得します。
         /// </summary>
@@ -173,9 +179,11 @@ namespace FileHashCraft.ViewModels.Modules
             // 取得したアイコンとファイル種類を返す
             return (icon, Utf16StringMarshaller.ConvertToManaged(shinfo.szTypeName) ?? String.Empty);
         }
+
         #endregion WindowsAPIを使うメソッド
 
         #region ファイルのアイコンと種類をキャッシュしながら管理する
+
         /// <summary>
         /// キャッシュに指定されたキーが登録されていない場合、指定されたファイルの情報を取得して登録します。
         /// </summary>
@@ -228,10 +236,13 @@ namespace FileHashCraft.ViewModels.Modules
 
         // ファイルのアイコンと種類のキャッシュ
         private static readonly Dictionary<string, BitmapSource> FileIconCache = [];
+
         private static readonly Dictionary<string, string> FileTypeCache = [];
+
         #endregion ファイルのアイコンと種類をキャッシュしながら管理する
 
         #region 外部からのアクセスメソッド
+
         /// <summary>
         /// ファイルのアイコンを取得します。
         /// </summary>
@@ -290,6 +301,7 @@ namespace FileHashCraft.ViewModels.Modules
                 return path;
             }
         }
+
         /// <summary>
         /// 指定された特殊フォルダのパスを取得します。
         /// </summary>

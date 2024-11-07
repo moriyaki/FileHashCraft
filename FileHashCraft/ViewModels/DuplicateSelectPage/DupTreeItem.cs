@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
+using FileHashCraft.Models.HashCalc;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.Modules;
@@ -14,41 +15,49 @@ using FileHashCraft.ViewModels.Modules;
 namespace FileHashCraft.ViewModels.DuplicateSelectPage
 {
     #region インターフェース
+
     public interface IDupTreeItem
     {
         /// <summary>
         /// ツリービューの子
         /// </summary>
         ObservableCollection<IDupTreeItem> Children { get; set; }
+
         /// <summary>
         /// 親ディレクトリ
         /// </summary>
         string Parent { get; }
+
         /// <summary>
         /// 選択されているかどうか
         /// </summary>
         bool IsSelected { get; set; }
     }
+
     #endregion インターフェース
+
     public partial class DupTreeItem : ObservableObject, IDupTreeItem
     {
         #region コンストラクタ
-        private readonly IMessenger _messenger;
-        private readonly ISettingsService _settingsService;
+
+        private readonly IMessenger _Messanger;
+        private readonly ISettingsService _SettingsService;
+        private readonly IDuplicateFilesManager _DupFilesManager;
 
         public DupTreeItem()
         {
-            _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
-            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
+            _Messanger = Ioc.Default.GetService<IMessenger>() ?? throw new NullReferenceException(nameof(IMessenger));
+            _SettingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new NullReferenceException(nameof(ISettingsService));
+            _DupFilesManager = Ioc.Default.GetService<IDuplicateFilesManager>() ?? throw new NullReferenceException(nameof(IDuplicateFilesManager));
             // フォント変更メッセージ受信
-            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
+            _Messanger.Register<CurrentFontFamilyChangedMessage>(this, (_, m)
                 => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            _messenger.Register<FontSizeChangedMessage>(this, (_, m)
+            _Messanger.Register<FontSizeChangedMessage>(this, (_, m)
                 => FontSize = m.FontSize);
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            _CurrentFontFamily = _SettingsService.CurrentFont;
+            _FontSize = _SettingsService.FontSize;
         }
 
         public DupTreeItem(string parent) : this()
@@ -76,9 +85,11 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             _Hash = hashFile.FileHash;
             _FileSize = hashFile.FileSize;
         }
+
         #endregion コンストラクタ
 
         #region バインディング
+
         /// <summary>
         /// ツリービューの子
         /// </summary>
@@ -119,8 +130,17 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// <summary>
         /// 選択されているかどうか
         /// </summary>
-        [ObservableProperty]
         private bool _IsSelected = false;
+
+        public bool IsSelected
+        {
+            get => _IsSelected;
+            set
+            {
+                SetProperty(ref _IsSelected, value);
+                _DupFilesManager.GetDuplicateLinkFiles(Hash);
+            }
+        }
 
         /// <summary>
         /// チェックされているかどうか
@@ -132,6 +152,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// チェックボックスを表示するか
         /// </summary>
         private Visibility _IsCheckBoxVisible = Visibility.Visible;
+
         public Visibility IsCheckBoxVisible
         {
             get => _IsCheckBoxVisible;
@@ -149,6 +170,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// フォントの設定
         /// </summary>
         private FontFamily _CurrentFontFamily;
+
         public FontFamily CurrentFontFamily
         {
             get => _CurrentFontFamily;
@@ -156,7 +178,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.CurrentFont = value;
+                _SettingsService.CurrentFont = value;
             }
         }
 
@@ -164,6 +186,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// フォントサイズの設定
         /// </summary>
         private double _FontSize;
+
         public double FontSize
         {
             get => _FontSize;
@@ -171,9 +194,10 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 if (_FontSize == value) { return; }
                 SetProperty(ref _FontSize, value);
-                _settingsService.FontSize = value;
+                _SettingsService.FontSize = value;
             }
         }
+
         #endregion バインディング
     }
 }

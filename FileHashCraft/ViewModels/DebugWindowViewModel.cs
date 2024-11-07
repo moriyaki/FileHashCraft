@@ -2,6 +2,7 @@
 
     デバッグウィンドウの ViewModel を提供します。
  */
+
 using System.Text;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,26 +14,31 @@ using FileHashCraft.Services;
 namespace FileHashCraft.ViewModels
 {
     #region インターフェース
+
     public interface IDebugWindowViewModel
     {
         double Top { get; set; }
         double Left { get; set; }
     }
+
     #endregion インターフェース
+
     public partial class DebugWindowViewModel : BaseViewModel, IDebugWindowViewModel
     {
-        enum PollingTarget
+        private enum PollingTarget
         {
             None,
             ExpandDirectoryManager,
             CheckedDirectoryManager,
         }
+
         /// <summary>
         /// 【ここでポーリング対象を決める】
         /// </summary>
         private readonly PollingTarget pollingTarget = PollingTarget.CheckedDirectoryManager;
 
         #region バインディング
+
         /// <summary>
         /// 画面の上端設定
         /// </summary>
@@ -61,6 +67,7 @@ namespace FileHashCraft.ViewModels
         /// ポーリング処理中か否か
         /// </summary>
         private bool _IsPolling = false;
+
         public bool IsPolling
         {
             get => _IsPolling;
@@ -89,14 +96,18 @@ namespace FileHashCraft.ViewModels
         /// ポーリング用タイマー
         /// </summary>
         private readonly DispatcherTimer timer;
+
         public RelayCommand PollingCommand { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタと初期化
+
         /// <summary>
         /// ICheckedDirectoryManager、デバッグ対象により変更する
         /// </summary>
-        private readonly IDirectoriesManager _directoriesManager;
+        private readonly IDirectoriesCollection _DirectoriesManager;
+
         /// <summary>
         /// コンストラクタ、ポーリングの設定とポーリング対象を獲得します。
         /// 今はIExpandedDirectoryManager、デバッグ対象により変更する
@@ -104,15 +115,15 @@ namespace FileHashCraft.ViewModels
         public DebugWindowViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
-            IDirectoriesManager directoriesManager
+            IDirectoriesCollection directoriesManager
         ) : base(messenger, settingsService)
         {
-            _directoriesManager = directoriesManager;
+            _DirectoriesManager = directoriesManager;
 
-            Top = _settingsService.Top;
-            Left = _settingsService.Left + _settingsService.Width;
-            Width = _settingsService.Width / 2;
-            Height = _settingsService.Height;
+            Top = _SettingsService.Top;
+            Left = _SettingsService.Left + _SettingsService.Width;
+            Width = _SettingsService.Width / 2;
+            Height = _SettingsService.Height;
 
             timer = new DispatcherTimer();
             timer.Tick += Polling;
@@ -135,9 +146,11 @@ namespace FileHashCraft.ViewModels
             );
             PollingCommand.Execute(null);
         }
+
         #endregion コンストラクタと初期化
 
         #region ポーリング処理
+
         /// <summary>
         /// ポーリング中の処理を行います。
         /// </summary>
@@ -150,24 +163,26 @@ namespace FileHashCraft.ViewModels
             switch (pollingTarget)
             {
                 case PollingTarget.ExpandDirectoryManager:
-                    foreach (var item in _directoriesManager.Directories)
+                    foreach (var item in _DirectoriesManager.Directories)
                     {
                         sb.AppendLine(item);
                     }
                     break;
+
                 case PollingTarget.CheckedDirectoryManager:
                     sb.AppendLine("サブディレクトリを含まない管理");
-                    foreach (var item in _directoriesManager.NonNestedDirectories)
+                    foreach (var item in _DirectoriesManager.NonNestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }
                     sb.AppendLine("-------------------------------");
                     sb.AppendLine("サブディレクトリを含む管理");
-                    foreach (var item in _directoriesManager.NestedDirectories)
+                    foreach (var item in _DirectoriesManager.NestedDirectories)
                     {
                         sb.Append('\t').AppendLine(item);
                     }
                     break;
+
                 default:
                     break;
             }
@@ -178,6 +193,7 @@ namespace FileHashCraft.ViewModels
                 DebugText = sb.ToString();
             });
         }
+
         #endregion ポーリング処理
     }
 }

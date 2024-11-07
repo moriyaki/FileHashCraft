@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Services;
@@ -12,6 +7,7 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.ViewModels.DuplicateSelectPage
 {
     #region インターフェース
+
     public interface IDupDirsFilesTreeViewModel
     {
         /// <summary>
@@ -19,17 +15,20 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// </summary>
         double DupDirsFilesTreeViewWidth { get; set; }
     }
+
     #endregion インターフェース
 
     public class DupDirsFilesTreeViewModel : BaseViewModel, IDupDirsFilesTreeViewModel
     {
         #region バインディング
+
         public ObservableCollection<IDupTreeItem> TreeRoot { get; set; } = [];
 
         /// <summary>
         /// 重複ファイルとフォルダのツリービューの幅
         /// </summary>
         private double _DupDirsFilesTreeViewWidth;
+
         public double DupDirsFilesTreeViewWidth
         {
             get => _DupDirsFilesTreeViewWidth;
@@ -37,25 +36,29 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 if (_DupDirsFilesTreeViewWidth == value) return;
                 SetProperty(ref _DupDirsFilesTreeViewWidth, value);
-                _settingsService.DupDirsFilesTreeViewWidth = value;
+                _SettingsService.DupDirsFilesTreeViewWidth = value;
             }
         }
+
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IFileManager _fileManager;
-        public DupDirsFilesTreeViewModel() { throw new NotImplementedException(nameof(DupDirsFilesTreeViewModel)); }
+
+        private readonly IFileManager _FileManager;
+
+        public DupDirsFilesTreeViewModel()
+        { throw new NotImplementedException(nameof(DupDirsFilesTreeViewModel)); }
 
         public DupDirsFilesTreeViewModel(
             IMessenger messenger,
             ISettingsService settingsService,
             IFileManager fileManager
-            ) : base( messenger, settingsService )
+            ) : base(messenger, settingsService)
         {
-            _fileManager = fileManager;
+            _FileManager = fileManager;
 
             // 重複ファイルを含むディレクトリ受信
-            _messenger.Register<DuplicateFilesMessage>(this, (_, m) =>
+            _Messanger.Register<DuplicateFilesMessage>(this, (_, m) =>
             {
                 if (TreeRoot.Any()) { TreeRoot.Clear(); }
                 var parent = new DupTreeItem(m.Directory);
@@ -73,6 +76,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
 
             DupDirsFilesTreeViewWidth = settingsService.DupDirsFilesTreeViewWidth;
         }
+
         #endregion コンストラクタ
     }
 }

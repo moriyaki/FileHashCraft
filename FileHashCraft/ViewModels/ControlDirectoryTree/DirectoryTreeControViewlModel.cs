@@ -2,6 +2,7 @@
 
     ディレクトリツリービューの ViewModel を提供します。
  */
+
 using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,41 +14,51 @@ using FileHashCraft.ViewModels.ControlDirectoryTree;
 namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 {
     #region インターフェース
+
     public interface IControDirectoryTreeViewlModel
     {
         /// <summary>
         /// ツリービューのルートコレクション
         /// </summary>
         ObservableCollection<DirectoryTreeItem> TreeRoot { get; }
+
         /// <summary>
         /// チェックボックスを表示するか否か
         /// </summary>
         void SetIsCheckBoxVisible(bool isVisible);
+
         /// <summary>
         /// チェックボックスが表示されるか否かを設定します。
         /// </summary>
         Visibility IsCheckBoxVisible { get; }
+
         /// <summary>
         /// カレントディレクトリ
         /// </summary>
         string CurrentFullPath { get; set; }
+
         /// <summary>
         /// ルートにアイテムを追加します。
         /// </summary>
         void AddRoot(FileItemInformation item, bool findSpecial);
+
         /// <summary>
         /// ルートアイテムをクリアします。
         /// </summary>
         void ClearRoot();
+
         /// <summary>
         /// ツリービューの横幅設定をします。
         /// </summary>
         double DirectoryTreeViewWidth { get; set; }
     }
+
     #endregion インターフェース
+
     public partial class ControDirectoryTreeViewModel : BaseViewModel, IControDirectoryTreeViewlModel
     {
         #region バインディング
+
         /// <summary>
         /// TreeView にバインドするコレクション
         /// </summary>
@@ -57,6 +68,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// チェックボックスの表示状態の設定
         /// </summary>
         private Visibility _IsCheckBoxVisible = Visibility.Visible;
+
         public Visibility IsCheckBoxVisible
         {
             get => _IsCheckBoxVisible;
@@ -67,6 +79,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         /// カレントディレクトリのフルパス
         /// </summary>
         private string _CurrentFullPath = string.Empty;
+
         public string CurrentFullPath
         {
             get => _CurrentFullPath;
@@ -78,14 +91,16 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                     // カレントディレクトリを TreeView の選択状態に反映
                     FolderSelectedChanged(value);
                     // カレントディレクトリ変更のメッセージ発信
-                    _fileSystemServices.NotifyChangeCurrentDirectory(value);
+                    _FileSystemServices.NotifyChangeCurrentDirectory(value);
                 }
             }
         }
+
         /// <summary>
         /// ツリービュー横幅の設定
         /// </summary>
         private double _DirectoryTreeViewWidth;
+
         public double DirectoryTreeViewWidth
         {
             get => _DirectoryTreeViewWidth;
@@ -93,21 +108,24 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             {
                 if (_DirectoryTreeViewWidth == value) { return; }
                 SetProperty(ref _DirectoryTreeViewWidth, value);
-                _settingsService.DirectoriesTreeViewWidth = value;
+                _SettingsService.DirectoriesTreeViewWidth = value;
             }
         }
+
         #endregion バインディング
 
         #region コンストラクタと初期処理
-        private readonly IFileSystemServices _fileSystemServices;
-        private readonly IFileWatcherService _fileWatcherService;
-        private readonly IDirectoryTreeManager _treeManager;
+
+        private readonly IFileSystemServices _FileSystemServices;
+        private readonly IFileWatcherService _FileWatcherService;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
 
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        public ControDirectoryTreeViewModel() { throw new NotImplementedException(nameof(ControDirectoryTreeViewModel)); }
+        public ControDirectoryTreeViewModel()
+        { throw new NotImplementedException(nameof(ControDirectoryTreeViewModel)); }
 
         // 通常コンストラクタ
         public ControDirectoryTreeViewModel(
@@ -118,12 +136,12 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             IDirectoryTreeManager treeManager
         ) : base(messenger, settingsService)
         {
-            _fileSystemServices = fileSystemService;
-            _fileWatcherService = fileWatcherService;
-            _treeManager = treeManager;
+            _FileSystemServices = fileSystemService;
+            _FileWatcherService = fileWatcherService;
+            _DirectoryTreeManager = treeManager;
 
             // カレントディレクトリの変更メッセージ
-            _messenger.Register<CurrentDirectoryChangedMessage>(this, (_, message) =>
+            _Messanger.Register<CurrentDirectoryChangedMessage>(this, (_, message) =>
             {
                 if (CurrentFullPath == message.CurrentFullPath) return;
                 CurrentFullPath = message.CurrentFullPath;
@@ -132,34 +150,34 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
 
             foreach (var root in SpecialFolderAndRootDrives.ScanDrives())
             {
-                _fileWatcherService.SetRootDirectoryWatcher(root);
+                _FileWatcherService.SetRootDirectoryWatcher(root);
             }
 
             // ディレクトリの内容が変更された
-            _messenger.Register<DirectoryItemDeletedMessage>(this, async (_, m)
+            _Messanger.Register<DirectoryItemDeletedMessage>(this, async (_, m)
                 => await DirectoryChanged(m.DeletedFullPath));
 
             // ディレクトリの内容が追加された
-            _messenger.Register<DirectoryItemCreatedMessage>(this, async (_, m)
+            _Messanger.Register<DirectoryItemCreatedMessage>(this, async (_, m)
                 => await DirectoryCreated(m.CreatedFullPath));
 
             // ディレクトリの名前が変更された
-            _messenger.Register<DirectoryItemRenamedMessage>(this, async(_, m)
+            _Messanger.Register<DirectoryItemRenamedMessage>(this, async (_, m)
                 => await DirectoryRenamed(m.OldFullPath, m.NewFullPath));
 
             // リムーバブルドライブが追加または挿入された
-            _messenger.Register<OpticalDriveMediaInsertedMessage>(this, async (_, m)
+            _Messanger.Register<OpticalDriveMediaInsertedMessage>(this, async (_, m)
                 => await OpticalDriveMediaInserted(m.InsertedPath));
 
             // リムーバブルドライブがイジェクトされた
-            _messenger.Register<OpticalDriveMediaEjectedMessage>(this, async (_, m)
+            _Messanger.Register<OpticalDriveMediaEjectedMessage>(this, async (_, m)
                 => await OpticalDriveMediaEjected(m.EjectedPath));
 
             // ツリービューのチェックボックスを表示するか否か
-            _messenger.Register<TreeViewIsCheckBoxVisible>(this, (_, m)
+            _Messanger.Register<TreeViewIsCheckBoxVisible>(this, (_, m)
                 => m.Reply(IsCheckBoxVisible));
 
-            _DirectoryTreeViewWidth = _settingsService.DirectoriesTreeViewWidth;
+            _DirectoryTreeViewWidth = _SettingsService.DirectoriesTreeViewWidth;
         }
 
         /// <summary>
@@ -184,7 +202,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (!findSpecial) return;
 
             // 展開ディレクトリに追加
-            _treeManager.AddDirectory(item.FullPath);
+            _DirectoryTreeManager.AddDirectory(item.FullPath);
             /* ルートドライブが追加された時、特殊フォルダは追加されている
               * 特殊フォルダがルートドライブに含まれているなら、内部的に Kick して展開しておく
               * そうすることで、特殊フォルダのチェックに対してドライブ下のディレクトリにも反映される
@@ -221,9 +239,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
         {
             TreeRoot.Clear();
         }
+
         #endregion コンストラクタと初期処理
 
         #region カレントディレクトリ移動
+
         /// <summary>
         /// カレントディレクトリが変更されたときの処理を行います。
         /// </summary>
@@ -264,6 +284,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 searchNode.IsExpanded = true;
             }
         }
+
         #endregion カレントディレクトリ移動
     }
 }

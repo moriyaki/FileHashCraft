@@ -14,30 +14,37 @@ namespace FileHashCraft.ViewModels.Modules
         /// 登録したディレクトリのリストを取得します。
         /// </summary>
         List<string> Directories { get; }
+
         /// <summary>
         /// 展開されたディレクトリかどうかを調べます。
         /// </summary>
         bool IsExpandedDirectory(string path);
+
         /// <summary>
         /// 特殊フォルダの配下かどうかを調べます。
         /// </summary>
         bool HasSpecialSubFolder(string fullPath);
+
         /// <summary>
         /// 特殊フォルダに含まれているサブディレクトリかどうかを取得します。
         /// </summary>
         bool IsSpecialSubFolder(string fullPath);
+
         /// <summary>
         /// ディレクトリノードを展開マネージャに追加します。
         /// </summary>
         void AddExpandedDirectoryManager(DirectoryTreeItem node);
+
         /// <summary>
         /// ディレクトリノードを展開マネージャから削除します。
         /// </summary>
         void RemoveExpandedDirectoryManager(DirectoryTreeItem node);
+
         /// <summary>
         /// 指定したパスを管理対象に追加します。
         /// </summary>
         void AddDirectory(string fullPath);
+
         /// <summary>
         /// 指定したパスを管理対象から外します。
         /// </summary>
@@ -56,6 +63,7 @@ namespace FileHashCraft.ViewModels.Modules
         }
 
         #region 変数宣言
+
         /// <summary>
         /// 登録したディレクトリのリスト
         /// </summary>
@@ -70,9 +78,11 @@ namespace FileHashCraft.ViewModels.Modules
         /// /特殊フォルダのリスト
         /// </summary>
         private readonly List<string> _specialDirectoriesRoot = [];
+
         #endregion 変数宣言
 
         #region メソッドとプロパティ
+
         /// <summary>
         /// 登録したディレクトリのリストを取得します。
         /// </summary>
@@ -130,9 +140,11 @@ namespace FileHashCraft.ViewModels.Modules
         /// <param name="fullPath">チェックするディレクトリのフルパス</param>
         /// <returns>TreeViewで展開されているかどうか</returns>
         public bool HasDirectory(string fullPath) => _normalDirectories.Any(dir => dir == fullPath);
+
         #endregion メソッドとプロパティ
 
         #region 追加削除メソッド
+
         /// <summary>
         /// TreeViewItem が展開された時に展開マネージャに通知します。
         /// </summary>
@@ -208,6 +220,7 @@ namespace FileHashCraft.ViewModels.Modules
                 return;
             }
         }
+
         #endregion 追加削除メソッド
     }
 }

@@ -2,6 +2,7 @@
 
     カレントディレクトリの変更を監視するクラスです。
  */
+
 using System.IO;
 using FileHashCraft.Models;
 using FileHashCraft.Services.Messages;
@@ -9,6 +10,7 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.Services.FileSystemWatcherServices
 {
     #region インターフェース
+
     public interface ICurrentDirFileSystemWatcherService
     {
         /// <summary>
@@ -16,23 +18,28 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         /// </summary>
         void SetCurrentDirectoryWatcher(string currentDirectory);
     }
+
     #endregion インターフェース
+
     public class CurrentDirFileSystemWatcherService : ICurrentDirFileSystemWatcherService
     {
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        public CurrentDirFileSystemWatcherService() { throw new NotImplementedException(nameof(CurrentDirFileSystemWatcherService)); }
+        public CurrentDirFileSystemWatcherService()
+        { throw new NotImplementedException(nameof(CurrentDirFileSystemWatcherService)); }
 
-        private readonly IFileSystemServices _fileSystemServices;
+        private readonly IFileSystemServices _FileSystemServices;
+
         public CurrentDirFileSystemWatcherService(
             IFileSystemServices fileSystemServices)
         {
-            _fileSystemServices = fileSystemServices;
+            _FileSystemServices = fileSystemServices;
         }
 
         #region FileSystemWatcherの宣言
+
         private readonly FileSystemWatcher CurrentWatcher = new();
 
         /// <summary>
@@ -66,6 +73,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
             }
             catch (FileNotFoundException) { }
         }
+
         /// <summary>
         /// FIleSystemWatcherエラーイベントの処理をします。
         /// </summary>
@@ -75,9 +83,11 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         {
             DebugManager.ExceptionWrite($"FileSystemWatcher : {e.GetException()}");
         }
+
         #endregion FileSystemWatcherの宣言
 
         #region ファイル変更通知
+
         /// <summary>
         /// ファイルが作成された通知の処理をします。
         /// </summary>
@@ -86,7 +96,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentCreated(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Created) return;
-            _fileSystemServices.NotifyCurrentItemCreatedMessage(e.FullPath);
+            _FileSystemServices.NotifyCurrentItemCreatedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -97,7 +107,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentDeleted(object sender, FileSystemEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Deleted) return;
-            _fileSystemServices.NotifyCurrentItemDeletedMessage(e.FullPath);
+            _FileSystemServices.NotifyCurrentItemDeletedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -108,8 +118,9 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnCurrentRenamed(object sender, RenamedEventArgs e)
         {
             if (e.ChangeType != WatcherChangeTypes.Renamed) return;
-            _fileSystemServices.NotifyCurrentItemRenamedMessage(e.OldFullPath, e.FullPath);
+            _FileSystemServices.NotifyCurrentItemRenamedMessage(e.OldFullPath, e.FullPath);
         }
+
         #endregion ファイル変更通知
     }
 }

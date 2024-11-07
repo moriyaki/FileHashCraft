@@ -2,6 +2,7 @@
 
     設定画面の ViewModel を提供します。
  */
+
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Media;
@@ -15,12 +16,15 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.ViewModels
 {
     #region インターフェース
+
     public interface ISettingsPageViewModel;
+
     #endregion インターフェース
 
     public class SettingsPageViewModel : BaseViewModel, ISettingsPageViewModel
     {
         #region バインディング
+
         /// <summary>
         ///  選択できる言語
         /// </summary>
@@ -34,20 +38,21 @@ namespace FileHashCraft.ViewModels
         /// 選択されている言語
         /// </summary>
         private string _SelectedLanguage;
+
         public string SelectedLanguage
         {
             get => _SelectedLanguage;
             set
             {
                 _SelectedLanguage = value;
-                _settingsService.SelectedLanguage = value;
+                _SettingsService.SelectedLanguage = value;
                 var currentHashAlgorithms = SelectedHashAlgorithm;
                 HashAlgorithms.Clear();
                 HashAlgorithms =
                 [
-                    new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                    new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                    new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
                 ];
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
@@ -64,6 +69,7 @@ namespace FileHashCraft.ViewModels
         /// ハッシュ計算アルゴリズムの取得と設定
         /// </summary>
         private string _SelectedHashAlgorithm;
+
         public string SelectedHashAlgorithm
         {
             get => _SelectedHashAlgorithm;
@@ -71,13 +77,15 @@ namespace FileHashCraft.ViewModels
             {
                 if (value == _SelectedHashAlgorithm) return;
                 SetProperty(ref _SelectedHashAlgorithm, value);
-                _settingsService.HashAlgorithm = value;
+                _SettingsService.HashAlgorithm = value;
             }
         }
+
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
         private bool _IsReadOnlyFileInclude;
+
         public bool IsReadOnlyFileInclude
         {
             get => _IsReadOnlyFileInclude;
@@ -85,7 +93,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_IsReadOnlyFileInclude == value) return;
                 SetProperty(ref _IsReadOnlyFileInclude, value);
-                _settingsService.IsReadOnlyFileInclude = value;
+                _SettingsService.IsReadOnlyFileInclude = value;
             }
         }
 
@@ -93,6 +101,7 @@ namespace FileHashCraft.ViewModels
         /// 隠しファイルを対象にするかどうか
         /// </summary>
         private bool _IsHiddenFileInclude;
+
         public bool IsHiddenFileInclude
         {
             get => _IsHiddenFileInclude;
@@ -100,13 +109,15 @@ namespace FileHashCraft.ViewModels
             {
                 if (_IsHiddenFileInclude == value) return;
                 SetProperty(ref _IsHiddenFileInclude, value);
-                _settingsService.IsHiddenFileInclude = value;
+                _SettingsService.IsHiddenFileInclude = value;
             }
         }
+
         /// <summary>
         ///  0 サイズのファイルを削除するかどうか
         /// </summary>
         private bool _IsZeroSizeFileDelete;
+
         public bool IsZeroSizeFileDelete
         {
             get => _IsZeroSizeFileDelete;
@@ -114,7 +125,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_IsZeroSizeFileDelete == value) return;
                 SetProperty(ref _IsZeroSizeFileDelete, value);
-                _settingsService.IsZeroSizeFileDelete = value;
+                _SettingsService.IsZeroSizeFileDelete = value;
             }
         }
 
@@ -122,6 +133,7 @@ namespace FileHashCraft.ViewModels
         /// 空のフォルダを削除するかどうか
         /// </summary>
         private bool _isEmptyDirectoryDelete;
+
         public bool IsEmptyDirectoryDelete
         {
             get => _isEmptyDirectoryDelete;
@@ -129,7 +141,7 @@ namespace FileHashCraft.ViewModels
             {
                 if (_isEmptyDirectoryDelete == value) return;
                 SetProperty(ref _isEmptyDirectoryDelete, value);
-                _settingsService.IsEmptyDirectoryDelete = value;
+                _SettingsService.IsEmptyDirectoryDelete = value;
             }
         }
 
@@ -152,23 +164,28 @@ namespace FileHashCraft.ViewModels
         /// 読み取り専用ファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
         public RelayCommand IsReadOnlyFileIncludeClicked { get; set; }
+
         /// <summary>
         /// 隠しファイルを利用するかどうかがクリックされた時、チェック状態を切り替えるコマンド
         /// </summary>
         public RelayCommand IsHiddenFileIncludeClicked { get; set; }
+
         /// <summary>
         ///  0 サイズのファイルを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
         public RelayCommand IsZeroSizeFIleDeleteClicked { get; set; }
+
         /// <summary>
         /// 空のフォルダを削除するかどうかのテキストがクリックされた時のコマンド
         /// </summary>
         public RelayCommand IsEmptyDirectoryDeleteClicked { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタと初期化
-        private readonly IFileSystemServices _fileSystemServices;
-        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
+
+        private readonly IFileSystemServices _FileSystemServices;
+        private readonly IHashAlgorithmHelper _HashAlgorithmHelper;
 
         public SettingsPageViewModel(
             IMessenger messenger,
@@ -177,21 +194,21 @@ namespace FileHashCraft.ViewModels
             IHashAlgorithmHelper hashAlgorithmHelper
         ) : base(messenger, settingsService)
         {
-            _fileSystemServices = fileSystemServices;
-            _hashAlgorithmHelper = hashAlgorithmHelper;
+            _FileSystemServices = fileSystemServices;
+            _HashAlgorithmHelper = hashAlgorithmHelper;
 
             HashAlgorithms =
             [
-                new (_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new (_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new (_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
             // フォントの一覧取得とバインド
             FontFamilies = new ObservableCollection<FontFamily>(GetSortedFontFamilies());
 
             // フォントサイズの一覧取得とバインド
-            foreach (var fontSize in _settingsService.GetSelectableFontSize())
+            foreach (var fontSize in _SettingsService.GetSelectableFontSize())
             {
                 FontSizes.Add(new FontSize(fontSize));
             }
@@ -213,14 +230,14 @@ namespace FileHashCraft.ViewModels
 
             // 「終了」で戻るページへのメッセージを送るコマンド
             ReturnPage = new RelayCommand(
-                () => _fileSystemServices.NavigateReturnPageFromSettings());
+                () => _FileSystemServices.NavigateReturnPageFromSettings());
 
-            _SelectedLanguage = _settingsService.SelectedLanguage;
-            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
-            _IsReadOnlyFileInclude = _settingsService.IsReadOnlyFileInclude;
-            _IsHiddenFileInclude = _settingsService.IsHiddenFileInclude;
-            _IsZeroSizeFileDelete = _settingsService.IsZeroSizeFileDelete;
-            _isEmptyDirectoryDelete = _settingsService.IsEmptyDirectoryDelete;
+            _SelectedLanguage = _SettingsService.SelectedLanguage;
+            _SelectedHashAlgorithm = _SettingsService.HashAlgorithm;
+            _IsReadOnlyFileInclude = _SettingsService.IsReadOnlyFileInclude;
+            _IsHiddenFileInclude = _SettingsService.IsHiddenFileInclude;
+            _IsZeroSizeFileDelete = _SettingsService.IsZeroSizeFileDelete;
+            _isEmptyDirectoryDelete = _SettingsService.IsEmptyDirectoryDelete;
         }
 
         /// <summary>
@@ -258,10 +275,12 @@ namespace FileHashCraft.ViewModels
             }
             return fontFamilyList.OrderBy(family => family.Source);
         }
+
         #endregion コンストラクタと初期化
     }
 
     #region 設定画面表示用クラス
+
     /// <summary>
     /// 言語の選択用クラス
     /// </summary>
@@ -269,7 +288,9 @@ namespace FileHashCraft.ViewModels
     {
         public string Lang { get; }
         public string Name { get; }
-        public Language() { throw new NotImplementedException(nameof(Language)); }
+
+        public Language()
+        { throw new NotImplementedException(nameof(Language)); }
 
         public Language(string lang, string name)
         {
@@ -284,6 +305,7 @@ namespace FileHashCraft.ViewModels
     public class FontSize
     {
         public double Size { get; }
+
         public string SizeString
         {
             get
@@ -298,7 +320,10 @@ namespace FileHashCraft.ViewModels
                 }
             }
         }
-        public FontSize() { throw new NotImplementedException(nameof(FontSize)); }
+
+        public FontSize()
+        { throw new NotImplementedException(nameof(FontSize)); }
+
         public FontSize(double size)
         {
             Size = size;
@@ -312,12 +337,16 @@ namespace FileHashCraft.ViewModels
     {
         public string Algorithm { get; }
         public string Name { get; }
-        public HashAlgorithm() { throw new NotImplementedException(nameof(HashAlgorithm)); }
+
+        public HashAlgorithm()
+        { throw new NotImplementedException(nameof(HashAlgorithm)); }
+
         public HashAlgorithm(string algorithm, string algorithmCaption)
         {
             Algorithm = algorithm;
             Name = algorithmCaption;
         }
     }
+
     #endregion 設定画面表示用クラス
 }

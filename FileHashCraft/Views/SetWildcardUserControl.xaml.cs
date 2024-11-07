@@ -20,8 +20,8 @@ namespace FileHashCraft.Views
             DataContext = Ioc.Default.GetService<ISetWildcardControlViewModel>();
 
             // ワイルドカード検索条件一覧のテキストボックスにフォーカスを当てる
-            var _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new NotImplementedException(nameof(IMessenger));
-            _messenger.Register<ListBoxSeletedWildcardTextBoxFocusMessage>(this, (_, _) =>
+            var _Messanger = Ioc.Default.GetService<IMessenger>() ?? throw new NullReferenceException(nameof(IMessenger));
+            _Messanger.Register<ListBoxSeletedWildcardTextBoxFocusMessage>(this, (_, _) =>
             {
                 if (WildcardSearchListBox.SelectedIndex == -1) { return; }
                 if (WildcardSearchListBox.ItemContainerGenerator.ContainerFromIndex(
@@ -32,7 +32,7 @@ namespace FileHashCraft.Views
                 }
             });
 
-            _messenger.Register<NewWildcardCriteriaFocusMessage>(this, (_, _) =>
+            _Messanger.Register<NewWildcardCriteriaFocusMessage>(this, (_, _) =>
                 NewWildcardCriteria.Focus());
         }
 
@@ -65,6 +65,7 @@ namespace FileHashCraft.Views
             }
             return null;
         }
+
         /// <summary>
         /// ワイルドカードの新規作成でEnterが押されたら、リストボックスに追加します。
         /// </summary>

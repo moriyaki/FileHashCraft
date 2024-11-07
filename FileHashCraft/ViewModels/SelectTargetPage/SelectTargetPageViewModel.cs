@@ -3,6 +3,7 @@
     ハッシュを取得する検索条件ウィンドウの ViewModel を提供します。
     PartialNormal, PartialWildcard, PartialRegularExpression, PartialExpert に分割されています。
  */
+
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,6 +19,7 @@ using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region ハッシュ計算するファイルの取得状況
+
     public enum FileScanStatus
     {
         None,
@@ -25,15 +27,18 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         FilesScanning,
         Finished,
     }
+
     #endregion ハッシュ計算するファイルの取得状況
 
     #region インターフェース
+
     public interface ISelectTargetPageViewModel
     {
         /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
         ISetExtentionControlViewModel ViewModelExtention { get; }
+
         /// <summary>
         /// PageSelectTargetViewModelのワイルドカードViewModel
         /// </summary>
@@ -48,92 +53,114 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// PageSelectTargetViewModelExpert 上級者向け設定のViewModel
         /// </summary>
         ISetExpertControlViewModel ViewModelExpert { get; }
+
         /// <summary>
         /// 他ページから移動してきた時の初期化処理をします。
         /// </summary>
         void Initialize();
+
         /// <summary>
         /// リストボックスの幅
         /// </summary>
         double FilesListBoxWidth { get; set; }
+
         /// <summary>
         /// ハッシュ取得対象のファイルリストアイテムのリストボックスコレクションです。
         /// </summary>
         ObservableCollection<HashListFileItems> HashFileListItems { get; }
+
         /// <summary>
         /// ファイルスキャン状況
         /// </summary>
         FileScanStatus Status { get; set; }
+
         /// <summary>
         /// ファイルスキャン状況に合わせた背景色
         /// </summary>
         Brush StatusColor { get; set; }
+
         /// <summary>
         /// ファイルスキャン状況に合わせた文字列
         /// </summary>
         string StatusMessage { get; set; }
+
         /// <summary>
         /// ハッシュアルゴリズム
         /// </summary>
         string SelectedHashAlgorithm { get; set; }
+
         /// <summary>
         /// 表示言語の変更に伴う対策をします。
         /// </summary>
         void LanguageChangedMeasures();
+
         /// <summary>
         /// 全ディレクトリ数(StatusBar用)
         /// </summary>
         int CountScannedDirectories { get; set; }
+
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数(StatusBar用)
         /// </summary>
         int CountHashFilesDirectories { get; set; }
+
         /// <summary>
         /// ハッシュを取得する全ファイル数
         /// </summary>
         int CountAllTargetFilesGetHash { get; set; }
+
         /// <summary>
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
         int CountFilteredGetHash { get; set; }
+
         /// <summary>
         /// ハッシュ計算画面に移動します。
         /// </summary>
         RelayCommand ToHashCalcingPage { get; set; }
+
         /// <summary>
         /// 検索ステータスを変更します。
         /// </summary>
         void ChangeHashScanStatus(FileScanStatus status);
+
         /// <summary>
         /// スキャンした全ディレクトリ数に加算します。
         /// </summary>
         void AddScannedDirectoriesCount(int count = 1);
+
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数に加算します。
         /// </summary>
         void AddFilesScannedDirectoriesCount(int count = 1);
+
         /// <summary>
         /// 総対象ファイル数を設定します。
         /// </summary>
         void SetAllTargetfilesCount();
+
         /// <summary>
         /// スキャンするファイル数が増減した時の処理をします。
         /// </summary>
         void SetTargetCountChanged();
+
         /// <summary>
         /// ツリービューの選択ディレクトリが変更された時の処理です。
         /// </summary>
         void ChangeCurrentPath(string currentFullPath);
+
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
         void ChangeSelectedToListBox();
     }
+
     #endregion インターフェース
 
     public partial class SelectTargetPageViewModel : BaseViewModel, ISelectTargetPageViewModel
     {
         #region バインディング
+
         /// <summary>
         /// PageSelectTargetViewModelの拡張子ViewModel
         /// </summary>
@@ -158,6 +185,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// ファイルスキャン状況
         /// </summary>
         private FileScanStatus _Status = FileScanStatus.None;
+
         public FileScanStatus Status
         {
             get => _Status;
@@ -169,19 +197,23 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                     case FileScanStatus.None:
                         StatusColor = Brushes.Pink;
                         break;
+
                     case FileScanStatus.DirectoriesScanning:
                         StatusColor = Brushes.Pink;
                         StatusMessage = $"{Resources.LabelDirectoryScanning} {CountScannedDirectories}";
                         break;
+
                     case FileScanStatus.FilesScanning:
                         StatusColor = Brushes.Yellow;
                         StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
                         break;
+
                     case FileScanStatus.Finished:
                         StatusColor = Brushes.LightGreen;
                         StatusMessage = Resources.LabelFinished;
-                        _messenger.Send(new FileScanFinished());
+                        _Messanger.Send(new FileScanFinished());
                         break;
+
                     default: // 異常
                         StatusColor = Brushes.Red;
                         break;
@@ -210,6 +242,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// ハッシュ計算アルゴリズムの取得と設定
         /// </summary>
         private string _SelectedHashAlgorithm;
+
         public string SelectedHashAlgorithm
         {
             get => _SelectedHashAlgorithm;
@@ -217,7 +250,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (value == _SelectedHashAlgorithm) return;
                 SetProperty(ref _SelectedHashAlgorithm, value);
-                _settingsService.HashAlgorithm = value;
+                _SettingsService.HashAlgorithm = value;
             }
         }
 
@@ -225,6 +258,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// 全ディレクトリ数(StatusBar用)
         /// </summary>
         private int _CountScannedDirectories = 0;
+
         public int CountScannedDirectories
         {
             get => _CountScannedDirectories;
@@ -239,6 +273,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// ファイルスキャンが完了したディレクトリ数(StatusBar用)
         /// </summary>
         private int _CountHashFilesDirectories = 0;
+
         public int CountHashFilesDirectories
         {
             get => _CountHashFilesDirectories;
@@ -254,6 +289,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// ハッシュを取得する全ファイル数
         /// </summary>
         private int _CountAllTargetFilesGetHash = 0;
+
         public int CountAllTargetFilesGetHash
         {
             get => _CountAllTargetFilesGetHash;
@@ -268,6 +304,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// 絞り込みをした時の、ハッシュを獲得するファイル数
         /// </summary>
         private int _CountFilteredGetHash = 0;
+
         public int CountFilteredGetHash
         {
             get => _CountFilteredGetHash;
@@ -298,6 +335,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// リストボックスの幅を設定します
         /// </summary>
         private double _FilesListBoxWidth;
+
         public double FilesListBoxWidth
         {
             get => _FilesListBoxWidth;
@@ -305,7 +343,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (value == _FilesListBoxWidth) { return; }
                 SetProperty(ref _FilesListBoxWidth, value);
-                _settingsService.FilesListBoxWidth = value;
+                _SettingsService.FilesListBoxWidth = value;
             }
         }
 
@@ -313,29 +351,34 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// 設定画面を開きます。
         /// </summary>
         public RelayCommand SettingsOpen { get; set; }
+
         /// <summary>
         /// デバッグウィンドウを開きます。
         /// </summary>
         public RelayCommand DebugOpen { get; set; }
+
         /// <summary>
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public RelayCommand HelpOpen { get; set; }
+
         /// <summary>
         /// エクスプローラー画面に戻ります。
         /// </summary>
         public RelayCommand ToExplorerPage { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IFileManager _fileManager;
-        private readonly IFileSystemServices _fileSystemServices;
-        private readonly IDirectoriesManager _directoriesManager;
-        private readonly IScanHashFiles _scanHashFiles;
-        private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly IHelpWindowViewModel _helpWindowViewModel;
-        private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
-        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
+
+        private readonly IFileManager _FileManager;
+        private readonly IFileSystemServices _FileSystemServices;
+        private readonly IDirectoriesCollection _DirectoriesManager;
+        private readonly IScanHashFiles _ScanHashFiles;
+        private readonly IScannedFilesManager _ScannedFilesManager;
+        private readonly IHelpWindowViewModel _HelpWindowViewModel;
+        private readonly IControDirectoryTreeViewlModel _ControDirectoryTreeViewlViewModel;
+        private readonly IHashAlgorithmHelper _HashAlgorithmHelper;
         private bool IsExecuting = false;
 
         public SelectTargetPageViewModel(
@@ -347,7 +390,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             IMessenger messenger,
             ISettingsService settingsService,
             IFileManager fileManager,
-            IDirectoriesManager directoriesManager,
+            IDirectoriesCollection directoriesManager,
             IScanHashFiles scanHashFiles,
             IScannedFilesManager scannedFilesManager,
             IHelpWindowViewModel helpWindowViewModel,
@@ -359,43 +402,43 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             ViewModelWildcard = pageSelectTargetViewModelWildcard;
             ViewModelRegEx = pageSelectTargetViewModelRegEx;
             ViewModelExpert = pageSelectTargetViewModelExpert;
-            _fileManager = fileManager;
-            _fileSystemServices = fileSystemServices;
-            _directoriesManager = directoriesManager;
-            _scanHashFiles = scanHashFiles;
-            _scannedFilesManager = scannedFilesManager;
-            _helpWindowViewModel = helpWindowViewModel;
-            _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
-            _hashAlgorithmHelper = hashAlgorithmHelper;
+            _FileManager = fileManager;
+            _FileSystemServices = fileSystemServices;
+            _DirectoriesManager = directoriesManager;
+            _ScanHashFiles = scanHashFiles;
+            _ScannedFilesManager = scannedFilesManager;
+            _HelpWindowViewModel = helpWindowViewModel;
+            _ControDirectoryTreeViewlViewModel = controDirectoryTreeViewlViewModel;
+            _HashAlgorithmHelper = hashAlgorithmHelper;
 
             // カレントハッシュ計算アルゴリズムを保存
-            //ViewModelMain.SelectedHashAlgorithm = _settingsService.HashAlgorithm;
+            //ViewModelMain.SelectedHashAlgorithm = _SettingsService.HashAlgorithm;
             HashAlgorithms =
 [
-                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
             // ハッシュ計算画面に移動するコマンド
             ToHashCalcingPage = new RelayCommand(
-                () => _fileSystemServices.NavigateToHashCalcingPage(),
+                () => _FileSystemServices.NavigateToHashCalcingPage(),
                 () => CountFilteredGetHash > 0
             );
 
             // カレントディレクトリが変更されたメッセージ受信
-            _messenger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
+            _Messanger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
                 => ChangeCurrentPath(m.CurrentFullPath));
 
             // 拡張子チェックボックスのチェック状態が変更されたら、カレントディレクトリリストボックス変更
-            _messenger.Register<ExtentionCheckChangedToListBoxMessage>(this, (_, _)
+            _Messanger.Register<ExtentionCheckChangedToListBoxMessage>(this, (_, _)
                 => ChangeSelectedToListBox());
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
             {
                 IsExecuting = true;
-                _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.SelecTargettPage);
+                _FileSystemServices.NavigateToSettingsPage(ReturnPageEnum.SelecTargettPage);
             });
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -408,54 +451,56 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 var helpWindow = new Views.HelpWindow();
                 helpWindow.Show();
-                _helpWindowViewModel.Initialize(HelpPage.Index);
+                _HelpWindowViewModel.Initialize(HelpPage.Index);
             });
             // エクスプローラー風画面に移動するコマンド
             ToExplorerPage = new RelayCommand(() =>
             {
                 CTS?.Cancel();
-                _fileSystemServices.NavigateToExplorerPage();
+                _FileSystemServices.NavigateToExplorerPage();
             });
 
             // スキャンした全ディレクトリ数に加算するメッセージ
-            _messenger.Register<AddScannedDirectoriesCountMessage>(this, (_, m)
+            _Messanger.Register<AddScannedDirectoriesCountMessage>(this, (_, m)
                 => AddScannedDirectoriesCount(m.DirectoriesCount));
 
             // ファイルスキャンが完了したディレクトリ数に加算するメッセージ
-            _messenger.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
+            _Messanger.Register<AddFilesScannedDirectoriesCountMessage>(this, (_, _)
                 => AddFilesScannedDirectoriesCount());
 
             // ハッシュ取得対象となる総対象ファイル数にファイル数を設定するメッセージ
-            _messenger.Register<SetAllTargetfilesCountMessge>(this, (_, _)
+            _Messanger.Register<SetAllTargetfilesCountMessge>(this, (_, _)
                 => SetAllTargetfilesCount());
 
             // 拡張子をリストボックスに追加するメッセージ
-            _messenger.Register<AddExtentionMessage>(this, (_, m)
+            _Messanger.Register<AddExtentionMessage>(this, (_, m)
                 => ViewModelExtention.AddExtention(m.Extention));
 
             // ファイルの拡張子グループをリストボックスに追加するメッセージ
-            _messenger.Register<AddFileTypesMessage>(this, (_, _)
+            _Messanger.Register<AddFileTypesMessage>(this, (_, _)
                 => ViewModelExtention.AddFileTypes());
 
             // 拡張子のチェック状態がされたらグループも変更する
-            _messenger.Register<ExtentionCheckReflectToGroupMessage>(this, (_, _)
+            _Messanger.Register<ExtentionCheckReflectToGroupMessage>(this, (_, _)
                 => SetTargetCountChanged());
-            _messenger.Register<ExtentionUncheckReflectToGroupMessage>(this, (_, _)
+            _Messanger.Register<ExtentionUncheckReflectToGroupMessage>(this, (_, _)
                 => SetTargetCountChanged());
 
             // ファイル対象数の変更通知
-            _messenger.Register<ChangeSelectedCountMessage>(this, (_, _) =>
+            _Messanger.Register<ChangeSelectedCountMessage>(this, (_, _) =>
             {
                 SetTargetCountChanged();
                 ChangeSelectedToListBox();
             });
-            _FilesListBoxWidth = _settingsService.FilesListBoxWidth;
-            _SelectedHashAlgorithm = _settingsService.HashAlgorithm;
+            _FilesListBoxWidth = _SettingsService.FilesListBoxWidth;
+            _SelectedHashAlgorithm = _SettingsService.HashAlgorithm;
             OnPropertyChanged(nameof(SelectedHashAlgorithm));
         }
+
         #endregion コンストラクタ
 
         #region 初期処理
+
         public CancellationTokenSource? CTS;
         public CancellationToken cancellationToken;
 
@@ -484,14 +529,14 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             InitializeTreeView();
             try
             {
-                ChangeCurrentPath(_controDirectoryTreeViewlViewModel.TreeRoot[0].FullPath);
-                _controDirectoryTreeViewlViewModel.TreeRoot[0].IsSelected = true;
+                ChangeCurrentPath(_ControDirectoryTreeViewlViewModel.TreeRoot[0].FullPath);
+                _ControDirectoryTreeViewlViewModel.TreeRoot[0].IsSelected = true;
             }
             catch { }
             // 既にファイル検索がされていて、ディレクトリ選択設定が変わっていなければ終了
             if (Status == FileScanStatus.Finished
-             && _directoriesManager.NestedDirectories.Order().SequenceEqual(NestedDirectories.Order())
-             && _directoriesManager.NonNestedDirectories.Order().SequenceEqual(NonNestedDirectories.Order()))
+             && _DirectoriesManager.NestedDirectories.Order().SequenceEqual(NestedDirectories.Order())
+             && _DirectoriesManager.NonNestedDirectories.Order().SequenceEqual(NonNestedDirectories.Order()))
             {
                 return;
             }
@@ -514,21 +559,21 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         private void InitializeTreeView()
         {
-            _controDirectoryTreeViewlViewModel.ClearRoot();
-            _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
+            _ControDirectoryTreeViewlViewModel.ClearRoot();
+            _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(false);
 
             // 該当以下のディレクトリを含むディレクトリのパスをツリービューに追加する。
-            foreach (var root in _directoriesManager.NestedDirectories)
+            foreach (var root in _DirectoriesManager.NestedDirectories)
             {
                 var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
-                _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
+                _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
             // 該当ディレクトリのみを単独でツリービューに追加する。
-            foreach (var root in _directoriesManager.NonNestedDirectories)
+            foreach (var root in _DirectoriesManager.NonNestedDirectories)
             {
                 var fi = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(root);
                 fi.HasChildren = false;
-                _controDirectoryTreeViewlViewModel.AddRoot(fi, false);
+                _ControDirectoryTreeViewlViewModel.AddRoot(fi, false);
             }
         }
 
@@ -538,9 +583,9 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         private void SaveCurrentDirectorySelectionSettings()
         {
             NestedDirectories.Clear();
-            NestedDirectories.AddRange(_directoriesManager.NestedDirectories);
+            NestedDirectories.AddRange(_DirectoriesManager.NestedDirectories);
             NonNestedDirectories.Clear();
-            NonNestedDirectories.AddRange(_directoriesManager.NonNestedDirectories);
+            NonNestedDirectories.AddRange(_DirectoriesManager.NonNestedDirectories);
         }
 
         /// <summary>
@@ -548,10 +593,10 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         private void ReflectionExpertSettings()
         {
-            ViewModelExpert.IsReadOnlyFileInclude = _settingsService.IsReadOnlyFileInclude;
-            ViewModelExpert.IsHiddenFileInclude = _settingsService.IsHiddenFileInclude;
-            ViewModelExpert.IsZeroSizeFileDelete = _settingsService.IsZeroSizeFileDelete;
-            ViewModelExpert.IsEmptyDirectoryDelete = _settingsService.IsEmptyDirectoryDelete;
+            ViewModelExpert.IsReadOnlyFileInclude = _SettingsService.IsReadOnlyFileInclude;
+            ViewModelExpert.IsHiddenFileInclude = _SettingsService.IsHiddenFileInclude;
+            ViewModelExpert.IsZeroSizeFileDelete = _SettingsService.IsZeroSizeFileDelete;
+            ViewModelExpert.IsEmptyDirectoryDelete = _SettingsService.IsEmptyDirectoryDelete;
         }
 
         /// <summary>
@@ -586,32 +631,34 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             // スキャンするディレクトリの追加
             Task.Run(() => ScanFiles(cancellationToken));
         }
+
         #endregion 初期処理
 
         #region メイン処理
+
         /// <summary>
         /// スキャンするファイルを検出します。
         /// </summary>
         public async Task ScanFiles(CancellationToken cancellation)
         {
             // クリアしないとキャンセルから戻ってきた時、ファイル数がおかしくなる
-            _scannedFilesManager.AllFiles.Clear();
-            _scanHashFiles.DirectoriesHashSet.Clear();
+            _ScannedFilesManager.AllFiles.Clear();
+            _ScanHashFiles.DirectoriesHashSet.Clear();
             ViewModelExtention.ClearExtentions();
 
             try
             {
                 ChangeHashScanStatus(FileScanStatus.DirectoriesScanning);
-                await _scanHashFiles.DirectoriesScan(cancellation);
+                await _ScanHashFiles.DirectoriesScan(cancellation);
 
                 ChangeHashScanStatus(FileScanStatus.FilesScanning);
-                await Task.Run(() => _scanHashFiles.DirectoryFilesScan(cancellation), cancellation);
+                await Task.Run(() => _ScanHashFiles.DirectoryFilesScan(cancellation), cancellation);
             }
             catch (OperationCanceledException)
             {
                 return;
             }
-            _scanHashFiles.ScanExtention(cancellation);
+            _ScanHashFiles.ScanExtention(cancellation);
 
             // スキャン終了の表示に切り替える
             ChangeHashScanStatus(FileScanStatus.Finished);
@@ -619,6 +666,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             //--------------------- 開発用自動化処理
             App.Current?.Dispatcher.InvokeAsync(() => ToHashCalcingPage.Execute(this));
         }
+
         #endregion メイン処理
 
         /// <summary>
@@ -626,14 +674,14 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         public void LanguageChangedMeasures()
         {
-            var currentAlgorithm = _settingsService.HashAlgorithm;
+            var currentAlgorithm = _SettingsService.HashAlgorithm;
 
             HashAlgorithms.Clear();
             HashAlgorithms =
             [
-                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(_hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
             ];
 
             // ハッシュ計算アルゴリズムを再設定
@@ -642,6 +690,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         }
 
         #region ファイル数の管理処理
+
         /// <summary>
         /// 検索のステータスを変更します。
         /// </summary>
@@ -650,6 +699,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         {
             App.Current?.Dispatcher?.Invoke(() => Status = status);
         }
+
         /// <summary>
         /// スキャンした全ディレクトリ数に加算します。
         /// </summary>
@@ -658,6 +708,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         {
             App.Current?.Dispatcher?.Invoke(() => CountScannedDirectories += directoriesCount);
         }
+
         /// <summary>
         /// ファイルスキャンが完了したディレクトリ数に加算します。
         /// </summary>
@@ -673,7 +724,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         public void SetAllTargetfilesCount()
         {
             App.Current?.Dispatcher?.Invoke(() =>
-            CountAllTargetFilesGetHash = _scannedFilesManager.GetAllFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
+            CountAllTargetFilesGetHash = _ScannedFilesManager.GetAllFilesCount(_SettingsService.IsHiddenFileInclude, _SettingsService.IsReadOnlyFileInclude));
         }
 
         /// <summary>
@@ -682,11 +733,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         public void SetTargetCountChanged()
         {
             App.Current.Dispatcher.Invoke(() =>
-            CountFilteredGetHash = _scannedFilesManager.GetAllCriteriaFilesCount(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
+            CountFilteredGetHash = _ScannedFilesManager.GetAllCriteriaFilesCount(_SettingsService.IsHiddenFileInclude, _SettingsService.IsReadOnlyFileInclude));
         }
+
         #endregion ファイル数の管理処理
 
         #region ツリービューのカレントディレクトリ、リストビューの色変え処理
+
         /// <summary>
         /// ツリービューの選択ディレクトリが変更された時の処理です。
         /// </summary>
@@ -696,17 +749,18 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         {
             App.Current?.Dispatcher?.Invoke(() => HashFileListItems.Clear());
 
-            foreach (var file in _fileManager.EnumerateFiles(currentFullPath))
+            foreach (var file in _FileManager.EnumerateFiles(currentFullPath))
             {
                 var item = new HashListFileItems
                 {
                     FileFullPath = file,
-                    //IsHashTarget = _scannedFilesManager.GetAllCriteriaFileName().Any(f => f.FileFullPath == file)
-                    IsHashTarget = _scannedFilesManager.IsCriteriaFile(file, _settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude),
+                    //IsHashTarget = _ScannedFilesManager.GetAllCriteriaFileName().Any(f => f.FileFullPath == file)
+                    IsHashTarget = _ScannedFilesManager.IsCriteriaFile(file, _SettingsService.IsHiddenFileInclude, _SettingsService.IsReadOnlyFileInclude),
                 };
                 App.Current?.Dispatcher?.Invoke(() => HashFileListItems.Add(item));
             }
         }
+
         /// <summary>
         /// 拡張子の検索条件が変更された時の処理です。
         /// </summary>
@@ -715,9 +769,10 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             foreach (var item in HashFileListItems)
             {
                 App.Current?.Dispatcher?.Invoke(() =>
-                    item.IsHashTarget = _scannedFilesManager.IsCriteriaFile(item.FileFullPath, _settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude));
+                    item.IsHashTarget = _ScannedFilesManager.IsCriteriaFile(item.FileFullPath, _SettingsService.IsHiddenFileInclude, _SettingsService.IsReadOnlyFileInclude));
             }
         }
+
         #endregion ツリービューのカレントディレクトリ、リストビューの色変え処理
     }
 }

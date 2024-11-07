@@ -7,11 +7,11 @@
         xmlns:local="clr-namespace:FileHashCraft.Views"
         mc:Ignorable="d"
         Title="HelpWindow"
-        Height="{Binding Height,Mode=TwoWay}" 
-        Width="{Binding Width,Mode=TwoWay}" 
-        Top="{Binding Top,Mode=TwoWay}" 
+        Height="{Binding Height,Mode=TwoWay}"
+        Width="{Binding Width,Mode=TwoWay}"
+        Top="{Binding Top,Mode=TwoWay}"
         Left="{Binding Left,Mode=TwoWay}">
     <Grid>
-        <wv2:WebView2 Name="webView" Source="{Binding HtmlFile}"/>
+        <wv2:WebView2 Name="webView" Source="{Binding HtmlFile}" />
     </Grid>
 </Window>

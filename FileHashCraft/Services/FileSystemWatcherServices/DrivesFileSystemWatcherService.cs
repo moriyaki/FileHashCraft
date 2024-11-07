@@ -2,34 +2,40 @@
 
     ドライブ以下全てのファイルを監視するクラスです。
  */
+
 using System.IO;
-using FileHashCraft.ViewModels.ControlDirectoryTree;
-using FileHashCraft.Services.Messages;
 using FileHashCraft.Models;
+using FileHashCraft.Services.Messages;
+using FileHashCraft.ViewModels.ControlDirectoryTree;
 
 namespace FileHashCraft.Services.FileSystemWatcherServices
 {
     #region インターフェース
+
     public interface IFileWatcherService
     {
         /// <summary>
         /// ドライブに対して、ファイルアイテム変更監視の設定をします。
         /// </summary>
         void SetRootDirectoryWatcher(FileItemInformation rootDrive);
+
         /// <summary>
         /// リムーバブルドライブの追加または挿入処理をします。
         /// </summary>
         void InsertOpticalDriveMedia(char driveLetter);
+
         /// <summary>
         /// リムーバブルメディアの削除またはイジェクト処理を行います。
         /// </summary>
         void EjectOpticalDriveMedia(char driveLetter);
     }
+
     #endregion インターフェース
 
     public class DrivesFileSystemWatcherService : IFileWatcherService
     {
         #region コンストラクタ
+
         /// <summary>
         /// ドライブ内のディレクトリ変更を監視するインスタンス
         /// </summary>
@@ -44,8 +50,8 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
             throw new NotImplementedException(nameof(DrivesFileSystemWatcherService));
         }
 
-        private readonly IFileSystemServices _fileSystemServices;
-        private readonly IDirectoryTreeManager _directoryTreeManager;
+        private readonly IFileSystemServices _FileSystemServices;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
 
         /// <summary>
         /// コンストラクタインジェクションをします。
@@ -56,12 +62,14 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
             IDirectoryTreeManager directoryTreeManager
         )
         {
-            _fileSystemServices = fileSystemServices;
-            _directoryTreeManager = directoryTreeManager;
+            _FileSystemServices = fileSystemServices;
+            _DirectoryTreeManager = directoryTreeManager;
         }
+
         #endregion コンストラクタ
 
         #region ディレクトリ変更通知処理
+
         /// <summary>
         /// ドライブに対して、ファイルアイテム変更監視の設定をします。
         /// </summary>
@@ -113,7 +121,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
                 return false;
             }
             // 展開マネージャに登録されてないディレクトリ、またはその親が登録されてない場合は通知しない
-            if (!(_directoryTreeManager.IsExpandedDirectory(fullPath) || _directoryTreeManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
+            if (!(_DirectoryTreeManager.IsExpandedDirectory(fullPath) || _DirectoryTreeManager.IsExpandedDirectory(Path.GetDirectoryName(fullPath) ?? string.Empty)))
             {
                 return true;
             }
@@ -151,7 +159,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryChanged(object? sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemServices.NotifyDirectoryItemDeletedMessage(e.FullPath);
+            _FileSystemServices.NotifyDirectoryItemDeletedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -162,7 +170,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryCreated(object sender, FileSystemEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemServices.NotifyDirectoryItemCreatedMessage(e.FullPath);
+            _FileSystemServices.NotifyDirectoryItemCreatedMessage(e.FullPath);
         }
 
         /// <summary>
@@ -173,11 +181,13 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         private void OnDirectoryRenamed(object sender, RenamedEventArgs e)
         {
             if (IsEventNotCatch(e.FullPath)) return;
-            _fileSystemServices.NotifyDirectoryItemRenamedMessage(e.OldFullPath, e.FullPath);
+            _FileSystemServices.NotifyDirectoryItemRenamedMessage(e.OldFullPath, e.FullPath);
         }
+
         #endregion ディレクトリ変更通知処理
 
         #region リムーバブルディスクの着脱処理
+
         /// <summary>
         /// リムーバブルドライブの追加または挿入処理をします。
         /// </summary>
@@ -185,7 +195,7 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void InsertOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            _fileSystemServices.NotifyInsertOpticalMediaMessage(path);
+            _FileSystemServices.NotifyInsertOpticalMediaMessage(path);
         }
 
         /// <summary>
@@ -195,8 +205,9 @@ namespace FileHashCraft.Services.FileSystemWatcherServices
         public void EjectOpticalDriveMedia(char driveLetter)
         {
             var path = driveLetter + @":\";
-            _fileSystemServices.NotifyEjectOpticalMediaMessage(path);
+            _FileSystemServices.NotifyEjectOpticalMediaMessage(path);
         }
+
         #endregion リムーバブルディスクの着脱処理
     }
 }

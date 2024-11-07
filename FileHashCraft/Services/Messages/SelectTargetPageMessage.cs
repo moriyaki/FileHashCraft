@@ -6,13 +6,17 @@ namespace FileHashCraft.Services.Messages
     public class FileScanFinished;
 
     #region ファイルスキャンメッセージ
+
     /// <summary>
     /// スキャンした全ディレクトリ数に加算するメッセージ
     /// </summary>
     public class AddScannedDirectoriesCountMessage
     {
         public int DirectoriesCount { get; set; } = 0;
-        public AddScannedDirectoriesCountMessage() { throw new NotImplementedException(nameof(AddScannedDirectoriesCountMessage)); }
+
+        public AddScannedDirectoriesCountMessage()
+        { throw new NotImplementedException(nameof(AddScannedDirectoriesCountMessage)); }
+
         public AddScannedDirectoriesCountMessage(int directoryCount)
         {
             DirectoriesCount = directoryCount;
@@ -35,7 +39,10 @@ namespace FileHashCraft.Services.Messages
     public class AddExtentionMessage
     {
         public string Extention { get; set; } = string.Empty;
-        public AddExtentionMessage() { throw new NotImplementedException(nameof(AddExtentionMessage)); }
+
+        public AddExtentionMessage()
+        { throw new NotImplementedException(nameof(AddExtentionMessage)); }
+
         public AddExtentionMessage(string extention)
         {
             Extention = extention;
@@ -50,25 +57,33 @@ namespace FileHashCraft.Services.Messages
     #endregion ファイルスキャンメッセージ
 
     #region 拡張子チェックボックスメッセージ
+
     /// <summary>
     /// 拡張子がチェックボックスされたら拡張子グループ変更するメッセージ
     /// </summary>
     public class ExtentionCheckReflectToGroupMessage
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionCheckReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionCheckReflectToGroupMessage)); }
+
+        public ExtentionCheckReflectToGroupMessage()
+        { throw new NotImplementedException(nameof(ExtentionCheckReflectToGroupMessage)); }
+
         public ExtentionCheckReflectToGroupMessage(string name)
         {
             Name = name;
         }
     }
+
     /// <summary>
     /// 拡張子がチェックボックス解除されたら拡張子グループ変更するメッセージ
     /// </summary>
     public class ExtentionUncheckReflectToGroupMessage
     {
         public string Name { get; set; } = string.Empty;
-        public ExtentionUncheckReflectToGroupMessage() { throw new NotImplementedException(nameof(ExtentionUncheckReflectToGroupMessage)); }
+
+        public ExtentionUncheckReflectToGroupMessage()
+        { throw new NotImplementedException(nameof(ExtentionUncheckReflectToGroupMessage)); }
+
         public ExtentionUncheckReflectToGroupMessage(string name)
         {
             Name = name;
@@ -87,7 +102,10 @@ namespace FileHashCraft.Services.Messages
     {
         public bool IsChecked { get; set; }
         public IEnumerable<string> ExtentionCollection;
-        public ExtentionGroupCheckedMessage() { throw new NotImplementedException(nameof(ExtentionGroupCheckedMessage)); }
+
+        public ExtentionGroupCheckedMessage()
+        { throw new NotImplementedException(nameof(ExtentionGroupCheckedMessage)); }
+
         public ExtentionGroupCheckedMessage(bool isChecked, IEnumerable<string> extentionCollection)
         {
             IsChecked = isChecked;
@@ -96,16 +114,20 @@ namespace FileHashCraft.Services.Messages
     }
 
     public class ChangeSelectedCountMessage;
+
     #endregion 拡張子チェックボックスメッセージ
 
     #region ワイルドカード/正規表現共通メッセージ
+
     /// <summary>
     /// 編集モード/閲覧モードの変更を通知するメッセージ
     /// </summary>
     public class IsEditModeChangedMessage;
+
     #endregion ワイルドカード/正規表現共通メッセージ
 
     #region ワイルドカードメッセージ
+
     /// <summary>
     /// ワイルドカード一覧のテキストボックスにフォーカスを移すメッセージ
     /// </summary>
@@ -123,7 +145,10 @@ namespace FileHashCraft.Services.Messages
     {
         public bool IsSelected { get; set; }
         public WildcardCriteriaItemViewModel SelectedItem { get; set; }
-        public IsSelectedWildcardChangedMessage() { throw new NotSupportedException(nameof(IsSelectedWildcardChangedMessage)); }
+
+        public IsSelectedWildcardChangedMessage()
+        { throw new NotSupportedException(nameof(IsSelectedWildcardChangedMessage)); }
+
         public IsSelectedWildcardChangedMessage(bool isSelected, WildcardCriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
@@ -138,20 +163,26 @@ namespace FileHashCraft.Services.Messages
     {
         public string WildcardCriteria { get; set; } = string.Empty;
         public string OriginalWildcardCriteria { get; set; } = string.Empty;
-        public SelectedChangedWildcardCriteriaRequestMessage() { throw new NotImplementedException(nameof(SelectedChangedWildcardCriteriaRequestMessage)); }
+
+        public SelectedChangedWildcardCriteriaRequestMessage()
+        { throw new NotImplementedException(nameof(SelectedChangedWildcardCriteriaRequestMessage)); }
+
         public SelectedChangedWildcardCriteriaRequestMessage(string wildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
         }
+
         public SelectedChangedWildcardCriteriaRequestMessage(string wildcardCriteria, string oldWildcardCriteria)
         {
             WildcardCriteria = wildcardCriteria;
             OriginalWildcardCriteria = oldWildcardCriteria;
         }
     }
+
     #endregion ワイルドカードメッセージ
 
     #region 正規表現メッセージ
+
     /// <summary>
     /// 正規表現一覧のテキストボックスにフォーカスを移すメッセージ
     /// </summary>
@@ -169,7 +200,10 @@ namespace FileHashCraft.Services.Messages
     {
         public bool IsSelected { get; set; }
         public RegexCriteriaItemViewModel SelectedItem { get; set; }
-        public IsSelectedRegexChangedMessage() { throw new NotSupportedException(nameof(IsSelectedRegexChangedMessage)); }
+
+        public IsSelectedRegexChangedMessage()
+        { throw new NotSupportedException(nameof(IsSelectedRegexChangedMessage)); }
+
         public IsSelectedRegexChangedMessage(bool isSelected, RegexCriteriaItemViewModel selectedItem)
         {
             IsSelected = isSelected;
@@ -184,16 +218,21 @@ namespace FileHashCraft.Services.Messages
     {
         public string RegexCriteria { get; set; } = string.Empty;
         public string OriginalRegexCriteria { get; set; } = string.Empty;
-        public SelectedChangedRegexCriteriaRequestMessage() { throw new NotImplementedException(nameof(SelectedChangedRegexCriteriaRequestMessage)); }
+
+        public SelectedChangedRegexCriteriaRequestMessage()
+        { throw new NotImplementedException(nameof(SelectedChangedRegexCriteriaRequestMessage)); }
+
         public SelectedChangedRegexCriteriaRequestMessage(string wildcardCriteria)
         {
             RegexCriteria = wildcardCriteria;
         }
+
         public SelectedChangedRegexCriteriaRequestMessage(string regexCriteria, string oldRegexCriteria)
         {
             RegexCriteria = regexCriteria;
             OriginalRegexCriteria = oldRegexCriteria;
         }
     }
+
     #endregion 正規表現メッセージ
 }

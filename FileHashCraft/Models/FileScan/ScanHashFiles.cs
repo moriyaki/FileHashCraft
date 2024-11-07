@@ -3,33 +3,41 @@ using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.Models.FileScan
 {
+    #region インターフェース
     public interface IScanHashFiles
     {
         /// <summary>
         /// 全ディレクトリのリスト
         /// </summary>
         HashSet<string> DirectoriesHashSet { get; set; }
+
         /// <summary>
         /// ハッシュを取得するディレクトリをスキャンします。
         /// </summary>
         Task DirectoriesScan(CancellationToken cancellation);
+
         /// <summary>
         /// ディレクトリを全て検索します。
         /// </summary>
         Task DirectorySearch(List<string> rootDirectories, CancellationToken cancellation);
+
         /// <summary>
         /// ディレクトリ内部をを検索して取得します。
         /// </summary>
         HashSet<string> GetDirectories(string rootDirectory, CancellationToken cancellation);
+
         /// <summary>
         /// ハッシュを取得するディレクトリのファイルをスキャンします。
         /// </summary>
         Task DirectoryFilesScan(CancellationToken cancellation);
+
         /// <summary>
         /// 拡張子によるファイルフィルタの設定をします。
         /// </summary>
         public void ScanExtention(CancellationToken cancellation);
     }
+    #endregion インターフェース
+
     public class ScanHashFiles : IScanHashFiles
     {
         /// <summary>
@@ -37,29 +45,32 @@ namespace FileHashCraft.Models.FileScan
         /// </summary>
         public HashSet<string> DirectoriesHashSet { get; set; } = [];
 
-        public ScanHashFiles() { throw new NotImplementedException(nameof(ScanHashFiles)); }
+        public ScanHashFiles()
+        { throw new NotImplementedException(nameof(ScanHashFiles)); }
 
-        private readonly IMessenger _messenger;
-        private readonly IExtentionManager _extentionManager;
-        private readonly IDirectoriesManager _directoriesManager;
-        private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly IFileManager _fileManager;
+        private readonly IMessenger _Messanger;
+        private readonly IExtentionManager _ExtentionManager;
+        private readonly IDirectoriesCollection _DirectoriesManager;
+        private readonly IScannedFilesManager _ScannedFilesManager;
+        private readonly IFileManager _FileManager;
+
         public ScanHashFiles(
             IMessenger messenger,
             IExtentionManager extentionManager,
-            IDirectoriesManager directoriesManager,
+            IDirectoriesCollection directoriesManager,
             IScannedFilesManager scannedFilesManager,
             IFileManager fileManager
         )
         {
-            _messenger = messenger;
-            _extentionManager = extentionManager;
-            _directoriesManager = directoriesManager;
-            _scannedFilesManager = scannedFilesManager;
-            _fileManager = fileManager;
+            _Messanger = messenger;
+            _ExtentionManager = extentionManager;
+            _DirectoriesManager = directoriesManager;
+            _ScannedFilesManager = scannedFilesManager;
+            _FileManager = fileManager;
         }
 
         #region ディレクトリを検索する
+
         /// <summary>
         /// ハッシュを取得するディレクトリをスキャンします。
         /// </summary>
@@ -67,8 +78,8 @@ namespace FileHashCraft.Models.FileScan
         public async Task DirectoriesScan(CancellationToken cancellation)
         {
             // 各ドライブに対してタスクを回す
-            await DirectorySearch(_directoriesManager.NestedDirectories, cancellation);
-            _messenger.Send(new AddScannedDirectoriesCountMessage(_directoriesManager.NonNestedDirectories.Count));
+            await DirectorySearch(_DirectoriesManager.NestedDirectories, cancellation);
+            _Messanger.Send(new AddScannedDirectoriesCountMessage(_DirectoriesManager.NonNestedDirectories.Count));
         }
 
         /// <summary>
@@ -107,8 +118,8 @@ namespace FileHashCraft.Models.FileScan
             {
                 string currentDirectory = paths.Pop();
                 result.Add(currentDirectory);
-                _messenger.Send(new AddScannedDirectoriesCountMessage(1));
-                foreach (var subDir in _fileManager.EnumerateDirectories(currentDirectory))
+                _Messanger.Send(new AddScannedDirectoriesCountMessage(1));
+                foreach (var subDir in _FileManager.EnumerateDirectories(currentDirectory))
                 {
                     paths.Push(subDir);
                     if (cancellation.IsCancellationRequested) { return []; }
@@ -116,9 +127,11 @@ namespace FileHashCraft.Models.FileScan
             }
             return result;
         }
+
         #endregion ディレクトリを検索する
 
         #region ハッシュを取得するファイルのスキャン処理
+
         /// <summary>
         /// ハッシュを取得するディレクトリのファイルをスキャンします。
         /// </summary>
@@ -132,14 +145,14 @@ namespace FileHashCraft.Models.FileScan
                 try
                 {
                     await semaphore.WaitAsync(cancellation);
-                    foreach (var file in _fileManager.EnumerateFiles(directoryFullPath))
+                    foreach (var file in _FileManager.EnumerateFiles(directoryFullPath))
                     {
-                        _scannedFilesManager.AddFile(file);
-                        _extentionManager.AddFile(file);
+                        _ScannedFilesManager.AddFile(file);
+                        _ExtentionManager.AddFile(file);
                     }
 
-                    _messenger.Send(new AddFilesScannedDirectoriesCountMessage());
-                    _messenger.Send(new SetAllTargetfilesCountMessge());
+                    _Messanger.Send(new AddFilesScannedDirectoriesCountMessage());
+                    _Messanger.Send(new SetAllTargetfilesCountMessge());
 
                     if (cancellation.IsCancellationRequested) { return; }
                 }
@@ -153,13 +166,14 @@ namespace FileHashCraft.Models.FileScan
         /// <param name="cancellation">キャンセリングトークン</param>
         public void ScanExtention(CancellationToken cancellation)
         {
-            foreach (var extention in _extentionManager.GetExtentions())
+            foreach (var extention in _ExtentionManager.GetExtentions())
             {
-                _messenger.Send(new AddExtentionMessage(extention));
+                _Messanger.Send(new AddExtentionMessage(extention));
                 if (cancellation.IsCancellationRequested) { return; }
             }
-            _messenger.Send(new AddFileTypesMessage());
+            _Messanger.Send(new AddFileTypesMessage());
         }
+
         #endregion ハッシュを取得するファイルのスキャン処理
     }
 }

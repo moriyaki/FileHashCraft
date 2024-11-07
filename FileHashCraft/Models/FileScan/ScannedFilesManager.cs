@@ -3,44 +3,53 @@ using System.Text.RegularExpressions;
 
 namespace FileHashCraft.Models.FileScan
 {
+    #region インターフェース
     public interface IScannedFilesManager
     {
         /// <summary>
         /// 全管理対象ファイルディクショナリに追加します。
         /// </summary>
         void AddFile(string fileFullPath, FileHashAlgorithm hashAlgorithm = FileHashAlgorithm.SHA256, string fileHash = "");
+
         /// <summary>
         /// ディレクトリをキーとした全てのファイルを持つファイルの辞書
         /// </summary>
         HashSet<HashFile> AllFiles { get; }
+
         /// <summary>
         /// 属性条件に合致する全てのファイル数を取得します。
         /// </summary>
         int GetAllFilesCount(bool includeHidden, bool includeReadOnly);
+
         /// <summary>
         /// 検索条件に合致する全てのファイル数を取得します。
         /// </summary>
         int GetAllCriteriaFilesCount(bool includeHidden, bool includeReadOnly);
+
         /// <summary>
         /// 検索条件に合致するファイルを取得する
         /// </summary>
         HashSet<HashFile> GetAllCriteriaFileName(bool includeHidden, bool includeReadOnly);
+
         /// <summary>
         /// ファイルが検索条件に合致しているかを取得します。
         /// </summary>
         bool IsCriteriaFile(string fileFullPath, bool includeHidden, bool includeReadOnly);
     }
+    #endregion インターフェース
 
     public class ScannedFilesManager : IScannedFilesManager
     {
-        public ScannedFilesManager() { throw new NotImplementedException(nameof(ScannedFilesManager)); }
+        public ScannedFilesManager()
+        { throw new NotImplementedException(nameof(ScannedFilesManager)); }
 
-        private readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
+        private readonly IFileSearchCriteriaManager _FileSearchCriteriaManager;
+
         public ScannedFilesManager(
             IFileSearchCriteriaManager fileSearchCriteriaManager
         )
         {
-            _fileSearchCriteriaManager = fileSearchCriteriaManager;
+            _FileSearchCriteriaManager = fileSearchCriteriaManager;
         }
 
         /// <summary>
@@ -155,19 +164,22 @@ namespace FileHashCraft.Models.FileScan
         public HashSet<HashFile> GetAllCriteriaFileName(bool includeHidden, bool includeReadOnly)
         {
             var files = new HashSet<HashFile>();
-            foreach (var criteria in _fileSearchCriteriaManager.AllCriteria)
+            foreach (var criteria in _FileSearchCriteriaManager.AllCriteria)
             {
                 switch (criteria.SearchOption)
                 {
                     case FileSearchOption.Extention:
                         files.UnionWith(GetFilesByExtention(criteria, includeHidden, includeReadOnly));
                         break;
+
                     case FileSearchOption.Wildcard:
                         files.UnionWith(GetFilesByWildcard(criteria, includeHidden, includeReadOnly));
                         break;
+
                     case FileSearchOption.Regex:
                         files.UnionWith(GetFilesByRegex(criteria, includeHidden, includeReadOnly));
                         break;
+
                     default:
                         throw new NotFiniteNumberException("GetAllCriteriaFilesCount");
                 }
@@ -176,6 +188,7 @@ namespace FileHashCraft.Models.FileScan
         }
 
         #region ファイルの検索条件一致ファイル取得
+
         /// <summary>
         /// 拡張子の検索条件に合致するファイルを返す
         /// </summary>
@@ -219,6 +232,7 @@ namespace FileHashCraft.Models.FileScan
             return AllFiles.Where(f => regex.IsMatch(f.FileFullPath)
              && MatchFileAttributesCriteria(f, includeHidden, includeReadOnly)).Select(f => f);
         }
+
         #endregion ファイルの検索条件一致ファイル取得
 
         /// <summary>
@@ -232,7 +246,7 @@ namespace FileHashCraft.Models.FileScan
         {
             var file = AllFiles.FirstOrDefault(c => c.FileFullPath == fileFullPath);
             if (file == null) { return false; }
-            foreach (var criteria in _fileSearchCriteriaManager.AllCriteria)
+            foreach (var criteria in _FileSearchCriteriaManager.AllCriteria)
             {
                 switch (criteria.SearchOption)
                 {
@@ -240,14 +254,17 @@ namespace FileHashCraft.Models.FileScan
                         if (IsMatchingExtention(criteria, file, includeHidden, includeReadOnly))
                         { return true; }
                         break;
+
                     case FileSearchOption.Wildcard:
                         if (IsMatchingWildcard(criteria, file, includeHidden, includeReadOnly))
                         { return true; }
                         break;
+
                     case FileSearchOption.Regex:
                         if (IsMatchingRegex(criteria, file, includeHidden, includeReadOnly))
                         { return true; }
                         break;
+
                     default:
                         throw new NotFiniteNumberException("IsCriteriaFile");
                 }
@@ -256,6 +273,7 @@ namespace FileHashCraft.Models.FileScan
         }
 
         #region ファイルの検索条件一致チェック
+
         /// <summary>
         /// ファイルが拡張子の検索条件に一致しているかどうか
         /// </summary>
@@ -300,6 +318,7 @@ namespace FileHashCraft.Models.FileScan
             var regex = new Regex(criteria.SearchPattern);
             return regex.IsMatch(file.FileFullPath) && MatchFileAttributesCriteria(file, includeHidden, includeReadOnly);
         }
+
         #endregion ファイルの検索条件一致チェック
     }
 }

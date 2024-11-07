@@ -2,11 +2,13 @@
 
     拡張子グループから拡張子を取得するヘルパークラスです。
  */
+
 using FileHashCraft.Properties;
 
 namespace FileHashCraft.Models
 {
     #region 拡張子グループ
+
     /// <summary>
     /// 拡張子グループの列挙
     /// </summary>
@@ -22,23 +24,28 @@ namespace FileHashCraft.Models
         Registrations,
         Others,
     }
-    #endregion ファイル種類
 
+    #endregion 拡張子グループ
+
+    #region インターフェース
     public interface IExtentionTypeHelper
     {
         /// <summary>
         /// ファイルタイプから表示名を取得します。
         /// </summary>
         string GetFileGroupName(FileGroupType type);
+
         /// <summary>
         /// 拡張子グループから、該当する拡張子を取得します。
         /// </summary>
         HashSet<string> GetFileGroupExtention(FileGroupType type);
+
         /// <summary>
         /// 拡張子がどの拡張子グループに属しているかを取得します。
         /// </summary>
         FileGroupType GetFileGroupFromExtention(string extention);
     }
+    #endregion インターフェース
 
     /// <summary>
     /// 拡張子グループから表示名や拡張子を取得するクラス
@@ -46,6 +53,7 @@ namespace FileHashCraft.Models
     public class ExtentionTypeHelper : IExtentionTypeHelper
     {
         #region ファイル種類の管理
+
         /// <summary>
         /// ファイルタイプから表示名を取得します。
         /// </summary>
@@ -105,11 +113,13 @@ namespace FileHashCraft.Models
             if (RegistrationFiles.Contains(extention)) { return FileGroupType.Registrations; }
             return FileGroupType.Others;
         }
+
         #endregion ファイル種類の管理
+
+        #region 主なファイル
         /// <summary>
         /// 主な動画ファイル
         /// </summary>
-        #region 主な動画ファイル
         private readonly HashSet<string> MovieFiles =
         [
             ".avi",
@@ -185,11 +195,10 @@ namespace FileHashCraft.Models
             ".nut",
             ".swf",
         ];
-        #endregion 主な動画ファイル
+
         /// <summary>
         /// 主な画像ファイル
         /// </summary>
-        #region 主な画像ファイル
         private readonly HashSet<string> PictureFiles =
         [
             ".jpeg",
@@ -223,11 +232,10 @@ namespace FileHashCraft.Models
             ".xbm",
             ".xpm",
         ];
-        #endregion 主な画像ファイル
+
         /// <summary>
         /// 主なサウンドファイル
         /// </summary>
-        #region 主な音楽ファイル
         private readonly HashSet<string> MusicFiles =
         [
             ".ac3",
@@ -286,11 +294,10 @@ namespace FileHashCraft.Models
             ".cue",
             ".fpl",
         ];
-        #endregion 主なサウンドファイル
+
         /// <summary>
         /// 主なドキュメントファイル
         /// </summary>
-        #region 主なドキュメントファイル
         private readonly HashSet<string> DocumentFiles =
         [
             ".doc",
@@ -313,11 +320,10 @@ namespace FileHashCraft.Models
             ".markdown",
             ".yaml",
         ];
-        #endregion 主なドキュメントファイル
+
         /// <summary>
         /// 主な圧縮ファイル
         /// </summary>
-        #region 主な圧縮ファイル
         private readonly HashSet<string> ArchiveFiles =
         [
             ".7z",
@@ -344,11 +350,10 @@ namespace FileHashCraft.Models
             ".lha",
             ".arj",
         ];
-        #endregion 主な圧縮ファイル
+
         /// <summary>
         /// 主なアプリケーションファイル
         /// </summary>
-        #region 主なアプリケーションファイル
         private readonly HashSet<string> ApplicationFiles =
         [
             ".exe",
@@ -364,11 +369,10 @@ namespace FileHashCraft.Models
             ".sh",
             ".ps1",
         ];
-        #endregion 主なアプリケーションファイル
+
         /// <summary>
         /// 主なソースコードファイル
         /// </summary>
-        #region 主なソースコードファイル
         private readonly HashSet<string> SourceCodeFiles =
         [
             ".c",
@@ -394,11 +398,10 @@ namespace FileHashCraft.Models
             ".rs",
             ".vbs",
         ];
-        #endregion 主なソースコードファイル
+
         /// <summary>
         /// 主な登録ファイル
         /// </summary>
-        #region 主な登録ファイル
         private readonly HashSet<string> RegistrationFiles =
         [
             ".reg",
@@ -406,6 +409,6 @@ namespace FileHashCraft.Models
             ".regtrans-ms",
             ".pol",
         ];
-        #endregion 主な登録ファイル
+        #endregion 主なファイル
     }
 }

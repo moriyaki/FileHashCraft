@@ -2,6 +2,7 @@
 
     表示言語の切り替えを行うためのリソースサービスです。
  */
+
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FileHashCraft.Properties;
@@ -9,6 +10,7 @@ using FileHashCraft.Properties;
 namespace FileHashCraft.Services
 {
     #region リソースサービス
+
     public class ResourceService : ObservableObject
     {
         public static ResourceService Current { get; } = new();
@@ -24,5 +26,6 @@ namespace FileHashCraft.Services
             OnPropertyChanged(nameof(Resources));
         }
     }
+
     #endregion リソースサービス
 }

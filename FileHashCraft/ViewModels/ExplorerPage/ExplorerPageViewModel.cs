@@ -2,6 +2,7 @@
 
     Explorer 風の画面を提供する ViewModel を提供します。
  */
+
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
@@ -19,38 +20,47 @@ using FileHashCraft.ViewModels.DirectoryTreeViewControl;
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
     #region インターフェース
+
     public interface IExplorerPageViewModel
     {
         /// <summary>
         /// リストビューのアイテムコレクション
         /// </summary>
         ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; }
+
         /// <summary>
         /// ツリービューのチェックボックスの表示状態
         /// </summary>
         Visibility IsCheckBoxVisible { get; }
+
         /// <summary>
         /// 初期化処理
         /// </summary>
         void Initialize();
+
         /// <summary>
         /// カレントディレクトリを取得または設定する
         /// </summary>
         string CurrentFullPath { get; set; }
+
         /// <summary>
         /// リムーバブルストレージ用のフック処理
         /// </summary>
         /// <param name="hwndSource"></param>
         void HwndAddHook(HwndSource? hwndSource);
+
         /// <summary>
         /// リムーバブルストレージ用のフック解除処理
         /// </summary>
         void HwndRemoveHook();
     }
+
     #endregion インターフェース
+
     public partial class ExplorerPageViewModel : BaseViewModel, IExplorerPageViewModel
     {
         #region バインディング
+
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
 
         /// <summary>
@@ -68,6 +78,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// カレントディレクトリ
         /// </summary>
         private string _currentFullPath = string.Empty;
+
         public string CurrentFullPath
         {
             get => _currentFullPath;
@@ -113,8 +124,8 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 {
                     ToUpDirectory.NotifyCanExecuteChanged();
                     ListViewUpdater.Execute(null);
-                    _fileSystemWatcherService.SetCurrentDirectoryWatcher(changedDirectory);
-                    _fileSystemServices.NotifyChangeCurrentDirectory(changedDirectory);
+                    _FileSystemWatcherService.SetCurrentDirectoryWatcher(changedDirectory);
+                    _FileSystemServices.NotifyChangeCurrentDirectory(changedDirectory);
                 }
             }
         }
@@ -159,17 +170,20 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public RelayCommand HelpOpen { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタと初期処理
+
         private bool IsExecuting = false;
 
-        private readonly IFileSystemServices _fileSystemServices;
-        private readonly IFileSystemWatcherService _fileSystemWatcherService;
-        private readonly IDirectoryTreeManager _directoryTreeManager;
-        private readonly IFileManager _fileManager;
-        private readonly IHelpWindowViewModel _helpWindowViewModel;
-        private readonly IControDirectoryTreeViewlModel _controDirectoryTreeViewlViewModel;
+        private readonly IFileSystemServices _FileSystemServices;
+        private readonly IFileSystemWatcherService _FileSystemWatcherService;
+        private readonly IDirectoryTreeManager _DirectoryTreeManager;
+        private readonly IFileManager _FileManager;
+        private readonly IHelpWindowViewModel _HelpWindowViewModel;
+        private readonly IControDirectoryTreeViewlModel _ControDirectoryTreeViewlViewModel;
+
         public ExplorerPageViewModel(
             IMessenger messenger,
             IFileSystemServices fileSystemServices,
@@ -181,12 +195,12 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             IControDirectoryTreeViewlModel controDirectoryTreeViewlModel
         ) : base(messenger, settingsService)
         {
-            _fileSystemServices = fileSystemServices;
-            _fileSystemWatcherService = fileSystemWatcherService;
-            _directoryTreeManager = directoryTreeManager;
-            _fileManager = fileManager;
-            _helpWindowViewModel = helpWindowViewModel;
-            _controDirectoryTreeViewlViewModel = controDirectoryTreeViewlModel;
+            _FileSystemServices = fileSystemServices;
+            _FileSystemWatcherService = fileSystemWatcherService;
+            _DirectoryTreeManager = directoryTreeManager;
+            _FileManager = fileManager;
+            _HelpWindowViewModel = helpWindowViewModel;
+            _ControDirectoryTreeViewlViewModel = controDirectoryTreeViewlModel;
 
             // 「上へ」ボタンのコマンド
             ToUpDirectory = new RelayCommand(
@@ -207,7 +221,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 var items = await Task.Run(() =>
                 {
                     var collectedItems = new List<ExplorerListItemViewModel>();
-                    foreach (var folderFile in _fileManager.EnumerateFileSystemEntries(CurrentFullPath))
+                    foreach (var folderFile in _FileManager.EnumerateFileSystemEntries(CurrentFullPath))
                     {
                         var info = SpecialFolderAndRootDrives.GetFileInformationFromDirectorPath(folderFile);
                         collectedItems.Add(new ExplorerListItemViewModel(info));
@@ -230,7 +244,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     var newDirectory = SelectedListViewItem.FullPath;
                     if (Directory.Exists(newDirectory))
                     {
-                        _fileSystemServices.NotifyChangeCurrentDirectory(newDirectory);
+                        _FileSystemServices.NotifyChangeCurrentDirectory(newDirectory);
                     }
                 }
             });
@@ -238,13 +252,13 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             // ハッシュ管理ウィンドウ実行のコマンド
             HashCalc = new RelayCommand(() =>
             {
-                _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-                _fileSystemServices.NavigateToSelectTargetPage();
+                _DirectoryTreeManager.CreateCheckBoxManager(_ControDirectoryTreeViewlViewModel.TreeRoot);
+                _FileSystemServices.NavigateToSelectTargetPage();
             });
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(() =>
-                _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.ExplorerPage));
+                _FileSystemServices.NavigateToSettingsPage(ReturnPageEnum.ExplorerPage));
 
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
@@ -258,23 +272,23 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             {
                 var helpWindow = new Views.HelpWindow();
                 helpWindow.Show();
-                _helpWindowViewModel.Initialize(HelpPage.Index);
+                _HelpWindowViewModel.Initialize(HelpPage.Index);
             });
 
             // カレントディレクトリ変更のメッセージ受信
-            _messenger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
+            _Messanger.Register<CurrentDirectoryChangedMessage>(this, (_, m)
                 => CurrentFullPath = m.CurrentFullPath);
 
             // カレントディレクトリのアイテム作成のメッセージ受信
-            _messenger.Register<CurrentDirectoryItemCreatedMessage>(this, (_, m)
+            _Messanger.Register<CurrentDirectoryItemCreatedMessage>(this, (_, m)
                 => CurrentDirectoryItemCreated(m.CreatedFullPath));
 
             // カレントディレクトリのアイテム名前変更のメッセージ受信
-            _messenger.Register<CurrentDirectoryItemRenamedMessage>(this, (_, m)
+            _Messanger.Register<CurrentDirectoryItemRenamedMessage>(this, (_, m)
                 => CurrentDirectoryItemRenamed(m.OldFullPath, m.NewFullPath));
 
             // カレントディレクトリのアイテム削除のメッセージ受信
-            _messenger.Register<CurrentDirectoryItemDeletedMessage>(this, (_, m)
+            _Messanger.Register<CurrentDirectoryItemDeletedMessage>(this, (_, m)
                 => CurrentDirectoryItemDeleted(m.DeletedFullPath));
 
             Initialize();
@@ -293,21 +307,21 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             }
 
             // ツリービューを初期化する
-            _controDirectoryTreeViewlViewModel.ClearRoot();
-            _controDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(true);
+            _ControDirectoryTreeViewlViewModel.ClearRoot();
+            _ControDirectoryTreeViewlViewModel.SetIsCheckBoxVisible(true);
 
             // TreeViewにルートアイテムを登録する
             foreach (var rootInfo in SpecialFolderAndRootDrives.ScanSpecialFolders())
             {
-                _controDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
+                _ControDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
             }
             foreach (var rootInfo in SpecialFolderAndRootDrives.ScanDrives())
             {
-                _controDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
+                _ControDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
             }
-            _directoryTreeManager.CheckStatusChangeFromCheckManager(_controDirectoryTreeViewlViewModel.TreeRoot);
+            _DirectoryTreeManager.CheckStatusChangeFromCheckManager(_ControDirectoryTreeViewlViewModel.TreeRoot);
             //--------------------- 開発用自動化処理
-            foreach (var root in _controDirectoryTreeViewlViewModel.TreeRoot)
+            foreach (var root in _ControDirectoryTreeViewlViewModel.TreeRoot)
             {
                 if (root.FullPath == @"E:\")
                 {
@@ -334,14 +348,15 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                     }
                 }
             }
-            _directoryTreeManager.CreateCheckBoxManager(_controDirectoryTreeViewlViewModel.TreeRoot);
-            _fileSystemServices.NavigateToSelectTargetPage();
+            _DirectoryTreeManager.CreateCheckBoxManager(_ControDirectoryTreeViewlViewModel.TreeRoot);
+            _FileSystemServices.NavigateToSelectTargetPage();
             //--------------------- 開発用自動化処理ここまで
-
         }
+
         #endregion コンストラクタと初期処理
 
         #region リストビューのディレクトリ更新通知処理
+
         /// <summary>
         /// カレントディレクトリにディレクトリが追加された時の処理です。
         /// </summary>
@@ -428,9 +443,11 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             }
             return indexToInsert;
         }
-        #endregion リストビューの更新通知処理
+
+        #endregion リストビューのディレクトリ更新通知処理
 
         #region ドライブ変更のフック処理
+
         /// <summary>
         /// ページのHwndSourceを保持するための変数
         /// </summary>
@@ -476,7 +493,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <summary>
         /// 論理ボリュームに関する情報
         /// </summary>
-        struct DEV_BROADCAST_VOLUME
+        private struct DEV_BROADCAST_VOLUME
         {
             public uint dbcv_size;
             public uint dbcv_devicetype;
@@ -535,8 +552,9 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { DebugManager.ExceptionWrite($"WndProcで例外が発生しました: {ex.Message}"); }
-                    _fileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    _FileSystemWatcherService.InsertOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
+
                 case DBT.DBT_DEVICEREMOVECOMPLETE:
                     //ドライブが取り外されたされた時の処理を書く
                     try
@@ -551,12 +569,13 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         }
                     }
                     catch (Exception ex) { DebugManager.ExceptionWrite($"WndProcで例外が発生しました: {ex.Message}"); }
-                    _fileSystemWatcherService.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
+                    _FileSystemWatcherService.EjectOpticalDriveMedia(GetDriveLetter(volume.dbcv_unitmask));
                     break;
             }
             // デフォルトのウィンドウプロシージャに処理を渡す
             return IntPtr.Zero;
         }
+
         #endregion ドライブ変更のフック処理
     }
 }

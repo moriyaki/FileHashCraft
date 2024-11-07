@@ -7,27 +7,33 @@ using FileHashCraft.Services.Messages;
 
 namespace FileHashCraft.Models.HashCalc
 {
+    #region インターフェース
     public interface IFileHashCalc
     {
         Task ProcessGetHashFilesAsync(Dictionary<string, HashSet<HashFile>> filesDictionary);
+
         Dictionary<string, HashSet<HashFile>> GetHashDriveFiles();
     }
+    #endregion インターフェース
+
     public class FileHashCalc : IFileHashCalc
     {
-        public FileHashCalc() { throw new NotImplementedException(nameof(FileHashCalc)); }
+        public FileHashCalc()
+        { throw new NotImplementedException(nameof(FileHashCalc)); }
 
-        private readonly IMessenger _messenger;
-        private readonly IScannedFilesManager _scannedFilesManager;
-        private readonly ISettingsService _settingsService;
+        private readonly IMessenger _Messanger;
+        private readonly IScannedFilesManager _ScannedFilesManager;
+        private readonly ISettingsService _SettingsService;
+
         public FileHashCalc(
             IMessenger messenger,
             IScannedFilesManager scannedFilesManager,
             ISettingsService settingsService
         )
         {
-            _messenger = messenger;
-            _scannedFilesManager = scannedFilesManager;
-            _settingsService = settingsService;
+            _Messanger = messenger;
+            _ScannedFilesManager = scannedFilesManager;
+            _SettingsService = settingsService;
         }
 
         private int BufferSize { get; } = 1048576;
@@ -38,7 +44,7 @@ namespace FileHashCraft.Models.HashCalc
         /// <returns>ドライブ毎に辞書に振り分けられたファイルリスト</returns>
         public Dictionary<string, HashSet<HashFile>> GetHashDriveFiles()
         {
-            var duplicateSizeFiles = _scannedFilesManager.GetAllCriteriaFileName(_settingsService.IsHiddenFileInclude, _settingsService.IsReadOnlyFileInclude)
+            var duplicateSizeFiles = _ScannedFilesManager.GetAllCriteriaFileName(_SettingsService.IsHiddenFileInclude, _SettingsService.IsReadOnlyFileInclude)
                 .GroupBy(f => f.FileSize)
                 .Where(g => g.Count() > 1)
                 .SelectMany(g => g)
@@ -57,7 +63,7 @@ namespace FileHashCraft.Models.HashCalc
                 value.Add(file);
             }
             var drives = filesDictionary.Keys.ToHashSet();
-            _messenger.Send(new CalcingDriveMessage(drives));
+            _Messanger.Send(new CalcingDriveMessage(drives));
             return filesDictionary;
         }
 
@@ -78,21 +84,23 @@ namespace FileHashCraft.Models.HashCalc
                     {
                         if (!string.IsNullOrEmpty(file.FileHash))
                         {
-                            switch (_settingsService.HashAlgorithm)
+                            switch (_SettingsService.HashAlgorithm)
                             {
                                 case "SHA-256":
                                     if (file.HashAlgorithm == FileHashAlgorithm.SHA256) continue;
                                     break;
+
                                 case "SHA-384":
                                     if (file.HashAlgorithm == FileHashAlgorithm.SHA384) continue;
                                     break;
+
                                 case "SHA-512":
                                     if (file.HashAlgorithm == FileHashAlgorithm.SHA512) continue;
                                     break;
                             }
                         }
 
-                        using HashAlgorithm hashAlgorithm = _settingsService.HashAlgorithm switch
+                        using HashAlgorithm hashAlgorithm = _SettingsService.HashAlgorithm switch
                         {
                             "SHA-256" => SHA256.Create(),
                             "SHA-384" => SHA384.Create(),
@@ -100,11 +108,11 @@ namespace FileHashCraft.Models.HashCalc
                             _ => SHA256.Create(),
                         };
 
-                        _messenger.Send(new StartCalcingFileMessage(file.FileFullPath));
+                        _Messanger.Send(new StartCalcingFileMessage(file.FileFullPath));
                         var hash = await CalculateHashFileAsync(file.FileFullPath, hashAlgorithm);
                         if (string.IsNullOrEmpty(hash)) { continue; }
 
-                        file.HashAlgorithm = _settingsService.HashAlgorithm switch
+                        file.HashAlgorithm = _SettingsService.HashAlgorithm switch
                         {
                             "SHA-256" => FileHashAlgorithm.SHA256,
                             "SHA-384" => FileHashAlgorithm.SHA384,
@@ -118,13 +126,13 @@ namespace FileHashCraft.Models.HashCalc
                 }
                 finally
                 {
-                    _messenger.Send(new EndCalcingFileMessage(filePath));
+                    _Messanger.Send(new EndCalcingFileMessage(filePath));
                     semaphone.Release();
                 }
             }).ToList();
 
             await Task.WhenAll(tasks);
-            _messenger.Send(new FinishedCalcingFileMessage());
+            _Messanger.Send(new FinishedCalcingFileMessage());
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 
     拡張子、またはファイル拡張子グループのチェックボックスを扱うクラスです。
     ExtensionOrTypeCheckBoxBase を継承させた
-    ExtensionCheckBox (拡張子チェックボックス) および 
+    ExtensionCheckBox (拡張子チェックボックス) および
     ExtentionGroupCheckBoxViewModel (拡張子グループチェックボックス) を利用します。
  */
 
@@ -18,17 +18,20 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
+
     public interface IExtensionOrTypeCheckBoxBase
     {
         /// <summary>
         /// チェックボックス状態を参照または変更する
         /// </summary>
         bool? IsChecked { get; set; }
+
         /// <summary>
         /// 拡張子またはそのグループを参照する
         /// </summary>
         string Name { get; }
     }
+
     #endregion インターフェース
 
     /// <summary>
@@ -37,10 +40,12 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
     public partial class BaseExtensionOrTypeCheckBox : ObservableObject, IExtensionOrTypeCheckBoxBase
     {
         #region コンストラクタ
-        protected readonly IMessenger _messenger;
-        protected readonly ISettingsService _settingsService;
-        protected readonly IExtentionManager _extentionManager;
-        protected readonly IFileSearchCriteriaManager _fileSearchCriteriaManager;
+
+        protected readonly IMessenger _Messanger;
+        protected readonly ISettingsService _SettingsService;
+        protected readonly IExtentionManager _ExtentionManager;
+        protected readonly IFileSearchCriteriaManager _FileSearchCriteriaManager;
+
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入
         /// </summary>
@@ -52,23 +57,25 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             IFileSearchCriteriaManager fileSearchCriteriaManager
         )
         {
-            _messenger = messenger;
-            _settingsService = settingsService;
-            _extentionManager = extentionManager;
-            _fileSearchCriteriaManager = fileSearchCriteriaManager;
+            _Messanger = messenger;
+            _SettingsService = settingsService;
+            _ExtentionManager = extentionManager;
+            _FileSearchCriteriaManager = fileSearchCriteriaManager;
 
             // フォント変更メッセージ受信
-            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            _Messanger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
 
             // フォントサイズ変更メッセージ受信
-            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _Messanger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            _CurrentFontFamily = _SettingsService.CurrentFont;
+            _FontSize = _SettingsService.FontSize;
         }
+
         #endregion コンストラクタ
 
         #region バインディング
+
         /// <summary>
         /// チェックボックスから表示する文字列
         /// </summary>
@@ -83,6 +90,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 return $"{Name} ({ExtentionCount})";
             }
         }
+
         public int ExtentionCount { get; set; } = 0;
 
         /// <summary>
@@ -95,6 +103,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// フォントの設定
         /// </summary>
         private FontFamily _CurrentFontFamily;
+
         public FontFamily CurrentFontFamily
         {
             get => _CurrentFontFamily;
@@ -102,7 +111,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.CurrentFont = value;
+                _SettingsService.CurrentFont = value;
             }
         }
 
@@ -110,6 +119,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// フォントサイズの設定
         /// </summary>
         private double _FontSize;
+
         public double FontSize
         {
             get => _FontSize;
@@ -118,18 +128,22 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 if (_FontSize == value) { return; }
 
                 SetProperty(ref _FontSize, value);
-                _settingsService.FontSize = value;
+                _SettingsService.FontSize = value;
             }
         }
+
         /// <summary>
         /// チェックボックスのチェックの状態
         /// </summary>
         protected bool? _IsChecked = false;
+
         public virtual bool? IsChecked { get; set; }
 
         public virtual bool? IsCheckedForce { get; set; }
+
         #endregion バインディング
     }
+
     //----------------------------------------------------------------------------------------------------------------------
     /// <summary>
     /// ファイル拡張子のチェックボックスを扱うクラス
@@ -150,11 +164,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         public void Initialize(string extention)
         {
             Name = extention;
-            ExtentionCount = _extentionManager.GetExtentionsCount(extention);
+            ExtentionCount = _ExtentionManager.GetExtentionsCount(extention);
         }
-        #endregion 初期化
+
+        #endregion コンストラクタと初期化
 
         #region バインディング
+
         /// <summary>
         /// setterのメッセージは親のViewModelへの送信、拡張子グループのチェックボックス遷移などを行う
         /// </summary>
@@ -166,23 +182,25 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 SetProperty(ref _IsChecked, value);
                 if (value == true)
                 {
-                    _fileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
-                    _messenger.Send(new ExtentionCheckReflectToGroupMessage(Name));
-                    _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
+                    _FileSearchCriteriaManager.AddCriteria(Name, FileSearchOption.Extention);
+                    _Messanger.Send(new ExtentionCheckReflectToGroupMessage(Name));
+                    _Messanger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
                 else
                 {
-                    _fileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
-                    _messenger.Send(new ExtentionUncheckReflectToGroupMessage(Name));
-                    _messenger.Send(new ExtentionCheckChangedToListBoxMessage());
+                    _FileSearchCriteriaManager.RemoveCriteria(Name, FileSearchOption.Extention);
+                    _Messanger.Send(new ExtentionUncheckReflectToGroupMessage(Name));
+                    _Messanger.Send(new ExtentionCheckChangedToListBoxMessage());
                 }
             }
         }
+
         public override bool? IsCheckedForce
         {
             get => _IsChecked;
             set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
         }
+
         #endregion バインディング
     }
 
@@ -205,8 +223,8 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         public void Initialize()
         {
             FileType = FileGroupType.Others;
-            ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
-            Name = _extentionManager.GetFileGroupName(FileGroupType.Others);
+            ExtentionCount = _ExtentionManager.GetExtentionGroupCount(FileType);
+            Name = _ExtentionManager.GetFileGroupName(FileGroupType.Others);
         }
 
         /// <summary>
@@ -216,13 +234,16 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         public void Initialize(FileGroupType fileType)
         {
             FileType = fileType;
-            ExtentionCount = _extentionManager.GetExtentionGroupCount(FileType);
-            Name = _extentionManager.GetFileGroupName(FileType);
+            ExtentionCount = _ExtentionManager.GetExtentionGroupCount(FileType);
+            Name = _ExtentionManager.GetFileGroupName(FileType);
         }
+
         #endregion 初期化
 
         #region バインディング
+
         public FileGroupType FileType { get; set; }
+
         /// <summary>
         /// チェックボックスの状態、拡張子グループのチェックボックスが変更されたら、拡張子チェックボックスにも変更
         /// </summary>
@@ -234,19 +255,21 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 SetProperty(ref _IsChecked, value);
                 if (value == true)
                 {
-                    _messenger.Send(new ExtentionGroupCheckedMessage(true, _extentionManager.GetGroupExtentions(FileType)));
+                    _Messanger.Send(new ExtentionGroupCheckedMessage(true, _ExtentionManager.GetGroupExtentions(FileType)));
                 }
                 else
                 {
-                    _messenger.Send(new ExtentionGroupCheckedMessage(false, _extentionManager.GetGroupExtentions(FileType)));
+                    _Messanger.Send(new ExtentionGroupCheckedMessage(false, _ExtentionManager.GetGroupExtentions(FileType)));
                 }
             }
         }
+
         public override bool? IsCheckedForce
         {
             get => _IsChecked;
             set => SetProperty(ref _IsChecked, value, nameof(IsChecked));
         }
+
         #endregion バインディング
     }
 }

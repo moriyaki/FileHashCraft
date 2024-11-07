@@ -11,43 +11,43 @@
 
     <Grid PreviewMouseWheel="OnMouseWheel">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto" MinHeight="35"/>
-            <RowDefinition Height="auto" MinHeight="35"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" MinHeight="35" />
+            <RowDefinition Height="auto" MinHeight="35" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
 
         <!-- For MouseWheel Border Color To Transparent -->
-        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="9" Background="Transparent"/>
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="9" Background="Transparent" />
 
         <Button Grid.Row="8" Grid.Column="2" Margin="5" Command="{Binding ReturnPage}"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}"/>
+                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}" />
 
         <!-- Language Select -->
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="Language"/>
+               Content="Language" />
         <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                   ItemsSource="{Binding Languages}"
                   SelectedValue="{Binding SelectedLanguage}"
                   SelectedValuePath="Lang"
-                  DisplayMemberPath="Name"/>
+                  DisplayMemberPath="Name" />
 
         <!-- Font Select -->
         <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFontString, Mode=OneWay}"/>
+               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFontString, Mode=OneWay}" />
         <ComboBox x:Name="FontComboBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
                   FontSize="{Binding FontSize}"
                   VirtualizingStackPanel.IsVirtualizing="True"
@@ -55,7 +55,7 @@
                   SelectedItem="{Binding CurrentFontFamily, Mode=TwoWay}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" FontFamily="{Binding}"/>
+                    <TextBlock Text="{Binding}" FontFamily="{Binding}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
@@ -63,25 +63,25 @@
         <!-- Font Size Select -->
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFontSizeString, Mode=OneWay}"/>
+               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFontSizeString, Mode=OneWay}" />
         <ComboBox x:Name="FontSizeComboBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                   ItemsSource="{Binding FontSizes}"
                   SelectedValue="{Binding FontSize}"
                   SelectedValuePath="Size"
-                  DisplayMemberPath="SizeString"/>
+                  DisplayMemberPath="SizeString" />
 
         <!-- Hash Algorithm Select -->
         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}"/>
+               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}" />
 
         <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                   ItemsSource="{Binding HashAlgorithms}"
                   SelectedValue="{Binding SelectedHashAlgorithm}"
                   SelectedValuePath="Algorithm"
-                  DisplayMemberPath="Name"/>
+                  DisplayMemberPath="Name" />
 
         <GroupBox Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert, Mode=OneWay}"
                   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
@@ -89,57 +89,57 @@
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" MinHeight="30"/>
-                    <RowDefinition Height="Auto" MinHeight="30"/>
-                    <RowDefinition Height="Auto" MinHeight="30"/>
-                    <RowDefinition Height="Auto" MinHeight="30"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" MinHeight="30" />
+                    <RowDefinition Height="Auto" MinHeight="30" />
+                    <RowDefinition Height="Auto" MinHeight="30" />
+                    <RowDefinition Height="Auto" MinHeight="30" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!-- 読み取り専用ファイルを削除するか -->
                 <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}"/>
-                    <Label VerticalAlignment="Center" 
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}" />
+                    <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
                         <Label.InputBindings>
-                            <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick"/>
+                            <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>
                     </Label>
                 </StackPanel>
 
                 <!-- 隠しファイルを削除するか -->
                 <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}"/>
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}" />
                     <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
                         <Label.InputBindings>
-                            <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick"/>
+                            <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>
                     </Label>
                 </StackPanel>
 
                 <!-- 0サイズファイル削除するか -->
                 <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}"/>
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}" />
                     <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
                         <Label.InputBindings>
-                            <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick"/>
+                            <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>
                     </Label>
                 </StackPanel>
 
                 <!-- 空ディレクトリを削除するか -->
                 <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}"/>
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}" />
                     <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
                         <Label.InputBindings>
-                            <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick"/>
+                            <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>
                     </Label>
                 </StackPanel>

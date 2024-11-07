@@ -3,6 +3,7 @@
     TreeViewの展開状況とチェック状況をまとめて管理します。
     Facadeパターンを利用しています。
  */
+
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
@@ -19,14 +20,17 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// そのディレクトリがチェックされているかどうか。
         /// </summary>
         bool IsChecked(string fullPath);
+
         /// <summary>
         /// ディレクトリのチェック状態を変化させます。
         /// </summary>
         void CheckChanged(string fullPath, bool? checkedStatus);
+
         /// <summary>
         /// チェックマネージャの情報に基づき、チェック状態を変更します。
         /// </summary>
         void CheckStatusChangeFromCheckManager(ObservableCollection<DirectoryTreeItem> treeRoot);
+
         /// <summary>
         /// チェックボックスマネージャの登録をします。
         /// </summary>
@@ -37,22 +41,27 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// 展開されたディレクトリかどうか。
         /// </summary>
         bool IsExpandedDirectory(string path);
+
         /// <summary>
         /// 特殊フォルダの子ディレクトリかどうか。
         /// </summary>
         bool HasSpecialSubFolder(string fullPath);
+
         /// <summary>
         /// ディレクトリノードを展開マネージャに追加します。
         /// </summary>
         void AddExpandedDirectoryManager(DirectoryTreeItem node);
+
         /// <summary>
         /// ディレクトリノードを展開マネージャから削除します。
         /// </summary>
         void RemoveExpandedDirectoryManager(DirectoryTreeItem node);
+
         /// <summary>
         /// ディレクトリを追加します。
         /// </summary>
         void AddDirectory(string fullPath);
+
         /// <summary>
         /// ディレクトリを削除します。
         /// </summary>
@@ -65,34 +74,37 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        public DirectoryTreeManager() { throw new NotImplementedException(nameof(DirectoryTreeManager)); }
+        public DirectoryTreeManager()
+        { throw new NotImplementedException(nameof(DirectoryTreeManager)); }
 
-        private readonly IMessenger _messenger;
+        private readonly IMessenger _Messanger;
         private readonly ICheckedTreeItemsManager _treeCheckedManager;
         private readonly ITreeExpandedManager _treeExpandedManager;
-        private readonly IDirectoriesManager _directoriesManager;
+        private readonly IDirectoriesCollection _DirectoriesManager;
+
         public DirectoryTreeManager(
             IMessenger messenger,
             ICheckedTreeItemsManager treeCheckedManager,
             ITreeExpandedManager treeExpandedManager,
-            IDirectoriesManager directoriesManager
+            IDirectoriesCollection directoriesManager
             )
         {
-            _messenger = messenger;
+            _Messanger = messenger;
             _treeCheckedManager = treeCheckedManager;
             _treeExpandedManager = treeExpandedManager;
-            _directoriesManager = directoriesManager;
+            _DirectoriesManager = directoriesManager;
 
-            _directoriesManager.Directories = _treeExpandedManager.Directories;
-            _directoriesManager.NestedDirectories = _treeCheckedManager.NestedDirectories;
-            _directoriesManager.NonNestedDirectories = _treeCheckedManager.NonNestedDirectories;
+            _DirectoriesManager.Directories = _treeExpandedManager.Directories;
+            _DirectoriesManager.NestedDirectories = _treeCheckedManager.NestedDirectories;
+            _DirectoriesManager.NonNestedDirectories = _treeCheckedManager.NonNestedDirectories;
 
-            _messenger.Register<AddToExpandDirectoryManagerMessage>(this, (_, m)
+            _Messanger.Register<AddToExpandDirectoryManagerMessage>(this, (_, m)
                 => AddExpandedDirectoryManager(m.Child));
 
-            _messenger.Register<RemoveFromExpandDirectoryManagerMessage>(this, (_, m)
+            _Messanger.Register<RemoveFromExpandDirectoryManagerMessage>(this, (_, m)
                 => RemoveExpandedDirectoryManager(m.Child));
         }
+
         //-----------------------------------TreeCheckedManager
         /// <summary>
         /// そのディレクトリがチェックされているかどうかを調べます。
@@ -126,7 +138,7 @@ namespace FileHashCraft.ViewModels.ControlDirectoryTree
         /// </summary>
         /// <param name="path">チェックするディレクトリのフルパス</param>
         /// <returns>展開されたディレクトリかどうか</returns>
-        public bool IsExpandedDirectory(string path)=> _treeExpandedManager.IsExpandedDirectory(path);
+        public bool IsExpandedDirectory(string path) => _treeExpandedManager.IsExpandedDirectory(path);
 
         /// <summary>
         /// 特殊フォルダの配下かどうかを調べます。

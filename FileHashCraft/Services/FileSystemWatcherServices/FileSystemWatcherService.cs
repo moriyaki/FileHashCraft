@@ -6,14 +6,17 @@
         /// カレントディレクトリに対してファイル変更監視の設定をします。
         /// </summary>
         void SetCurrentDirectoryWatcher(string currentDirectory);
+
         /// <summary>
         /// ドライブに対して、ファイルアイテム変更監視の設定をします。
         /// </summary>
         void SetRootDirectoryWatcher(FileItemInformation rootDrive);
+
         /// <summary>
         /// リムーバブルドライブの追加または挿入処理をします。
         /// </summary>
         void InsertOpticalDriveMedia(char driveLetter);
+
         /// <summary>
         /// リムーバブルメディアの削除またはイジェクト処理を行います。
         /// </summary>
@@ -29,7 +32,9 @@
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
         /// <exception cref="NotImplementedException">引数無しの直接呼び出し</exception>
-        public FileSystemWatcherService() { throw new NotImplementedException(nameof(FileSystemWatcherService)); }
+        public FileSystemWatcherService()
+        { throw new NotImplementedException(nameof(FileSystemWatcherService)); }
+
         public FileSystemWatcherService(
             ICurrentDirFileSystemWatcherService currentDirectoryFIleSystemWatcherService,
             IFileWatcherService drivesFileSystemWatcherService)

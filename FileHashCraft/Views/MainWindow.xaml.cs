@@ -4,11 +4,11 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels;
-using FileHashCraft.ViewModels.ExplorerPage;
-using FileHashCraft.ViewModels.SelectTargetPage;
 using FileHashCraft.ViewModels.DuplicateSelectPage;
-using FileHashCraft.Views;
+using FileHashCraft.ViewModels.ExplorerPage;
 using FileHashCraft.ViewModels.HashCalcingPage;
+using FileHashCraft.ViewModels.SelectTargetPage;
+using FileHashCraft.Views;
 
 namespace FileHashCraft
 {
@@ -28,28 +28,28 @@ namespace FileHashCraft
             MainFrame.Navigated += MainFrame_Navigated;
             MainFrame.Navigate(new ExplorerPage());
 
-            var _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new NotImplementedException(nameof(IMessenger));
+            var _Messanger = Ioc.Default.GetService<IMessenger>() ?? throw new NullReferenceException(nameof(IMessenger));
 
             // PageExplorer へ移動のメッセージ受信したので移動
-            _messenger.Register<ToExplorerPageMessage>(this, (_, _) =>
+            _Messanger.Register<ToExplorerPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new ExplorerPage()));
             // PageSelectTarget へ移動のメッセージ受信したので移動
-            _messenger.Register<ToPageSelectTargetMessage>(this, (_, _) =>
+            _Messanger.Register<ToPageSelectTargetMessage>(this, (_, _) =>
                 MainFrame.Navigate(new SelectTargetPage()));
             // PageHashCalcing へ移動のメッセージ受信したので移動
-            _messenger.Register<ToHashCalcingPageMessage>(this, (_, _) =>
+            _Messanger.Register<ToHashCalcingPageMessage>(this, (_, _) =>
                 MainFrame.Navigate(new HashCalcingPage()));
             // PageSameFileSelectSimple へ移動のメッセージ受信したので移動
-            _messenger.Register<ToDuplicateSelectPage>(this, (_, _) =>
+            _Messanger.Register<ToDuplicateSelectPage>(this, (_, _) =>
                 MainFrame.Navigate(new DuplicateSelectPage()));
             // PageSetting への移動のメッセージ受信したので、戻り先を保存して移動
-            _messenger.Register<ToSettingPageMessage>(this, (_, m) =>
+            _Messanger.Register<ToSettingPageMessage>(this, (_, m) =>
             {
                 FromPage = m.ReturnPage;
                 MainFrame.Navigate(new SettingsPage());
             });
             // PageSetting の終了メッセージを受信したので、元のページへ移動
-            _messenger.Register<ReturnPageFromSettingsMessage>(this, (_, _) =>
+            _Messanger.Register<ReturnPageFromSettingsMessage>(this, (_, _) =>
             {
                 switch (FromPage)
                 {
@@ -57,12 +57,15 @@ namespace FileHashCraft
                         MainFrame.Navigate(new ExplorerPage());
 
                         break;
+
                     case ReturnPageEnum.SelecTargettPage:
                         MainFrame.Navigate(new SelectTargetPage());
                         break;
+
                     case ReturnPageEnum.HashCalcingPage:
                         MainFrame.Navigate(new HashCalcingPage());
                         break;
+
                     default:
                         break;
                 }
@@ -74,7 +77,7 @@ namespace FileHashCraft
         /// </summary>
         /// <param name="sender">object?</param>
         /// <param name="e">NavigationEventArgs</param>
-        private void MainFrame_Navigated(object sender, NavigationEventArgs e)
+        private async void MainFrame_Navigated(object sender, NavigationEventArgs e)
         {
             if (e.Content is ExplorerPage)
             {
@@ -91,7 +94,7 @@ namespace FileHashCraft
             if (e.Content is HashCalcingPage)
             {
                 var hashCalcing = Ioc.Default.GetService<IHashCalcingPageViewModel>() ?? throw new NullReferenceException(nameof(IHashCalcingPageViewModel));
-                hashCalcing.Initialize();
+                await hashCalcing.InitializeAsync();
                 return;
             }
             if (e.Content is DuplicateSelectPage)
@@ -109,8 +112,11 @@ namespace FileHashCraft
         /// <param name="e">EventArgs</param>
         private void Window_Closed(object? sender, EventArgs e)
         {
-            var explorerPageViewModel = Ioc.Default.GetService<ExplorerPageViewModel>();
-            explorerPageViewModel?.HwndRemoveHook();
+            var explorerPageViewModel = Ioc.Default.GetService<IExplorerPageViewModel>() ?? throw new NullReferenceException(nameof(IExplorerListItemViewModel));
+            explorerPageViewModel.HwndRemoveHook();
+
+            var messanger = Ioc.Default.GetService<IMessenger>() ?? throw new NullReferenceException(nameof(IMessenger));
+            //messanger.UnregisterAll(this);
 
             Application.Current.Shutdown();
         }

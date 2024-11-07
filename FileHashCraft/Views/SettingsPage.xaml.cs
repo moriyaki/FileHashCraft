@@ -26,12 +26,9 @@ namespace FileHashCraft.Views
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) != ModifierKeys.None)
             {
-                var settingsService = Ioc.Default.GetService<ISettingsService>();
-                if (settingsService != null)
-                {
-                    if (e.Delta > 0) { settingsService.FontSizePlus(); }
-                    else { settingsService.FontSizeMinus(); }
-                }
+                var settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new NullReferenceException(nameof(ISettingsPageViewModel));
+                if (e.Delta > 0) { settingsService.FontSizePlus(); }
+                else { settingsService.FontSizeMinus(); }
                 e.Handled = true;
             }
             else

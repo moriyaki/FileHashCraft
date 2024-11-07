@@ -3,6 +3,7 @@
     ディレクトリの TreeView でドライブまたはディレクトリが変更された時の処理をします。
 
  */
+
 using System.Collections.ObjectModel;
 using System.IO;
 using FileHashCraft.Models;
@@ -23,9 +24,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
      *
      * → DirectoryDeletedは必要なし
      */
+
     public partial class ControDirectoryTreeViewModel
     {
         #region ディレクトリ変更通知処理
+
         /// <summary>
         /// ディレクトリが変更された時の処理をします。
         /// 特に重要なのはドライブルートのアイテム削除は $RECYCLE.BIN を利用してしか不可で、
@@ -111,7 +114,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (deletedTreeItem == null) { return; }
 
             // カレントディレクトリに削除メッセージを送信
-            _fileSystemServices.NotifyCurrentItemDeletedMessage(deletedItemFullPath);
+            _FileSystemServices.NotifyCurrentItemDeletedMessage(deletedItemFullPath);
 
             // 削除されたツリービューアイテムの削除
             await App.Current.Dispatcher.InvokeAsync(() =>
@@ -149,7 +152,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             var addTreeItem = new DirectoryTreeItem(fileInformation);
 
             // カレントディレクトリに作成メッセージを送信
-            _fileSystemServices.NotifyCurrentItemCreatedMessage(fullPath);
+            _FileSystemServices.NotifyCurrentItemCreatedMessage(fullPath);
 
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
@@ -206,7 +209,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             if (renamedTreeItem == null) { return; }
 
             // カレントディレクトリに名前変更メッセージを送信
-            _fileSystemServices.NotifyCurrentItemRenamedMessage(oldFullPath, newFullPath);
+            _FileSystemServices.NotifyCurrentItemRenamedMessage(oldFullPath, newFullPath);
             int newTreeIndex = 0;
             await App.Current.Dispatcher.InvokeAsync(() =>
             {
@@ -251,9 +254,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 }
             });
         }
+
         #endregion ディレクトリ変更通知処理
 
         #region リムーバブルドライブドライブ変更通知処理
+
         /// <summary>
         /// リムーバブルドライブが追加または挿入された時の処理をします。
         /// </summary>
@@ -357,7 +362,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                         //App.Current?.Dispatcher?.Invoke(() => TreeRoot.Remove(drive));
                         await App.Current.Dispatcher.InvokeAsync(() =>
                         {
-                            lock(treeRootLock)
+                            lock (treeRootLock)
                             {
                                 drive = TreeRoot.FirstOrDefault(c => c.FullPath == fullPath);
                                 if (drive != null)
@@ -374,9 +379,11 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
                 DebugManager.ExceptionWrite($"Exception in EjectOpticalDriveMedia: {ex.Message}");
             }
         }
+
         #endregion リムーバブルドライブドライブ変更通知処理
 
         #region TreeNode取得関連
+
         /// <summary>
         /// 変更が加えられたファイルアイテムのドライブディレクトリツリーアイテムを検索します。
         /// </summary>
@@ -461,6 +468,7 @@ namespace FileHashCraft.ViewModels.DirectoryTreeViewControl
             }
             return indexToInsert;
         }
+
         #endregion TreeNode取得関連
     }
 }

@@ -3,7 +3,6 @@ using System.Windows;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
-using FileHashCraft.Models.DupSelectAndDelete;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.HashCalc;
 using FileHashCraft.Services;
@@ -150,7 +149,7 @@ namespace FileHashCraft
             services.AddSingleton<IFileManager, FileManager>();
 
             // Model - FileScan
-            services.AddSingleton<IDirectoriesManager, DirectoriesManager>();
+            services.AddSingleton<IDirectoriesCollection, DirectoriesCollection>();
             services.AddSingleton<IFileSearchCriteriaManager, FileSearchCriteriaManager>();
             services.AddSingleton<IScanHashFiles, ScanHashFiles>();
             services.AddSingleton<IScannedFilesManager, ScannedFilesManager>();
@@ -159,7 +158,7 @@ namespace FileHashCraft
             services.AddSingleton<IFileHashCalc, FileHashCalc>();
 
             // Model - DupSelectAndDelete
-            services.AddSingleton<IDupFilesManager, DupFilesManager>();
+            services.AddSingleton<IDuplicateFilesManager, DuplicateFilesManager>();
 
             // Model - Helper
             services.AddSingleton<IExtentionTypeHelper, ExtentionTypeHelper>();

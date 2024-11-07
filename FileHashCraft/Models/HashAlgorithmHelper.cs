@@ -2,6 +2,7 @@
 
     ハッシュアルゴリズムのタイプと文字列を相互変換するヘルパークラスです。
  */
+
 using FileHashCraft.Properties;
 
 namespace FileHashCraft.Models
@@ -16,21 +17,25 @@ namespace FileHashCraft.Models
         SHA512
     }
 
+    #region インターフェース
     public interface IHashAlgorithmHelper
     {
         /// <summary>
         /// ハッシュアルゴリズム名からハッシュアルゴリズムタイプを取得するヘルパー
         /// </summary>
         FileHashAlgorithm GetAlgorithm(string algorithm);
+
         /// <summary>
         /// ハッシュアルゴリズムタイプからハッシュアルゴリズム名を取得するヘルパー
         /// </summary>
         string GetAlgorithmName(FileHashAlgorithm algorithmType);
+
         /// <summary>
         /// ハッシュアルゴリズ名からハッシュアルゴリズムの解説を取得するヘルパー
         /// </summary>
         string GetAlgorithmCaption(string algorithm);
     }
+    #endregion インターフェース
 
     /// <summary>
     /// ハッシュアルゴリズムから識別文字を取得する

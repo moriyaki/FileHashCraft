@@ -11,32 +11,39 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
+
     public interface ISetWildcardControlViewModel
     {
         /// <summary>
         /// 検索条件コレクション
         /// </summary>
         ObservableCollection<BaseCriteriaItemViewModel> CriteriaItems { get; set; }
+
         /// <summary>
         /// 選択された検索条件コレクション
         /// </summary>
         ObservableCollection<BaseCriteriaItemViewModel> SelectedItems { get; set; }
+
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
         WildcardSearchErrorStatus SearchErrorStatus { get; }
+
         /// <summary>
         /// 検索条件を追加します。
         /// </summary>
         void AddCriteria();
+
         /// <summary>
         /// リストボックスの検索条件から離れます。
         /// </summary>
         void LeaveListBoxCriteria();
+
         /// <summary>
         /// リストボックスの検索条件から強制的に離れます。
         /// </summary>
         void LeaveListBoxCriteriaForce();
+
         /// <summary>
         /// 検索条件が正しいかを検査します。
         /// </summary>
@@ -45,6 +52,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         // 開発用
         string SearchCriteriaText { get; set; }
     }
+
     #endregion インターフェース
 
     public enum WildcardSearchErrorStatus
@@ -59,10 +67,12 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
     public class SetWildcardControlViewModel : BaseCriteriaViewModel, ISetWildcardControlViewModel
     {
         #region バインディング
+
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
         private WildcardSearchErrorStatus _SearchErrorStatus = WildcardSearchErrorStatus.None;
+
         public WildcardSearchErrorStatus SearchErrorStatus
         {
             get => _SearchErrorStatus;
@@ -75,18 +85,22 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                         SearchErrorBackground = Brushes.Transparent;
                         SearchCriteriaErrorOutput = string.Empty;
                         break;
+
                     case WildcardSearchErrorStatus.Empty:
                         SearchErrorBackground = Brushes.Red;
                         SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_Empty}";
                         break;
+
                     case WildcardSearchErrorStatus.AlreadyRegistered:
                         SearchErrorBackground = Brushes.Red;
                         SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_AlreadyRegistered}";
                         break;
+
                     case WildcardSearchErrorStatus.TooManyAsterisk:
                         SearchErrorBackground = Brushes.Red;
                         SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_TooManyAsterisk}";
                         break;
+
                     case WildcardSearchErrorStatus.NotAllowedCharacter:
                         SearchErrorBackground = Brushes.Red;
                         SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_NotAllowedCharacter}";
@@ -99,9 +113,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public override RelayCommand HelpOpenCommand { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタ
+
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
@@ -123,11 +139,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 var helpWindow = new Views.HelpWindow();
                 helpWindow.Show();
-                _helpWindowViewModel.Initialize(HelpPage.Wildcard);
+                _HelpWindowViewModel.Initialize(HelpPage.Wildcard);
             });
 
             // リストボックスの選択状態が変わった時の処理をします。
-            _messenger.Register<IsSelectedWildcardChangedMessage>(this, (_, m) =>
+            _Messanger.Register<IsSelectedWildcardChangedMessage>(this, (_, m) =>
             {
                 if (m.IsSelected)
                 {
@@ -141,9 +157,10 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 RemoveCriteriaCommand.NotifyCanExecuteChanged();
             });
             // リストボックスアイテムが編集された時のエラーチェックをします。
-            _messenger.Register<SelectedChangedWildcardCriteriaRequestMessage>(this, (_, m) =>
+            _Messanger.Register<SelectedChangedWildcardCriteriaRequestMessage>(this, (_, m) =>
                 m.Reply(IsCriteriaConditionCorrent(m.WildcardCriteria, m.OriginalWildcardCriteria)));
         }
+
         #endregion コンストラクタ
 
         /// <summary>
@@ -151,13 +168,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         public override void AddCriteria()
         {
-            var newWildcard = new WildcardCriteriaItemViewModel(_messenger, _settingsService)
+            var newWildcard = new WildcardCriteriaItemViewModel(_Messanger, _SettingsService)
             {
                 Criteria = SearchCriteriaText,
             };
             CriteriaItems.Add(newWildcard);
-            _fileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Wildcard);
-            _messenger.Send(new ChangeSelectedCountMessage());
+            _FileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Wildcard);
+            _Messanger.Send(new ChangeSelectedCountMessage());
             SearchCriteriaText = string.Empty;
         }
 
@@ -168,16 +185,16 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         {
             foreach (var item in SelectedItems)
             {
-                _fileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Wildcard);
+                _FileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Wildcard);
                 //_selectTargetPageViewModel.SetAllTargetfilesCount();
-                _messenger.Send(new ChangeSelectedCountMessage());
+                _Messanger.Send(new ChangeSelectedCountMessage());
                 CriteriaItems.Remove(item);
             }
             SelectedItems.Clear();
             ModifyCriteriaCommand.NotifyCanExecuteChanged();
             RemoveCriteriaCommand.NotifyCanExecuteChanged();
             LeaveListBoxCriteria();
-            _messenger.Send(new NewWildcardCriteriaFocusMessage());
+            _Messanger.Send(new NewWildcardCriteriaFocusMessage());
         }
 
         /// <summary>
@@ -205,19 +222,20 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 listItem.IsEditMode = false;
                 listItem.Criteria = listItem.OriginalCriteria;
-                _messenger.Send(new NewWildcardCriteriaFocusMessage());
+                _Messanger.Send(new NewWildcardCriteriaFocusMessage());
                 IsCriteriaConditionCorrent(SearchCriteriaText);
             }
         }
+
         /// <summary>
         /// ワイルドカード検索条件を変更します。
         /// </summary>
         /// <param name="modifiedItem">変更されたワイルドカード検索条件</param>
         public override void ModefyCriteria(BaseCriteriaItemViewModel modifiedItem)
         {
-            _fileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
-            _fileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Wildcard);
-            _messenger.Send(new ChangeSelectedCountMessage());
+            _FileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
+            _FileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Wildcard);
+            _Messanger.Send(new ChangeSelectedCountMessage());
         }
 
         /// <summary>

@@ -11,108 +11,132 @@ using FileHashCraft.Services.Messages;
 namespace FileHashCraft.Services
 {
     #region インターフェース
+
     public interface ISettingsService
     {
         /// <summary>
         /// ウィンドウの開始上位置
         /// </summary>
         double Top { get; set; }
+
         /// <summary>
         /// ウィンドウの開始左位置
         /// </summary>
         double Left { get; set; }
+
         /// <summary>
         /// ウィンドウの幅
         /// </summary>
         double Width { get; set; }
+
         /// <summary>
         /// ウィンドウの高さ
         /// </summary>
         double Height { get; set; }
+
         /// <summary>
         /// ディレクトリツリービューの幅
         /// </summary>
         double DirectoriesTreeViewWidth { get; set; }
+
         /// <summary>
         /// ファイル一覧リストボックスの幅
         /// </summary>
         double FilesListBoxWidth { get; set; }
+
         /// <summary>
         /// 重複ファイルを含むフォルダのリストボックスの幅
         /// </summary>
         double DupFilesDirsListBoxWidth { get; set; }
+
         /// <summary>
         /// 重複ファイルとフォルダのツリービューの幅
         /// </summary>
         double DupDirsFilesTreeViewWidth { get; set; }
+
         /// <summary>
         /// 選択されている言語
         /// </summary>
         string SelectedLanguage { get; set; }
+
         /// <summary>
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
         string HashAlgorithm { get; set; }
+
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
         bool IsReadOnlyFileInclude { get; set; }
+
         /// <summary>
         /// 隠しファイルを対象にするかどうか
         /// </summary>
         bool IsHiddenFileInclude { get; set; }
+
         /// <summary>
         /// 0 サイズのファイルを削除するかどうか
         /// </summary>
         bool IsZeroSizeFileDelete { get; set; }
+
         /// <summary>
         /// 空のフォルダを削除するかどうか
         /// </summary>
         bool IsEmptyDirectoryDelete { get; set; }
+
         /// <summary>
         /// フォントの変更
         /// MainWindowを参照できる所には以下のコード
         /// </summary>
         FontFamily CurrentFont { get; set; }
+
         /// <summary>
         /// フォントのサイズ
         /// </summary>
         double FontSize { get; set; }
+
         /// <summary>
         /// 設定できるフォントサイズのコレクションを取得します。
         /// </summary>
         IEnumerable<double> GetSelectableFontSize();
+
         /// <summary>
         /// フォントサイズを大きくします。
         /// </summary>
         void FontSizePlus();
+
         /// <summary>
         /// フォントサイズを小さくします。
         /// </summary>
         void FontSizeMinus();
+
         /// <summary>
         /// 設定を読み込みます。
         /// </summary>
         void LoadSettings();
+
         /// <summary>
         /// フォントを設定します
         /// </summary>
         void SendCurrentFont(FontFamily font);
+
         /// <summary>
         /// フォントサイズを設定します。
         /// </summary>
         void SendFontSize(double fontSize);
     }
+
     #endregion インターフェース
 
     public class SettingsService : ObservableObject, ISettingsService
     {
         #region コンストラクタ
+
         private readonly string appName = "FileHashCraft";
         private readonly string settingXMLFile = "settings.xml";
         private readonly string settingsFilePath;
-        private readonly IMessenger _messenger;
-        private readonly IHashAlgorithmHelper _hashAlgorithmHelper;
+        private readonly IMessenger _Messanger;
+        private readonly IHashAlgorithmHelper _HashAlgorithmHelper;
 
         public SettingsService(
             IMessenger messenger,
@@ -121,25 +145,28 @@ namespace FileHashCraft.Services
         {
             var localAppDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), appName);
             settingsFilePath = Path.Combine(localAppDataPath, settingXMLFile);
-            _messenger = messenger;
-            _hashAlgorithmHelper = hashAlgorithmHelper;
+            _Messanger = messenger;
+            _HashAlgorithmHelper = hashAlgorithmHelper;
 
-            _HashAlgorithm = _hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
+            _HashAlgorithm = _HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
             LoadSettings();
 
             SendCurrentFont(CurrentFont);
             SendFontSize(FontSize);
 
-            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFont = m.CurrentFontFamily);
-            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _Messanger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFont = m.CurrentFontFamily);
+            _Messanger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
         }
+
         #endregion コンストラクタ
 
         #region プロパティ
+
         /// <summary>
         /// ウィンドウの開始上位置
         /// </summary>
         private double _Top = 100d;
+
         public double Top
         {
             get => _Top;
@@ -155,6 +182,7 @@ namespace FileHashCraft.Services
         /// ウィンドウの開始左位置
         /// </summary>
         private double _Left = 100d;
+
         public double Left
         {
             get => _Left;
@@ -170,6 +198,7 @@ namespace FileHashCraft.Services
         /// ウィンドウの幅
         /// </summary>
         private double _Width = 1500d;
+
         public double Width
         {
             get => _Width;
@@ -185,6 +214,7 @@ namespace FileHashCraft.Services
         /// ウィンドウの高さ
         /// </summary>
         private double _Height = 800d;
+
         public double Height
         {
             get => _Height;
@@ -200,6 +230,7 @@ namespace FileHashCraft.Services
         /// ツリービューの幅
         /// </summary>
         private double _DirectoriesTreeViewWidth = 300d;
+
         public double DirectoriesTreeViewWidth
         {
             get => _DirectoriesTreeViewWidth;
@@ -215,6 +246,7 @@ namespace FileHashCraft.Services
         /// ファイル一覧リストボックスの幅
         /// </summary>
         private double _FilesListBoxWidth = 300d;
+
         public double FilesListBoxWidth
         {
             get => _FilesListBoxWidth;
@@ -230,6 +262,7 @@ namespace FileHashCraft.Services
         /// ファイル一覧リストボックスの幅
         /// </summary>
         private double _DupFilesDirsListBoxWidth = 400d;
+
         public double DupFilesDirsListBoxWidth
         {
             get => _DupFilesDirsListBoxWidth;
@@ -242,6 +275,7 @@ namespace FileHashCraft.Services
         }
 
         private double _DupDirsFilesTreeViewWidth = 500d;
+
         public double DupDirsFilesTreeViewWidth
         {
             get => _DupDirsFilesTreeViewWidth;
@@ -257,6 +291,7 @@ namespace FileHashCraft.Services
         /// 選択されている言語
         /// </summary>
         private string _SelectedLanguage = "ja-JP";
+
         public string SelectedLanguage
         {
             get => _SelectedLanguage;
@@ -274,6 +309,7 @@ namespace FileHashCraft.Services
         /// ハッシュ計算アルゴリズムの変更
         /// </summary>
         private string _HashAlgorithm = "SHA-256";
+
         public string HashAlgorithm
         {
             get => _HashAlgorithm;
@@ -284,10 +320,12 @@ namespace FileHashCraft.Services
                 SaveSettings();
             }
         }
+
         /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
         private bool _IsReadOnlyFileInclude = false;
+
         public bool IsReadOnlyFileInclude
         {
             get => _IsReadOnlyFileInclude;
@@ -303,6 +341,7 @@ namespace FileHashCraft.Services
         /// 隠しファイルを対象にするかどうか
         /// </summary>
         private bool _IsHiddenFileInclude = false;
+
         public bool IsHiddenFileInclude
         {
             get => _IsHiddenFileInclude;
@@ -318,6 +357,7 @@ namespace FileHashCraft.Services
         /// 0 サイズのファイルを削除するかどうか
         /// </summary>
         private bool _IsZeroSizeFileDelete = false;
+
         public bool IsZeroSizeFileDelete
         {
             get => _IsZeroSizeFileDelete;
@@ -333,6 +373,7 @@ namespace FileHashCraft.Services
         /// 空のフォルダを削除するかどうか
         /// </summary>
         private bool _IsEmptyDirectoryDelete = false;
+
         public bool IsEmptyDirectoryDelete
         {
             get => _IsEmptyDirectoryDelete;
@@ -349,6 +390,7 @@ namespace FileHashCraft.Services
         /// MainWindowを参照できる所には以下のコード
         /// </summary>
         private FontFamily _CurrentFont = SystemFonts.MessageFontFamily;
+
         public FontFamily CurrentFont
         {
             get => _CurrentFont;
@@ -364,6 +406,7 @@ namespace FileHashCraft.Services
         /// フォントのサイズ
         /// </summary>
         private double _FontSize = SystemFonts.MessageFontSize;
+
         public double FontSize
         {
             get => _FontSize;
@@ -375,9 +418,11 @@ namespace FileHashCraft.Services
                 SaveSettings();
             }
         }
+
         #endregion プロパティ
 
         #region フォントサイズの変更メソッド
+
         /// <summary>
         /// 設定できるフォントサイズ
         /// </summary>
@@ -403,6 +448,7 @@ namespace FileHashCraft.Services
 
             FontSize = FontSizes[index + 1];
         }
+
         /// <summary>
         /// フォントサイズを小さくします。
         /// </summary>
@@ -413,9 +459,11 @@ namespace FileHashCraft.Services
 
             FontSize = FontSizes[index - 1];
         }
+
         #endregion フォントサイズの変更メソッド
 
         #region 設定ファイルの読み書き
+
         /// <summary>
         /// 設定ファイルからロード
         /// </summary>
@@ -444,7 +492,7 @@ namespace FileHashCraft.Services
                         IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
                         IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
                         SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
-                        HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? _hashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
+                        HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? _HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
 
                         var fontFamilyName = root.Element("CurrentFont")?.Value ?? string.Empty;
                         CurrentFont = new FontFamilyConverter().ConvertFromString(fontFamilyName) as FontFamily ?? SystemFonts.MessageFontFamily;
@@ -504,25 +552,29 @@ namespace FileHashCraft.Services
                 DebugManager.ExceptionWrite($"設定の保存中にエラーが発生しました: {ex.Message}");
             }
         }
+
         #endregion 設定ファイルの読み書き
 
         #region ウィンドウ設定
+
         /// <summary>
         /// フォントを設定します
         /// </summary>
         /// <param name="currentFont">フォントファミリー</param>
         public void SendCurrentFont(FontFamily currentFont)
         {
-            _messenger.Send(new CurrentFontFamilyChangedMessage(currentFont));
+            _Messanger.Send(new CurrentFontFamilyChangedMessage(currentFont));
         }
+
         /// <summary>
         /// フォントサイズを設定します。
         /// </summary>
         /// <param name="fontSize">フォントサイズ</param>
         public void SendFontSize(double fontSize)
         {
-            _messenger.Send(new FontSizeChangedMessage(fontSize));
+            _Messanger.Send(new FontSizeChangedMessage(fontSize));
         }
+
         #endregion ウィンドウ設定
     }
 }

@@ -2,12 +2,14 @@
 
     特殊フォルダとルートドライブを取得するクラスです。
  */
+
 using System.IO;
 using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.Services
 {
     #region ディレクトリとファイル情報
+
     /// <summary>
     /// ファイル情報
     /// </summary>
@@ -27,6 +29,7 @@ namespace FileHashCraft.Services
         /// ドライブが着脱可能かどうか
         /// </summary>
         public bool IsRemovable { get; set; } = false;
+
         /// <summary>
         /// ファイルがディレクトリかどうか
         /// </summary>
@@ -47,11 +50,13 @@ namespace FileHashCraft.Services
         /// </summary>
         public long FileSize { get; set; } = 0;
     }
+
     #endregion ディレクトリとファイル情報
 
     public static class SpecialFolderAndRootDrives
     {
         #region フルパスからFileItemInformationを取得
+
         /// <summary>
         /// 指定されたディレクトリのパスから、FileInformationを生成します。
         /// </summary>
@@ -122,6 +127,7 @@ namespace FileHashCraft.Services
         }
 
         #endregion フルパスからFileItemInformationを取得
+
         /// <summary>
         /// 特殊フォルダをスキャンして情報を取得します。
         /// </summary>

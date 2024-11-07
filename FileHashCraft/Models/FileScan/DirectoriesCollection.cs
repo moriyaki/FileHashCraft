@@ -1,30 +1,37 @@
 ﻿namespace FileHashCraft.Models.FileScan
 {
-    public interface IDirectoriesManager
+    #region インターフェース
+    public interface IDirectoriesCollection
     {
         /// <summary>
         /// 全てのディレクトリです。
         /// </summary>
         List<string> Directories { get; set; }
+
         /// <summary>
         /// 子ディレクトリを含むチェックされたディレクトリです。
         /// </summary>
         List<string> NestedDirectories { get; set; }
+
         /// <summary>
         /// 子ディレクトリを含まないチェックされたディレクトリです。
         /// </summary>
         List<string> NonNestedDirectories { get; set; }
     }
-    public class DirectoriesManager : IDirectoriesManager
+    #endregion インターフェース
+
+    public class DirectoriesCollection : IDirectoriesCollection
     {
         /// <summary>
         /// 全てのディレクトリです。
         /// </summary>
         public List<string> Directories { get; set; } = [];
+
         /// <summary>
         /// 子ディレクトリを含むチェックされたディレクトリです。
         /// </summary>
         public List<string> NestedDirectories { get; set; } = [];
+
         /// <summary>
         /// 子ディレクトリを含まないチェックされたディレクトリです。
         /// </summary>

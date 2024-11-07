@@ -7,45 +7,53 @@ using FileHashCraft.Models.FileScan;
 using FileHashCraft.Properties;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
-using FileHashCraft.ViewModels.SelectTargetPage;
 
 namespace FileHashCraft.ViewModels.SelectTargetPage
 {
     #region インターフェース
+
     public interface ISetRegexControlViewModel
     {
         /// <summary>
         /// 検索条件コレクション
         /// </summary>
         ObservableCollection<BaseCriteriaItemViewModel> CriteriaItems { get; set; }
+
         /// <summary>
         /// 選択された検索条件コレクション
         /// </summary>
         ObservableCollection<BaseCriteriaItemViewModel> SelectedItems { get; set; }
+
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
         RegexSearchErrorStatus SearchErrorStatus { get; }
+
         /// <summary>
         /// 検索条件を追加します。
         /// </summary>
         void AddCriteria();
+
         /// <summary>
         /// リストボックスの検索条件から離れます。
         /// </summary>
         void LeaveListBoxCriteria();
+
         /// <summary>
         /// リストボックスの検索条件から強制的に離れます。
         /// </summary>
         void LeaveListBoxCriteriaForce();
+
         /// <summary>
         /// 検索条件が正しいかを検査します。
         /// </summary>
         bool IsCriteriaConditionCorrent(string pattern, string originalPattern = "");
     }
+
     #endregion インターフェース
 
     #region 正規表現エラー
+
     public enum RegexSearchErrorStatus
     {
         None,
@@ -84,15 +92,18 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         UnterminatedBracket,
         UnterminatedComment,
     }
+
     #endregion 正規表現エラー
 
     public class SetRegexControlViewModel : BaseCriteriaViewModel, ISetRegexControlViewModel
     {
         #region バインディング
+
         /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
         private RegexSearchErrorStatus _SearchErrorStatus = RegexSearchErrorStatus.None;
+
         public RegexSearchErrorStatus SearchErrorStatus
         {
             get => _SearchErrorStatus;
@@ -111,99 +122,131 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                     case RegexSearchErrorStatus.Empty:
                         SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_Empty}";
                         break;
+
                     case RegexSearchErrorStatus.AlreadyRegistered:
                         SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_AlreadyRegistered}";
                         break;
+
                     case RegexSearchErrorStatus.AlternationHasMalformedCondition:
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasMalformedCondition}";
                         break;
+
                     case RegexSearchErrorStatus.AlternationHasMalformedReference:   // "(x)(?(3x|y)"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasMalformedReference}";
                         break;
+
                     case RegexSearchErrorStatus.AlternationHasNamedCapture:         // "(?(?<x>)true|false)"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasNamedCapture}";
                         break;
+
                     case RegexSearchErrorStatus.AlternationHasTooManyConditions:    // "(?(foo)a|b|c)"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasTooManyConditions}";
                         break;
+
                     case RegexSearchErrorStatus.AlternationHasUndefinedReference:   // "(?(1))"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasUndefinedReference}";
                         break;
+
                     case RegexSearchErrorStatus.CaptureGroupNameInvalid:            // "(?'x)"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_CaptureGroupNameInvalid}";
                         break;
+
                     case RegexSearchErrorStatus.CaptureGroupOfZero:                 // "(?'0'foo)"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_CaptureGroupOfZero}";
                         break;
+
                     case RegexSearchErrorStatus.ExclusionGroupNotLast:              // "[a-z-[xy]A]"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ExclusionGroupNotLast}";
                         break;
+
                     case RegexSearchErrorStatus.InsufficientClosingParentheses:     // "(((foo))"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InsufficientClosingParentheses}";
                         break;
+
                     case RegexSearchErrorStatus.InsufficientOpeningParentheses:     // "((foo)))"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InsufficientOpeningParentheses}";
                         break;
+
                     case RegexSearchErrorStatus.InsufficientOrInvalidHexDigits:     // @"\xr"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InsufficientOrInvalidHexDigits}";
                         break;
+
                     case RegexSearchErrorStatus.InvalidGroupingConstruct:           // "(?"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InvalidGroupingConstruct}";
                         break;
+
                     case RegexSearchErrorStatus.InvalidUnicodePropertyEscape:       // @"\p{ L}"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InvalidUnicodePropertyEscape}";
                         break;
+
                     case RegexSearchErrorStatus.MalformedNamedReference:            // @"\k<"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_MalformedNamedReference}";
                         break;
+
                     case RegexSearchErrorStatus.MalformedUnicodePropertyEscape:     // @"\p {L}"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_MalformedUnicodePropertyEscape}";
                         break;
+
                     case RegexSearchErrorStatus.MissingControlCharacter:            // @"\c"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_MissingControlCharacter}";
                         break;
+
                     case RegexSearchErrorStatus.NestedQuantifiersNotParenthesized:  // "abc**"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_NestedQuantifiersNotParenthesized}";
                         break;
+
                     case RegexSearchErrorStatus.QuantifierAfterNothing:             // "((*foo)bar)"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_QuantifierAfterNothing}";
                         break;
+
                     case RegexSearchErrorStatus.QuantifierOrCaptureGroupOutOfRange: // "x{234567899988}"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_QuantifierOrCaptureGroupOutOfRange}";
                         break;
+
                     case RegexSearchErrorStatus.ReversedCharacterRange:             // "[z-a]"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ReversedCharacterRange}";
                         break;
+
                     case RegexSearchErrorStatus.ReversedQuantifierRange:            // "abc{3,0}"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ReversedQuantifierRange}";
                         break;
+
                     case RegexSearchErrorStatus.ShorthandClassInCharacterRange:     // @"[a-\w]"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ShorthandClassInCharacterRange}";
                         break;
+
                     case RegexSearchErrorStatus.UndefinedNamedReference:            // @"\k<x>"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UndefinedNamedReference}";
                         break;
+
                     case RegexSearchErrorStatus.UndefinedNumberedReference:         // @"(x)\2"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UndefinedNumberedReference}";
                         break;
+
                     case RegexSearchErrorStatus.UnescapedEndingBackslash:           // @"foo\"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnescapedEndingBackslash}";
                         break;
+
                     case RegexSearchErrorStatus.Unknown:
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_Unknown}";
                         break;
+
                     case RegexSearchErrorStatus.UnrecognizedControlCharacter:       // @"\c!"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnrecognizedControlCharacter}";
                         break;
+
                     case RegexSearchErrorStatus.UnrecognizedEscape:                 // @"\C"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnrecognizedEscape}";
                         break;
+
                     case RegexSearchErrorStatus.UnrecognizedUnicodeProperty:        // @"\p{Lll}"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnrecognizedUnicodeProperty}";
                         break;
+
                     case RegexSearchErrorStatus.UnterminatedBracket:                //  "[a-b"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnterminatedBracket}";
                         break;
+
                     case RegexSearchErrorStatus.UnterminatedComment:                // "(?#comment .*"
                         SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnterminatedComment}";
                         break;
@@ -219,6 +262,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #endregion バインディング
 
         #region コンストラクタ
+
         /// <summary>
         /// 引数なしの直接呼び出しは許容しません。
         /// </summary>
@@ -240,7 +284,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 var helpWindow = new Views.HelpWindow();
                 helpWindow.Show();
-                _helpWindowViewModel.Initialize(HelpPage.Wildcard);
+                _HelpWindowViewModel.Initialize(HelpPage.Wildcard);
             });
 
             // リストボックスの選択状態が変わった時の処理をします。
@@ -261,6 +305,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             messenger.Register<SelectedChangedRegexCriteriaRequestMessage>(this, (_, m) =>
                 m.Reply(IsCriteriaConditionCorrent(m.RegexCriteria, m.OriginalRegexCriteria)));
         }
+
         #endregion コンストラクタ
 
         /// <summary>
@@ -268,13 +313,13 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         public override void AddCriteria()
         {
-            var newRegex = new RegexCriteriaItemViewModel(_messenger, _settingsService)
+            var newRegex = new RegexCriteriaItemViewModel(_Messanger, _SettingsService)
             {
                 Criteria = SearchCriteriaText,
             };
             CriteriaItems.Add(newRegex);
-            _fileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Regex);
-            _messenger.Send(new ChangeSelectedCountMessage());
+            _FileSearchCriteriaManager.AddCriteria(SearchCriteriaText, FileSearchOption.Regex);
+            _Messanger.Send(new ChangeSelectedCountMessage());
             SearchCriteriaText = string.Empty;
         }
 
@@ -285,16 +330,16 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         {
             foreach (var item in SelectedItems)
             {
-                _fileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Regex);
+                _FileSearchCriteriaManager.RemoveCriteria(item.Criteria, FileSearchOption.Regex);
                 //_selectTargetPageViewModel.SetAllTargetfilesCount();
-                _messenger.Send(new ChangeSelectedCountMessage());
+                _Messanger.Send(new ChangeSelectedCountMessage());
                 CriteriaItems.Remove(item);
             }
             SelectedItems.Clear();
             ModifyCriteriaCommand.NotifyCanExecuteChanged();
             RemoveCriteriaCommand.NotifyCanExecuteChanged();
             LeaveListBoxCriteria();
-            _messenger.Send(new NewRegexCriteriaFocusMessage());
+            _Messanger.Send(new NewRegexCriteriaFocusMessage());
         }
 
         /// <summary>
@@ -322,22 +367,24 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 listItem.IsEditMode = false;
                 listItem.Criteria = listItem.OriginalCriteria;
-                _messenger.Send(new NewRegexCriteriaFocusMessage());
+                _Messanger.Send(new NewRegexCriteriaFocusMessage());
                 IsCriteriaConditionCorrent(SearchCriteriaText);
             }
         }
+
         /// <summary>
         /// 正規表現検索条件を変更します。
         /// </summary>
         /// <param name="modifiedItem">変更された正規表現検索条件</param>
         public override void ModefyCriteria(BaseCriteriaItemViewModel modifiedItem)
         {
-            _fileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
-            _fileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Regex);
-            _messenger.Send(new ChangeSelectedCountMessage());
+            _FileSearchCriteriaManager.RemoveCriteria(modifiedItem.OriginalCriteria, FileSearchOption.Wildcard);
+            _FileSearchCriteriaManager.AddCriteria(modifiedItem.Criteria, FileSearchOption.Regex);
+            _Messanger.Send(new ChangeSelectedCountMessage());
         }
 
         #region 正規表現チェック
+
         /// <summary>
         /// 正規表現文字列が正しいかを検査します。
         /// </summary>
@@ -378,96 +425,127 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                     case RegexParseError.AlternationHasComment:
                         SearchErrorStatus = RegexSearchErrorStatus.AlternationHasComment;
                         return false;
+
                     case RegexParseError.AlternationHasMalformedCondition:
                         SearchErrorStatus = RegexSearchErrorStatus.AlternationHasMalformedCondition;
                         return false;
+
                     case RegexParseError.AlternationHasMalformedReference:
                         SearchErrorStatus = RegexSearchErrorStatus.AlternationHasMalformedReference;
                         return false;
+
                     case RegexParseError.AlternationHasNamedCapture:
                         SearchErrorStatus = RegexSearchErrorStatus.AlternationHasNamedCapture;
                         return false;
+
                     case RegexParseError.AlternationHasTooManyConditions:
                         SearchErrorStatus = RegexSearchErrorStatus.AlternationHasTooManyConditions;
                         return false;
+
                     case RegexParseError.AlternationHasUndefinedReference:
                         SearchErrorStatus = RegexSearchErrorStatus.AlternationHasUndefinedReference;
                         return false;
+
                     case RegexParseError.CaptureGroupNameInvalid:
                         SearchErrorStatus = RegexSearchErrorStatus.CaptureGroupNameInvalid;
                         return false;
+
                     case RegexParseError.CaptureGroupOfZero:
                         SearchErrorStatus = RegexSearchErrorStatus.CaptureGroupOfZero;
                         return false;
+
                     case RegexParseError.ExclusionGroupNotLast:
                         SearchErrorStatus = RegexSearchErrorStatus.ExclusionGroupNotLast;
                         return false;
+
                     case RegexParseError.InsufficientClosingParentheses:
                         SearchErrorStatus = RegexSearchErrorStatus.InsufficientClosingParentheses;
                         return false;
+
                     case RegexParseError.InsufficientOpeningParentheses:
                         SearchErrorStatus = RegexSearchErrorStatus.InsufficientOpeningParentheses;
                         return false;
+
                     case RegexParseError.InsufficientOrInvalidHexDigits:
                         SearchErrorStatus = RegexSearchErrorStatus.InsufficientOrInvalidHexDigits;
                         return false;
+
                     case RegexParseError.InvalidGroupingConstruct:
                         SearchErrorStatus = RegexSearchErrorStatus.InvalidGroupingConstruct;
                         return false;
+
                     case RegexParseError.InvalidUnicodePropertyEscape:
                         SearchErrorStatus = RegexSearchErrorStatus.InvalidUnicodePropertyEscape;
                         return false;
+
                     case RegexParseError.MalformedNamedReference:
                         SearchErrorStatus = RegexSearchErrorStatus.MalformedNamedReference;
                         return false;
+
                     case RegexParseError.MalformedUnicodePropertyEscape:
                         SearchErrorStatus = RegexSearchErrorStatus.MalformedUnicodePropertyEscape;
                         return false;
+
                     case RegexParseError.NestedQuantifiersNotParenthesized:
                         SearchErrorStatus = RegexSearchErrorStatus.NestedQuantifiersNotParenthesized;
                         return false;
+
                     case RegexParseError.MissingControlCharacter:
                         SearchErrorStatus = RegexSearchErrorStatus.MissingControlCharacter;
                         return false;
+
                     case RegexParseError.QuantifierAfterNothing:
                         SearchErrorStatus = RegexSearchErrorStatus.QuantifierAfterNothing;
                         return false;
+
                     case RegexParseError.QuantifierOrCaptureGroupOutOfRange:
                         SearchErrorStatus = RegexSearchErrorStatus.QuantifierOrCaptureGroupOutOfRange;
                         return false;
+
                     case RegexParseError.ReversedCharacterRange:
                         SearchErrorStatus = RegexSearchErrorStatus.ReversedCharacterRange;
                         return false;
+
                     case RegexParseError.ReversedQuantifierRange:
                         SearchErrorStatus = RegexSearchErrorStatus.ReversedQuantifierRange;
                         return false;
+
                     case RegexParseError.ShorthandClassInCharacterRange:
                         SearchErrorStatus = RegexSearchErrorStatus.ShorthandClassInCharacterRange;
                         return false;
+
                     case RegexParseError.UndefinedNamedReference:
                         SearchErrorStatus = RegexSearchErrorStatus.UndefinedNamedReference;
                         return false;
+
                     case RegexParseError.UndefinedNumberedReference:
                         SearchErrorStatus = RegexSearchErrorStatus.UndefinedNumberedReference;
                         return false;
+
                     case RegexParseError.UnescapedEndingBackslash:
                         SearchErrorStatus = RegexSearchErrorStatus.UnescapedEndingBackslash;
                         return false;
+
                     case RegexParseError.Unknown:
                         SearchErrorStatus = RegexSearchErrorStatus.Unknown;
                         return false;
+
                     case RegexParseError.UnrecognizedControlCharacter:
                         SearchErrorStatus = RegexSearchErrorStatus.UnrecognizedControlCharacter;
                         return false;
+
                     case RegexParseError.UnrecognizedEscape:
                         SearchErrorStatus = RegexSearchErrorStatus.UnrecognizedEscape;
                         return false;
+
                     case RegexParseError.UnrecognizedUnicodeProperty:
                         SearchErrorStatus = RegexSearchErrorStatus.UnrecognizedUnicodeProperty;
                         return false;
+
                     case RegexParseError.UnterminatedBracket:
                         SearchErrorStatus = RegexSearchErrorStatus.UnterminatedBracket;
                         return false;
+
                     case RegexParseError.UnterminatedComment:
                         SearchErrorStatus = RegexSearchErrorStatus.UnterminatedComment;
                         return false;
@@ -477,6 +555,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             SearchErrorStatus = RegexSearchErrorStatus.None;
             return true;
         }
+
         #endregion 正規表現チェック
     }
 }

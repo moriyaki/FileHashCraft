@@ -8,7 +8,10 @@
     public class CalcingDriveMessage
     {
         public HashSet<string> Drives { get; set; } = [];
-        public CalcingDriveMessage() { throw new NotImplementedException(nameof(StartCalcingFileMessage)); }
+
+        public CalcingDriveMessage()
+        { throw new NotImplementedException(nameof(StartCalcingFileMessage)); }
+
         public CalcingDriveMessage(HashSet<string> drives)
         {
             Drives = drives;
@@ -21,7 +24,10 @@
     public class StartCalcingFileMessage
     {
         public string CalcingFile { get; set; } = string.Empty;
-        public StartCalcingFileMessage() { throw new NotImplementedException(nameof(StartCalcingFileMessage)); }
+
+        public StartCalcingFileMessage()
+        { throw new NotImplementedException(nameof(StartCalcingFileMessage)); }
+
         public StartCalcingFileMessage(string calcingFile)
         {
             CalcingFile = calcingFile;
@@ -34,7 +40,10 @@
     public class EndCalcingFileMessage
     {
         public string CalcingFile { get; set; } = string.Empty;
-        public EndCalcingFileMessage() { throw new NotImplementedException(nameof(EndCalcingFileMessage)); }
+
+        public EndCalcingFileMessage()
+        { throw new NotImplementedException(nameof(EndCalcingFileMessage)); }
+
         public EndCalcingFileMessage(string calcingFile)
         {
             CalcingFile = calcingFile;

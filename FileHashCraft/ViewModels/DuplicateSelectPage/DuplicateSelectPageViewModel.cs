@@ -11,11 +11,13 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// 初期化処理
         /// </summary>
         void Initialize();
+
         /// <summary>
         /// 重複ファイルとフォルダのツリービューの幅
         /// </summary>
         double DupFilesDirsListBoxWidth { get; set; }
     }
+
     public class DuplicateSelectPageViewModel : BaseViewModel, IDuplicateSelectPageViewModel
     {
         #region バインディング
@@ -24,6 +26,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// 重複ファイルとフォルダのツリービューの幅
         /// </summary>
         private double _DupFilesDirsListBoxWidth;
+
         public double DupFilesDirsListBoxWidth
         {
             get => _DupFilesDirsListBoxWidth;
@@ -31,7 +34,7 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 if (_DupFilesDirsListBoxWidth == value) return;
                 SetProperty(ref _DupFilesDirsListBoxWidth, value);
-                _settingsService.DupDirsFilesTreeViewWidth = value;
+                _SettingsService.DupDirsFilesTreeViewWidth = value;
             }
         }
 
@@ -39,30 +42,37 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// 設定画面を開きます。
         /// </summary>
         public RelayCommand SettingsOpen { get; set; }
+
         /// <summary>
         /// デバッグウィンドウを開きます。
         /// </summary>
         public RelayCommand DebugOpen { get; set; }
+
         /// <summary>
         /// ヘルプウィンドウを開きます。
         /// </summary>
         public RelayCommand HelpOpen { get; set; }
+
         /// <summary>
         /// ファイル選択画面に戻ります。
         /// </summary>
         public RelayCommand ToSelectTargetPage { get; set; }
+
         /// <summary>
         /// 削除を実行します。
         /// </summary>
         public RelayCommand DeleteCommand { get; set; }
+
         #endregion バインディング
 
         #region コンストラクタ
-        private readonly IDupFilesDirsListBoxViewModel _dupDirsFilesTreeViewControlViewModel;
-        private readonly IFileSystemServices _fileSystemServices;
-        private readonly IHelpWindowViewModel _helpWindowViewModel;
 
-        public DuplicateSelectPageViewModel() { throw new NotImplementedException(nameof(DuplicateSelectPageViewModel)); }
+        private readonly IDupFilesDirsListBoxViewModel _DupDirsFilesTreeViewControlViewModel;
+        private readonly IFileSystemServices _FileSystemServices;
+        private readonly IHelpWindowViewModel _HelpWindowViewModel;
+
+        public DuplicateSelectPageViewModel()
+        { throw new NotImplementedException(nameof(DuplicateSelectPageViewModel)); }
 
         public DuplicateSelectPageViewModel(
             IMessenger messenger,
@@ -72,13 +82,13 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             IHelpWindowViewModel helpWindowViewModel
         ) : base(messenger, settingsService)
         {
-            _dupDirsFilesTreeViewControlViewModel = dupFilesDirsListBoxControlViewModel;
-            _fileSystemServices = fileSystemServices;
-            _helpWindowViewModel = helpWindowViewModel;
+            _DupDirsFilesTreeViewControlViewModel = dupFilesDirsListBoxControlViewModel;
+            _FileSystemServices = fileSystemServices;
+            _HelpWindowViewModel = helpWindowViewModel;
 
             // 設定画面ページに移動するコマンド
             SettingsOpen = new RelayCommand(()
-                => _fileSystemServices.NavigateToSettingsPage(ReturnPageEnum.SelecTargettPage));
+                => _FileSystemServices.NavigateToSettingsPage(ReturnPageEnum.SelecTargettPage));
             // デバッグウィンドウを開くコマンド
             DebugOpen = new RelayCommand(() =>
             {
@@ -90,14 +100,14 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             {
                 var helpWindow = new Views.HelpWindow();
                 helpWindow.Show();
-                _helpWindowViewModel.Initialize(HelpPage.Index);
+                _HelpWindowViewModel.Initialize(HelpPage.Index);
             });
             // 削除コマンド
             DeleteCommand = new RelayCommand(()
                 => System.Windows.MessageBox.Show("まだだよ"));
 
             ToSelectTargetPage = new RelayCommand(() =>
-                _fileSystemServices.NavigateToSelectTargetPage());
+                _FileSystemServices.NavigateToSelectTargetPage());
 
             DupFilesDirsListBoxWidth = settingsService.DupFilesDirsListBoxWidth;
         }
@@ -107,8 +117,9 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// </summary>
         public void Initialize()
         {
-            _dupDirsFilesTreeViewControlViewModel.Initialize();
+            _DupDirsFilesTreeViewControlViewModel.Initialize();
         }
+
         #endregion コンストラクタ
     }
 }

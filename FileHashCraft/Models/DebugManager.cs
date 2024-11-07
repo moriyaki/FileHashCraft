@@ -2,6 +2,7 @@
 
     デバッグログを管理するクラスです。
  */
+
 using System.Diagnostics;
 using System.IO;
 

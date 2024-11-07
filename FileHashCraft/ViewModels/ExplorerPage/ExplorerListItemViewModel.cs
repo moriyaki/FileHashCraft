@@ -2,6 +2,7 @@
 
     Explorer 風画面の ListView のアイテム ViewModel を提供します。
  */
+
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -9,8 +10,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Services;
-using FileHashCraft.ViewModels.Modules;
 using FileHashCraft.Services.Messages;
+using FileHashCraft.ViewModels.Modules;
 
 namespace FileHashCraft.ViewModels.ExplorerPage
 {
@@ -25,12 +26,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
     public partial class ExplorerListItemViewModel : ObservableObject, IComparable<ExplorerListItemViewModel>, IExplorerListItemViewModel
     {
         #region コンストラクタ
+
         /// <summary>
         /// コンストラクタで渡されるIExplorerPageViewModel
         /// </summary>
-        private readonly IMessenger _messenger;
-        private readonly IFileSystemServices _messageServices;
-        private readonly ISettingsService _settingsService;
+        private readonly IMessenger _Messanger;
+
+        private readonly IFileSystemServices _FileSystemServices;
+        private readonly ISettingsService _SettingsService;
 
         /// <summary>
         /// 必ず通すサービスロケータによる依存性注入です。
@@ -38,17 +41,17 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// <exception cref="InvalidOperationException">インターフェースがnullという異常発生</exception>
         public ExplorerListItemViewModel()
         {
-            _messenger = Ioc.Default.GetService<IMessenger>() ?? throw new InvalidOperationException($"{nameof(IMessenger)} dependency not resolved.");
-            _messageServices = Ioc.Default.GetService<IFileSystemServices>() ?? throw new InvalidOperationException($"{nameof(IFileSystemServices)} dependency not resolved.");
-            _settingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new InvalidOperationException($"{nameof(ISettingsService)} dependency not resolved.");
+            _Messanger = Ioc.Default.GetService<IMessenger>() ?? throw new NullReferenceException(nameof(IMessenger));
+            _FileSystemServices = Ioc.Default.GetService<IFileSystemServices>() ?? throw new NullReferenceException(nameof(IFileSystemServices));
+            _SettingsService = Ioc.Default.GetService<ISettingsService>() ?? throw new NullReferenceException(nameof(ISettingsService));
 
-            _CurrentFontFamily = _settingsService.CurrentFont;
-            _FontSize = _settingsService.FontSize;
+            _CurrentFontFamily = _SettingsService.CurrentFont;
+            _FontSize = _SettingsService.FontSize;
 
             // フォント変更メッセージ受信
-            _messenger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
+            _Messanger.Register<CurrentFontFamilyChangedMessage>(this, (_, m) => CurrentFontFamily = m.CurrentFontFamily);
             // フォントサイズ変更メッセージ受信
-            _messenger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
+            _Messanger.Register<FontSizeChangedMessage>(this, (_, m) => FontSize = m.FontSize);
         }
 
         /// <summary>
@@ -66,9 +69,11 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             LastModifiedDate = f.LastModifiedDate;
             FileSize = f.FileSize;
         }
+
         #endregion コンストラクタ
 
         #region メソッド
+
         /// <summary>
         /// ソートのための比較関数です。
         /// </summary>
@@ -78,9 +83,11 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         {
             return FullPath.CompareTo(other?.FullPath);
         }
+
         #endregion メソッド
 
         #region バインディング
+
         /// <summary>
         /// ファイルの表示名
         /// </summary>
@@ -99,6 +106,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// ファイルまたはフォルダのフルパス
         /// </summary>
         private string _FullPath = string.Empty;
+
         public string FullPath
         {
             get => _FullPath;
@@ -131,6 +139,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// ディレクトリがディレクトリを持つかどうか
         /// </summary>
         protected bool _HasChildren = false;
+
         public virtual bool HasChildren
         {
             get => _HasChildren;
@@ -141,6 +150,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// ディレクトリのドライブが準備されているかどうか
         /// </summary>
         protected bool _IsReady = false;
+
         public virtual bool IsReady
         {
             get => _IsReady;
@@ -203,6 +213,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// フォントの設定
         /// </summary>
         private FontFamily _CurrentFontFamily;
+
         public FontFamily CurrentFontFamily
         {
             get => _CurrentFontFamily;
@@ -210,7 +221,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             {
                 if (_CurrentFontFamily.Source == value.Source) { return; }
                 SetProperty(ref _CurrentFontFamily, value);
-                _settingsService.CurrentFont = value;
+                _SettingsService.CurrentFont = value;
             }
         }
 
@@ -218,6 +229,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         /// フォントサイズの設定
         /// </summary>
         private double _FontSize;
+
         public double FontSize
         {
             get => _FontSize;
@@ -226,9 +238,10 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 if (_FontSize == value) { return; }
 
                 SetProperty(ref _FontSize, value);
-                _settingsService.FontSize = value;
+                _SettingsService.FontSize = value;
             }
         }
+
         #endregion バインディング
     }
 }

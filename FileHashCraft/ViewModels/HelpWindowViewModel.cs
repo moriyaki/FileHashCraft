@@ -13,25 +13,30 @@ namespace FileHashCraft.ViewModels
     }
 
     #region インターフェース
+
     public interface IHelpWindowViewModel
     {
         double Top { get; set; }
         double Left { get; set; }
+
         /// <summary>
         /// ウィンドウ位置の初期化
         /// </summary>
         void Initialize(HelpPage help);
+
         /// <summary>
         /// 指定したヘルプファイルを開く
         /// </summary>
         /// <param name="help">ヘルプファイル</param>
         void NavigateToHtmlFile(HelpPage help);
     }
+
     #endregion インターフェース
 
     public partial class HelpWindowViewModel : BaseViewModel, IHelpWindowViewModel
     {
         #region バインディング
+
         /// <summary>
         /// 画面の上端設定
         /// </summary>
@@ -61,28 +66,33 @@ namespace FileHashCraft.ViewModels
         /// </summary>
         [ObservableProperty]
         private string _HtmlFile = "index.html";
+
         #endregion バインディング
 
-        public HelpWindowViewModel() : base() { }
+        public HelpWindowViewModel() : base()
+        {
+        }
 
-        public HelpWindowViewModel(IMessenger messenger, ISettingsService settingsService) : base(messenger, settingsService) { }
+        public HelpWindowViewModel(IMessenger messenger, ISettingsService settingsService) : base(messenger, settingsService)
+        {
+        }
 
         /// <summary>
         /// ウィンドウ位置の初期化
         /// </summary>
         public void Initialize(HelpPage help)
         {
-            Top = _settingsService.Top;
-            Left = _settingsService.Left + _settingsService.Width;
-            Width = _settingsService.Width / 2;
-            Height = _settingsService.Height;
+            Top = _SettingsService.Top;
+            Left = _SettingsService.Left + _SettingsService.Width;
+            Width = _SettingsService.Width / 2;
+            Height = _SettingsService.Height;
 
             NavigateToHtmlFile(help);
         }
 
         private string GetHtmlFileFromHelpPage(HelpPage helpTab)
         {
-            return _settingsService.SelectedLanguage switch
+            return _SettingsService.SelectedLanguage switch
             {
                 "ja-JP" => helpTab switch
                 {
