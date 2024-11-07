@@ -343,7 +343,14 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                         if (child.FullPath == @"H:\旧D_Drive")
                         {
                             child.KickChild();
-                            child.IsChecked = true;
+                            foreach (var grandchild in child.Children)
+                            {
+                                if (grandchild.FullPath == @"H:\旧D_Drive\Software")
+                                {
+                                    grandchild.KickChild();
+                                    grandchild.IsChecked = true;
+                                }
+                            }
                         }
                     }
                 }

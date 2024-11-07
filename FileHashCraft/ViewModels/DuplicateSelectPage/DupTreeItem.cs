@@ -29,6 +29,10 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         string Parent { get; }
 
         /// <summary>
+        /// 展開されているかどうか
+        /// </summary>
+        bool IsExpanded { get; set; }
+        /// <summary>
         /// 選択されているかどうか
         /// </summary>
         bool IsSelected { get; set; }
@@ -60,13 +64,11 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             _FontSize = _SettingsService.FontSize;
         }
 
-        public DupTreeItem(string parent) : this()
+        public DupTreeItem(string parent, bool isFullPath) : this()
         {
             Parent = parent;
-            _Name = Path.GetFileName(parent);
+            _Name = isFullPath ? parent : Path.GetFileName(parent);
             _Icon = WindowsAPI.GetIcon(parent);
-            IsSelected = true;
-            IsExpanded = true;
         }
 
         public DupTreeItem(string parent, string name) : this()
@@ -130,17 +132,8 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
         /// <summary>
         /// 選択されているかどうか
         /// </summary>
+        [ObservableProperty]
         private bool _IsSelected = false;
-
-        public bool IsSelected
-        {
-            get => _IsSelected;
-            set
-            {
-                SetProperty(ref _IsSelected, value);
-                _DupFilesManager.GetDuplicateLinkFiles(Hash);
-            }
-        }
 
         /// <summary>
         /// チェックされているかどうか
@@ -158,9 +151,13 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             get => _IsCheckBoxVisible;
             set
             {
-                if (value == Visibility.Hidden)
+                if (value == Visibility.Hidden && IsChecked == true)
                 {
                     IsChecked = null;
+                }
+                else if (value == Visibility.Visible && IsChecked == null)
+                {
+                    IsChecked = true;
                 }
                 SetProperty(ref _IsCheckBoxVisible, value);
             }

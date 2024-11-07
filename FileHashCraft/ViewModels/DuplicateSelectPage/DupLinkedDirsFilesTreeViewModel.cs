@@ -39,12 +39,11 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
             // 重複ファイルを含むディレクトリ受信
             _Messanger.Register<DuplicateLinkFilesMessage>(this, (_, m) =>
             {
-                var parent = TreeRoot.FirstOrDefault(i => i.Parent == m.Directory);
-                if (parent == null)
-                {
-                    parent = new DupTreeItem(m.Directory);
-                    TreeRoot.Add(parent);
-                }
+                // 親ディレクトリの設定
+                var parent = new DupTreeItem(m.Directory, true);
+                TreeRoot.Add(parent);
+
+                // 各ファイルのアイテム設定
                 foreach (var file in fileManager.EnumerateFiles(m.Directory))
                 {
                     var hashFile = m.HashFiles.FirstOrDefault(f => f.FileFullPath == file);

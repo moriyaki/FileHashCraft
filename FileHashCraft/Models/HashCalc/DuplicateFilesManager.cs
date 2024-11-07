@@ -21,12 +21,7 @@ namespace FileHashCraft.Models.HashCalc
         /// <summary>
         /// ハッシュが同一のディレクトリを一括で送信する
         /// </summary>
-        void GetDuplicateLinkFiles(string hash);
-
-        /// <summary>
-        /// 重複するファイルの個数を取得する
-        /// </summary>
-        int GetHashFilesCount(string hash);
+        void GetDuplicateLinkFiles(HashSet<string> hashes, string currentDirectory);
 
         /// <summary>
         /// 重複ファイルがあるファイルを一括で追加する
@@ -90,28 +85,22 @@ namespace FileHashCraft.Models.HashCalc
         /// <summary>
         /// ハッシュが同一のディレクトリを一括で送信する
         /// </summary>
-        /// <param name="hash">重複ファイルのハッシュ</param>
-        public void GetDuplicateLinkFiles(string hash)
+        /// <param name="hashes">重複ファイルのハッシュのコレクション</param>
+        /// <param name="currentDirectory">カレントディレクトリ</param>
+        public void GetDuplicateLinkFiles(HashSet<string> hashes, string currentDirectory)
         {
-            if (string.IsNullOrEmpty(hash)) { return; }
-            _Messanger.Send(new DuplicateLinkClearMessage());
-            foreach (var hashFiles in _dupHashFiles[hash])
+            // 同一ハッシュを持つディレクトリ一覧を取得する
+            var directories = hashes
+                .SelectMany(hash => _dupHashFiles[hash])
+                .Select(file => Path.GetDirectoryName(file.FileFullPath) ?? string.Empty)
+                .ToHashSet();
+
+            // ディレクトリ一覧からファイル一覧を取得して返す
+            foreach (var directory in directories)
             {
-                var directory = Path.GetDirectoryName(hashFiles.FileFullPath) ?? string.Empty;
                 _Messanger.Send(new DuplicateLinkFilesMessage(directory, _dicectoryFiles[directory]));
             }
         }
-
-        /// <summary>
-        /// 重複するファイルの個数を取得する
-        /// </summary>
-        /// <param name="hash">重複ファイルのハッシュ</param>
-        /// <returns>重複ファイルのハッシュの個数</returns>
-        public int GetHashFilesCount(string hash)
-        {
-            return _dupHashFiles[hash].Count;
-        }
-
         #endregion 取得メソッド
 
         /// <summary>

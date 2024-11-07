@@ -1,4 +1,6 @@
 ﻿using System.Windows.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using FileHashCraft.ViewModels.DuplicateSelectPage;
 
 namespace FileHashCraft.Views
 {
@@ -10,6 +12,7 @@ namespace FileHashCraft.Views
         public DupLinkedDirsFilesTreeViewControl()
         {
             InitializeComponent();
+            DataContext = Ioc.Default.GetService<IDupLinkedDirsFilesTreeViewModel>();
         }
     }
 }
