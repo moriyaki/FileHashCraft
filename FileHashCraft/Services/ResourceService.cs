@@ -11,7 +11,7 @@ namespace FileHashCraft.Services
 {
     public static class ResourceService
     {
-        private static readonly ResourceManager resourceManager = new("FileHashCraft.Resources.Resources", Assembly.GetExecutingAssembly());
+        private static readonly ResourceManager resourceManager = new("FileHashCraft.Resources.Resource", Assembly.GetExecutingAssembly());
 
         public static void ChangeCulture(string cultureCode)
         {
