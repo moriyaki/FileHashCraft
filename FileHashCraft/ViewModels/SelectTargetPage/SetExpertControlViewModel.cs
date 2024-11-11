@@ -18,6 +18,30 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #region バインディング
 
         /// <summary>
+        /// ラベル「読み取り専用ファイルを削除するか」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelExpert_ReadOnlyFiles { get => ResourceService.GetString("LabelExpert_ReadOnlyFiles"); }
+
+        /// <summary>
+        /// ラベル「隠しファイルを削除するか」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelExpert_HiddenFiles { get => ResourceService.GetString("LabelExpert_HiddenFiles"); }
+
+        /// <summary>
+        /// ラベル「0サイズファイル削除」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelExpert_ZeroSizeFileDelete { get => ResourceService.GetString("LabelExpert_ZeroSizeFileDelete"); }
+
+        /// <summary>
+        /// ラベル「空ディレクトリ削除」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelExpert_EmptyDirDelete { get => ResourceService.GetString("LabelExpert_EmptyDirDelete"); }
+
+        /// <summary>
         ///  読み取り専用ファイルを対象にするかどうか
         /// </summary>
         private bool _IsReadOnlyFileInclude;

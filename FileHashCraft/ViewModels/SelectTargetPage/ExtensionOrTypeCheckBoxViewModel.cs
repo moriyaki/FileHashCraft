@@ -11,7 +11,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Properties;
+using FileHashCraft.Resources;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -85,7 +85,7 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             {
                 if (string.IsNullOrEmpty(Name))
                 {
-                    return $"{Resources.NoHaveExtentions} ({ExtentionCount})";
+                    return $"{ResourceService.GetString("NoHaveExtentions")} ({ExtentionCount})";
                 }
                 return $"{Name} ({ExtentionCount})";
             }

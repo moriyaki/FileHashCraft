@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:FileHashCraft.Views"
-             xmlns:rs="clr-namespace:FileHashCraft.Services"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -30,9 +29,8 @@
             </Grid.RowDefinitions>
 
             <!-- 拡張子種別検索フィルタ -->
-            <Label Grid.Row="0" Grid.Column="0" Margin="3"
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtention_GroupFilterSetting, Mode=OneWay}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="3" Content="{Binding LabelExtention_GroupFilterSetting}"
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
 
             <ListBox x:Name="checkBoxTypeListBox" ItemsSource="{Binding ExtentionsGroupCollection}"
                                 Grid.Row="1" Grid.Column="0" Margin="3">
@@ -55,12 +53,11 @@
             </ListBox>
 
             <!-- 拡張子検索フィルタ -->
-            <Label Grid.Row="0" Grid.Column="1" Margin="3"
-                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                            Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExtention_FilterSetting, Mode=OneWay}" />
+            <Label Grid.Row="0" Grid.Column="1" Margin="3" Content="{Binding LabelExtention_FilterSetting}"
+                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
 
             <ListBox x:Name="checkBoxExtentionListBox" ItemsSource="{Binding ExtentionCollection}"
-                                Grid.Row="1" Grid.Column="1" Margin="3">
+                     Grid.Row="1" Grid.Column="1" Margin="3">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

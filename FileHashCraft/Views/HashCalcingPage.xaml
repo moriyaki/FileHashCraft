@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:rs="clr-namespace:FileHashCraft.Services"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="HashCalcingPage">
@@ -33,12 +32,8 @@
         <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="9" Grid.ColumnSpan="4" Background="White" />
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="4">
-            <MenuItem Command="{Binding SettingsOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
-            <MenuItem Command="{Binding DebugOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
-            <MenuItem Command="{Binding HelpOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
+            <MenuItem Command="{Binding SettingsOpen}" Header="{Binding MenuSettings}" />
+            <MenuItem Command="{Binding HelpOpen}" Header="{Binding MenuHelp}" />
         </Menu>
 
         <!-- Status Message-->
@@ -53,7 +48,7 @@
         <!-- Hash Algorithm -->
         <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}" />
+               Content="{Binding LabelShowTargetInfo_HashAlgorithm}" />
 
         <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -62,7 +57,7 @@
         <!-- Hash Algorithm -->
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_AllTargetFilesCount, Mode=OneWay}" />
+               Content="{Binding LabelHashCalcing_AllTargetFilesCount}" />
 
         <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -71,7 +66,7 @@
         <!-- All HashGet Files Count-->
         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_AllHashNeedToGetFilesCount, Mode=OneWay}" />
+               Content="{Binding LabelHashCalcing_AllHashNeedToGetFilesCount}" />
         <Label Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding AllHashNeedToGetFilesCount}" />
@@ -79,7 +74,7 @@
         <!-- Hash Got Files Count -->
         <Label Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_HashGotFileCount, Mode=OneWay}" />
+               Content="{Binding LabelHashCalcing_HashGotFileCount}" />
         <Label Grid.Row="5" Grid.Column="1"  Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding HashGotFileCount}" />
@@ -87,7 +82,7 @@
         <!-- Match Hash Count -->
         <Label Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_HashGotPercent, Mode=OneWay}" />
+               Content="{Binding LabelHashCalcing_HashGotPercent}" />
 
         <Border Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" Margin="3">
             <StatusBar Grid.Row="5" Grid.Column="1" Margin="3" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch">
@@ -97,17 +92,18 @@
             </StatusBar>
         </Border>
 
-        <!-- Same Hash Count -->
+        <!-- Duplicate Hash Count -->
         <Label Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_MatchHashCount, Mode=OneWay}" />
+               Content="{Binding LabelHashCalcing_MatchHashCount}" />
         <Label Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                Content="{Binding MatchHashCount}" />
 
+        <!-- Name of the file being processed -->
         <Label Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right" Margin="3"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelHashCalcing_ProcessingFileName, Mode=OneWay}" />
+               Content="{Binding LabelHashCalcing_ProcessingFileName}" />
         <ListBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
                  ItemsSource="{Binding CalcingFiles}"
                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
@@ -116,11 +112,9 @@
         <!-- Buttons -->
         <Button Grid.Row="9" Grid.Column="2" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
-                Command="{Binding ToSelectTargetPage}" />
+                Content="{Binding ButtonCancel}" Command="{Binding ToSelectTargetPage}" />
         <Button Grid.Row="9" Grid.Column="3" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonDupDelete, Mode=OneWay}"
-                Command="{Binding ToDupDeletePage}" />
+                Content="{Binding ButtonDupDelete}" Command="{Binding ToDupDeletePage}" />
     </Grid>
 </Page>

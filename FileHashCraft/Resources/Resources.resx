@@ -125,6 +125,14 @@
     <value>Cancel</value>
     <comment>Button/SelectTargetPage</comment>
   </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>Button/DuplicateSelectPage</comment>
+  </data>
+  <data name="ButtonDupDelete" xml:space="preserve">
+    <value>Delete duplicate files</value>
+    <comment>Button/HashCalcingPage</comment>
+  </data>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>Execute Command</value>
     <comment>Button/ExplorerPage</comment>
@@ -209,6 +217,14 @@
     <value>Whether to delete files of size 0 or not</value>
     <comment>Label/SettingsPage/SelectTargetPageExpert</comment>
   </data>
+  <data name="LabelExtention_FilterSetting" xml:space="preserve">
+    <value>Specifying file types by extension</value>
+    <comment>Label/SelectTargetPage</comment>
+  </data>
+  <data name="LabelExtention_GroupFilterSetting" xml:space="preserve">
+    <value>Specify files by file type</value>
+    <comment>Label/SelectTargetPage</comment>
+  </data>
   <data name="LabelExtentionFiles_Applications" xml:space="preserve">
     <value>Application Files</value>
     <comment>Label/ExtentionHelper</comment>
@@ -248,14 +264,6 @@
   <data name="LabelExtentionFiles_SourceCodes" xml:space="preserve">
     <value>Source Code Files</value>
     <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelExtention_FilterSetting" xml:space="preserve">
-    <value>Specifying file types by extension</value>
-    <comment>Label/SelectTargetPage</comment>
-  </data>
-  <data name="LabelExtention_GroupFilterSetting" xml:space="preserve">
-    <value>Specify files by file type</value>
-    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelFileCalcing" xml:space="preserve">
     <value>Computing file hash.</value>
@@ -300,6 +308,14 @@
   <data name="LabelHashCalcing_ProcessingFileName" xml:space="preserve">
     <value>Name of the file being processed:</value>
     <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelRegex_Criteria" xml:space="preserve">
+    <value>Regular Expression Search Criteria</value>
+    <comment>Label/SelectTargetPage</comment>
+  </data>
+  <data name="LabelRegex_Error" xml:space="preserve">
+    <value>Regular Expression Search Error</value>
+    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelRegexError_AlternationHasComment" xml:space="preserve">
     <value>An alternation construct in a regular expression contains a comment.</value>
@@ -429,14 +445,6 @@
     <value>A comment in a regular expression is not terminated.</value>
     <comment>Label/SetRegexUserControl</comment>
   </data>
-  <data name="LabelRegex_Criteria" xml:space="preserve">
-    <value>Regular Expression Search Criteria</value>
-    <comment>Label/SelectTargetPage</comment>
-  </data>
-  <data name="LabelRegex_Error" xml:space="preserve">
-    <value>Regular Expression Search Error</value>
-    <comment>Label/SelectTargetPage</comment>
-  </data>
   <data name="LabelSettings" xml:space="preserve">
     <value>During internal file writing or other processing of found files.</value>
     <comment>Label/SettingsPage/SelectTargetPage</comment>
@@ -457,6 +465,14 @@
     <value>Algorithm for file hash calculation</value>
     <comment>Label/ShowTargetInfoUserControl</comment>
   </data>
+  <data name="LabelWildcard_Criteria" xml:space="preserve">
+    <value>Wildcard Search Criteria</value>
+    <comment>Label/SelectTargetPage</comment>
+  </data>
+  <data name="LabelWildcard_Error" xml:space="preserve">
+    <value>Wildcard Error</value>
+    <comment>Label/SelectTargetPage</comment>
+  </data>
   <data name="LabelWildcardError_AlreadyRegistered" xml:space="preserve">
     <value>Wildcard conditions that have already been registered.</value>
     <comment>Label/SelectTargetPageWildcard</comment>
@@ -472,14 +488,6 @@
   <data name="LabelWildcardError_TooManyAsterisk" xml:space="preserve">
     <value>Too much use of '*'</value>
     <comment>Label/SelectTargetPageWildcard</comment>
-  </data>
-  <data name="LabelWildcard_Criteria" xml:space="preserve">
-    <value>Wildcard Search Criteria</value>
-    <comment>Label/SelectTargetPage</comment>
-  </data>
-  <data name="LabelWildcard_Error" xml:space="preserve">
-    <value>Wildcard Error</value>
-    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>Data Modified</value>
@@ -532,13 +540,5 @@
   <data name="TitleTargetFilterWindow" xml:space="preserve">
     <value>Wildcard Filter Result</value>
     <comment>TargetFilterWindow</comment>
-  </data>
-  <data name="ButtonDelete" xml:space="preserve">
-    <value>Delete</value>
-    <comment>Button/DuplicateSelectPage</comment>
-  </data>
-  <data name="ButtonDupDelete" xml:space="preserve">
-    <value>Delete duplicate files</value>
-    <comment>Button/HashCalcingPage</comment>
   </data>
 </root>

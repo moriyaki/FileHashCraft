@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:rs="clr-namespace:FileHashCraft.Services"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="SettingsPage">
@@ -29,9 +28,8 @@
         <!-- For MouseWheel Border Color To Transparent -->
         <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Grid.RowSpan="9" Background="Transparent" />
 
-        <Button Grid.Row="8" Grid.Column="2" Margin="5" Command="{Binding ReturnPage}"
-                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.Exit, Mode=OneWay}" />
+        <Button Grid.Row="8" Grid.Column="2" Margin="5" Command="{Binding ReturnPage}" Content="{Binding Exit}"
+                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
 
         <!-- Language Select -->
         <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -45,9 +43,8 @@
                   DisplayMemberPath="Name" />
 
         <!-- Font Select -->
-        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
-               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFontString, Mode=OneWay}" />
+        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding LabelFontString}" 
+               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
         <ComboBox x:Name="FontComboBox" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
                   FontSize="{Binding FontSize}"
                   VirtualizingStackPanel.IsVirtualizing="True"
@@ -61,9 +58,8 @@
         </ComboBox>
 
         <!-- Font Size Select -->
-        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
-               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelFontSizeString, Mode=OneWay}" />
+        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" Content="{Binding LabelFontSizeString}"
+               FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
         <ComboBox x:Name="FontSizeComboBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
                   ItemsSource="{Binding FontSizes}"
@@ -74,7 +70,7 @@
         <!-- Hash Algorithm Select -->
         <Label Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center"
                FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-               Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}" />
+               Content="{Binding LabelShowTargetInfo_HashAlgorithm}" />
 
         <ComboBox x:Name="HashAlgorithmsComboBox"  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Margin="5"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -83,7 +79,7 @@
                   SelectedValuePath="Algorithm"
                   DisplayMemberPath="Name" />
 
-        <GroupBox Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert, Mode=OneWay}"
+        <GroupBox Header="{Binding LabelExpert}"
                   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="3" Margin="3"
                   Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
@@ -101,7 +97,7 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}" />
                     <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
+                                   Content="{Binding LabelExpert_ReadOnlyFiles}">
                         <Label.InputBindings>
                             <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>
@@ -113,7 +109,7 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}" />
                     <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
+                                   Content="{Binding LabelExpert_HiddenFiles}">
                         <Label.InputBindings>
                             <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>
@@ -125,7 +121,7 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}" />
                     <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
+                                   Content="{Binding LabelExpert_ZeroSizeFileDelete}">
                         <Label.InputBindings>
                             <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>
@@ -137,7 +133,7 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}" />
                     <Label VerticalAlignment="Center"
                                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
+                                   Content="{Binding LabelExpert_EmptyDirDelete}">
                         <Label.InputBindings>
                             <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick" />
                         </Label.InputBindings>

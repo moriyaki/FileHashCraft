@@ -11,7 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Properties;
+using FileHashCraft.Resources;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 using FileHashCraft.ViewModels.DirectoryTreeViewControl;
@@ -182,6 +182,71 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         public ISetExpertControlViewModel ViewModelExpert { get; }
 
         /// <summary>
+        /// メニュー「設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string MenuSettings { get => ResourceService.GetString("MenuSettings"); }
+
+        /// <summary>
+        /// メニュー「ヘルプ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string MenuHelp { get => ResourceService.GetString("MenuHelp"); }
+
+        /// <summary>
+        /// メニュー「Hash Algorithm Select 」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelShowTargetInfo_HashAlgorithm { get => ResourceService.GetString("LabelShowTargetInfo_HashAlgorithm"); }
+
+        /// <summary>
+        /// メニュー「Number of all files to get hash」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelShowTargetInfo_CountAllFilesGetHash { get => ResourceService.GetString("LabelShowTargetInfo_CountAllFilesGetHash"); }
+
+        /// <summary>
+        /// メニュー「Number of files to get hashes from filtered files」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelShowTargetInfo_CountFilteredGetHash { get => ResourceService.GetString("LabelShowTargetInfo_CountFilteredGetHash"); }
+
+        /// <summary>
+        /// タブ「標準設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string TabContentStarndard { get => ResourceService.GetString("TabContentStarndard"); }
+
+        /// <summary>
+        /// タブ「ワイルドカード設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string TabContentWildCard { get => ResourceService.GetString("TabContentWildCard"); }
+
+        /// <summary>
+        /// タブ「正規表現設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string TabContentRegularExpression { get => ResourceService.GetString("TabContentRegularExpression"); }
+
+        /// <summary>
+        /// タブ「上級者向け設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string TabContentExpert { get => ResourceService.GetString("TabContentExpert"); }
+
+        /// <summary>
+        /// ボタン「キャンセル」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string ButtonCancel { get => ResourceService.GetString("ButtonCancel"); }
+        /// <summary>
+        /// ボタン「ハッシュ計算」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string ButtonHashCalc { get => ResourceService.GetString("ButtonHashCalc"); }
+
+        /// <summary>
         /// ファイルスキャン状況
         /// </summary>
         private FileScanStatus _Status = FileScanStatus.None;
@@ -200,17 +265,17 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
 
                     case FileScanStatus.DirectoriesScanning:
                         StatusColor = Brushes.Pink;
-                        StatusMessage = $"{Resources.LabelDirectoryScanning} {CountScannedDirectories}";
+                        StatusMessage = $"{ResourceService.GetString("LabelDirectoryScanning")} {CountScannedDirectories}";
                         break;
 
                     case FileScanStatus.FilesScanning:
                         StatusColor = Brushes.Yellow;
-                        StatusMessage = $"{Resources.LabelDirectoryCount} ({CountHashFilesDirectories} / {CountScannedDirectories})";
+                        StatusMessage = $"{ResourceService.GetString("LabelDirectoryCount")} ({CountHashFilesDirectories} / {CountScannedDirectories})";
                         break;
 
                     case FileScanStatus.Finished:
                         StatusColor = Brushes.LightGreen;
-                        StatusMessage = Resources.LabelFinished;
+                        StatusMessage = ResourceService.GetString("LabelFinished");
                         _Messanger.Send(new FileScanFinished());
                         break;
 
@@ -415,9 +480,9 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             //ViewModelMain.SelectedHashAlgorithm = _SettingsService.HashAlgorithm;
             HashAlgorithms =
 [
-                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), ResourceService.GetString("HashAlgorithm_SHA256")),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), ResourceService.GetString("HashAlgorithm_SHA384")),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), ResourceService.GetString("HashAlgorithm_SHA512")),
             ];
 
             // ハッシュ計算画面に移動するコマンド
@@ -681,9 +746,9 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             HashAlgorithms.Clear();
             HashAlgorithms =
             [
-                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), ResourceService.GetString("HashAlgorithm_SHA256")),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), ResourceService.GetString("HashAlgorithm_SHA384")),
+                new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), ResourceService.GetString("HashAlgorithm_SHA512")),
             ];
 
             // ハッシュ計算アルゴリズムを再設定

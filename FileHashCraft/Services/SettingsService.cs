@@ -290,7 +290,7 @@ namespace FileHashCraft.Services
         /// <summary>
         /// 選択されている言語
         /// </summary>
-        private string _SelectedLanguage = "ja-JP";
+        private string _SelectedLanguage = string.Empty;
 
         public string SelectedLanguage
         {
@@ -299,7 +299,7 @@ namespace FileHashCraft.Services
             {
                 if (value == _SelectedLanguage) { return; }
                 _SelectedLanguage = value;
-                ResourceService.Current.ChangeCulture(value);
+                ResourceService.ChangeCulture(value);
                 OnPropertyChanged("Resources");
                 SaveSettings();
             }
@@ -491,7 +491,7 @@ namespace FileHashCraft.Services
                         IsHiddenFileInclude = Convert.ToBoolean(root.Element("IsHiddenFileInclude")?.Value);
                         IsZeroSizeFileDelete = Convert.ToBoolean(root.Element("IsZeroSizeFileDelete")?.Value);
                         IsEmptyDirectoryDelete = Convert.ToBoolean(root.Element("IsEmptyDirectoryDelete")?.Value);
-                        SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja-JP";
+                        SelectedLanguage = root.Element("SelectedLanguage")?.Value ?? "ja";
                         HashAlgorithm = root.Element("HashAlgorithm")?.Value ?? _HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256);
 
                         var fontFamilyName = root.Element("CurrentFont")?.Value ?? string.Empty;

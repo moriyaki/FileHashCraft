@@ -4,28 +4,24 @@
  */
 
 using System.Globalization;
-using CommunityToolkit.Mvvm.ComponentModel;
-using FileHashCraft.Properties;
+using System.Reflection;
+using System.Resources;
 
 namespace FileHashCraft.Services
 {
-    #region リソースサービス
-
-    public class ResourceService : ObservableObject
+    public static class ResourceService
     {
-        public static ResourceService Current { get; } = new();
-        public Resources Resources { get; } = new();
+        private static readonly ResourceManager resourceManager = new("FileHashCraft.Resources.Resources", Assembly.GetExecutingAssembly());
 
-        /// <summary>
-        /// 言語カルチャを変更する
-        /// </summary>
-        /// <param name="name">変更するカルチャ(例："ja-JP")</param>
-        public void ChangeCulture(string name)
+        public static void ChangeCulture(string cultureCode)
         {
-            Resources.Culture = CultureInfo.GetCultureInfo(name);
-            OnPropertyChanged(nameof(Resources));
+            var culture = new CultureInfo(cultureCode);
+            CultureInfo.CurrentUICulture = culture;
+        }
+
+        public static string GetString(string key)
+        {
+            return resourceManager.GetString(key, CultureInfo.CurrentUICulture) ?? string.Empty;
         }
     }
-
-    #endregion リソースサービス
 }

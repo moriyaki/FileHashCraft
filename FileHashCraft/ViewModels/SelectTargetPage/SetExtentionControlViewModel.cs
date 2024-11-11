@@ -66,6 +66,18 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #region バインディング
 
         /// <summary>
+        /// ラベル「拡張子種別検索フィルタ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelExtention_GroupFilterSetting { get => ResourceService.GetString("LabelExtention_GroupFilterSetting"); }
+
+        /// <summary>
+        /// ラベル「拡張子検索フィルタ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelExtention_FilterSetting { get => ResourceService.GetString("LabelExtention_FilterSetting"); }
+
+        /// <summary>
         /// ファイルの拡張子グループによる絞り込みチェックボックスを持つリストボックス
         /// </summary>
         public ObservableCollection<ExtentionGroupCheckBoxViewModel> ExtentionsGroupCollection { get; set; } = [];

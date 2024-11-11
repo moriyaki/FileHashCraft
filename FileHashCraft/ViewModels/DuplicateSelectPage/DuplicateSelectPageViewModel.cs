@@ -21,6 +21,29 @@ namespace FileHashCraft.ViewModels.DuplicateSelectPage
     public class DuplicateSelectPageViewModel : BaseViewModel, IDuplicateSelectPageViewModel
     {
         #region バインディング
+        /// <summary>
+        /// メニュー「設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string MenuSettings { get => ResourceService.GetString("MenuSettings"); }
+
+        /// <summary>
+        /// メニュー「ヘルプ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string MenuHelp { get => ResourceService.GetString("MenuHelp"); }
+
+        /// <summary>
+        /// ボタン「キャンセル」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string ButtonCancel { get => ResourceService.GetString("ButtonCancel"); }
+
+        /// <summary>
+        /// ボタン「重複ファイルの削除」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string ButtonDelete { get => ResourceService.GetString("ButtonDelete"); }
 
         /// <summary>
         /// 重複ファイルとフォルダのツリービューの幅

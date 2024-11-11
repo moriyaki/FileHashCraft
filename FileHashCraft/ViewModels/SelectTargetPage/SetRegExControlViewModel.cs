@@ -4,7 +4,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Properties;
+using FileHashCraft.Resources;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -100,6 +100,36 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #region バインディング
 
         /// <summary>
+        /// ボタン「変更」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonModify { get => ResourceService.GetString("ButtonModify"); }
+
+        /// <summary>
+        /// ボタン「削除」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonRemove { get => ResourceService.GetString("ButtonRemove"); }
+
+        /// <summary>
+        /// ボタン「追加」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonAdd { get => ResourceService.GetString("ButtonAdd"); }
+
+        /// <summary>
+        /// ボタン「正規条件での検索条件」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelRegex_Criteria { get => ResourceService.GetString("LabelRegex_Criteria"); }
+
+        /// <summary>
+        /// ボタン「正規表現のエラー」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelRegex_Error { get => ResourceService.GetString("LabelRegex_Error"); }
+
+        /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
         private RegexSearchErrorStatus _SearchErrorStatus = RegexSearchErrorStatus.None;
@@ -120,135 +150,135 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
                 switch (value)
                 {
                     case RegexSearchErrorStatus.Empty:
-                        SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_Empty}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelWildcardError_Empty")}";
                         break;
 
                     case RegexSearchErrorStatus.AlreadyRegistered:
-                        SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_AlreadyRegistered}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelWildcardError_AlreadyRegistered}")}";
                         break;
 
                     case RegexSearchErrorStatus.AlternationHasMalformedCondition:
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasMalformedCondition}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_AlternationHasMalformedCondition}")}";
                         break;
 
                     case RegexSearchErrorStatus.AlternationHasMalformedReference:   // "(x)(?(3x|y)"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasMalformedReference}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_AlternationHasMalformedReference}")}";
                         break;
 
                     case RegexSearchErrorStatus.AlternationHasNamedCapture:         // "(?(?<x>)true|false)"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasNamedCapture}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_AlternationHasNamedCapture}")}";
                         break;
 
                     case RegexSearchErrorStatus.AlternationHasTooManyConditions:    // "(?(foo)a|b|c)"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasTooManyConditions}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_AlternationHasTooManyConditions}")}";
                         break;
 
                     case RegexSearchErrorStatus.AlternationHasUndefinedReference:   // "(?(1))"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_AlternationHasUndefinedReference}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_AlternationHasUndefinedReference}")}";
                         break;
 
                     case RegexSearchErrorStatus.CaptureGroupNameInvalid:            // "(?'x)"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_CaptureGroupNameInvalid}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_CaptureGroupNameInvalid}")}";
                         break;
 
                     case RegexSearchErrorStatus.CaptureGroupOfZero:                 // "(?'0'foo)"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_CaptureGroupOfZero}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_CaptureGroupOfZero}")}";
                         break;
 
                     case RegexSearchErrorStatus.ExclusionGroupNotLast:              // "[a-z-[xy]A]"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ExclusionGroupNotLast}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_ExclusionGroupNotLast}")}";
                         break;
 
                     case RegexSearchErrorStatus.InsufficientClosingParentheses:     // "(((foo))"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InsufficientClosingParentheses}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_InsufficientClosingParentheses}")}";
                         break;
 
                     case RegexSearchErrorStatus.InsufficientOpeningParentheses:     // "((foo)))"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InsufficientOpeningParentheses}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_InsufficientOpeningParentheses}")}";
                         break;
 
                     case RegexSearchErrorStatus.InsufficientOrInvalidHexDigits:     // @"\xr"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InsufficientOrInvalidHexDigits}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_InsufficientOrInvalidHexDigits}")}";
                         break;
 
                     case RegexSearchErrorStatus.InvalidGroupingConstruct:           // "(?"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InvalidGroupingConstruct}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_InvalidGroupingConstruct}")}";
                         break;
 
                     case RegexSearchErrorStatus.InvalidUnicodePropertyEscape:       // @"\p{ L}"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_InvalidUnicodePropertyEscape}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_InvalidUnicodePropertyEscape}")}";
                         break;
 
                     case RegexSearchErrorStatus.MalformedNamedReference:            // @"\k<"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_MalformedNamedReference}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_MalformedNamedReference}")}";
                         break;
 
                     case RegexSearchErrorStatus.MalformedUnicodePropertyEscape:     // @"\p {L}"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_MalformedUnicodePropertyEscape}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_MalformedUnicodePropertyEscape}")}";
                         break;
 
                     case RegexSearchErrorStatus.MissingControlCharacter:            // @"\c"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_MissingControlCharacter}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_MissingControlCharacter}")}";
                         break;
 
                     case RegexSearchErrorStatus.NestedQuantifiersNotParenthesized:  // "abc**"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_NestedQuantifiersNotParenthesized}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_NestedQuantifiersNotParenthesized}")}";
                         break;
 
                     case RegexSearchErrorStatus.QuantifierAfterNothing:             // "((*foo)bar)"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_QuantifierAfterNothing}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_QuantifierAfterNothing}")}";
                         break;
 
                     case RegexSearchErrorStatus.QuantifierOrCaptureGroupOutOfRange: // "x{234567899988}"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_QuantifierOrCaptureGroupOutOfRange}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_QuantifierOrCaptureGroupOutOfRange}")}";
                         break;
 
                     case RegexSearchErrorStatus.ReversedCharacterRange:             // "[z-a]"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ReversedCharacterRange}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_ReversedCharacterRange}")}";
                         break;
 
                     case RegexSearchErrorStatus.ReversedQuantifierRange:            // "abc{3,0}"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ReversedQuantifierRange}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_ReversedQuantifierRange}")}";
                         break;
 
                     case RegexSearchErrorStatus.ShorthandClassInCharacterRange:     // @"[a-\w]"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_ShorthandClassInCharacterRange}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_ShorthandClassInCharacterRange}")}";
                         break;
 
                     case RegexSearchErrorStatus.UndefinedNamedReference:            // @"\k<x>"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UndefinedNamedReference}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UndefinedNamedReference}")}";
                         break;
 
                     case RegexSearchErrorStatus.UndefinedNumberedReference:         // @"(x)\2"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UndefinedNumberedReference}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UndefinedNumberedReference}")}";
                         break;
 
                     case RegexSearchErrorStatus.UnescapedEndingBackslash:           // @"foo\"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnescapedEndingBackslash}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UnescapedEndingBackslash}")}";
                         break;
 
                     case RegexSearchErrorStatus.Unknown:
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_Unknown}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_Unknown}")}";
                         break;
 
                     case RegexSearchErrorStatus.UnrecognizedControlCharacter:       // @"\c!"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnrecognizedControlCharacter}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UnrecognizedControlCharacter}")}";
                         break;
 
                     case RegexSearchErrorStatus.UnrecognizedEscape:                 // @"\C"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnrecognizedEscape}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UnrecognizedEscape}")}";
                         break;
 
                     case RegexSearchErrorStatus.UnrecognizedUnicodeProperty:        // @"\p{Lll}"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnrecognizedUnicodeProperty}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UnrecognizedUnicodeProperty}")}";
                         break;
 
                     case RegexSearchErrorStatus.UnterminatedBracket:                //  "[a-b"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnterminatedBracket}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UnterminatedBracket}")}";
                         break;
 
                     case RegexSearchErrorStatus.UnterminatedComment:                // "(?#comment .*"
-                        SearchCriteriaErrorOutput = $"{Resources.LabelRegexError_UnterminatedComment}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelRegexError_UnterminatedComment}")}";
                         break;
                 }
             }

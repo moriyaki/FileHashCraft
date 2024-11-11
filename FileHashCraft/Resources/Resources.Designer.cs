@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FileHashCraft.Properties {
+namespace FileHashCraft.Resources {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace FileHashCraft.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace FileHashCraft.Properties {
         ///   このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileHashCraft.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileHashCraft.Resources.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace FileHashCraft.Properties {
         ///   現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Add に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonAdd {
+        internal static string ButtonAdd {
             get {
                 return ResourceManager.GetString("ButtonAdd", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Cancel に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonCancel {
+        internal static string ButtonCancel {
             get {
                 return ResourceManager.GetString("ButtonCancel", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Delete に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonDelete {
+        internal static string ButtonDelete {
             get {
                 return ResourceManager.GetString("ButtonDelete", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Delete duplicate files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonDupDelete {
+        internal static string ButtonDupDelete {
             get {
                 return ResourceManager.GetString("ButtonDupDelete", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Execute Command に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonExecuteCommand {
+        internal static string ButtonExecuteCommand {
             get {
                 return ResourceManager.GetString("ButtonExecuteCommand", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Hash calculation に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonHashCalc {
+        internal static string ButtonHashCalc {
             get {
                 return ResourceManager.GetString("ButtonHashCalc", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Hash Management に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonHashManagement {
+        internal static string ButtonHashManagement {
             get {
                 return ResourceManager.GetString("ButtonHashManagement", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Same File Result に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonHashResult {
+        internal static string ButtonHashResult {
             get {
                 return ResourceManager.GetString("ButtonHashResult", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Modify に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonModify {
+        internal static string ButtonModify {
             get {
                 return ResourceManager.GetString("ButtonModify", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Return to standard settings に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonNormalSettings {
+        internal static string ButtonNormalSettings {
             get {
                 return ResourceManager.GetString("ButtonNormalSettings", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Remove に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonRemove {
+        internal static string ButtonRemove {
             get {
                 return ResourceManager.GetString("ButtonRemove", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Hash acquisition target に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ButtonTargetFilter {
+        internal static string ButtonTargetFilter {
             get {
                 return ResourceManager.GetString("ButtonTargetFilter", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Exit に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string Exit {
+        internal static string Exit {
             get {
                 return ResourceManager.GetString("Exit", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   SHA-256 (High security: More reliable, generally faster than MD5. Recommended as standard) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string HashAlgorithm_SHA256 {
+        internal static string HashAlgorithm_SHA256 {
             get {
                 return ResourceManager.GetString("HashAlgorithm_SHA256", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   SHA-384 (High security: higher security strength than SHA-256, but slightly slower calculation) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string HashAlgorithm_SHA384 {
+        internal static string HashAlgorithm_SHA384 {
             get {
                 return ResourceManager.GetString("HashAlgorithm_SHA384", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   SHA-512 (maximum security: very high security strength, but slow computation) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string HashAlgorithm_SHA512 {
+        internal static string HashAlgorithm_SHA512 {
             get {
                 return ResourceManager.GetString("HashAlgorithm_SHA512", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Command に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelCommand {
+        internal static string LabelCommand {
             get {
                 return ResourceManager.GetString("LabelCommand", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Current Directory に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelCurrentDirectory {
+        internal static string LabelCurrentDirectory {
             get {
                 return ResourceManager.GetString("LabelCurrentDirectory", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   File Scanning : Dicrecotires に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelDirectoryCount {
+        internal static string LabelDirectoryCount {
             get {
                 return ResourceManager.GetString("LabelDirectoryCount", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Directory Scanning...: Found に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelDirectoryScanning {
+        internal static string LabelDirectoryScanning {
             get {
                 return ResourceManager.GetString("LabelDirectoryScanning", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   For Advanced User に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExpert {
+        internal static string LabelExpert {
             get {
                 return ResourceManager.GetString("LabelExpert", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Whether to delete empty directories or not に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExpert_EmptyDirDelete {
+        internal static string LabelExpert_EmptyDirDelete {
             get {
                 return ResourceManager.GetString("LabelExpert_EmptyDirDelete", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Target hidden files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExpert_HiddenFiles {
+        internal static string LabelExpert_HiddenFiles {
             get {
                 return ResourceManager.GetString("LabelExpert_HiddenFiles", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Target read-only files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExpert_ReadOnlyFiles {
+        internal static string LabelExpert_ReadOnlyFiles {
             get {
                 return ResourceManager.GetString("LabelExpert_ReadOnlyFiles", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Whether to delete files of size 0 or not に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExpert_ZeroSizeFileDelete {
+        internal static string LabelExpert_ZeroSizeFileDelete {
             get {
                 return ResourceManager.GetString("LabelExpert_ZeroSizeFileDelete", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Specifying file types by extension に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtention_FilterSetting {
+        internal static string LabelExtention_FilterSetting {
             get {
                 return ResourceManager.GetString("LabelExtention_FilterSetting", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Specify files by file type に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtention_GroupFilterSetting {
+        internal static string LabelExtention_GroupFilterSetting {
             get {
                 return ResourceManager.GetString("LabelExtention_GroupFilterSetting", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Application Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_Applications {
+        internal static string LabelExtentionFiles_Applications {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_Applications", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Archive Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_Archives {
+        internal static string LabelExtentionFiles_Archives {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_Archives", resourceCulture);
             }
@@ -324,7 +324,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Document Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_Documents {
+        internal static string LabelExtentionFiles_Documents {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_Documents", resourceCulture);
             }
@@ -333,7 +333,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Movie Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_Movies {
+        internal static string LabelExtentionFiles_Movies {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_Movies", resourceCulture);
             }
@@ -342,7 +342,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   No Have Extentions に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_NoHaveExtentions {
+        internal static string LabelExtentionFiles_NoHaveExtentions {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_NoHaveExtentions", resourceCulture);
             }
@@ -351,7 +351,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Ohter Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_OtherFiles {
+        internal static string LabelExtentionFiles_OtherFiles {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_OtherFiles", resourceCulture);
             }
@@ -360,7 +360,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Picture Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_Pictures {
+        internal static string LabelExtentionFiles_Pictures {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_Pictures", resourceCulture);
             }
@@ -369,7 +369,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Registration Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_Registrations {
+        internal static string LabelExtentionFiles_Registrations {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_Registrations", resourceCulture);
             }
@@ -378,7 +378,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Sound Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_Sounds {
+        internal static string LabelExtentionFiles_Sounds {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_Sounds", resourceCulture);
             }
@@ -387,7 +387,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Source Code Files に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelExtentionFiles_SourceCodes {
+        internal static string LabelExtentionFiles_SourceCodes {
             get {
                 return ResourceManager.GetString("LabelExtentionFiles_SourceCodes", resourceCulture);
             }
@@ -396,7 +396,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Computing file hash. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelFileCalcing {
+        internal static string LabelFileCalcing {
             get {
                 return ResourceManager.GetString("LabelFileCalcing", resourceCulture);
             }
@@ -405,7 +405,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Searching for the same file. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelFileMatching {
+        internal static string LabelFileMatching {
             get {
                 return ResourceManager.GetString("LabelFileMatching", resourceCulture);
             }
@@ -414,7 +414,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Finished. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelFinished {
+        internal static string LabelFinished {
             get {
                 return ResourceManager.GetString("LabelFinished", resourceCulture);
             }
@@ -423,7 +423,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Font Size に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelFontSizeString {
+        internal static string LabelFontSizeString {
             get {
                 return ResourceManager.GetString("LabelFontSizeString", resourceCulture);
             }
@@ -432,7 +432,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Font に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelFontString {
+        internal static string LabelFontString {
             get {
                 return ResourceManager.GetString("LabelFontString", resourceCulture);
             }
@@ -441,7 +441,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Number of files whose hashes need to be retrieved : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelHashCalcing_AllHashNeedToGetFilesCount {
+        internal static string LabelHashCalcing_AllHashNeedToGetFilesCount {
             get {
                 return ResourceManager.GetString("LabelHashCalcing_AllHashNeedToGetFilesCount", resourceCulture);
             }
@@ -450,7 +450,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Total number of target files :  に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelHashCalcing_AllTargetFilesCount {
+        internal static string LabelHashCalcing_AllTargetFilesCount {
             get {
                 return ResourceManager.GetString("LabelHashCalcing_AllTargetFilesCount", resourceCulture);
             }
@@ -459,7 +459,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Number of files whose hashes have been retrieved : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelHashCalcing_HashGotFileCount {
+        internal static string LabelHashCalcing_HashGotFileCount {
             get {
                 return ResourceManager.GetString("LabelHashCalcing_HashGotFileCount", resourceCulture);
             }
@@ -468,7 +468,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Hash acquisition status : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelHashCalcing_HashGotPercent {
+        internal static string LabelHashCalcing_HashGotPercent {
             get {
                 return ResourceManager.GetString("LabelHashCalcing_HashGotPercent", resourceCulture);
             }
@@ -477,7 +477,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Number of identical files found : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelHashCalcing_MatchHashCount {
+        internal static string LabelHashCalcing_MatchHashCount {
             get {
                 return ResourceManager.GetString("LabelHashCalcing_MatchHashCount", resourceCulture);
             }
@@ -486,7 +486,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Name of the file being processed: に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelHashCalcing_ProcessingFileName {
+        internal static string LabelHashCalcing_ProcessingFileName {
             get {
                 return ResourceManager.GetString("LabelHashCalcing_ProcessingFileName", resourceCulture);
             }
@@ -495,7 +495,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Regular Expression Search Criteria に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegex_Criteria {
+        internal static string LabelRegex_Criteria {
             get {
                 return ResourceManager.GetString("LabelRegex_Criteria", resourceCulture);
             }
@@ -504,7 +504,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Regular Expression Search Error に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegex_Error {
+        internal static string LabelRegex_Error {
             get {
                 return ResourceManager.GetString("LabelRegex_Error", resourceCulture);
             }
@@ -513,7 +513,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An alternation construct in a regular expression contains a comment. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_AlternationHasComment {
+        internal static string LabelRegexError_AlternationHasComment {
             get {
                 return ResourceManager.GetString("LabelRegexError_AlternationHasComment", resourceCulture);
             }
@@ -522,7 +522,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An alternation in a regular expression has a malformed condition. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_AlternationHasMalformedCondition {
+        internal static string LabelRegexError_AlternationHasMalformedCondition {
             get {
                 return ResourceManager.GetString("LabelRegexError_AlternationHasMalformedCondition", resourceCulture);
             }
@@ -531,7 +531,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An alternation construct in a regular expression contains a malformed reference. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_AlternationHasMalformedReference {
+        internal static string LabelRegexError_AlternationHasMalformedReference {
             get {
                 return ResourceManager.GetString("LabelRegexError_AlternationHasMalformedReference", resourceCulture);
             }
@@ -540,7 +540,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An alternation construct in a regular expression uses a named capture. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_AlternationHasNamedCapture {
+        internal static string LabelRegexError_AlternationHasNamedCapture {
             get {
                 return ResourceManager.GetString("LabelRegexError_AlternationHasNamedCapture", resourceCulture);
             }
@@ -549,7 +549,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An alternation in a regular expression has too many conditions. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_AlternationHasTooManyConditions {
+        internal static string LabelRegexError_AlternationHasTooManyConditions {
             get {
                 return ResourceManager.GetString("LabelRegexError_AlternationHasTooManyConditions", resourceCulture);
             }
@@ -558,7 +558,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An alternation construct in a regular expression contains an undefined reference. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_AlternationHasUndefinedReference {
+        internal static string LabelRegexError_AlternationHasUndefinedReference {
             get {
                 return ResourceManager.GetString("LabelRegexError_AlternationHasUndefinedReference", resourceCulture);
             }
@@ -567,7 +567,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   The group name of a captured group in a regular expression is invalid. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_CaptureGroupNameInvalid {
+        internal static string LabelRegexError_CaptureGroupNameInvalid {
             get {
                 return ResourceManager.GetString("LabelRegexError_CaptureGroupNameInvalid", resourceCulture);
             }
@@ -576,7 +576,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A regular expression defines a numbered subexpression named zero. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_CaptureGroupOfZero {
+        internal static string LabelRegexError_CaptureGroupOfZero {
             get {
                 return ResourceManager.GetString("LabelRegexError_CaptureGroupOfZero", resourceCulture);
             }
@@ -585,7 +585,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A character class in a regular expression with an exclusion group is not the last part of the character class. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_ExclusionGroupNotLast {
+        internal static string LabelRegexError_ExclusionGroupNotLast {
             get {
                 return ResourceManager.GetString("LabelRegexError_ExclusionGroupNotLast", resourceCulture);
             }
@@ -594,7 +594,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A regular expression has a non-escaped left parenthesis, or misses a closing right parenthesis. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_InsufficientClosingParentheses {
+        internal static string LabelRegexError_InsufficientClosingParentheses {
             get {
                 return ResourceManager.GetString("LabelRegexError_InsufficientClosingParentheses", resourceCulture);
             }
@@ -603,7 +603,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A regular expression has a non-escaped right parenthesis, or misses an opening left parenthesis. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_InsufficientOpeningParentheses {
+        internal static string LabelRegexError_InsufficientOpeningParentheses {
             get {
                 return ResourceManager.GetString("LabelRegexError_InsufficientOpeningParentheses", resourceCulture);
             }
@@ -612,7 +612,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A hexadecimal escape sequence in a regular expression does not have enough digits, or contains invalid digits. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_InsufficientOrInvalidHexDigits {
+        internal static string LabelRegexError_InsufficientOrInvalidHexDigits {
             get {
                 return ResourceManager.GetString("LabelRegexError_InsufficientOrInvalidHexDigits", resourceCulture);
             }
@@ -621,7 +621,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A grouping construct in a regular expression is invalid or malformed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_InvalidGroupingConstruct {
+        internal static string LabelRegexError_InvalidGroupingConstruct {
             get {
                 return ResourceManager.GetString("LabelRegexError_InvalidGroupingConstruct", resourceCulture);
             }
@@ -630,7 +630,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A Unicode property escape in a regular expression is invalid or unknown. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_InvalidUnicodePropertyEscape {
+        internal static string LabelRegexError_InvalidUnicodePropertyEscape {
             get {
                 return ResourceManager.GetString("LabelRegexError_InvalidUnicodePropertyEscape", resourceCulture);
             }
@@ -639,7 +639,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A named reference in a regular expression is malformed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_MalformedNamedReference {
+        internal static string LabelRegexError_MalformedNamedReference {
             get {
                 return ResourceManager.GetString("LabelRegexError_MalformedNamedReference", resourceCulture);
             }
@@ -648,7 +648,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A Unicode property escape is malformed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_MalformedUnicodePropertyEscape {
+        internal static string LabelRegexError_MalformedUnicodePropertyEscape {
             get {
                 return ResourceManager.GetString("LabelRegexError_MalformedUnicodePropertyEscape", resourceCulture);
             }
@@ -657,7 +657,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A control character in a regular expression is missing. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_MissingControlCharacter {
+        internal static string LabelRegexError_MissingControlCharacter {
             get {
                 return ResourceManager.GetString("LabelRegexError_MissingControlCharacter", resourceCulture);
             }
@@ -666,7 +666,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Repeated quantifiers on another quantifier inside a regular expression are not grouped in parentheses. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_NestedQuantifiersNotParenthesized {
+        internal static string LabelRegexError_NestedQuantifiersNotParenthesized {
             get {
                 return ResourceManager.GetString("LabelRegexError_NestedQuantifiersNotParenthesized", resourceCulture);
             }
@@ -675,7 +675,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A quantifier in a regular expression is in a position where it cannot quantify anything, like at the beginning of a regular expression or in a group. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_QuantifierAfterNothing {
+        internal static string LabelRegexError_QuantifierAfterNothing {
             get {
                 return ResourceManager.GetString("LabelRegexError_QuantifierAfterNothing", resourceCulture);
             }
@@ -684,7 +684,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A captured group or a quantifier in a regular expression is not within range, that is, it is larger than Int32.MaxValue. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_QuantifierOrCaptureGroupOutOfRange {
+        internal static string LabelRegexError_QuantifierOrCaptureGroupOutOfRange {
             get {
                 return ResourceManager.GetString("LabelRegexError_QuantifierOrCaptureGroupOutOfRange", resourceCulture);
             }
@@ -693,7 +693,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A character class in a regular expression contains an inverse character range, like z-a instead of a-z. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_ReversedCharacterRange {
+        internal static string LabelRegexError_ReversedCharacterRange {
             get {
                 return ResourceManager.GetString("LabelRegexError_ReversedCharacterRange", resourceCulture);
             }
@@ -702,7 +702,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A quantifier range in a regular expression is inverse, like {10,1} instead of {1,10}. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_ReversedQuantifierRange {
+        internal static string LabelRegexError_ReversedQuantifierRange {
             get {
                 return ResourceManager.GetString("LabelRegexError_ReversedQuantifierRange", resourceCulture);
             }
@@ -711,7 +711,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A character-class in a regular expression contains a short-hand class that is not allowed inside a character class. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_ShorthandClassInCharacterRange {
+        internal static string LabelRegexError_ShorthandClassInCharacterRange {
             get {
                 return ResourceManager.GetString("LabelRegexError_ShorthandClassInCharacterRange", resourceCulture);
             }
@@ -720,7 +720,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A used named reference in a regular expression is not defined. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UndefinedNamedReference {
+        internal static string LabelRegexError_UndefinedNamedReference {
             get {
                 return ResourceManager.GetString("LabelRegexError_UndefinedNamedReference", resourceCulture);
             }
@@ -729,7 +729,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A used numbered reference in a regular expression is not defined. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UndefinedNumberedReference {
+        internal static string LabelRegexError_UndefinedNumberedReference {
             get {
                 return ResourceManager.GetString("LabelRegexError_UndefinedNumberedReference", resourceCulture);
             }
@@ -738,7 +738,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A regular expression ends with a non-escaped ending backslash. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UnescapedEndingBackslash {
+        internal static string LabelRegexError_UnescapedEndingBackslash {
             get {
                 return ResourceManager.GetString("LabelRegexError_UnescapedEndingBackslash", resourceCulture);
             }
@@ -747,7 +747,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An unknown regular expression parse error. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_Unknown {
+        internal static string LabelRegexError_Unknown {
             get {
                 return ResourceManager.GetString("LabelRegexError_Unknown", resourceCulture);
             }
@@ -756,7 +756,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A control character in a regular expression is not recognized. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UnrecognizedControlCharacter {
+        internal static string LabelRegexError_UnrecognizedControlCharacter {
             get {
                 return ResourceManager.GetString("LabelRegexError_UnrecognizedControlCharacter", resourceCulture);
             }
@@ -765,7 +765,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   An escape character or sequence in a regular expression is invalid. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UnrecognizedEscape {
+        internal static string LabelRegexError_UnrecognizedEscape {
             get {
                 return ResourceManager.GetString("LabelRegexError_UnrecognizedEscape", resourceCulture);
             }
@@ -774,7 +774,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A unicode property in a regular expression is not recognized, or invalid. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UnrecognizedUnicodeProperty {
+        internal static string LabelRegexError_UnrecognizedUnicodeProperty {
             get {
                 return ResourceManager.GetString("LabelRegexError_UnrecognizedUnicodeProperty", resourceCulture);
             }
@@ -783,7 +783,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A regular expression has a non-escaped left square bracket, or misses a closing right square bracket. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UnterminatedBracket {
+        internal static string LabelRegexError_UnterminatedBracket {
             get {
                 return ResourceManager.GetString("LabelRegexError_UnterminatedBracket", resourceCulture);
             }
@@ -792,7 +792,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   A comment in a regular expression is not terminated. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelRegexError_UnterminatedComment {
+        internal static string LabelRegexError_UnterminatedComment {
             get {
                 return ResourceManager.GetString("LabelRegexError_UnterminatedComment", resourceCulture);
             }
@@ -801,7 +801,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   During internal file writing or other processing of found files. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelSettings {
+        internal static string LabelSettings {
             get {
                 return ResourceManager.GetString("LabelSettings", resourceCulture);
             }
@@ -810,7 +810,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Number of all files to get hash : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelShowTargetInfo_CountAllFilesGetHash {
+        internal static string LabelShowTargetInfo_CountAllFilesGetHash {
             get {
                 return ResourceManager.GetString("LabelShowTargetInfo_CountAllFilesGetHash", resourceCulture);
             }
@@ -819,7 +819,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Number of files for which a hash has already been obtained : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelShowTargetInfo_CountAlreadyGetHash {
+        internal static string LabelShowTargetInfo_CountAlreadyGetHash {
             get {
                 return ResourceManager.GetString("LabelShowTargetInfo_CountAlreadyGetHash", resourceCulture);
             }
@@ -828,7 +828,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Number of files to get hashes from filtered files : に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelShowTargetInfo_CountFilteredGetHash {
+        internal static string LabelShowTargetInfo_CountFilteredGetHash {
             get {
                 return ResourceManager.GetString("LabelShowTargetInfo_CountFilteredGetHash", resourceCulture);
             }
@@ -837,7 +837,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Algorithm for file hash calculation に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelShowTargetInfo_HashAlgorithm {
+        internal static string LabelShowTargetInfo_HashAlgorithm {
             get {
                 return ResourceManager.GetString("LabelShowTargetInfo_HashAlgorithm", resourceCulture);
             }
@@ -846,7 +846,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Wildcard Search Criteria に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildcard_Criteria {
+        internal static string LabelWildcard_Criteria {
             get {
                 return ResourceManager.GetString("LabelWildcard_Criteria", resourceCulture);
             }
@@ -855,7 +855,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Wildcard Error に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildcard_Error {
+        internal static string LabelWildcard_Error {
             get {
                 return ResourceManager.GetString("LabelWildcard_Error", resourceCulture);
             }
@@ -864,7 +864,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Wildcard conditions that have already been registered. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildcardError_AlreadyRegistered {
+        internal static string LabelWildcardError_AlreadyRegistered {
             get {
                 return ResourceManager.GetString("LabelWildcardError_AlreadyRegistered", resourceCulture);
             }
@@ -873,7 +873,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Wildcard search criteria not entered に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildcardError_Empty {
+        internal static string LabelWildcardError_Empty {
             get {
                 return ResourceManager.GetString("LabelWildcardError_Empty", resourceCulture);
             }
@@ -882,7 +882,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Characters not allowed in file names に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildcardError_NotAllowedCharacter {
+        internal static string LabelWildcardError_NotAllowedCharacter {
             get {
                 return ResourceManager.GetString("LabelWildcardError_NotAllowedCharacter", resourceCulture);
             }
@@ -891,7 +891,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Too much use of &apos;*&apos; に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string LabelWildcardError_TooManyAsterisk {
+        internal static string LabelWildcardError_TooManyAsterisk {
             get {
                 return ResourceManager.GetString("LabelWildcardError_TooManyAsterisk", resourceCulture);
             }
@@ -900,7 +900,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Data Modified に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ListViewDataModified {
+        internal static string ListViewDataModified {
             get {
                 return ResourceManager.GetString("ListViewDataModified", resourceCulture);
             }
@@ -909,7 +909,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Name に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ListViewName {
+        internal static string ListViewName {
             get {
                 return ResourceManager.GetString("ListViewName", resourceCulture);
             }
@@ -918,7 +918,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Size に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ListViewSize {
+        internal static string ListViewSize {
             get {
                 return ResourceManager.GetString("ListViewSize", resourceCulture);
             }
@@ -927,7 +927,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Type に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ListViewType {
+        internal static string ListViewType {
             get {
                 return ResourceManager.GetString("ListViewType", resourceCulture);
             }
@@ -936,7 +936,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Debug(_D) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string MenuDebug {
+        internal static string MenuDebug {
             get {
                 return ResourceManager.GetString("MenuDebug", resourceCulture);
             }
@@ -945,7 +945,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Help(_H) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string MenuHelp {
+        internal static string MenuHelp {
             get {
                 return ResourceManager.GetString("MenuHelp", resourceCulture);
             }
@@ -954,7 +954,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Settings(_X) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string MenuSettings {
+        internal static string MenuSettings {
             get {
                 return ResourceManager.GetString("MenuSettings", resourceCulture);
             }
@@ -963,7 +963,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   No Have Extention  に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string NoHaveExtentions {
+        internal static string NoHaveExtentions {
             get {
                 return ResourceManager.GetString("NoHaveExtentions", resourceCulture);
             }
@@ -972,7 +972,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   (Caution) Advanced Settings(_E) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string TabContentExpert {
+        internal static string TabContentExpert {
             get {
                 return ResourceManager.GetString("TabContentExpert", resourceCulture);
             }
@@ -981,7 +981,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Regular Expression Settings(_R) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string TabContentRegularExpression {
+        internal static string TabContentRegularExpression {
             get {
                 return ResourceManager.GetString("TabContentRegularExpression", resourceCulture);
             }
@@ -990,7 +990,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Standard Settings(_N) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string TabContentStarndard {
+        internal static string TabContentStarndard {
             get {
                 return ResourceManager.GetString("TabContentStarndard", resourceCulture);
             }
@@ -999,7 +999,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Wildcard Settings(_W) に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string TabContentWildCard {
+        internal static string TabContentWildCard {
             get {
                 return ResourceManager.GetString("TabContentWildCard", resourceCulture);
             }
@@ -1008,7 +1008,7 @@ namespace FileHashCraft.Properties {
         /// <summary>
         ///   Wildcard Filter Result に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string TitleTargetFilterWindow {
+        internal static string TitleTargetFilterWindow {
             get {
                 return ResourceManager.GetString("TitleTargetFilterWindow", resourceCulture);
             }

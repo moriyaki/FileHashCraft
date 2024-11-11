@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:rs="clr-namespace:FileHashCraft.Services"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ExplorerPage">
@@ -26,12 +25,8 @@
 
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0">
-            <MenuItem Command="{Binding SettingsOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
-            <MenuItem Command="{Binding DebugOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
-            <MenuItem Command="{Binding HelpOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
+            <MenuItem Command="{Binding SettingsOpen}" Header="{Binding MenuSettings}" />
+            <MenuItem Command="{Binding HelpOpen}" Header="{Binding MenuHelp}" />
         </Menu>
 
         <!-- CUrrent Directory -->
@@ -41,18 +36,13 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Content="↑" Grid.Column="0" Margin="3"
-                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                    Command="{Binding ToUpDirectory}" />
-            <Label Grid.Column="1"
-                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCurrentDirectory, Mode=OneWay}" />
-            <TextBox
-                   Grid.Column="2"
-                   Margin="3"
-                   Name="CurrentDir"
-                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                   Text="{Binding CurrentFullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="↑" Grid.Column="0" Margin="3" Command="{Binding ToUpDirectory}"
+                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
+            <Label Grid.Column="1" Content="{Binding LabelCurrentDirectory}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
+            <TextBox Grid.Column="2" Margin="3"
+                   Name="CurrentDir" Text="{Binding CurrentFullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
         </Grid>
 
         <!-- Command and Buttons -->
@@ -64,22 +54,15 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0"
+            <Label Grid.Column="0" Content="{Binding LabelCommand}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
+            <TextBox Grid.Column="1" Margin="3" Name="UserCommand"
                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                   Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelCommand, Mode=OneWay}" />
-            <TextBox Grid.Column="1"
-                   Margin="3"
-                   Name="UserCommand"
-                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                   Text="{Binding CommandText, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Column="2"
-                    Margin="3"
+                   Text="{Binding CommandText, Mode=OneWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Grid.Column="2" Margin="3" Content="{Binding ButtonExecuteCommand}"
+                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"/>
+            <Button Grid.Column="3" Margin="3" Content="{Binding ButtonHashManagement}"
                     FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonExecuteCommand, Mode=OneWay}" />
-            <Button Grid.Column="3"
-                    Margin="3"
-                    FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashManagement, Mode=OneWay}"
                     Command="{Binding HashCalc}" />
         </Grid>
 
@@ -93,11 +76,9 @@
 
             <local:DirectoryTreeControl x:Name="ExplorerTreeView" Grid.Column="0" />
 
-            <GridSplitter
-			    Grid.Column="1"
-			    Width="3"
-			    HorizontalAlignment="Stretch"
-                DragDelta="GridSplitter_DragDelta" />
+            <GridSplitter Grid.Column="1" Width="3"
+                          HorizontalAlignment="Stretch"
+                          DragDelta="GridSplitter_DragDelta" />
 
             <ListView Name="FileItemsList" Grid.Column="2"
                       ItemsSource="{Binding ListItems, Mode=OneWay}"
@@ -108,10 +89,7 @@
                       FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn
-                            x:Name="FileName"
-						    Width="180"
-						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewName, Mode=OneWay}">
+                        <GridViewColumn x:Name="FileName" Width="180" Header="{Binding ListViewName}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -124,10 +102,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn
-						    x:Name="UpdateDate"
-						    Width="150"
-                            Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewDataModified, Mode=OneWay}">
+                        <GridViewColumn x:Name="UpdateDate" Width="150" Header="{Binding ListViewDataModified}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding LastFileUpdate, Mode=OneWay}"
@@ -136,10 +111,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn
-						    x:Name="FileType"
-						    Width="150"
-						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewType, Mode=OneWay}">
+                        <GridViewColumn x:Name="FileType" Width="150" Header="{Binding ListViewType}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding FileType, Mode=OneWay}"
@@ -148,10 +120,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn
-						    x:Name="FileSize"
-                            Width="200"
-						    Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ListViewSize, Mode=OneWay}">
+                        <GridViewColumn x:Name="FileSize" Width="200" Header="{Binding ListViewSize}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding FormattedFileSize, Mode=OneWay}"

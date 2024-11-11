@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:FileHashCraft.Views"
-             xmlns:rs="clr-namespace:FileHashCraft.Services"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -18,9 +17,8 @@
         <!-- 読み取り専用ファイルを対象とするか -->
         <StackPanel Grid.Row="0" x:Name="ReadOnlyFiles" Orientation="Horizontal">
             <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsReadOnlyFileInclude}" />
-            <Label VerticalAlignment="Center"
-                                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                  Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ReadOnlyFiles, Mode=OneWay}">
+            <Label VerticalAlignment="Center" Content="{Binding LabelExpert_ReadOnlyFiles}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <Label.InputBindings>
                     <MouseBinding Command="{Binding IsReadOnlyFileIncludeClicked}" MouseAction="LeftClick" />
                 </Label.InputBindings>
@@ -30,9 +28,8 @@
         <!-- 隠しファイルを対象とするか -->
         <StackPanel Grid.Row="1" x:Name="HiddenFiles" Orientation="Horizontal">
             <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHiddenFileInclude}" />
-            <Label VerticalAlignment="Center"
-                                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                  Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_HiddenFiles, Mode=OneWay}">
+            <Label VerticalAlignment="Center" Content="{Binding LabelExpert_HiddenFiles}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <Label.InputBindings>
                     <MouseBinding Command="{Binding IsHiddenFileIncludeClicked}" MouseAction="LeftClick" />
                 </Label.InputBindings>
@@ -42,9 +39,8 @@
         <!-- 0サイズのファイルを削除するか -->
         <StackPanel Grid.Row="2" x:Name="ZeroFile" Orientation="Horizontal">
             <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsZeroSizeFileDelete}" />
-            <Label VerticalAlignment="Center"
-                                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                  Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_ZeroSizeFileDelete, Mode=OneWay}">
+            <Label VerticalAlignment="Center" Content="{Binding LabelExpert_ZeroSizeFileDelete}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <Label.InputBindings>
                     <MouseBinding Command="{Binding IsZeroSizeFIleDeleteClicked}" MouseAction="LeftClick" />
                 </Label.InputBindings>
@@ -54,9 +50,8 @@
         <!-- からのディレクトリを削除するか -->
         <StackPanel Grid.Row="3" x:Name="EmptyDirecotry" Orientation="Horizontal">
             <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEmptyDirectoryDelete}" />
-            <Label VerticalAlignment="Center"
-                                  FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                                  Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelExpert_EmptyDirDelete, Mode=OneWay}">
+            <Label VerticalAlignment="Center" Content="{Binding LabelExpert_EmptyDirDelete}"
+                   FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <Label.InputBindings>
                     <MouseBinding Command="{Binding IsEmptyDirectoryDeleteClicked}" MouseAction="LeftClick" />
                 </Label.InputBindings>

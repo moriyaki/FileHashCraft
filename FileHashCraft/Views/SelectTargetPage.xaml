@@ -5,7 +5,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:rs="clr-namespace:FileHashCraft.Services"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="1000"
       Title="PageTargetFileSetting">
@@ -32,12 +31,8 @@
 
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="7">
-            <MenuItem Command="{Binding SettingsOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
-            <MenuItem Command="{Binding DebugOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
-            <MenuItem Command="{Binding HelpOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
+            <MenuItem Command="{Binding SettingsOpen}" Header="{Binding MenuSettings}" />
+            <MenuItem Command="{Binding HelpOpen}" Header="{Binding MenuHelp}" />
         </Menu>
         <!-- TreeView -->
         <local:DirectoryTreeControl x:Name="HashTargetTreeView"
@@ -100,7 +95,7 @@
             <!-- Hash Algorithm Select -->
             <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"
                     FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                    Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_HashAlgorithm, Mode=OneWay}" />
+                    Content="{Binding LabelShowTargetInfo_HashAlgorithm}" />
 
             <ComboBox x:Name="HashAlgorithmsComboBox" Grid.Row="1" Grid.Column="1" Margin="3"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -112,7 +107,7 @@
             <!-- 総ファイル数 -->
             <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_CountAllFilesGetHash, Mode=OneWay}" />
+                        Content="{Binding LabelShowTargetInfo_CountAllFilesGetHash}" />
 
             <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -121,7 +116,7 @@
             <!-- フィルタ済みのハッシュ取得が必要なファイル数 -->
             <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.LabelShowTargetInfo_CountFilteredGetHash, Mode=OneWay}" />
+                        Content="{Binding LabelShowTargetInfo_CountFilteredGetHash}" />
 
             <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
@@ -129,19 +124,19 @@
         </Grid>
 
         <TabControl  Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="3" Margin="3">
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentStarndard, Mode=OneWay}"
+            <TabItem Header="{Binding TabContentStarndard}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <local:SetExtentionUserControl />
             </TabItem>
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentWildCard, Mode=OneWay}"
+            <TabItem Header="{Binding TabContentWildCard}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <local:SetWildcardUserControl />
             </TabItem>
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentRegularExpression, Mode=OneWay}"
+            <TabItem Header="{Binding TabContentRegularExpression}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <local:SetRegexUserControl />
             </TabItem>
-            <TabItem Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.TabContentExpert, Mode=OneWay}"
+            <TabItem Header="{Binding TabContentExpert}"
                      FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}">
                 <local:SetExpertUserControl />
             </TabItem>
@@ -150,11 +145,9 @@
         <!-- Buttons -->
         <Button Grid.Row="3" Grid.Column="5" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
-                Command="{Binding ToExplorerPage}" />
+                Content="{Binding ButtonCancel}" Command="{Binding ToExplorerPage}" />
         <Button Grid.Row="3" Grid.Column="6" Margin="3"
                 FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonHashCalc, Mode=OneWay}"
-                Command="{Binding ToHashCalcingPage}" />
+                Content="{Binding ButtonHashCalc}" Command="{Binding ToHashCalcingPage}" />
     </Grid>
 </Page>

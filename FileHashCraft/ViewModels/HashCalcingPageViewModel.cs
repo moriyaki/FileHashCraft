@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
 using FileHashCraft.Models.HashCalc;
-using FileHashCraft.Properties;
+using FileHashCraft.Resources;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -41,6 +41,72 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
         #region バインディング
 
         /// <summary>
+        /// メニュー「設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string MenuSettings { get => ResourceService.GetString("MenuSettings"); }
+
+        /// <summary>
+        /// メニュー「ヘルプ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string MenuHelp { get => ResourceService.GetString("MenuHelp"); }
+
+        /// <summary>
+        /// ラベル「Hash Algorithm」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelShowTargetInfo_HashAlgorithm { get => ResourceService.GetString("LabelShowTargetInfo_HashAlgorithm"); }
+
+        /// <summary>
+        /// ラベル「All HashGet Files Count」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelHashCalcing_AllTargetFilesCount { get => ResourceService.GetString("LabelShowTargetInfo_HashAlgorithm"); }
+
+        /// <summary>
+        /// ラベル「All Hash Need ToGet Files Count」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelHashCalcing_AllHashNeedToGetFilesCount { get => ResourceService.GetString("LabelHashCalcing_AllHashNeedToGetFilesCount"); }
+
+        /// <summary>
+        /// ラベル「Hash Got Files Count」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelHashCalcing_HashGotFileCount { get => ResourceService.GetString("LabelHashCalcing_HashGotFileCount"); }
+
+        /// <summary>
+        /// ラベル「Match Hash Count」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelHashCalcing_HashGotPercent { get => ResourceService.GetString("LabelHashCalcing_HashGotPercent"); }
+
+        /// <summary>
+        /// ラベル「Duplicate Hash Count」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelHashCalcing_MatchHashCount { get => ResourceService.GetString("LabelHashCalcing_MatchHashCount"); }
+
+        /// <summary>
+        /// ラベル「Match Hash Count」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelHashCalcing_ProcessingFileName { get => ResourceService.GetString("LabelHashCalcing_ProcessingFileName"); }
+
+        /// <summary>
+        /// ラベル「キャンセル」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string ButtonCancel { get => ResourceService.GetString("ButtonCancel"); }
+
+        /// <summary>
+        /// ラベル「Delete duplicate files」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string ButtonDupDelete { get => ResourceService.GetString("ButtonDupDelete"); }
+
+        /// <summary>
         /// ファイルハッシュ計算の進行状況
         /// </summary>
         private FileHashCalcStatus _Status = FileHashCalcStatus.None;
@@ -59,17 +125,17 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
 
                     case FileHashCalcStatus.FileCalcing:
                         StatusColor = Brushes.Pink;
-                        StatusMessage = $"{Resources.LabelFileCalcing}";
+                        StatusMessage = ResourceService.GetString("LabelFileCalcing");
                         break;
 
                     case FileHashCalcStatus.FileMatching:
                         StatusColor = Brushes.Yellow;
-                        StatusMessage = $"{Resources.LabelFileMatching}";
+                        StatusMessage = ResourceService.GetString("LabelFileMatching");
                         break;
 
                     case FileHashCalcStatus.Finished:
                         StatusColor = Brushes.LightGreen;
-                        StatusMessage = Resources.LabelFinished;
+                        StatusMessage = ResourceService.GetString("LabelFinished");
                         break;
 
                     default:

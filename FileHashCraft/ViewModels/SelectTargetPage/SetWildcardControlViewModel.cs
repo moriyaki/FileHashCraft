@@ -4,7 +4,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models.FileScan;
-using FileHashCraft.Properties;
+using FileHashCraft.Resources;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -69,6 +69,35 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         #region バインディング
 
         /// <summary>
+        /// ボタン「変更」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonModify { get => ResourceService.GetString("ButtonModify"); }
+
+        /// <summary>
+        /// ボタン「削除」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonRemove { get => ResourceService.GetString("ButtonRemove"); }
+
+        /// <summary>
+        /// ボタン「追加」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonAdd { get => ResourceService.GetString("ButtonAdd"); }
+        /// <summary>
+        /// ボタン「ワイルドカードでの検索条件」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelWildcard_Criteria { get => ResourceService.GetString("LabelWildcard_Criteria"); }
+
+        /// <summary>
+        /// ボタン「ワイルドカードのエラー」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelWildcard_Error { get => ResourceService.GetString("LabelWildcard_Error"); }
+
+        /// <summary>
         /// 検索条件入力のステータス
         /// </summary>
         private WildcardSearchErrorStatus _SearchErrorStatus = WildcardSearchErrorStatus.None;
@@ -88,22 +117,22 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
 
                     case WildcardSearchErrorStatus.Empty:
                         SearchErrorBackground = Brushes.Red;
-                        SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_Empty}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelWildcardError_Empty")}";
                         break;
 
                     case WildcardSearchErrorStatus.AlreadyRegistered:
                         SearchErrorBackground = Brushes.Red;
-                        SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_AlreadyRegistered}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelWildcardError_AlreadyRegistered")}";
                         break;
 
                     case WildcardSearchErrorStatus.TooManyAsterisk:
                         SearchErrorBackground = Brushes.Red;
-                        SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_TooManyAsterisk}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelWildcardError_TooManyAsterisk")}";
                         break;
 
                     case WildcardSearchErrorStatus.NotAllowedCharacter:
                         SearchErrorBackground = Brushes.Red;
-                        SearchCriteriaErrorOutput = $"{Resources.LabelWildcardError_NotAllowedCharacter}";
+                        SearchCriteriaErrorOutput = $"{ResourceService.GetString("LabelWildcardError_NotAllowedCharacter}")}";
                         break;
                 }
             }

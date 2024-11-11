@@ -64,6 +64,66 @@ namespace FileHashCraft.ViewModels.ExplorerPage
         public ObservableCollection<ExplorerListItemViewModel> ListItems { get; set; } = [];
 
         /// <summary>
+        /// メニュー「設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string MenuSettings { get => ResourceService.GetString("MenuSettings"); }
+
+        /// <summary>
+        /// メニュー「ヘルプ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string MenuHelp { get => ResourceService.GetString("MenuHelp"); }
+
+        /// <summary>
+        /// ラベル「カレントディレクトリ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelCurrentDirectory { get => ResourceService.GetString("LabelCurrentDirectory"); }
+
+        /// <summary>
+        /// ラベル「コマンド」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string LabelCommand { get => ResourceService.GetString("LabelCommand"); }
+
+        /// <summary>
+        /// ボタン「実効」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonExecuteCommand { get => ResourceService.GetString("ButtonExecuteCommand"); }
+
+        /// <summary>
+        /// ボタン「ハッシュ管理」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ButtonHashManagement { get => ResourceService.GetString("ButtonHashManagement"); }
+
+        /// <summary>
+        /// リストビューラベル「ファイル名」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ListViewName { get => ResourceService.GetString("ListViewName"); }
+
+        /// <summary>
+        /// リストビューラベル「最終更新日」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ListViewDataModified { get => ResourceService.GetString("ListViewDataModified"); }
+
+        /// <summary>
+        /// リストビューラベル「ファイル種類」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ListViewType { get => ResourceService.GetString("ListViewType"); }
+
+        /// <summary>
+        /// リストビューラベル「ファイルサイズ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")] 
+        public string ListViewSize { get => ResourceService.GetString("ListViewSize"); }
+
+        /// <summary>
         /// 選択されているリストビューのアイテム
         /// </summary>
         [ObservableProperty]
