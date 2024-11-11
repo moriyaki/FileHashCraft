@@ -168,6 +168,11 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
         /// </summary>
         public override void AddCriteria()
         {
+            if (SearchCriteriaText.EndsWith('.'))
+            {
+                // ワイルドカード末尾の'.'を除去する
+                SearchCriteriaText = SearchCriteriaText[..^1];
+            }
             var newWildcard = new WildcardCriteriaItemViewModel(_Messanger, _SettingsService)
             {
                 Criteria = SearchCriteriaText,

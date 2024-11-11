@@ -100,33 +100,44 @@ namespace FileHashCraft.Models.FileScan
         }
 
         /// <summary>
+        /// ワイルドカード文字列を正規表現文字列に変換します。
+        /// </summary>
+        /// <param name="pattern">ワイルドカード文字列</param>
+        /// <returns>正規表現文字列</returns>
+        private static string WildcardToRegex(string pattern)
+        {
+            return Regex.Escape(pattern).Replace("\\*", ".*").Replace("\\?", ".") ?? string.Empty;
+        }
+
+        /// <summary>
         /// ワイルドカードを含むファイル名をRegex型に変換します。
         /// </summary>
-        /// <param name="WildcardPattern">ワイルドカードを含むファイル名</param>
+        /// <param name="wildcardPattern">ワイルドカードを含むファイル名</param>
         /// <returns>Regex型</returns>
-        public static Regex WildcardToRegexPattern(string WildcardPattern)
+        public static Regex WildcardToRegexPattern(string wildcardPattern)
         {
-            if (!WildcardPattern.Contains('.'))
+            if (!wildcardPattern.Contains('.'))
             {
                 // ワイルドカードに拡張子がない時の処理
-                var filePattern = Regex.Escape(WildcardPattern).Replace("\\*", ".*").Replace("\\?", ".");
-                return new Regex("^" + filePattern + "$", RegexOptions.IgnoreCase);
+                var filePattern = WildcardToRegex(wildcardPattern);
+                return new Regex($"^{filePattern}$", RegexOptions.IgnoreCase);
             }
 
             // ワイルドカードに拡張子がある時の処理
-            var fileName = Path.GetFileNameWithoutExtension(WildcardPattern);
-            var fileNamePattern = Regex.Escape(fileName).Replace("\\*", ".*").Replace("\\?", ".");
+            var fileName = Path.GetFileNameWithoutExtension(wildcardPattern);
+            var fileNamePattern = WildcardToRegex(fileName);
 
-            var fileExtention = Path.GetExtension(WildcardPattern);
+            var fileExtention = Path.GetExtension(wildcardPattern);
             if (fileExtention == ".*")
             {
                 // 拡張子全ての時、例えば"file"と"file.txt"の両方をヒットさせる
-                return new Regex("^" + fileNamePattern + "(?:\\..+)?$", RegexOptions.IgnoreCase);
+                return new Regex($"^{fileNamePattern}(?:\\..+)?$", RegexOptions.IgnoreCase);
             }
             else
             {
-                var extensionPattern = Regex.Escape(fileExtention).Replace("\\*", ".*").Replace("\\?", ".");
-                return new Regex("^" + fileNamePattern + extensionPattern + "$", RegexOptions.IgnoreCase);
+                // 拡張子を正規表現文字列に変換し、ファイル名と連結する
+                var extensionPattern = WildcardToRegex(fileExtention);
+                return new Regex($"^{fileNamePattern}{extensionPattern}$", RegexOptions.IgnoreCase);
             }
         }
 

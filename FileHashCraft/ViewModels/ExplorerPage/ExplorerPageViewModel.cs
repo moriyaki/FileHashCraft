@@ -320,6 +320,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
                 _ControDirectoryTreeViewlViewModel.AddRoot(rootInfo, true);
             }
             _DirectoryTreeManager.CheckStatusChangeFromCheckManager(_ControDirectoryTreeViewlViewModel.TreeRoot);
+            /*
             //--------------------- 開発用自動化処理
             foreach (var root in _ControDirectoryTreeViewlViewModel.TreeRoot)
             {
@@ -358,6 +359,7 @@ namespace FileHashCraft.ViewModels.ExplorerPage
             _DirectoryTreeManager.CreateCheckBoxManager(_ControDirectoryTreeViewlViewModel.TreeRoot);
             _FileSystemServices.NavigateToSelectTargetPage();
             //--------------------- 開発用自動化処理ここまで
+            */
         }
 
         #endregion コンストラクタと初期処理

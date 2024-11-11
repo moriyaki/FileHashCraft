@@ -663,8 +663,10 @@ namespace FileHashCraft.ViewModels.SelectTargetPage
             // スキャン終了の表示に切り替える
             ChangeHashScanStatus(FileScanStatus.Finished);
 
+            /*
             //--------------------- 開発用自動化処理
             App.Current?.Dispatcher.InvokeAsync(() => ToHashCalcingPage.Execute(this));
+            */
         }
 
         #endregion メイン処理

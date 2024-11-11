@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using FileHashCraft.Models.FileScan;
 
 namespace FileHashCraft.Tests
@@ -8,8 +9,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameAsteriskTest()
         {
-            var wildcardPattern = "craft*.txt";
-            var expectedPattern = "^craft.*\\.txt$";
+            const string wildcardPattern = "craft*.txt";
+            const string expectedPattern = "^craft.*\\.txt$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -19,8 +20,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileExtentionAsteriskTest()
         {
-            var wildcardPattern = "file.*";
-            var expectedPattern = "^file(?:\\..+)?$";
+            const string wildcardPattern = "file.*";
+            const string expectedPattern = "^file(?:\\..+)?$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -30,8 +31,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameQuestionTest()
         {
-            var wildcardPattern = "file?.log";
-            var expectedPattern = "^file.\\.log$";
+            const string wildcardPattern = "file?.log";
+            const string expectedPattern = "^file.\\.log$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -41,8 +42,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameAllAsteriskTest()
         {
-            var wildcardPattern = "*.log";
-            var expectedPattern = "^.*\\.log$";
+            const string wildcardPattern = "*.log";
+            const string expectedPattern = "^.*\\.log$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -52,8 +53,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameNoWildcardTest()
         {
-            var wildcardPattern = "file";
-            var expectedPattern = "^file$";
+            const string wildcardPattern = "file";
+            const string expectedPattern = "^file$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -63,8 +64,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameBracketsEscapeTest()
         {
-            var wildcardPattern = "file[1].txt";
-            var expectedPattern = "^file\\[1]\\.txt$";
+            const string wildcardPattern = "file[1].txt";
+            const string expectedPattern = "^file\\[1]\\.txt$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -74,8 +75,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameParenthesesEscapeTest()
         {
-            var wildcardPattern = "file(1).txt";
-            var expectedPattern = "^file\\(1\\)\\.txt$";
+            const string wildcardPattern = "file(1).txt";
+            const string expectedPattern = "^file\\(1\\)\\.txt$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -85,20 +86,19 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameCurlyBracesEscapeTest()
         {
-            var wildcardPattern = "file{1}.txt";
-            var expectedPattern = "^file\\{1}\\.txt$";
+            const string wildcardPattern = "file{1}.txt";
+            const string expectedPattern = "^file\\{1}\\.txt$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
             Assert.Equal(expectedPattern, result.ToString());
         }
 
-
         [Fact]
         public void FileNamePlusEscapeTest()
         {
-            var wildcardPattern = "file+.log";
-            var expectedPattern = "^file\\+\\.log$";
+            const string wildcardPattern = "file+.log";
+            const string expectedPattern = "^file\\+\\.log$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result
@@ -108,8 +108,8 @@ namespace FileHashCraft.Tests
         [Fact]
         public void FileNameStartEndEscapeTest()
         {
-            var wildcardPattern = "file^$.log";
-            var expectedPattern = "^file\\^\\$\\.log$";
+            const string wildcardPattern = "file^$.log";
+            const string expectedPattern = "^file\\^\\$\\.log$";
             // Act
             var result = ScannedFilesManager.WildcardToRegexPattern(wildcardPattern);
             // Result

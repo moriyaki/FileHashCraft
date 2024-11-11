@@ -30,6 +30,12 @@
 
         public FileSearchCriteria(FileSearchOption searchOption, string searchPattern)
         {
+            // ワイルドカードかつ末尾 '.' の場合、条件から '.' を取り除く
+            if (searchOption == FileSearchOption.Wildcard && searchPattern.EndsWith('.'))
+            {
+                searchPattern = searchPattern[..^1];
+            }
+
             SearchOption = searchOption;
             SearchPattern = searchPattern ?? string.Empty;
         }

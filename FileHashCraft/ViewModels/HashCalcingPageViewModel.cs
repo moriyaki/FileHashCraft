@@ -297,24 +297,27 @@ namespace FileHashCraft.ViewModels.HashCalcingPage
             App.Current?.Dispatcher?.Invoke(() => Status = FileHashCalcStatus.FileMatching);
 
             // 同一ファイルの抽出と格納
-            var sameFiles = dupFileCandidate.Values
+            var duplicateFiles = dupFileCandidate.Values
                 .SelectMany(hashSet => hashSet)
+                .Where(file => !string.IsNullOrEmpty(file.FileHash))
                 .GroupBy(file => new { file.FileSize, file.FileHash })
                 .Where(g => g.Count() > 1)
                 .SelectMany(g => g)
                 .ToHashSet();
 
-            _DuplicateFilesManager.AddDuplicateFiles(sameFiles);
+            _DuplicateFilesManager.AddDuplicateFiles(duplicateFiles);
 
             // 
             App.Current?.Dispatcher?.Invoke(() =>
             {
                 Status = FileHashCalcStatus.Finished;
-                MatchHashCount = sameFiles.Count;
+                MatchHashCount = duplicateFiles.Count;
                 ToDupDeletePage.NotifyCanExecuteChanged();
+                /*
                 // 自動化処理--------------------------------------------------
                 _FileSystemServices.NavigateToDuplicateSelectPage();
                 //-------------------------------------------------------------
+                */
             });
         }
 
