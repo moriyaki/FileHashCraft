@@ -9,7 +9,7 @@ using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FileHashCraft.Models;
-using FileHashCraft.Properties;
+using FileHashCraft.Resources;
 using FileHashCraft.Services;
 using FileHashCraft.Services.Messages;
 
@@ -26,12 +26,66 @@ namespace FileHashCraft.ViewModels
         #region バインディング
 
         /// <summary>
+        /// ボタン「終了」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string Exit { get => ResourceService.GetString("Exit"); }
+
+        /// <summary>
+        /// ラベル「フォント」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelFontString { get => ResourceService.GetString("LabelFontString"); }
+
+        /// <summary>
+        /// ラベル「フォントサイズ」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelFontSizeString { get => ResourceService.GetString("LabelFontSizeString"); }
+
+        /// <summary>
+        /// ラベル「読み取り専用ファイルを削除するか」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelExpert_ReadOnlyFiles { get => ResourceService.GetString("LabelExpert_ReadOnlyFiles"); }
+
+        /// <summary>
+        /// ラベル「隠しファイルを削除するか」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelExpert_HiddenFiles { get => ResourceService.GetString("LabelExpert_HiddenFiles"); }
+
+        /// <summary>
+        /// ラベル「0サイズファイル削除」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelExpert_ZeroSizeFileDelete { get => ResourceService.GetString("LabelExpert_ZeroSizeFileDelete"); }
+
+        /// <summary>
+        /// ラベル「空ディレクトリ削除」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelExpert_EmptyDirDelete { get => ResourceService.GetString("LabelExpert_EmptyDirDelete"); }
+
+        /// <summary>
+        /// ラベル「上級者向け設定」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelExpert { get => ResourceService.GetString("LabelExpert"); }
+
+        /// <summary>
+        /// ラベル「Hash Algorithm」表示の取得
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static")]
+        public string LabelShowTargetInfo_HashAlgorithm { get => ResourceService.GetString("LabelShowTargetInfo_HashAlgorithm"); }
+
+        /// <summary>
         ///  選択できる言語
         /// </summary>
         public ObservableCollection<Language> Languages { get; } =
         [
-            new Language("en-US", "English"),
-            new Language("ja-JP", "日本語"),
+            new Language("en", "English"),
+            new Language("ja", "Japanese"),
         ];
 
         /// <summary>
@@ -50,13 +104,24 @@ namespace FileHashCraft.ViewModels
                 HashAlgorithms.Clear();
                 HashAlgorithms =
                 [
-                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), ResourceService.GetString("HashAlgorithm_SHA256")),
+                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), ResourceService.GetString("HashAlgorithm_SHA384")),
+                    new(_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), ResourceService.GetString("HashAlgorithm_SHA512")),
                 ];
+                ResourceService.ChangeCulture(value);
                 OnPropertyChanged(nameof(HashAlgorithms));
                 SelectedHashAlgorithm = currentHashAlgorithms;
                 OnPropertyChanged(nameof(SelectedHashAlgorithm));
+
+                OnPropertyChanged(nameof(Exit));
+                OnPropertyChanged(nameof(LabelFontString));
+                OnPropertyChanged(nameof(LabelFontSizeString));
+                OnPropertyChanged(nameof(LabelExpert_ReadOnlyFiles));
+                OnPropertyChanged(nameof(LabelExpert_HiddenFiles));
+                OnPropertyChanged(nameof(LabelExpert_ZeroSizeFileDelete));
+                OnPropertyChanged(nameof(LabelExpert_EmptyDirDelete));
+                OnPropertyChanged(nameof(LabelExpert));
+                OnPropertyChanged(nameof(LabelShowTargetInfo_HashAlgorithm));
             }
         }
 
@@ -199,9 +264,9 @@ namespace FileHashCraft.ViewModels
 
             HashAlgorithms =
             [
-                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), Resources.HashAlgorithm_SHA256),
-                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), Resources.HashAlgorithm_SHA384),
-                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), Resources.HashAlgorithm_SHA512),
+                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA256), ResourceService.GetString("HashAlgorithm_SHA256")),
+                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA384), ResourceService.GetString("HashAlgorithm_SHA384")),
+                new (_HashAlgorithmHelper.GetAlgorithmName(FileHashAlgorithm.SHA512), ResourceService.GetString("HashAlgorithm_SHA512")),
             ];
 
             // フォントの一覧取得とバインド

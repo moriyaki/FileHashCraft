@@ -125,6 +125,12 @@
     <value>キャンセル</value>
     <comment>Button/SelectTargetPage</comment>
   </data>
+  <data name="ButtonDelete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="ButtonDupDelete" xml:space="preserve">
+    <value>重複ファイル削除</value>
+  </data>
   <data name="ButtonExecuteCommand" xml:space="preserve">
     <value>コマンド実行</value>
     <comment>Button/ExplorerPage</comment>
@@ -209,6 +215,14 @@
     <value>0サイズのファイルを削除するかどうか</value>
     <comment>Label/SettingsPage/SelectTargetPageExpert</comment>
   </data>
+  <data name="LabelExtention_FilterSetting" xml:space="preserve">
+    <value>拡張子によるファイル種別の指定</value>
+    <comment>Label/SelectTargetPage</comment>
+  </data>
+  <data name="LabelExtention_GroupFilterSetting" xml:space="preserve">
+    <value>ファイル種類によるファイルの指定</value>
+    <comment>Label/SelectTargetPage</comment>
+  </data>
   <data name="LabelExtentionFiles_Applications" xml:space="preserve">
     <value>アプリケーションファイル</value>
     <comment>Label/ExtentionHelper</comment>
@@ -248,14 +262,6 @@
   <data name="LabelExtentionFiles_SourceCodes" xml:space="preserve">
     <value>ソースコードファイル</value>
     <comment>Label/ExtentionHelper</comment>
-  </data>
-  <data name="LabelExtention_FilterSetting" xml:space="preserve">
-    <value>拡張子によるファイル種別の指定</value>
-    <comment>Label/SelectTargetPage</comment>
-  </data>
-  <data name="LabelExtention_GroupFilterSetting" xml:space="preserve">
-    <value>ファイル種類によるファイルの指定</value>
-    <comment>Label/SelectTargetPage</comment>
   </data>
   <data name="LabelFileCalcing" xml:space="preserve">
     <value>ファイルハッシュの計算中です</value>
@@ -300,6 +306,14 @@
   <data name="LabelHashCalcing_ProcessingFileName" xml:space="preserve">
     <value>処理中のファイル名：</value>
     <comment>Label/HashCalcingPage</comment>
+  </data>
+  <data name="LabelRegex_Criteria" xml:space="preserve">
+    <value>正規表現での検索条件</value>
+    <comment>Label/SelectTargetPageRegEx</comment>
+  </data>
+  <data name="LabelRegex_Error" xml:space="preserve">
+    <value>正規表現のエラー</value>
+    <comment>Label/SelectTargetPageRegEx</comment>
   </data>
   <data name="LabelRegexError_AlternationHasComment" xml:space="preserve">
     <value>正規表現の交替構文にはコメントが含まれます。</value>
@@ -429,14 +443,6 @@
     <value>正規表現中のコメントは終了しません。</value>
     <comment>Label/SetRegexUserControl</comment>
   </data>
-  <data name="LabelRegex_Criteria" xml:space="preserve">
-    <value>正規表現での検索条件</value>
-    <comment>Label/SelectTargetPageRegEx</comment>
-  </data>
-  <data name="LabelRegex_Error" xml:space="preserve">
-    <value>正規表現のエラー</value>
-    <comment>Label/SelectTargetPageRegEx</comment>
-  </data>
   <data name="LabelSettings" xml:space="preserve">
     <value>見つかったファイルの内部ファイル書き込み等の処理中</value>
     <comment>Label/SettingsPage/SelectTargetPage</comment>
@@ -457,6 +463,14 @@
     <value>ファイルハッシュ計算のアルゴリズム</value>
     <comment>Label/ShowTargetInfoUserControl</comment>
   </data>
+  <data name="LabelWildcard_Criteria" xml:space="preserve">
+    <value>ワイルドカードでの検索条件</value>
+    <comment>Label/SetWildcardUserControl</comment>
+  </data>
+  <data name="LabelWildcard_Error" xml:space="preserve">
+    <value>ワイルドカードのエラー</value>
+    <comment>Label/SetWildcardUserControl</comment>
+  </data>
   <data name="LabelWildcardError_AlreadyRegistered" xml:space="preserve">
     <value>既に登録されているワイルドカード条件です。</value>
     <comment>Label/SetWildcardUserControl</comment>
@@ -472,14 +486,6 @@
   <data name="LabelWildcardError_TooManyAsterisk" xml:space="preserve">
     <value>'*'の利用が多すぎます</value>
     <comment>Label/SelectTargetPageWildcard</comment>
-  </data>
-  <data name="LabelWildcard_Criteria" xml:space="preserve">
-    <value>ワイルドカードでの検索条件</value>
-    <comment>Label/SetWildcardUserControl</comment>
-  </data>
-  <data name="LabelWildcard_Error" xml:space="preserve">
-    <value>ワイルドカードのエラー</value>
-    <comment>Label/SetWildcardUserControl</comment>
   </data>
   <data name="ListViewDataModified" xml:space="preserve">
     <value>更新日時</value>
@@ -532,11 +538,5 @@
   <data name="TitleTargetFilterWindow" xml:space="preserve">
     <value>フィルタ結果</value>
     <comment>TargetFilterWindow</comment>
-  </data>
-  <data name="ButtonDelete" xml:space="preserve">
-    <value>削除</value>
-  </data>
-  <data name="ButtonDupDelete" xml:space="preserve">
-    <value>重複ファイル削除</value>
   </data>
 </root>

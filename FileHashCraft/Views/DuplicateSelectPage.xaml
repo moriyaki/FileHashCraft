@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:FileHashCraft.Views"
-      xmlns:rs="clr-namespace:FileHashCraft.Services"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="DuplicateSelectPage">
@@ -28,12 +27,8 @@
 
         <!-- Menu -->
         <Menu x:Name="FolderMenu" DockPanel.Dock="Top" Grid.Row="0" Grid.ColumnSpan="5">
-            <MenuItem Command="{Binding SettingsOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuSettings, Mode=OneWay}" />
-            <MenuItem Command="{Binding DebugOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuDebug, Mode=OneWay}" />
-            <MenuItem Command="{Binding HelpOpen}"
-                      Header="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.MenuHelp, Mode=OneWay}" />
+            <MenuItem Command="{Binding SettingsOpen}" Header="{Binding MenuSettings}" />
+            <MenuItem Command="{Binding HelpOpen}" Header="{Binding MenuHelp}" />
         </Menu>
 
         <local:DupFilesDirsListBoxControl x:Name="DupDirsListBox"
@@ -60,13 +55,12 @@
                 <TextBlock Grid.Column="0" Background="Yellow" Margin="3"
                            Text="aaaaaaaaaaaaaaaaaaaaaaaa"
                            FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}" />
-                <Button Grid.Column="1" Width="100" Margin="3"
+                <Button Grid.Column="1" Width="100" Margin="3" Content="{Binding ButtonCancel}"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                        Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonCancel, Mode=OneWay}"
                         Command="{Binding ToSelectTargetPage}" />
-                <Button Grid.Column="2" Width="100" Margin="3" Command="{Binding DeleteCommand}"
+                <Button Grid.Column="2" Width="100" Margin="3" Content="{Binding ButtonDelete}"
                         FontFamily="{Binding CurrentFontFamily}" FontSize="{Binding FontSize}"
-                Content="{Binding Source={x:Static rs:ResourceService.Current},Path=Resources.ButtonDelete, Mode=OneWay}" />
+                        Command="{Binding DeleteCommand}" />
             </Grid>
         </StackPanel>
     </Grid>

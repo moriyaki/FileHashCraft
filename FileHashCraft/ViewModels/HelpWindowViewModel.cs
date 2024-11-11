@@ -94,7 +94,7 @@ namespace FileHashCraft.ViewModels
         {
             return _SettingsService.SelectedLanguage switch
             {
-                "ja-JP" => helpTab switch
+                "ja" => helpTab switch
                 {
                     HelpPage.Wildcard => "wildcard_ja.html",
                     HelpPage.Regex => "regex_ja.html",

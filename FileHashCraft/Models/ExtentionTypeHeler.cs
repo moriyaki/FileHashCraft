@@ -3,7 +3,8 @@
     拡張子グループから拡張子を取得するヘルパークラスです。
  */
 
-using FileHashCraft.Properties;
+using FileHashCraft.Resources;
+using FileHashCraft.Services;
 
 namespace FileHashCraft.Models
 {
@@ -63,15 +64,15 @@ namespace FileHashCraft.Models
         {
             return type switch
             {
-                FileGroupType.Movies => Resources.LabelExtentionFiles_Movies,
-                FileGroupType.Pictures => Resources.LabelExtentionFiles_Pictures,
-                FileGroupType.Musics => Resources.LabelExtentionFiles_Sounds,
-                FileGroupType.Documents => Resources.LabelExtentionFiles_Documents,
-                FileGroupType.Archives => Resources.LabelExtentionFiles_Archives,
-                FileGroupType.Applications => Resources.LabelExtentionFiles_Applications,
-                FileGroupType.SourceCodes => Resources.LabelExtentionFiles_SourceCodes,
-                FileGroupType.Registrations => Resources.LabelExtentionFiles_Registrations,
-                _ => Resources.LabelExtentionFiles_OtherFiles,
+                FileGroupType.Movies => ResourceService.GetString("LabelExtentionFiles_Movies"),
+                FileGroupType.Pictures => ResourceService.GetString("LabelExtentionFiles_Pictures"),
+                FileGroupType.Musics => ResourceService.GetString("LabelExtentionFiles_Sounds"),
+                FileGroupType.Documents => ResourceService.GetString("LabelExtentionFiles_Documents"),
+                FileGroupType.Archives => ResourceService.GetString("LabelExtentionFiles_Archives"),
+                FileGroupType.Applications => ResourceService.GetString("LabelExtentionFiles_Applications"),
+                FileGroupType.SourceCodes => ResourceService.GetString("LabelExtentionFiles_SourceCodes"),
+                FileGroupType.Registrations => ResourceService.GetString("LabelExtentionFiles_Registrations"),
+                _ => ResourceService.GetString("LabelExtentionFiles_OtherFiles"),
             };
         }
 
